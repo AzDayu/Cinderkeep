@@ -1,0 +1,92 @@
+Cinderkeep - Asset Foldering List
+
+Current Asset Folders
+- Assets/_TeamGuide
+  Team TXT guides. Start here.
+
+- Assets/Image
+  Original character portrait images used as source/reference image assets.
+
+- Assets/Resources/CharacterPortraits
+  Runtime-loaded character portraits.
+  File names are lowercase class ids:
+  archer.png, assassin.png, bard.png, blacksmith.png, healer.png, mage.png, spellblade.png, summoner.png, tactician.png, tanker.png
+
+- Assets/Scenes
+  Unity scene files.
+  Main_Lobby.unity is the menu scene.
+  Character selection and workspace scenes are grouped under Assets/Scenes/CharacterScenes.
+
+- Assets/Scenes/MainWorkspace
+  Shared main workspace scenes.
+  Muckhold_Workspace.unity is the first scene and current MainGame Muckhold prototype room.
+  MainWorkspaceRoom_ForBuild.unity is the build/integration workspace room.
+
+- Assets/Scenes/CharacterScenes
+  SampleScene.unity is character select.
+  PersonalWorkspaceRoom.unity is the general personal room.
+  Character personal scenes use Class_OwnerEnglishName naming.
+
+- Assets/Scripts/CharacterSelect
+  Runtime scripts for lobby, character select, detail panel, scene loading, and character profile data.
+
+- Assets/Scripts/CharacterSelect/Editor
+  Editor-only scene builder and validation scripts.
+  Do not reference these from runtime code.
+
+- Assets/Scripts/Workspace
+  Shared workspace runtime components.
+  Current component: MuckholdWorkspaceActor.
+
+- Assets/Settings
+  URP and project rendering settings.
+
+- Assets/TutorialInfo
+  Unity starter/tutorial files. Avoid editing unless the team decides to remove or replace them.
+
+- Assets/ThirdParty_PriAsset
+  Local-only folder for purchased, paid, or private third-party assets.
+  This folder is ignored by Git and should be shared outside Git when needed.
+
+Recommended New Folders
+- Assets/Prefabs
+  Reusable GameObjects. UI and gameplay objects should become prefabs when reused.
+
+- Assets/Prefabs/UI
+  Reusable UI buttons, panels, cards, and HUD pieces.
+
+- Assets/Prefabs/Gameplay
+  Player, enemy, resource, chest, base core, building, and interactable prefabs.
+
+- Assets/Materials
+  Shared materials. Do not create many duplicated scene-only materials.
+
+- Assets/ScriptableObjects
+  Data assets for static game data if the team chooses ScriptableObject data.
+
+- Assets/Data
+  JSON, CSV, or generated static data.
+
+- Assets/Art
+  Final art assets.
+
+- Assets/Art/Characters
+  Character art and sprites.
+
+- Assets/Art/Environment
+  Terrain, props, resources, buildings, and base-defense visuals.
+
+- Assets/Audio
+  BGM, SFX, and mixer assets.
+
+Naming Rules
+- Scenes: PascalCase or Class_OwnerEnglishName.
+- Scripts: PascalCase, one main class per file.
+- Prefabs: clear noun names, for example Player, Enemy_PlayerChaser, Chest_RandomGrowth.
+- Materials: M_ prefix, for example M_Ground_Green.
+- UI objects: name by purpose, for example Team ID Cards Button, Open Personal Workspace Button.
+
+Do Not Put Here
+- Do not put generated logs in Assets.
+- Do not put personal desktop files in Assets.
+- Do not put temporary screenshots in Assets unless they are real project references.

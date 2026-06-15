@@ -1,0 +1,43 @@
+Cinderkeep - GitHub Baseline and Archive Rule
+
+Current Baseline
+- main is the team base branch from [3차] 작업 공간 세팅.
+- Every new branch must start from origin/main.
+- Do not start new work from old role branches or archive branches.
+
+Why Archive Exists
+- archive is the professional name for the old trash/recovery area.
+- archive/* stores legacy, test, discarded, or wrong pushed work.
+- archive/* is read-only for normal team work.
+- Use archive/* only when the owner needs to recover something from old history.
+
+New Branch Flow
+1. Fetch origin.
+2. Checkout main.
+3. Pull origin/main.
+4. Create a new branch from main.
+5. Push the branch.
+6. Open a pull request into main.
+
+Branch Name Examples
+- feature/player-movement
+- feature/mage-skill-ui
+- feature/blacksmith-crafting
+- fix/character-select-button
+- docs/team-guide-update
+
+Archive Name Examples
+- archive/pre-3rd-workspace-main
+- archive/old-branches/Archer
+- archive/discarded/<short-reason>
+
+Do Not
+- Do not branch from archive/*.
+- Do not merge archive/* into main.
+- Do not force push main unless the repository owner approves it.
+- Do not keep working on old role branches without recreating them from main.
+
+If You Already Worked On An Old Branch
+- Tell the owner which branch has your work.
+- The owner can cherry-pick the needed commits into a new branch from main.
+- If the whole branch is no longer needed, it can be copied to archive/* first.

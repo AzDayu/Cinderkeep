@@ -1,0 +1,52 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# Unity cache and generated files
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# IDE files
+.vs/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Crash reports
+sysinfo.txt
+
+# Paid or private third-party Unity assets
+# Keep purchased assets here locally, but never commit them to this public repo.
+Assets/ThirdParty_PriAsset/
+Assets/ThirdParty_PriAsset.meta
+
+# Local recovery scenes
+Assets/_Recovery/
+Assets/_Recovery.meta

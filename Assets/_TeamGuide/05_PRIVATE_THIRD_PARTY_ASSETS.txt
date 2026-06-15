@@ -1,0 +1,33 @@
+Cinderkeep - Private Third Party Asset Rule
+
+Purpose
+- This repository is public.
+- Do not commit purchased, paid, or private third-party assets.
+- Portfolio Git history should show code style, scene structure, and team work history, not paid asset files.
+
+Required Folder
+- Put purchased/private assets only under:
+  Assets/ThirdParty_PriAsset
+
+Git Rule
+- Assets/ThirdParty_PriAsset is ignored by .gitignore.
+- Assets/ThirdParty_PriAsset.meta is also ignored.
+- Files inside that folder should not appear in Fork, GitHub Desktop, or git status.
+
+Team Sharing Rule
+- Share paid/private assets outside Git.
+- Use Google Drive, a Unity package, or another private physical transfer method.
+- Tell the team the asset name, version, and import notes in Discord or team notes.
+
+Safe Import Flow
+- Create an empty Unity project first.
+- Import the external asset into that empty project.
+- Avoid importing sample scenes, scripts, and shaders unless the team agrees.
+- Move compatible files such as FBX, textures, sprites, materials, and animation clips into this project.
+- Place those files under Assets/ThirdParty_PriAsset only.
+
+Before Push Checklist
+- Run git status.
+- Confirm no paid/private asset files are staged.
+- If private files were accidentally staged, stop and unstage them before commit.
+- If private files were already committed, tell the team lead before pushing.

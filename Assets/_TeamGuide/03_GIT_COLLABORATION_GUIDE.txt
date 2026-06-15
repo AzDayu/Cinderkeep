@@ -1,0 +1,58 @@
+Cinderkeep - Git Collaboration Guide
+
+Current Baseline Notice
+- main is the current team base from [3차] 작업 공간 세팅.
+- Create every new branch from origin/main.
+- archive/* is the legacy/discarded pushed-work area. Do not branch from archive/*.
+- Read 05_GITHUB_BASELINE_AND_ARCHIVE_RULE.txt before creating a new branch.
+
+Recommended Approach
+- Use GitHub, fork, branch, pull request, and merge outside Unity.
+- Unity should show the team workspace metaphor, not perform real git merge operations.
+- Real merges can conflict in scenes, prefabs, and project settings, so they need human review.
+
+Branch Rule
+- Each task should use its own branch.
+- Branch name examples:
+  feature/player-movement
+  feature/night-wave
+  feature/random-chest
+  fix/character-select-button
+
+Scene Ownership Rule
+- Avoid multiple people editing the same .unity scene at the same time.
+- Personal scene edits are safest in each character scene.
+- Muckhold_Workspace should be edited carefully because everyone depends on it.
+- If two people must edit Muckhold_Workspace, decide who owns the scene edit first.
+
+Prefab Rule
+- Prefer prefabs for reusable objects.
+- Editing a prefab is usually safer than editing many scene instances.
+- Put reusable work in Assets/Prefabs after the team creates that folder.
+
+Commit Rule
+- Commit small, understandable changes.
+- Good commit scope:
+  Add player placeholder movement.
+  Add chest growth data.
+  Update shared workspace prototype.
+- Bad commit scope:
+  Massive random changes.
+  Unrelated scene and script edits together.
+
+Before Pull Request
+- Open Unity and let assets import.
+- Check Console errors.
+- Test the scene you changed.
+- Check that no unrelated files were changed.
+- Mention which scene and system you touched.
+
+Merge Conflict Warning
+- Unity YAML scene conflicts are hard for beginners.
+- Do not auto-resolve scene conflicts without checking in Unity.
+- If a scene conflict happens, ask the team before choosing one side.
+
+How Unity Workspace Should Represent Git
+- The shared room can show team goals, feature boards, branch signs, and prototype objects.
+- MainWorkspaceRoom_ForBuild is for work that is ready to be shared before commit, push, merge, or build checks.
+- The actual git actions still happen through GitHub Desktop, Git CLI, SourceTree, Rider, Visual Studio, or GitHub web.
