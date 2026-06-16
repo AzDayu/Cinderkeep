@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -8,7 +9,8 @@ namespace OODong.Shared
     [RequireComponent(typeof(Camera))]
     public sealed class SceneCameraController : MonoBehaviour
     {
-        [SerializeField] private Camera _camera;
+        [FormerlySerializedAs("_camera")]
+        [SerializeField] private Camera Camera_Camera;
         [SerializeField] private float _keyboardMoveSpeed = 12f;
         [SerializeField] private float _dragMoveScale = 1f;
         [SerializeField] private float _scrollZoomSpeed = 1.5f;
@@ -27,13 +29,13 @@ namespace OODong.Shared
         private Vector2 _previousPointerPosition;
         private bool _isDragging;
 
-        public Camera Camera => _camera;
+        public Camera Camera => Camera_Camera;
 
         private void Awake()
         {
-            if (_camera == null)
+            if (Camera_Camera == null)
             {
-                _camera = GetComponent<Camera>();
+                Camera_Camera = GetComponent<Camera>();
             }
 
             StoreDefaultView();
@@ -82,13 +84,13 @@ namespace OODong.Shared
             transform.position = _defaultPosition;
             transform.rotation = _defaultRotation;
 
-            if (_camera.orthographic)
+            if (Camera_Camera.orthographic)
             {
-                _camera.orthographicSize = _defaultOrthographicSize;
+                Camera_Camera.orthographicSize = _defaultOrthographicSize;
             }
             else
             {
-                _camera.fieldOfView = _defaultFieldOfView;
+                Camera_Camera.fieldOfView = _defaultFieldOfView;
             }
         }
 
@@ -97,18 +99,18 @@ namespace OODong.Shared
             _defaultPosition = transform.position;
             _defaultRotation = transform.rotation;
 
-            if (_camera == null)
+            if (Camera_Camera == null)
             {
-                _camera = GetComponent<Camera>();
+                Camera_Camera = GetComponent<Camera>();
             }
 
-            _defaultOrthographicSize = _camera.orthographicSize;
-            _defaultFieldOfView = _camera.fieldOfView;
+            _defaultOrthographicSize = Camera_Camera.orthographicSize;
+            _defaultFieldOfView = Camera_Camera.fieldOfView;
         }
 
         public void SetCamera(Camera targetCamera)
         {
-            _camera = targetCamera;
+            Camera_Camera = targetCamera;
             StoreDefaultView();
         }
 
@@ -190,9 +192,9 @@ namespace OODong.Shared
 
         private float GetWorldUnitsPerPixel()
         {
-            if (_camera != null && _camera.orthographic)
+            if (Camera_Camera != null && Camera_Camera.orthographic)
             {
-                return (_camera.orthographicSize * 2f) / Mathf.Max(1f, Screen.height);
+                return (Camera_Camera.orthographicSize * 2f) / Mathf.Max(1f, Screen.height);
             }
 
             return 0.02f;
@@ -200,21 +202,21 @@ namespace OODong.Shared
 
         private void ZoomBy(float amount)
         {
-            if (_camera == null)
+            if (Camera_Camera == null)
             {
                 return;
             }
 
-            if (_camera.orthographic)
+            if (Camera_Camera.orthographic)
             {
-                _camera.orthographicSize = Mathf.Clamp(
-                    _camera.orthographicSize - amount,
+                Camera_Camera.orthographicSize = Mathf.Clamp(
+                    Camera_Camera.orthographicSize - amount,
                     _minOrthographicSize,
                     _maxOrthographicSize);
                 return;
             }
 
-            _camera.fieldOfView = Mathf.Clamp(_camera.fieldOfView - amount * 4f, 20f, 90f);
+            Camera_Camera.fieldOfView = Mathf.Clamp(Camera_Camera.fieldOfView - amount * 4f, 20f, 90f);
         }
 
         private void ClampPosition()

@@ -1,0 +1,10 @@
+{
+  "Items": [
+    {
+      "_id": "ember_speed",
+      "_displayName": "Ember Pace",
+      "_description": "Presentation MVP relic: movement pressure reward.",
+      "_value": 1.1
+    }
+  ]
+}

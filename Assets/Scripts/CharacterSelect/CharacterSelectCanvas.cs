@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OODong.CharacterSelect
 {
@@ -7,7 +8,8 @@ namespace OODong.CharacterSelect
     {
         private const int RequiredCharacterCount = 10;
 
-        [SerializeField] private CharacterDetailPanel _detailPanel;
+        [FormerlySerializedAs("_detailPanel")]
+        [SerializeField] private CharacterDetailPanel CharacterDetailPanel_DetailPanel;
 
         private readonly List<CharacterSlot> _characterSlots = new List<CharacterSlot>();
         private CharacterSlot _selectedSlot;
@@ -28,7 +30,7 @@ namespace OODong.CharacterSelect
 
         public void SetDetailPanel(CharacterDetailPanel detailPanel)
         {
-            _detailPanel = detailPanel;
+            CharacterDetailPanel_DetailPanel = detailPanel;
         }
 
         public void SelectCharacter(CharacterSlot slot)
@@ -38,7 +40,7 @@ namespace OODong.CharacterSelect
                 return;
             }
 
-            if (_selectedSlot == slot && _detailPanel != null && _detailPanel.IsOpen)
+            if (_selectedSlot == slot && CharacterDetailPanel_DetailPanel != null && CharacterDetailPanel_DetailPanel.IsOpen)
             {
                 HideDetailPanel();
                 return;
@@ -50,9 +52,9 @@ namespace OODong.CharacterSelect
                 characterSlot.SetSelected(characterSlot == _selectedSlot);
             }
 
-            if (_detailPanel != null)
+            if (CharacterDetailPanel_DetailPanel != null)
             {
-                _detailPanel.Show(slot.Entry);
+                CharacterDetailPanel_DetailPanel.Show(slot.Entry);
             }
         }
 
@@ -85,9 +87,9 @@ namespace OODong.CharacterSelect
 
         private void ResolveDetailPanel()
         {
-            if (_detailPanel == null)
+            if (CharacterDetailPanel_DetailPanel == null)
             {
-                _detailPanel = GetComponentInChildren<CharacterDetailPanel>(true);
+                CharacterDetailPanel_DetailPanel = GetComponentInChildren<CharacterDetailPanel>(true);
             }
         }
 
@@ -100,9 +102,9 @@ namespace OODong.CharacterSelect
                 slot.SetSelected(false);
             }
 
-            if (_detailPanel != null)
+            if (CharacterDetailPanel_DetailPanel != null)
             {
-                _detailPanel.Hide();
+                CharacterDetailPanel_DetailPanel.Hide();
             }
         }
 

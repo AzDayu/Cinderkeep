@@ -160,7 +160,8 @@ Unity 프로젝트에서 가장 위험한 충돌은 씬 파일 충돌입니다.
 
 ```text
 Assets/Scenes/Main_Lobby.unity
-Assets/Scenes/MainWorkspace/Muckhold_Workspace.unity
+Assets/Scenes/MainGame/Cinderkeep_Game.unity
+Assets/Scenes/MainWorkspace/Cinderkeep_Workspace.unity
 Assets/Scenes/MainWorkspace/MainWorkspaceRoom_ForBuild.unity
 ```
 

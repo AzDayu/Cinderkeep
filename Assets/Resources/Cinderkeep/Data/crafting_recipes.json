@@ -1,0 +1,152 @@
+{
+  "Items": [
+    {
+      "_id": "build_wall",
+      "_displayName": "Stone Wall",
+      "_category": "building",
+      "_stationId": "field",
+      "_resultItemId": "wall",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Stone", "_amount": 3 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 1,
+      "_description": "Fixed defense line. If destroyed, a ruin remains and the same site can be repaired or rebuilt."
+    },
+    {
+      "_id": "build_ember_turret",
+      "_displayName": "Ember Turret",
+      "_category": "building",
+      "_stationId": "field",
+      "_resultItemId": "turret",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 2 },
+        { "_itemId": "Stone", "_amount": 2 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 2,
+      "_description": "Auto defense object. Enemies prioritize it if it blocks the route to the FlameHeart."
+    },
+    {
+      "_id": "build_spike_trap",
+      "_displayName": "Spike Trap",
+      "_category": "building",
+      "_stationId": "field",
+      "_resultItemId": "trap",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Stone", "_amount": 3 },
+        { "_itemId": "Ore", "_amount": 1 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 2,
+      "_description": "Persistent trap zone. Later code should reduce enemy speed or apply stun instead of pure damage only."
+    },
+    {
+      "_id": "weapon_ember_bow",
+      "_displayName": "Ember Bow",
+      "_category": "weapon",
+      "_stationId": "workbench",
+      "_resultItemId": "ember_bow",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 3 },
+        { "_itemId": "Stone", "_amount": 2 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 2,
+      "_description": "Ranged weapon upgrade hook for the 30-minute expansion."
+    },
+    {
+      "_id": "weapon_frost_spear",
+      "_displayName": "Frost Spear",
+      "_category": "weapon",
+      "_stationId": "workbench",
+      "_resultItemId": "frost_spear",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 4 },
+        { "_itemId": "Stone", "_amount": 2 }
+      ],
+      "_requiredToolId": "iron_pickaxe",
+      "_unlockDay": 4,
+      "_description": "Long-run melee option. Needs a dedicated PlayerCombat component before runtime use."
+    },
+    {
+      "_id": "equipment_fur_cloak",
+      "_displayName": "Fur Cloak",
+      "_category": "equipment",
+      "_stationId": "workbench",
+      "_resultItemId": "fur_cloak",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Apple", "_amount": 2 },
+        { "_itemId": "Ore", "_amount": 1 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 3,
+      "_description": "Cold gauge mitigation hook. MVP does not run a cold gauge yet."
+    },
+    {
+      "_id": "equipment_ember_pack",
+      "_displayName": "Ember Pack",
+      "_category": "equipment",
+      "_stationId": "workbench",
+      "_resultItemId": "ember_pack",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 5 },
+        { "_itemId": "Stone", "_amount": 4 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 5,
+      "_description": "Inventory capacity hook for long mode."
+    },
+    {
+      "_id": "tool_stone_hatchet",
+      "_displayName": "Stone Hatchet",
+      "_category": "gatheringTool",
+      "_stationId": "workbench",
+      "_resultItemId": "stone_hatchet",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Stone", "_amount": 2 }
+      ],
+      "_requiredToolId": "",
+      "_unlockDay": 1,
+      "_description": "Wood gathering hook. MVP map has dead trees, but no runtime wood node yet."
+    },
+    {
+      "_id": "tool_iron_pickaxe",
+      "_displayName": "Iron Pickaxe",
+      "_category": "gatheringTool",
+      "_stationId": "workbench",
+      "_resultItemId": "iron_pickaxe",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 3 },
+        { "_itemId": "Stone", "_amount": 2 }
+      ],
+      "_requiredToolId": "Pickaxe",
+      "_unlockDay": 2,
+      "_description": "Higher-tier ore hook. Keep this as a separate tool component upgrade later."
+    },
+    {
+      "_id": "tool_salvage_hammer",
+      "_displayName": "Salvage Hammer",
+      "_category": "gatheringTool",
+      "_stationId": "workbench",
+      "_resultItemId": "salvage_hammer",
+      "_resultAmount": 1,
+      "_costs": [
+        { "_itemId": "Ore", "_amount": 4 },
+        { "_itemId": "Stone", "_amount": 5 }
+      ],
+      "_requiredToolId": "iron_pickaxe",
+      "_unlockDay": 4,
+      "_description": "Ruined-building salvage hook for the larger 7-day map."
+    }
+  ]
+}

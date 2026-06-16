@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OODong.CharacterSelect
 {
@@ -9,14 +10,15 @@ namespace OODong.CharacterSelect
         [SerializeField] private string _id;
         [SerializeField] private string _koreanRole;
         [SerializeField] private string _englishRole;
-        [SerializeField] private Sprite _portrait;
+        [FormerlySerializedAs("_portrait")]
+        [SerializeField] private Sprite Sprite_Portrait;
         [SerializeField] private string _ownerName;
         [SerializeField, TextArea(3, 8)] private string _introduction;
 
         public string Id => _id;
         public string KoreanRole => _koreanRole;
         public string EnglishRole => _englishRole;
-        public Sprite Portrait => _portrait;
+        public Sprite Portrait => Sprite_Portrait;
         public string OwnerName => _ownerName;
         public string Introduction => _introduction;
         public bool HasId => !string.IsNullOrWhiteSpace(_id);
@@ -40,7 +42,7 @@ namespace OODong.CharacterSelect
 
         public void SetPortrait(Sprite portrait)
         {
-            _portrait = portrait;
+            Sprite_Portrait = portrait;
         }
 
         public void SetProfile(string ownerName, string introduction)

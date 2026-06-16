@@ -1,0 +1,64 @@
+Cinderkeep - Cinderkeep Shared Workspace Plan
+
+Planning Deck Summary
+- Cinderkeep is inspired by Muck's fast growth feeling.
+- The direction is single-player base-defense roguelite.
+- Day is for farming and preparation.
+- Night is for survival and base defense.
+- Chests create random growth and replay variety.
+- Better resources should be farther away and riskier.
+- The MVP should prove a fun short session first.
+
+Current Cinderkeep_Workspace Preview
+- Cinderkeep_Green_Ground
+  Green placeholder ground.
+
+- Player_Green_Dot
+  Player placeholder.
+
+- Base_Core_Object
+  Base defense target. Night enemies can threaten this.
+
+- Mineral_Blue_Box_01 and Mineral_Blue_Box_02
+  Mineable resource placeholders.
+
+- Chest_Yellow_Box_01 and Chest_Yellow_Box_02
+  Random growth placeholders.
+
+- Enemy_Red_Dot_PlayerChaser
+  Enemy type that pressures the player.
+
+- Enemy_Red_Dot_BaseBreaker
+  Enemy type that pressures the base core.
+
+Suggested MVP Systems
+Implement these in Cinderkeep_Game, not directly in the workspace scene.
+
+- First-person movement and camera.
+- Wheel zoom in/out.
+- Day/night phase timer.
+- Resource gathering.
+- Basic crafting.
+- Basic building or wall placement.
+- Player health, hunger, and stamina HUD.
+- Base core health.
+- Night enemy wave.
+- Random chest upgrade.
+- Restart loop.
+
+Suggested Team Split
+- Planning/PM: MVP priority, task board, decisions.
+- Player/HUD: movement, zoom, health, hunger, stamina.
+- Gathering/Crafting/Building: resources, tools, tier upgrades, structures.
+- Combat/AI/Boss: wave enemies, player chaser, base breaker, first boss.
+- Map/Balance/QA: resource distance, respawn, day 3 test loop.
+
+Important Scope Rule
+- Do not build everything at once.
+- First prove:
+  player can move,
+  gather a resource,
+  open a chest,
+  defend a base core at night,
+  restart after failure.
+

@@ -1,0 +1,12 @@
+{
+  "Items": [
+    {
+      "_id": "arrow_bundle",
+      "_displayName": "Arrow Bundle",
+      "_costItemId": "Stone",
+      "_costAmount": 1,
+      "_resultItemId": "Arrow",
+      "_resultAmount": 6
+    }
+  ]
+}

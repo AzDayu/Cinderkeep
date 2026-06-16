@@ -2,20 +2,29 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace OODong.CharacterSelect
 {
     public sealed class CharacterSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
-        [SerializeField] private CharacterEntry _entry;
-        [SerializeField] private Image _frame;
-        [SerializeField] private Outline _outline;
-        [SerializeField] private RectTransform _rect;
-        [SerializeField] private Image _portrait;
-        [SerializeField] private Text _placeholder;
-        [SerializeField] private Image _hoverWash;
-        [SerializeField] private Image _labelBack;
+        [FormerlySerializedAs("_entry")]
+        [SerializeField] private CharacterEntry CharacterEntry_Entry;
+        [FormerlySerializedAs("_frame")]
+        [SerializeField] private Image Image_Frame;
+        [FormerlySerializedAs("_outline")]
+        [SerializeField] private Outline Outline_Outline;
+        [FormerlySerializedAs("_rect")]
+        [SerializeField] private RectTransform RectTransform_Rect;
+        [FormerlySerializedAs("_portrait")]
+        [SerializeField] private Image Image_Portrait;
+        [FormerlySerializedAs("_placeholder")]
+        [SerializeField] private Text Text_Placeholder;
+        [FormerlySerializedAs("_hoverWash")]
+        [SerializeField] private Image Image_HoverWash;
+        [FormerlySerializedAs("_labelBack")]
+        [SerializeField] private Image Image_LabelBack;
         [SerializeField] private Color _accentColor = Color.white;
         [SerializeField] private bool _loadPortraitFromResources = true;
 
@@ -25,7 +34,7 @@ namespace OODong.CharacterSelect
 
         public event Action<CharacterSlot> Selected;
 
-        public CharacterEntry Entry => _entry;
+        public CharacterEntry Entry => CharacterEntry_Entry;
 
         private void Awake()
         {
@@ -36,7 +45,7 @@ namespace OODong.CharacterSelect
 
         public void SetEntry(CharacterEntry entry)
         {
-            _entry = entry;
+            CharacterEntry_Entry = entry;
         }
 
         public void SetAccentColor(Color accentColor)
@@ -53,13 +62,13 @@ namespace OODong.CharacterSelect
             Image hoverWash,
             Image labelBack)
         {
-            _frame = frame;
-            _outline = outline;
-            _rect = rect;
-            _portrait = portrait;
-            _placeholder = placeholder;
-            _hoverWash = hoverWash;
-            _labelBack = labelBack;
+            Image_Frame = frame;
+            Outline_Outline = outline;
+            RectTransform_Rect = rect;
+            Image_Portrait = portrait;
+            Text_Placeholder = placeholder;
+            Image_HoverWash = hoverWash;
+            Image_LabelBack = labelBack;
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -87,33 +96,33 @@ namespace OODong.CharacterSelect
 
         private void ResolveReferences()
         {
-            if (_rect == null)
+            if (RectTransform_Rect == null)
             {
-                _rect = GetComponent<RectTransform>();
+                RectTransform_Rect = GetComponent<RectTransform>();
             }
 
-            if (_frame == null)
+            if (Image_Frame == null)
             {
-                _frame = GetComponent<Image>();
+                Image_Frame = GetComponent<Image>();
             }
 
-            if (_outline == null)
+            if (Outline_Outline == null)
             {
-                _outline = GetComponent<Outline>();
+                Outline_Outline = GetComponent<Outline>();
             }
         }
 
         private void LoadPortrait()
         {
-            if (!_loadPortraitFromResources || _entry == null || !_entry.HasId || _entry.Portrait != null)
+            if (!_loadPortraitFromResources || CharacterEntry_Entry == null || !CharacterEntry_Entry.HasId || CharacterEntry_Entry.Portrait != null)
             {
                 return;
             }
 
-            Sprite sprite = Resources.Load<Sprite>($"CharacterPortraits/{_entry.Id}");
+            Sprite sprite = Resources.Load<Sprite>($"CharacterPortraits/{CharacterEntry_Entry.Id}");
             if (sprite == null)
             {
-                Texture2D texture = Resources.Load<Texture2D>($"CharacterPortraits/{_entry.Id}");
+                Texture2D texture = Resources.Load<Texture2D>($"CharacterPortraits/{CharacterEntry_Entry.Id}");
                 if (texture != null)
                 {
                     sprite = Sprite.Create(
@@ -129,17 +138,17 @@ namespace OODong.CharacterSelect
                 return;
             }
 
-            _entry.SetPortrait(sprite);
-            if (_portrait != null)
+            CharacterEntry_Entry.SetPortrait(sprite);
+            if (Image_Portrait != null)
             {
-                _portrait.sprite = sprite;
-                _portrait.type = Image.Type.Simple;
-                _portrait.color = Color.white;
+                Image_Portrait.sprite = sprite;
+                Image_Portrait.type = Image.Type.Simple;
+                Image_Portrait.color = Color.white;
             }
 
-            if (_placeholder != null)
+            if (Text_Placeholder != null)
             {
-                _placeholder.gameObject.SetActive(false);
+                Text_Placeholder.gameObject.SetActive(false);
             }
         }
 
@@ -147,35 +156,35 @@ namespace OODong.CharacterSelect
         {
             bool active = _hovered || _selected;
 
-            if (_frame != null)
+            if (Image_Frame != null)
             {
-                _frame.color = active ? Color.Lerp(_accentColor, Color.white, 0.34f) : new Color(0.08f, 0.085f, 0.1f, 1f);
+                Image_Frame.color = active ? Color.Lerp(_accentColor, Color.white, 0.34f) : new Color(0.08f, 0.085f, 0.1f, 1f);
             }
 
-            if (_outline != null)
+            if (Outline_Outline != null)
             {
-                _outline.effectColor = _selected ? new Color(1f, 0.8f, 0.18f, 1f) : active ? Color.white : new Color(1f, 1f, 1f, 0.14f);
-                _outline.effectDistance = active ? new Vector2(12f, -12f) : new Vector2(2f, -2f);
+                Outline_Outline.effectColor = _selected ? new Color(1f, 0.8f, 0.18f, 1f) : active ? Color.white : new Color(1f, 1f, 1f, 0.14f);
+                Outline_Outline.effectDistance = active ? new Vector2(12f, -12f) : new Vector2(2f, -2f);
             }
 
-            if (_hoverWash != null)
+            if (Image_HoverWash != null)
             {
-                _hoverWash.color = active ? new Color(1f, 1f, 1f, 0.3f) : new Color(1f, 1f, 1f, 0f);
+                Image_HoverWash.color = active ? new Color(1f, 1f, 1f, 0.3f) : new Color(1f, 1f, 1f, 0f);
             }
 
-            if (_labelBack != null)
+            if (Image_LabelBack != null)
             {
-                _labelBack.color = active ? new Color(0f, 0f, 0f, 0.94f) : new Color(0f, 0f, 0f, 0.72f);
+                Image_LabelBack.color = active ? new Color(0f, 0f, 0f, 0.94f) : new Color(0f, 0f, 0f, 0.72f);
             }
 
-            if (_placeholder != null)
+            if (Text_Placeholder != null)
             {
-                _placeholder.color = active ? Color.white : new Color(1f, 1f, 1f, 0.78f);
+                Text_Placeholder.color = active ? Color.white : new Color(1f, 1f, 1f, 0.78f);
             }
 
-            if (_portrait != null && _portrait.sprite == null)
+            if (Image_Portrait != null && Image_Portrait.sprite == null)
             {
-                _portrait.color = active ? Color.Lerp(_accentColor, Color.white, 0.24f) : _accentColor;
+                Image_Portrait.color = active ? Color.Lerp(_accentColor, Color.white, 0.24f) : _accentColor;
             }
 
             ScaleCard(active ? 1.12f : 1f, animate);
@@ -183,7 +192,7 @@ namespace OODong.CharacterSelect
 
         private void ScaleCard(float targetScale, bool animate)
         {
-            if (_rect == null)
+            if (RectTransform_Rect == null)
             {
                 return;
             }
@@ -199,12 +208,12 @@ namespace OODong.CharacterSelect
                 return;
             }
 
-            _rect.localScale = Vector3.one * targetScale;
+            RectTransform_Rect.localScale = Vector3.one * targetScale;
         }
 
         private IEnumerator AnimateScale(float target)
         {
-            Vector3 start = _rect.localScale;
+            Vector3 start = RectTransform_Rect.localScale;
             Vector3 end = Vector3.one * target;
             float elapsed = 0f;
             const float Duration = 0.12f;
@@ -213,11 +222,11 @@ namespace OODong.CharacterSelect
             {
                 elapsed += Time.unscaledDeltaTime;
                 float t = Mathf.SmoothStep(0f, 1f, elapsed / Duration);
-                _rect.localScale = Vector3.Lerp(start, end, t);
+                RectTransform_Rect.localScale = Vector3.Lerp(start, end, t);
                 yield return null;
             }
 
-            _rect.localScale = end;
+            RectTransform_Rect.localScale = end;
             _scaleRoutine = null;
         }
     }

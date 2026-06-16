@@ -7,7 +7,7 @@ Cinderkeep - Start Here
 1. 01_Team_Workflow.txt
 2. 02_Foldering_Rules.txt
 3. 03_Code_Style_Summary.txt
-4. 04_Muckhold_Game_Plan.txt
+4. 04_Cinderkeep_Game_Plan.txt
 5. 05_Git_Checklist.txt
 
 팀 규칙

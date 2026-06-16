@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace OODong.CharacterSelect
@@ -7,11 +8,16 @@ namespace OODong.CharacterSelect
     {
         private const string SavePrefix = "OODong.CharacterSelect.";
 
-        [SerializeField] private Text _detailTitle;
-        [SerializeField] private Text _detailRole;
-        [SerializeField] private InputField _ownerInput;
-        [SerializeField] private InputField _introInput;
-        [SerializeField] private CharacterSceneLoadButton _personalSpaceButton;
+        [FormerlySerializedAs("_detailTitle")]
+        [SerializeField] private Text Text_DetailTitle;
+        [FormerlySerializedAs("_detailRole")]
+        [SerializeField] private Text Text_DetailRole;
+        [FormerlySerializedAs("_ownerInput")]
+        [SerializeField] private InputField InputField_Owner;
+        [FormerlySerializedAs("_introInput")]
+        [SerializeField] private InputField InputField_Intro;
+        [FormerlySerializedAs("_personalSpaceButton")]
+        [SerializeField] private CharacterSceneLoadButton CharacterSceneLoadButton_PersonalSpace;
         [SerializeField] private bool _saveIntroductionsToPlayerPrefs = true;
 
         private CharacterEntry _selectedEntry;
@@ -35,11 +41,11 @@ namespace OODong.CharacterSelect
             InputField introInput,
             CharacterSceneLoadButton personalSpaceButton)
         {
-            _detailTitle = detailTitle;
-            _detailRole = detailRole;
-            _ownerInput = ownerInput;
-            _introInput = introInput;
-            _personalSpaceButton = personalSpaceButton;
+            Text_DetailTitle = detailTitle;
+            Text_DetailRole = detailRole;
+            InputField_Owner = ownerInput;
+            InputField_Intro = introInput;
+            CharacterSceneLoadButton_PersonalSpace = personalSpaceButton;
         }
 
         public void Show(CharacterEntry entry)
@@ -56,30 +62,30 @@ namespace OODong.CharacterSelect
             string savedName = ReadSavedValue(entry, "name", entry.OwnerName);
             string savedIntro = ReadSavedValue(entry, "intro", entry.Introduction);
 
-            if (_detailTitle != null)
+            if (Text_DetailTitle != null)
             {
-                _detailTitle.text = $"Member: {savedName}";
+                Text_DetailTitle.text = $"Member: {savedName}";
             }
 
-            if (_detailRole != null)
+            if (Text_DetailRole != null)
             {
-                _detailRole.text = $"Class Badge: {entry.EnglishRole}";
+                Text_DetailRole.text = $"Class Badge: {entry.EnglishRole}";
             }
 
-            if (_ownerInput != null)
+            if (InputField_Owner != null)
             {
-                _ownerInput.text = savedName;
+                InputField_Owner.text = savedName;
             }
 
-            if (_introInput != null)
+            if (InputField_Intro != null)
             {
-                _introInput.text = savedIntro;
+                InputField_Intro.text = savedIntro;
             }
 
-            if (_personalSpaceButton != null)
+            if (CharacterSceneLoadButton_PersonalSpace != null)
             {
-                _personalSpaceButton.SetSceneName(GetPersonalSceneName(entry));
-                _personalSpaceButton.gameObject.SetActive(true);
+                CharacterSceneLoadButton_PersonalSpace.SetSceneName(GetPersonalSceneName(entry));
+                CharacterSceneLoadButton_PersonalSpace.gameObject.SetActive(true);
             }
         }
 
@@ -91,27 +97,27 @@ namespace OODong.CharacterSelect
 
         private void RegisterInputEvents()
         {
-            if (_ownerInput != null)
+            if (InputField_Owner != null)
             {
-                _ownerInput.onEndEdit.AddListener(HandleEditEnded);
+                InputField_Owner.onEndEdit.AddListener(HandleEditEnded);
             }
 
-            if (_introInput != null)
+            if (InputField_Intro != null)
             {
-                _introInput.onEndEdit.AddListener(HandleEditEnded);
+                InputField_Intro.onEndEdit.AddListener(HandleEditEnded);
             }
         }
 
         private void UnregisterInputEvents()
         {
-            if (_ownerInput != null)
+            if (InputField_Owner != null)
             {
-                _ownerInput.onEndEdit.RemoveListener(HandleEditEnded);
+                InputField_Owner.onEndEdit.RemoveListener(HandleEditEnded);
             }
 
-            if (_introInput != null)
+            if (InputField_Intro != null)
             {
-                _introInput.onEndEdit.RemoveListener(HandleEditEnded);
+                InputField_Intro.onEndEdit.RemoveListener(HandleEditEnded);
             }
         }
 
@@ -122,13 +128,13 @@ namespace OODong.CharacterSelect
 
         private void SaveSelectedEntry()
         {
-            if (!_saveIntroductionsToPlayerPrefs || _selectedEntry == null || _ownerInput == null || _introInput == null)
+            if (!_saveIntroductionsToPlayerPrefs || _selectedEntry == null || InputField_Owner == null || InputField_Intro == null)
             {
                 return;
             }
 
-            PlayerPrefs.SetString(GetSaveKey(_selectedEntry, "name"), _ownerInput.text);
-            PlayerPrefs.SetString(GetSaveKey(_selectedEntry, "intro"), _introInput.text);
+            PlayerPrefs.SetString(GetSaveKey(_selectedEntry, "name"), InputField_Owner.text);
+            PlayerPrefs.SetString(GetSaveKey(_selectedEntry, "intro"), InputField_Intro.text);
             PlayerPrefs.Save();
         }
 

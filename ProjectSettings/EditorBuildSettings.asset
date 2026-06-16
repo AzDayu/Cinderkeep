@@ -12,7 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/CharacterScenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/Scenes/MainWorkspace/Muckhold_Workspace.unity
+    path: Assets/Scenes/MainGame/Cinderkeep_Game.unity
+    guid: fb3c3a6c7b20dd8448184b1f55d5686a
+  - enabled: 1
+    path: Assets/Scenes/MainWorkspace/Cinderkeep_Workspace.unity
     guid: e8b53665e0b472b41af50e0db7a6f3e3
   - enabled: 1
     path: Assets/Scenes/MainWorkspace/MainWorkspaceRoom_ForBuild.unity

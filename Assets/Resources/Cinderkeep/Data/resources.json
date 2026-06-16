@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "_id": "stone",
+      "_displayName": "Stone",
+      "_tier": 1
+    },
+    {
+      "_id": "ore",
+      "_displayName": "Ore",
+      "_tier": 2
+    }
+  ]
+}

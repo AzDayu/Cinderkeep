@@ -3,10 +3,12 @@ Cinderkeep - Read First
 Purpose
 - This project is shared by 9 team members.
 - Each person chooses one character/class and works through that character's personal scene.
-- Shared game work belongs in MainGame Muckhold first, inside Muckhold_Workspace, then moves into real systems when the team agrees.
+- Shared team planning work belongs in Cinderkeep_Workspace.
+- Playable game work belongs in Cinderkeep_Game under Assets/Scenes/MainGame.
 
 Main Scenes
-- Muckhold_Workspace: first scene and current MainGame Muckhold prototype.
+- Cinderkeep_Game: playable Cinderkeep game scene.
+- Cinderkeep_Workspace: shared team workspace scene for task objects and design placeholders.
 - Main_Lobby: menu scene. Use this as the team entrance when you need character select or workspace links.
 - SampleScene: character select scene.
 - MainWorkspaceRoom_ForBuild: important integration room for completed work before commit, push, merge, and build checks.
@@ -38,9 +40,9 @@ Current Character Owners
 - Tanker: KimSeonggwang
 
 Unity Entry Flow
-- Press Play to start in Muckhold_Workspace.
+- Press Play from Main_Lobby when you need the team hub.
 - Click Back To Lobby when you need Main_Lobby.
-- Click !! Play Our Game (Prototype) to check the current game quickly.
+- Click !! Play Our Game (Prototype) to open Cinderkeep_Game.
 - Click Team ID Cards to see class badges and member roles.
 - Click Personal Work Rooms to enter a member's personal scene.
 - Select a character card.

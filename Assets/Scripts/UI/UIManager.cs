@@ -1,105 +1,108 @@
 using OODong.Shared;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OODong.UI
 {
     public sealed class UIManager : MonoBehaviour
     {
-        [SerializeField] private SceneCameraController _cameraController;
-        [SerializeField] private GameObject _cameraHelpPanel;
+        [FormerlySerializedAs("_cameraController")]
+        [SerializeField] private SceneCameraController SceneCameraController_CameraController;
+        [FormerlySerializedAs("_cameraHelpPanel")]
+        [SerializeField] private GameObject GameObject_CameraHelpPanel;
         [SerializeField] private bool _hideCameraHelpOnAwake = true;
 
-        public SceneCameraController CameraController => _cameraController;
+        public SceneCameraController CameraController => SceneCameraController_CameraController;
 
         private void Awake()
         {
             ResolveCameraController();
 
-            if (_hideCameraHelpOnAwake && _cameraHelpPanel != null)
+            if (_hideCameraHelpOnAwake && GameObject_CameraHelpPanel != null)
             {
-                _cameraHelpPanel.SetActive(false);
+                GameObject_CameraHelpPanel.SetActive(false);
             }
         }
 
         public void SetCameraController(SceneCameraController cameraController)
         {
-            _cameraController = cameraController;
+            SceneCameraController_CameraController = cameraController;
         }
 
         public void ShowCameraHelp()
         {
-            if (_cameraHelpPanel != null)
+            if (GameObject_CameraHelpPanel != null)
             {
-                _cameraHelpPanel.SetActive(true);
+                GameObject_CameraHelpPanel.SetActive(true);
             }
         }
 
         public void HideCameraHelp()
         {
-            if (_cameraHelpPanel != null)
+            if (GameObject_CameraHelpPanel != null)
             {
-                _cameraHelpPanel.SetActive(false);
+                GameObject_CameraHelpPanel.SetActive(false);
             }
         }
 
         public void ToggleCameraHelp()
         {
-            if (_cameraHelpPanel != null)
+            if (GameObject_CameraHelpPanel != null)
             {
-                _cameraHelpPanel.SetActive(!_cameraHelpPanel.activeSelf);
+                GameObject_CameraHelpPanel.SetActive(!GameObject_CameraHelpPanel.activeSelf);
             }
         }
 
         public void MoveCameraUp()
         {
             ResolveCameraController();
-            _cameraController?.MoveUp();
+            SceneCameraController_CameraController?.MoveUp();
         }
 
         public void MoveCameraDown()
         {
             ResolveCameraController();
-            _cameraController?.MoveDown();
+            SceneCameraController_CameraController?.MoveDown();
         }
 
         public void MoveCameraLeft()
         {
             ResolveCameraController();
-            _cameraController?.MoveLeft();
+            SceneCameraController_CameraController?.MoveLeft();
         }
 
         public void MoveCameraRight()
         {
             ResolveCameraController();
-            _cameraController?.MoveRight();
+            SceneCameraController_CameraController?.MoveRight();
         }
 
         public void ZoomCameraIn()
         {
             ResolveCameraController();
-            _cameraController?.ZoomIn();
+            SceneCameraController_CameraController?.ZoomIn();
         }
 
         public void ZoomCameraOut()
         {
             ResolveCameraController();
-            _cameraController?.ZoomOut();
+            SceneCameraController_CameraController?.ZoomOut();
         }
 
         public void ResetCameraView()
         {
             ResolveCameraController();
-            _cameraController?.ResetView();
+            SceneCameraController_CameraController?.ResetView();
         }
 
         private void ResolveCameraController()
         {
-            if (_cameraController != null)
+            if (SceneCameraController_CameraController != null)
             {
                 return;
             }
 
-            _cameraController = FindFirstObjectByType<SceneCameraController>();
+            SceneCameraController_CameraController = FindFirstObjectByType<SceneCameraController>();
         }
     }
 }

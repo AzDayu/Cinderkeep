@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace OODong.CharacterSelect
@@ -12,11 +13,16 @@ namespace OODong.CharacterSelect
         [SerializeField] private string _ownerEnglishName;
         [SerializeField] private float _experiencePerSecond = 6f;
         [SerializeField] private int _baseExperienceToLevelUp = 100;
-        [SerializeField] private Text _profileTitleText;
-        [SerializeField] private Text _levelText;
-        [SerializeField] private Text _statusText;
-        [SerializeField] private Text _experienceText;
-        [SerializeField] private Image _experienceFillImage;
+        [FormerlySerializedAs("_profileTitleText")]
+        [SerializeField] private Text Text_ProfileTitle;
+        [FormerlySerializedAs("_levelText")]
+        [SerializeField] private Text Text_Level;
+        [FormerlySerializedAs("_statusText")]
+        [SerializeField] private Text Text_Status;
+        [FormerlySerializedAs("_experienceText")]
+        [SerializeField] private Text Text_Experience;
+        [FormerlySerializedAs("_experienceFillImage")]
+        [SerializeField] private Image Image_ExperienceFill;
 
         private int _level = 1;
         private float _experience;
@@ -57,11 +63,11 @@ namespace OODong.CharacterSelect
             Text experienceText,
             Image experienceFillImage)
         {
-            _profileTitleText = profileTitleText;
-            _levelText = levelText;
-            _statusText = statusText;
-            _experienceText = experienceText;
-            _experienceFillImage = experienceFillImage;
+            Text_ProfileTitle = profileTitleText;
+            Text_Level = levelText;
+            Text_Status = statusText;
+            Text_Experience = experienceText;
+            Image_ExperienceFill = experienceFillImage;
         }
 
         private void AddExperience(float amount)
@@ -84,29 +90,29 @@ namespace OODong.CharacterSelect
             int requiredExperience = GetExperienceToLevelUp();
             float progress = Mathf.Clamp01(_experience / requiredExperience);
 
-            if (_profileTitleText != null)
+            if (Text_ProfileTitle != null)
             {
-                _profileTitleText.text = $"{_roleName} {_ownerEnglishName}";
+                Text_ProfileTitle.text = $"{_roleName} {_ownerEnglishName}";
             }
 
-            if (_levelText != null)
+            if (Text_Level != null)
             {
-                _levelText.text = $"DEV LEVEL {_level:00}";
+                Text_Level.text = $"DEV LEVEL {_level:00}";
             }
 
-            if (_statusText != null)
+            if (Text_Status != null)
             {
-                _statusText.text = $"작업 경험치 쌓는 중 - {_ownerEnglishName} {GetWorkingDots()}";
+                Text_Status.text = $"작업 경험치를 쌓는 중 - {_ownerEnglishName} {GetWorkingDots()}";
             }
 
-            if (_experienceText != null)
+            if (Text_Experience != null)
             {
-                _experienceText.text = $"EXP {Mathf.FloorToInt(_experience):000} / {requiredExperience:000}";
+                Text_Experience.text = $"EXP {Mathf.FloorToInt(_experience):000} / {requiredExperience:000}";
             }
 
-            if (_experienceFillImage != null)
+            if (Image_ExperienceFill != null)
             {
-                _experienceFillImage.fillAmount = progress;
+                Image_ExperienceFill.fillAmount = progress;
             }
         }
 

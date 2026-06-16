@@ -17,9 +17,13 @@ Current Asset Folders
   Main_Lobby.unity is the menu scene.
   Character selection and workspace scenes are grouped under Assets/Scenes/CharacterScenes.
 
+- Assets/Scenes/MainGame
+  Playable game scenes.
+  Cinderkeep_Game.unity is the real game scene.
+
 - Assets/Scenes/MainWorkspace
   Shared main workspace scenes.
-  Muckhold_Workspace.unity is the first scene and current MainGame Muckhold prototype room.
+  Cinderkeep_Workspace.unity is the shared team workspace room.
   MainWorkspaceRoom_ForBuild.unity is the build/integration workspace room.
 
 - Assets/Scenes/CharacterScenes
@@ -36,7 +40,7 @@ Current Asset Folders
 
 - Assets/Scripts/Workspace
   Shared workspace runtime components.
-  Current component: MuckholdWorkspaceActor.
+  Current component: CinderkeepWorkspaceActor.
 
 - Assets/Settings
   URP and project rendering settings.

@@ -1,0 +1,10 @@
+{
+  "Items": [
+    {
+      "_id": "beam",
+      "_displayName": "Flame Beam",
+      "_description": "FlameHeart targets the nearest enemy.",
+      "_value": 1.0
+    }
+  ]
+}
