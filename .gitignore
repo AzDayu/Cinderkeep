@@ -76,6 +76,22 @@ mono_crash.*
 *.unitypackage
 *.unitypackage.meta
 *.app
+*.exe
+*.zip
+*.rar
+*.7z
+*.dmg
+*.ipa
+
+# Build exports / release packages
+/[Rr]elease/
+/[Rr]eleases/
+/[Dd]ist/
+/[Oo]utput/
+
+# Unity / platform build caches
+/[Ss]witchIL2CPPCache/
+/[Ss]witchIL2CPPStats/
 
 # Crashlytics generated file
 crashlytics-build.properties
@@ -114,6 +130,21 @@ InitTestScene*.unity*
 # OS files
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db
+._*
+.Spotlight-V100
+.Trashes
+
+# Extra Visual Studio local files
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
 
 # Paid or private third-party Unity assets
 # Keep purchased assets here locally, but never commit them to this public repo.
@@ -128,3 +159,11 @@ ProjectSettings/HueFolders_Prefs.json
 # Local recovery scenes
 Assets/_Recovery/
 Assets/_Recovery.meta
+
+# Optional generated content.
+# Enable these only if the team does not version built asset bundles.
+# /[Aa]sset[Bb]undles/
+
+# Extra crash / dump files
+*.dmp
+*.stackdump
