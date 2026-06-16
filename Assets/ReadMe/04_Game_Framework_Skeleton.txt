@@ -1,0 +1,42 @@
+Cinderkeep Game Framework Skeleton
+
+Purpose
+- This is the new blank gameplay skeleton for team work.
+- Old Play Our Game scripts and old data are kept under Assets/_Disabled.
+- New gameplay code should start from GameManager, GameDataManager, GameObjectManager, UIManager, and SoundManager.
+
+Lifecycle Rule
+- GameManager is the only singleton in the gameplay skeleton.
+- Awake is used only to register GameManager.Inst.
+- Real setup starts from Initialize.
+- GameManager calls manager Initialize functions in this order:
+  1. GameDataManager
+  2. GameObjectManager
+  3. SoundManager
+  4. UIManager
+
+Coding Rule
+- Do not use scene-wide object search APIs in gameplay scripts.
+- Connect references through Inspector, prefab setup, or GameManager initialization.
+- Keep classes short.
+- Keep functions short.
+- Add comments where a beginner teammate needs to know why the code exists.
+
+Enemy Data Rule
+- JaeUk-MonsterAI branch enemy fields are reflected.
+- Active JSON path: Assets/Resources/Cinderkeep/data/enemies.json
+- Load path in code: Cinderkeep/data/enemies
+- Enemy fields:
+  _id
+  _displayName
+  _health
+  _moveSpeed
+  _stopDistance
+  _attackDamage
+  _attackInterval
+  _visualScale
+
+Team Work Note
+- Add new gameplay features after the manager lifecycle is connected in the scene.
+- If a script needs another manager, ask GameManager for it or receive it through Initialize.
+- Do not revive old disabled scripts unless the team lead approves it.
