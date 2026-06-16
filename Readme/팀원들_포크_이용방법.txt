@@ -130,7 +130,7 @@ Unity 프로젝트에서 가장 위험한 충돌은 씬 파일 충돌입니다.
 아래 공용 씬은 여러 명이 동시에 수정하지 않습니다.
 
 Assets/Scenes/Main_Lobby.unity
-Assets/Scenes/MainWorkspace/Muckhold_Workspace.unity
+Assets/Scenes/MainWorkspace/Cinderkeep_Workspace.unity
 Assets/Scenes/MainWorkspace/MainWorkspaceRoom_ForBuild.unity
 
 개인 작업은 먼저 자기 직업/이름 씬에서 진행합니다.

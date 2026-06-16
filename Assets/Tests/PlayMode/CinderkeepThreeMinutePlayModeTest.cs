@@ -1,0 +1,206 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Reflection;
+using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+
+namespace OODong.Cinderkeep.Tests
+{
+    // 실제 Cinderkeep_Game 씬을 PlayMode로 열어 3분 게임 시간까지 흐름을 검증한다.
+    // 테스트 어셈블리가 런타임 어셈블리 구조에 묶이지 않도록 Cinderkeep 타입은 리플렉션으로 찾는다.
+    public sealed class CinderkeepThreeMinutePlayModeTest
+    {
+        private const string SceneName = "Cinderkeep_Game";
+        private const float TargetGameSeconds = 180f;
+        private const float SimulationTimeScale = 20f;
+
+        [UnityTest]
+        public IEnumerator RunThreeMinutePlayableLoop()
+        {
+            string logPath = GetLogPath();
+            Directory.CreateDirectory(Path.GetDirectoryName(logPath));
+
+            using (StreamWriter writer = new StreamWriter(logPath, false))
+            {
+                writer.WriteLine($"Cinderkeep 3-minute PlayMode simulation started: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                writer.WriteLine($"Scene: {SceneName}");
+                writer.WriteLine($"Game seconds target: {TargetGameSeconds:0}");
+                writer.WriteLine($"Time scale: {SimulationTimeScale:0}");
+                writer.Flush();
+
+                Time.timeScale = SimulationTimeScale;
+
+                AsyncOperation sceneLoadOperation = SceneManager.LoadSceneAsync(SceneName, LoadSceneMode.Single);
+                while (sceneLoadOperation != null && !sceneLoadOperation.isDone)
+                {
+                    yield return null;
+                }
+
+                // Awake/Start가 모두 돌도록 몇 프레임을 기다린다.
+                yield return null;
+                yield return null;
+                yield return null;
+
+                Component gameManager = FindRequiredComponent("OODong.Cinderkeep.GameManager");
+                Component player = FindRequiredComponent("OODong.Cinderkeep.CinderkeepFirstPersonPlayer");
+                Component inventory = FindRequiredComponent("OODong.Cinderkeep.CinderkeepInventory");
+                Component flameHeart = FindRequiredComponent("OODong.Cinderkeep.CinderkeepFlameHeart");
+                Component[] buildSites = FindComponents("OODong.Cinderkeep.CinderkeepBuildSite");
+
+                Assert.IsNotNull(gameManager, "GameManager가 Cinderkeep_Game 씬에서 발견되어야 합니다.");
+                Assert.IsNotNull(player, "CinderkeepFirstPersonPlayer가 Cinderkeep_Game 씬에서 발견되어야 합니다.");
+                Assert.IsNotNull(inventory, "CinderkeepInventory가 Cinderkeep_Game 씬에서 발견되어야 합니다.");
+                Assert.IsNotNull(flameHeart, "CinderkeepFlameHeart가 Cinderkeep_Game 씬에서 발견되어야 합니다.");
+                Assert.Greater(buildSites.Length, 0, "고정 건설 지점이 최소 1개 있어야 발표 루프가 성립합니다.");
+
+                object runModel = GetProperty(gameManager, "RunModel");
+                object flameHeartModel = GetProperty(gameManager, "FlameHeartModel");
+
+                writer.WriteLine("Runtime references resolved.");
+                writer.WriteLine($"Initial phase: {GetProperty(runModel, "Phase")}");
+                writer.WriteLine($"Initial day: {GetProperty(runModel, "CurrentDay")}/{GetProperty(runModel, "MaxDay")}");
+                writer.WriteLine($"Starter arrows: {GetItemCount(inventory, "Arrow")}");
+                writer.WriteLine($"Starter pickaxe: {GetItemCount(inventory, "Pickaxe")}");
+                writer.Flush();
+
+                // 사람 손 입력 없이도 첫 건설 루프가 깨졌는지 확인하기 위한 최소 자원 주입.
+                // 실제 밸런스 검증은 사용자가 직접 플레이하며 수집량/동선을 조정해야 한다.
+                AddItem(inventory, "Stone", 20);
+                AddItem(inventory, "Ore", 10);
+                int stoneBeforeBuild = GetItemCount(inventory, "Stone");
+                InvokeMethod(buildSites[0], "Interact", player);
+                yield return null;
+                int stoneAfterBuild = GetItemCount(inventory, "Stone");
+
+                writer.WriteLine($"Build interaction tested. Stone: {stoneBeforeBuild} -> {stoneAfterBuild}");
+                writer.Flush();
+                Assert.Less(stoneAfterBuild, stoneBeforeBuild, "첫 건설 상호작용이 비용을 소비해야 합니다.");
+
+                float elapsedGameSeconds = 0f;
+                float nextLogTime = 0f;
+                string lastPhase = GetProperty(runModel, "Phase").ToString();
+
+                while (elapsedGameSeconds < TargetGameSeconds)
+                {
+                    elapsedGameSeconds += Time.deltaTime;
+
+                    string currentPhase = GetProperty(runModel, "Phase").ToString();
+                    if (!string.Equals(currentPhase, lastPhase, StringComparison.Ordinal))
+                    {
+                        lastPhase = currentPhase;
+                        writer.WriteLine($"Phase changed at {elapsedGameSeconds:0.0}s -> {lastPhase}");
+                    }
+
+                    if (elapsedGameSeconds >= nextLogTime)
+                    {
+                        writer.WriteLine(
+                            $"t={elapsedGameSeconds:000.0}s, phase={currentPhase}, " +
+                            $"remaining={GetProperty(runModel, "PhaseRemaining"):000.0}s, " +
+                            $"flameHeart={GetProperty(flameHeartModel, "CurrentHealth")}/{GetProperty(flameHeartModel, "MaxHealth")}, " +
+                            $"stone={GetItemCount(inventory, "Stone")}, ore={GetItemCount(inventory, "Ore")}");
+                        writer.Flush();
+                        nextLogTime += 30f;
+                    }
+
+                    if (string.Equals(currentPhase, "Defeat", StringComparison.Ordinal))
+                    {
+                        break;
+                    }
+
+                    yield return null;
+                }
+
+                string finalPhase = GetProperty(runModel, "Phase").ToString();
+                writer.WriteLine($"Final elapsed game seconds: {elapsedGameSeconds:0.0}");
+                writer.WriteLine($"Final phase: {finalPhase}");
+                writer.WriteLine($"Final result: {GetProperty(runModel, "ResultMessage")}");
+                writer.WriteLine($"Cinderkeep 3-minute PlayMode simulation finished: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                writer.Flush();
+
+                Time.timeScale = 1f;
+
+                Assert.GreaterOrEqual(elapsedGameSeconds, TargetGameSeconds - 0.5f, "게임 시간 3분까지 루프가 흘러야 합니다.");
+                Assert.AreNotEqual("Defeat", finalPhase, "3분 기본 검증 중 패배하면 MVP 초반 루프가 너무 빡빡합니다.");
+            }
+        }
+
+        private static string GetLogPath()
+        {
+            return Path.GetFullPath(Path.Combine(Application.dataPath, "..", "Temp", "cinderkeep_three_minute_playmode.log"));
+        }
+
+        private static Component FindRequiredComponent(string typeName)
+        {
+            Component[] components = FindComponents(typeName);
+            Assert.Greater(components.Length, 0, $"{typeName} 컴포넌트가 씬에 있어야 합니다.");
+            return components[0];
+        }
+
+        private static Component[] FindComponents(string typeName)
+        {
+            Type type = FindType(typeName);
+            UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(type);
+            Component[] components = new Component[objects.Length];
+            for (int i = 0; i < objects.Length; i++)
+            {
+                components[i] = objects[i] as Component;
+            }
+
+            return components;
+        }
+
+        private static Type FindType(string typeName)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                Type type = assemblies[i].GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            Assert.Fail($"{typeName} 타입을 현재 AppDomain에서 찾을 수 없습니다.");
+            return null;
+        }
+
+        private static object GetProperty(object target, string propertyName)
+        {
+            Assert.IsNotNull(target, $"{propertyName} 값을 읽을 대상이 null입니다.");
+            PropertyInfo propertyInfo = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            Assert.IsNotNull(propertyInfo, $"{target.GetType().Name}.{propertyName} 프로퍼티가 필요합니다.");
+            return propertyInfo.GetValue(target);
+        }
+
+        private static void InvokeMethod(object target, string methodName, params object[] parameters)
+        {
+            Assert.IsNotNull(target, $"{methodName} 호출 대상이 null입니다.");
+            MethodInfo methodInfo = target.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+            Assert.IsNotNull(methodInfo, $"{target.GetType().Name}.{methodName} 메서드가 필요합니다.");
+            methodInfo.Invoke(target, parameters);
+        }
+
+        private static void AddItem(Component inventory, string itemName, int count)
+        {
+            object itemId = ParseItemId(itemName);
+            InvokeMethod(inventory, "AddItem", itemId, count);
+        }
+
+        private static int GetItemCount(Component inventory, string itemName)
+        {
+            object itemId = ParseItemId(itemName);
+            object count = inventory.GetType().GetMethod("GetItemCount").Invoke(inventory, new[] { itemId });
+            return Convert.ToInt32(count);
+        }
+
+        private static object ParseItemId(string itemName)
+        {
+            Type itemIdType = FindType("OODong.Cinderkeep.CinderkeepItemId");
+            return Enum.Parse(itemIdType, itemName);
+        }
+    }
+}

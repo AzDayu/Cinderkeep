@@ -56,7 +56,7 @@ Current Project Examples
 - CharacterSlot is owned by each character card object.
 - CharacterSelectCanvas discovers CharacterSlot objects with GetComponentsInChildren.
 - CharacterSceneLoadButton owns scene-loading behavior on the button object.
-- MuckholdWorkspaceActor stores role data on each shared workspace placeholder.
+- CinderkeepWorkspaceActor stores role data on each shared workspace placeholder.
 - CharacterSelectSceneBuilder is editor-only tooling for scene generation and validation.
 
 Review Checklist

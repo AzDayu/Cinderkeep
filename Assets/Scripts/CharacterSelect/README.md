@@ -1,7 +1,8 @@
-﻿# Character Select And Workspace Scenes
+# Character Select And Workspace Scenes
 
-`Muckhold_Workspace` is the first scene in Build Settings and the editor play-mode start scene.
-This scene is the current `MainGame Muckhold` prototype. Use `Back To Lobby` when you need the hub.
+`Main_Lobby` is the first scene in Build Settings and the team hub.
+`Cinderkeep_Game` is the playable game scene.
+`Cinderkeep_Workspace` is the shared team workspace scene.
 
 ## Camera Controls
 
@@ -17,10 +18,11 @@ Every scene canvas has `UIManager` linked to that camera controller.
 
 `Main_Lobby` is the team hub and contains these main actions:
 
-- `!! Play Our Game (Prototype) Button`: loads `Muckhold_Workspace`
+- `!! Play Our Game (Prototype) Button`: loads `Cinderkeep_Game`
 - `Team ID Cards Button`: loads `SampleScene`
 - `Personal Work Rooms Button`: opens the personal character scene list
-- `Build Review Room Button`: loads `MainWorkspaceRoom_ForBuild` and opens related editor assets/scripts in the Unity Editor
+- `Shared Workspace Button`: loads `Cinderkeep_Workspace`
+- `Build Review Room Button`: loads `MainWorkspaceRoom_ForBuild`
 
 ## Character Select
 
@@ -67,7 +69,7 @@ Each object owns a `CharacterSceneLoadButton` component and stores its target sc
 
 ## Shared Workspace
 
-`Muckhold_Workspace` contains the current `MainGame Muckhold` prototype under `WorkspaceRoot_Shared`.
+`Cinderkeep_Workspace` contains team-owned planning and preview objects under `WorkspaceRoot_Shared`.
 It is intentionally simple and uses placeholder shapes:
 
 - green ground
@@ -77,7 +79,12 @@ It is intentionally simple and uses placeholder shapes:
 - yellow chest boxes
 - red enemy dots
 
-Each placeholder owns a `MuckholdWorkspaceActor` component so the object has its own role data.
+Each placeholder owns a `CinderkeepWorkspaceActor` component so the object has its own role data.
+
+## Playable Game
+
+`Cinderkeep_Game` is generated under `Assets/Scenes/MainGame`.
+Gameplay components such as player movement, HUD, enemies, gathering, chests, and projectiles belong there, not in the workspace scene.
 
 ## Editor Rebuild
 

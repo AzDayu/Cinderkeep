@@ -1,0 +1,25 @@
+{
+  "Items": [
+    {
+      "_id": "wall",
+      "_displayName": "Stone Wall",
+      "_costItemId": "Stone",
+      "_costAmount": 2,
+      "_maxHealth": 35
+    },
+    {
+      "_id": "turret",
+      "_displayName": "Ember Turret",
+      "_costItemId": "Ore",
+      "_costAmount": 2,
+      "_maxHealth": 25
+    },
+    {
+      "_id": "trap",
+      "_displayName": "Spike Trap",
+      "_costItemId": "Stone",
+      "_costAmount": 3,
+      "_maxHealth": 18
+    }
+  ]
+}

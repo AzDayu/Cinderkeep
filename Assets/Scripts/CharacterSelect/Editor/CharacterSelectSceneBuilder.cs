@@ -10,7 +10,7 @@ using OODong.Workspace;
 using OODong.Shared;
 using OODong.TeamDocs;
 using OODong.UI;
-using OODong.Muckhold.Editor;
+using OODong.Cinderkeep.Editor;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
@@ -21,23 +21,25 @@ namespace OODong.CharacterSelect.Editor
     {
         private const string ScenePath = "Assets/Scenes/CharacterScenes/SampleScene.unity";
         private const string MainLobbySceneName = "Main_Lobby";
-        private const string SharedWorkspaceSceneName = "Muckhold_Workspace";
+        private const string PlayableGameSceneName = "Cinderkeep_Game";
+        private const string SharedWorkspaceSceneName = "Cinderkeep_Workspace";
         private const string MainBuildWorkspaceSceneName = "MainWorkspaceRoom_ForBuild";
         private const string PersonalWorkspaceSceneName = "PersonalWorkspaceRoom";
         private const string SceneFolder = "Assets/Scenes";
+        private const string MainGameSceneFolder = "Assets/Scenes/MainGame";
         private const string MainWorkspaceSceneFolder = "Assets/Scenes/MainWorkspace";
         private const string CharacterSceneFolder = "Assets/Scenes/CharacterScenes";
         private const string LobbyBackgroundSpritePath = "Assets/MainAssets/Images/Lobby/SteampunkIndustries_Background.jpg";
         private const string KoreanFallbackFontPath = "Assets/Fonts/ChosunCentennial.ttf";
         private const string ReadMeFolderPath = "Assets/ReadMe";
 
-        private static readonly string[] MuckholdRelatedAssetPaths =
+        private static readonly string[] CinderkeepRelatedAssetPaths =
         {
-            "Assets/Scripts/Workspace/MuckholdWorkspaceActor.cs",
+            "Assets/Scripts/Workspace/CinderkeepWorkspaceActor.cs",
             "Assets/Scripts/Shared/SceneCameraController.cs",
             "Assets/Scripts/UI/UIManager.cs",
             "Assets/Scripts/CharacterSelect/CharacterSceneLoadButton.cs",
-            "Assets/_TeamGuide/04_MUCKHOLD_SHARED_WORKSPACE_PLAN.txt"
+            "Assets/_TeamGuide/04_CINDERKEEP_SHARED_WORKSPACE_PLAN.txt"
         };
 
         private static readonly CharacterEntry[] DefaultCharacters =
@@ -117,6 +119,7 @@ namespace OODong.CharacterSelect.Editor
         [MenuItem("OODong/Character Select/Rebuild Main Lobby Only")]
         public static void RebuildMainLobbyAndBuildSettingsOnly()
         {
+            EnsureMainGameSceneFolder();
             EnsureMainWorkspaceSceneFolder();
             EnsureCharacterSceneFolder();
             RebuildMainLobbyScene();
@@ -145,10 +148,13 @@ namespace OODong.CharacterSelect.Editor
 
         public static void RebuildWorkspaceScenes()
         {
+            EnsureMainGameSceneFolder();
             EnsureMainWorkspaceSceneFolder();
             EnsureCharacterSceneFolder();
+            CreateWorkspaceScene(SharedWorkspaceSceneName, "Cinderkeep Team Workspace", "WorkspaceRoot_Shared");
+            CreateWorkspaceScene(MainBuildWorkspaceSceneName, "Game Work Review Room", "WorkspaceRoot_MainBuild");
             CreateWorkspaceScene(PersonalWorkspaceSceneName, "Personal Workspace Room", "WorkspaceRoot_Personal");
-            MuckholdPlayableSceneBuilder.RebuildPlayableWorkspaceScenes();
+            CinderkeepPlayableSceneBuilder.RebuildPlayableGameScenes();
         }
 
         public static void ValidateSampleScene()
@@ -214,7 +220,7 @@ namespace OODong.CharacterSelect.Editor
             Scene lobbyScene = EditorSceneManager.OpenScene(GetScenePath(MainLobbySceneName), OpenSceneMode.Single);
             ValidateCameraAndUIManager(lobbyScene.name);
             CharacterSceneLoadButton[] lobbyButtons = Object.FindObjectsByType<CharacterSceneLoadButton>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            int expectedLoadButtonCount = CharacterScenes.Length + 5;
+            int expectedLoadButtonCount = (CharacterScenes.Length * 2) + 5;
             if (lobbyButtons.Length != expectedLoadButtonCount)
             {
                 throw new System.InvalidOperationException($"{lobbyScene.name} expected {expectedLoadButtonCount} load buttons, but found {lobbyButtons.Length}.");
@@ -243,6 +249,7 @@ namespace OODong.CharacterSelect.Editor
             ValidateWorkspaceScene(SharedWorkspaceSceneName, "WorkspaceRoot_Shared");
             ValidateWorkspaceScene(MainBuildWorkspaceSceneName, "WorkspaceRoot_MainBuild");
             ValidateWorkspaceScene(PersonalWorkspaceSceneName, "WorkspaceRoot_Personal");
+            CinderkeepPlayableSceneBuilder.ValidatePlayableGameScenes();
             Debug.Log("CharacterSelectSceneBuilder: main lobby and workspace scenes validated.");
         }
 
@@ -259,7 +266,7 @@ namespace OODong.CharacterSelect.Editor
             ValidateCharacterDetailPanel();
             ValidateCharacterScenes();
             ValidateMainLobbyAndWorkspaceScenes();
-            ValidateSharedMuckholdPrototype();
+            ValidateSharedCinderkeepWorkspacePreview();
             Debug.Log("CharacterSelectSceneBuilder: requested setup validated.");
         }
 
@@ -383,7 +390,7 @@ namespace OODong.CharacterSelect.Editor
             header.offsetMin = Vector2.zero;
             header.offsetMax = Vector2.zero;
 
-            Text title = CreateText("Lobby Title", header, "OO_DONG Muckhold Hub", 50, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text title = CreateText("Lobby Title", header, "OO_DONG Cinderkeep Hub", 50, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
             title.rectTransform.anchorMin = new Vector2(0f, 0.38f);
             title.rectTransform.anchorMax = new Vector2(1f, 1f);
             title.rectTransform.offsetMin = Vector2.zero;
@@ -416,7 +423,7 @@ namespace OODong.CharacterSelect.Editor
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
 
-            CreateLobbyLoadButton(menu, "!! Play Our Game (V1)", SharedWorkspaceSceneName, new Color(0.18f, 0.5f, 0.32f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "!! Play Our Game (V1)", PlayableGameSceneName, new Color(0.18f, 0.5f, 0.32f, 1f), Color.white);
             CreateLobbyLoadButton(menu, "Select My Character", "SampleScene", new Color(0.92f, 0.7f, 0.18f, 1f), new Color(0.055f, 0.06f, 0.07f, 1f));
             CreateOpenReadMeFolderButton(menu);
             CreateLobbyLoadButton(menu, "공동 작업 공간", SharedWorkspaceSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
@@ -1026,7 +1033,7 @@ namespace OODong.CharacterSelect.Editor
                 "Go_To_Playable_Game_Scene_Button",
                 buttonPanel,
                 "현재 게임 씬 플레이",
-                SharedWorkspaceSceneName,
+                PlayableGameSceneName,
                 new Vector2(0.51f, 0.55f),
                 new Vector2(1f, 1f),
                 new Color(0.15f, 0.48f, 0.31f, 1f),
@@ -1180,7 +1187,7 @@ namespace OODong.CharacterSelect.Editor
 
             if (sceneName == SharedWorkspaceSceneName)
             {
-                CreateMuckholdPrototype(workspaceRoot.transform);
+                CreateCinderkeepWorkspacePreview(workspaceRoot.transform);
             }
 
             if (sceneName == MainBuildWorkspaceSceneName)
@@ -1301,7 +1308,7 @@ namespace OODong.CharacterSelect.Editor
             }
         }
 
-        private static void CreateMuckholdPrototype(Transform workspaceRoot)
+        private static void CreateCinderkeepWorkspacePreview(Transform workspaceRoot)
         {
             Camera camera = Object.FindFirstObjectByType<Camera>();
             if (camera == null)
@@ -1324,7 +1331,7 @@ namespace OODong.CharacterSelect.Editor
             light.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
             CreatePrimitiveActor(
-                "Muckhold_Green_Ground",
+                "Cinderkeep_Green_Ground",
                 PrimitiveType.Cube,
                 workspaceRoot,
                 Vector3.zero,
@@ -1332,7 +1339,7 @@ namespace OODong.CharacterSelect.Editor
                 new Color(0.13f, 0.42f, 0.18f, 1f),
                 "Ground",
                 "Green Field",
-                "Placeholder arena for the Muckhold shared workspace.");
+                "Placeholder arena for the Cinderkeep shared workspace.");
 
             CreatePrimitiveActor(
                 "Player_Green_Dot",
@@ -1368,12 +1375,12 @@ namespace OODong.CharacterSelect.Editor
         {
             if (sceneName == SharedWorkspaceSceneName)
             {
-                return "MainGame Muckhold: farm by day, defend the base at night, open chests for random growth.";
+                return "Cinderkeep team workspace: organize shared tasks, member-owned objects, and game ideas before they move into the real game scene.";
             }
 
             if (sceneName == MainBuildWorkspaceSceneName)
             {
-                return "Share completed work here before commit, push, merge, or build checks.";
+                return "Game work review room: collect finished work here before commit, push, merge, or build checks.";
             }
 
             return $"Add work objects under {workspaceRootName}.";
@@ -1402,7 +1409,7 @@ namespace OODong.CharacterSelect.Editor
                 renderer.sharedMaterial = CreatePreviewMaterial(color);
             }
 
-            MuckholdWorkspaceActor workspaceActor = actor.AddComponent<MuckholdWorkspaceActor>();
+            CinderkeepWorkspaceActor workspaceActor = actor.AddComponent<CinderkeepWorkspaceActor>();
             workspaceActor.SetProfile(actorType, displayName, description);
             EditorUtility.SetDirty(workspaceActor);
             return actor;
@@ -1427,6 +1434,7 @@ namespace OODong.CharacterSelect.Editor
             {
                 new EditorBuildSettingsScene(GetScenePath(MainLobbySceneName), true),
                 new EditorBuildSettingsScene(ScenePath, true),
+                new EditorBuildSettingsScene(GetScenePath(PlayableGameSceneName), true),
                 new EditorBuildSettingsScene(GetScenePath(SharedWorkspaceSceneName), true),
                 new EditorBuildSettingsScene(GetScenePath(MainBuildWorkspaceSceneName), true),
                 new EditorBuildSettingsScene(GetScenePath(PersonalWorkspaceSceneName), true)
@@ -1447,12 +1455,28 @@ namespace OODong.CharacterSelect.Editor
                 return $"{SceneFolder}/{sceneName}.unity";
             }
 
+            if (sceneName == PlayableGameSceneName)
+            {
+                return $"{MainGameSceneFolder}/{sceneName}.unity";
+            }
+
             if (sceneName == SharedWorkspaceSceneName || sceneName == MainBuildWorkspaceSceneName)
             {
                 return $"{MainWorkspaceSceneFolder}/{sceneName}.unity";
             }
 
             return $"{CharacterSceneFolder}/{sceneName}.unity";
+        }
+
+        private static void EnsureMainGameSceneFolder()
+        {
+            if (AssetDatabase.IsValidFolder(MainGameSceneFolder))
+            {
+                return;
+            }
+
+            EnsureSceneFolder();
+            AssetDatabase.CreateFolder(SceneFolder, "MainGame");
         }
 
         private static void EnsureMainWorkspaceSceneFolder()
@@ -1545,12 +1569,12 @@ namespace OODong.CharacterSelect.Editor
             }
         }
 
-        private static void ValidateSharedMuckholdPrototype()
+        private static void ValidateSharedCinderkeepWorkspacePreview()
         {
             EditorSceneManager.OpenScene(GetScenePath(SharedWorkspaceSceneName), OpenSceneMode.Single);
             string[] requiredObjects =
             {
-                "Muckhold_Green_Ground",
+                "Cinderkeep_Green_Ground",
                 "Player_Green_Dot",
                 "Base_Core_Object",
                 "Mineral_Blue_Box_01",
@@ -1567,9 +1591,9 @@ namespace OODong.CharacterSelect.Editor
                     throw new System.InvalidOperationException($"{objectName} is missing from shared workspace.");
                 }
 
-                if (actor.GetComponent<MuckholdWorkspaceActor>() == null)
+                if (actor.GetComponent<CinderkeepWorkspaceActor>() == null)
                 {
-                    throw new System.InvalidOperationException($"{objectName} has no MuckholdWorkspaceActor.");
+                    throw new System.InvalidOperationException($"{objectName} has no CinderkeepWorkspaceActor.");
                 }
             }
         }

@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace OODong.CharacterSelect
 {
     public sealed class MainMenuCharacterPanel : MonoBehaviour
     {
-        [SerializeField] private GameObject _characterScenePanel;
+        [FormerlySerializedAs("_characterScenePanel")]
+        [SerializeField] private GameObject GameObject_CharacterScenePanel;
 
         private void Awake()
         {
@@ -13,30 +15,30 @@ namespace OODong.CharacterSelect
 
         public void SetCharacterScenePanel(GameObject characterScenePanel)
         {
-            _characterScenePanel = characterScenePanel;
+            GameObject_CharacterScenePanel = characterScenePanel;
         }
 
         public void ShowCharacterScenePanel()
         {
-            if (_characterScenePanel != null)
+            if (GameObject_CharacterScenePanel != null)
             {
-                _characterScenePanel.SetActive(true);
+                GameObject_CharacterScenePanel.SetActive(true);
             }
         }
 
         public void ToggleCharacterScenePanel()
         {
-            if (_characterScenePanel != null)
+            if (GameObject_CharacterScenePanel != null)
             {
-                _characterScenePanel.SetActive(!_characterScenePanel.activeSelf);
+                GameObject_CharacterScenePanel.SetActive(!GameObject_CharacterScenePanel.activeSelf);
             }
         }
 
         public void HideCharacterScenePanel()
         {
-            if (_characterScenePanel != null)
+            if (GameObject_CharacterScenePanel != null)
             {
-                _characterScenePanel.SetActive(false);
+                GameObject_CharacterScenePanel.SetActive(false);
             }
         }
     }

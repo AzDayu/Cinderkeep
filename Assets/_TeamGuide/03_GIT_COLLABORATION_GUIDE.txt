@@ -22,8 +22,8 @@ Branch Rule
 Scene Ownership Rule
 - Avoid multiple people editing the same .unity scene at the same time.
 - Personal scene edits are safest in each character scene.
-- Muckhold_Workspace should be edited carefully because everyone depends on it.
-- If two people must edit Muckhold_Workspace, decide who owns the scene edit first.
+- Cinderkeep_Workspace should be edited carefully because everyone depends on it.
+- If two people must edit Cinderkeep_Workspace, decide who owns the scene edit first.
 
 Prefab Rule
 - Prefer prefabs for reusable objects.
