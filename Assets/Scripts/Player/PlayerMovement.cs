@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 public sealed class PlayerMovement : MonoBehaviour
@@ -10,29 +10,23 @@ public sealed class PlayerMovement : MonoBehaviour
     [SerializeField] private float _gravity = -20f;
     [SerializeField] private float _groundStickVelocity = -2f;
 
-
     private PlayerStatus _playerStatus;
     private CharacterController _characterController;
     private Vector3 _moveDirection;
     private float _verticalVelocity;
 
-
-    //실시간으로 달리고 있는지 여부를 외부에서 알 수 있도록 개방
+    // HUD나 상태 표시에서 현재 달리기 여부를 읽을 수 있도록 열어둡니다.
     public bool IsRunningNow
     {
         get
         {
             bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
             bool isMoving = _moveDirection.magnitude > 0.01f;
-            bool hasStamina = _playerStatus != null && _playerStatus.CurrentStamina > 0f;
+            bool canRun = CheckCanRun();
 
-            return isMoving && isShiftPressed && hasStamina;
+            return isMoving && isShiftPressed && canRun;
         }
     }
-
-
-
-
 
     private void Start()
     {
@@ -53,7 +47,7 @@ public sealed class PlayerMovement : MonoBehaviour
 
     public void Jump(float jumpForce)
     {
-        if (_characterController == null || !_characterController.isGrounded)
+        if (_characterController == null || _characterController.isGrounded == false)
         {
             return;
         }
@@ -66,7 +60,7 @@ public sealed class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
 
-        Vector3 moveDirection = (transform.right * horizontal) + (transform.forward * vertical);
+        Vector3 moveDirection = transform.right * horizontal + transform.forward * vertical;
         _moveDirection = moveDirection.normalized;
     }
 
@@ -79,10 +73,9 @@ public sealed class PlayerMovement : MonoBehaviour
 
         bool isRunning = IsRunningNow;
 
-        // 달리는 중 PlayerStatus에게 스태미나 소모를 실시간 요청
         if (isRunning == true && _playerStatus != null)
         {
-            _playerStatus.ConsumeStaminaInMovement();
+            _playerStatus.ConsumeStaminaForRun();
         }
 
         float currentSpeed = isRunning ? _runSpeed : _moveSpeed;
@@ -95,12 +88,22 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        if (_characterController.isGrounded == true && _verticalVelocity < 0f)
         {
             _verticalVelocity = _groundStickVelocity;
             return;
         }
 
         _verticalVelocity += _gravity * Time.deltaTime;
+    }
+
+    private bool CheckCanRun()
+    {
+        if (_playerStatus == null)
+        {
+            return true;
+        }
+
+        return _playerStatus.CanRun();
     }
 }
