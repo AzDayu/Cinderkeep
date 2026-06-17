@@ -1,9 +1,13 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class PlayerBuild : MonoBehaviour
+public sealed class PlayerBuild : MonoBehaviour
 {
-    [SerializeField] private GameObject Prefab_Fence;
-    [SerializeField] private float SpawnDistance = 3.0f;
+    [FormerlySerializedAs("Prefab_Fence")]
+    [SerializeField] private GameObject GameObject_BuildingPrefab;
+    [FormerlySerializedAs("SpawnDistance")]
+    [SerializeField] private float _spawnDistance = 3f;
+    [SerializeField] private KeyCode _buildKey = KeyCode.B;
 
     private void Update()
     {
@@ -12,7 +16,7 @@ public class PlayerBuild : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(_buildKey))
         {
             SpawnBuilding();
         }
@@ -20,18 +24,18 @@ public class PlayerBuild : MonoBehaviour
 
     private void SpawnBuilding()
     {
-        if(Prefab_Fence == null)
+        if (GameObject_BuildingPrefab == null)
         {
-            Debug.LogError("Prefab_Fence°¡ ÀÎ½ºÆåÅÍ¿¡ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù");
+            Debug.LogError("PlayerBuild: ê±´ì¶• í”„ë¦¬íŒ¹ì´ ì¸ìŠ¤í™í„°ì— í• ë‹¹ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        Vector3 spawnPosition = transform.position + (transform.forward * SpawnDistance);
-
+        Vector3 spawnPosition = transform.position + transform.forward * _spawnDistance;
         Quaternion spawnRotation = transform.rotation;
 
-        Instantiate(Prefab_Fence, spawnPosition, spawnRotation);
+        // MVP í…ŒìŠ¤íŠ¸ìš© ì§ì ‘ ìƒì„±ì…ë‹ˆë‹¤. ì •ì‹ ê±´ì¶• ì‹œìŠ¤í…œì—ì„œëŠ” GameObjectManager ê²½ìœ ë¡œ êµì²´í•©ë‹ˆë‹¤.
+        Instantiate(GameObject_BuildingPrefab, spawnPosition, spawnRotation);
 
-        Debug.Log($"Ä³¸¯ÅÍ Á¤¸é {SpawnDistance}m ¾Õ¿¡ °ÇÃà¹°ÀÌ »ı¼ºµÇ¾ú½À´Ï´Ù");
+        Debug.Log("PlayerBuild: í”Œë ˆì´ì–´ ì•ì— ê±´ì¶•ë¬¼ì´ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
 }
