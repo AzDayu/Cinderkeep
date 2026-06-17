@@ -561,8 +561,8 @@ MonoBehaviour:
   _interactionDistance: 3
   _interactionLayerMask:
     serializedVersion: 2
-    m_Bits: 64
-  _camera: {fileID: 432202584}
+    m_Bits: 65
+  Transform_Camera: {fileID: 1477472499}
 --- !u!1 &432202583
 GameObject:
   m_ObjectHideFlags: 0
