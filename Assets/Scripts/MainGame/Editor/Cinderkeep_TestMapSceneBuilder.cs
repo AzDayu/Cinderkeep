@@ -1,0 +1,424 @@
+﻿using Cinderkeep.Gameplay;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+namespace Cinderkeep.MainGame.Editor
+{
+    // Cinderkeep_Game 씬에 MVP 테스트용 플레이어 리그와 간단 맵을 배치하는 에디터 도구입니다.
+    // 플레이어 담당 스크립트가 오면 Player 오브젝트에 붙여 바로 테스트합니다.
+    public static class Cinderkeep_TestMapSceneBuilder
+    {
+        private const string _gameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
+        private const string _materialFolderPath = "Assets/Materials/MainGame";
+        private const string _iceMaterialPath = _materialFolderPath + "/TestMap_Ice.mat";
+        private const string _wallMaterialPath = _materialFolderPath + "/TestMap_Wall.mat";
+        private const string _markerMaterialPath = _materialFolderPath + "/TestMap_Marker.mat";
+        private const string _flameHeartMaterialPath = _materialFolderPath + "/FlameHeart_Red.mat";
+        private const string _horizonMaterialPath = _materialFolderPath + "/TestMap_Horizon.mat";
+
+        [MenuItem("Cinderkeep/Main Game/Rebuild First Person Test Map")]
+        public static void RebuildFirstPersonTestMap()
+        {
+            Scene scene = EditorSceneManager.OpenScene(_gameScenePath, OpenSceneMode.Single);
+            ClearScene(scene);
+
+            Material iceMaterial = GetOrCreateMaterial(_iceMaterialPath, new Color(0.48f, 0.68f, 0.8f, 1f));
+            Material wallMaterial = GetOrCreateMaterial(_wallMaterialPath, new Color(0.12f, 0.17f, 0.22f, 1f));
+            Material markerMaterial = GetOrCreateMaterial(_markerMaterialPath, new Color(1f, 0.47f, 0.12f, 1f));
+            Material flameHeartMaterial = GetOrCreateMaterial(_flameHeartMaterialPath, new Color(0.95f, 0.05f, 0.03f, 1f));
+            Material horizonMaterial = GetOrCreateMaterial(_horizonMaterialPath, new Color(0.22f, 0.32f, 0.42f, 1f));
+
+            GameObject root = GetOrCreateRoot(scene, "MainGame_TestMapGroup");
+            ClearChildren(root.transform);
+
+            CreateTestMap(root.transform, iceMaterial, wallMaterial, markerMaterial, flameHeartMaterial, horizonMaterial);
+            CreatePlayerTestRig(scene);
+            CreateRuntimeManagers(scene);
+            CreateTestHud(scene);
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            AssetDatabase.SaveAssets();
+
+            Debug.Log("Cinderkeep_TestMapSceneBuilder: first person test map was rebuilt.");
+        }
+
+        private static void CreateTestMap(
+            Transform root,
+            Material iceMaterial,
+            Material wallMaterial,
+            Material markerMaterial,
+            Material flameHeartMaterial,
+            Material horizonMaterial)
+        {
+            GameObject ground = CreatePrimitive(
+                PrimitiveType.Cube,
+                "Cube_Ground_IcePlane",
+                root,
+                new Vector3(0f, -0.05f, 0f),
+                new Vector3(120f, 0.1f, 120f),
+                iceMaterial);
+
+            ground.isStatic = true;
+
+            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_North", root, new Vector3(0f, 0.55f, 54f), new Vector3(120f, 1.1f, 2f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_South", root, new Vector3(0f, 0.45f, -54f), new Vector3(120f, 0.9f, 2f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_East", root, new Vector3(54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "Cube_HorizonRidge_West", root, new Vector3(-54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
+
+            GameObject flameHeart = CreatePrimitive(PrimitiveType.Cube, "Cube_FlameHeart", root, new Vector3(0f, 1f, 0f), new Vector3(1.8f, 1.8f, 1.8f), flameHeartMaterial);
+            CreatePointLight("Light_FlameHeart_Red", flameHeart.transform, new Vector3(0f, 1.2f, 0f), new Color(1f, 0.12f, 0.04f, 1f), 3f, 9f);
+            CreateMarker(root, "Marker_PlayerSpawn_Test", new Vector3(0f, 0f, -8f));
+            CreateMarker(root, "Marker_EnemySpawn_North", new Vector3(0f, 0f, 15f));
+            CreateMarker(root, "Marker_EnemySpawn_East", new Vector3(15f, 0f, 0f));
+
+            CreatePrimitive(PrimitiveType.Cube, "Cube_ResourceNode_Stone_01", root, new Vector3(-7f, 0.45f, -2f), new Vector3(1.4f, 0.9f, 1.4f), wallMaterial);
+            CreatePrimitive(PrimitiveType.Cube, "Cube_ResourceNode_Wood_01", root, new Vector3(7f, 0.75f, -2f), new Vector3(0.8f, 1.5f, 0.8f), wallMaterial);
+            CreatePrimitive(PrimitiveType.Cylinder, "Cylinder_BuildPoint_Wall_North", root, new Vector3(-4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
+            CreatePrimitive(PrimitiveType.Cylinder, "Cylinder_BuildPoint_Turret_East", root, new Vector3(4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
+        }
+
+        private static void CreatePlayerTestRig(Scene scene)
+        {
+            GameObject player = GetOrCreateRoot(scene, "Player");
+            ClearChildren(player.transform);
+
+            player.transform.position = new Vector3(0f, 1.05f, -8f);
+            player.transform.rotation = Quaternion.identity;
+
+            CharacterController characterController = player.GetComponent<CharacterController>();
+            if (characterController == null)
+            {
+                characterController = player.AddComponent<CharacterController>();
+            }
+
+            characterController.center = new Vector3(0f, 0.85f, 0f);
+            characterController.height = 1.7f;
+            characterController.radius = 0.35f;
+            characterController.stepOffset = 0.35f;
+            characterController.slopeLimit = 45f;
+
+            GameObject visual = CreatePrimitive(
+                PrimitiveType.Capsule,
+                "Capsule_PlayerVisual_Test",
+                player.transform,
+                new Vector3(0f, 0.85f, 0f),
+                new Vector3(0.7f, 0.85f, 0.7f),
+                GetOrCreateMaterial(_markerMaterialPath, new Color(1f, 0.47f, 0.12f, 1f)));
+            UnityEngine.Object.DestroyImmediate(visual.GetComponent<Collider>());
+
+            GameObject cameraRoot = CreateEmpty("Transform_CameraRoot_FirstPerson", player.transform, new Vector3(0f, 1.55f, 0f));
+            GameObject cameraObject = CreateEmpty("Camera_FirstPerson", cameraRoot.transform, Vector3.zero);
+            Camera camera = cameraObject.GetComponent<Camera>();
+            if (camera == null)
+            {
+                camera = cameraObject.AddComponent<Camera>();
+            }
+
+            camera.fieldOfView = 70f;
+            camera.nearClipPlane = 0.05f;
+            camera.farClipPlane = 500f;
+            camera.depth = 20f;
+            camera.tag = "MainCamera";
+
+            AudioListener audioListener = cameraObject.GetComponent<AudioListener>();
+            if (audioListener == null)
+            {
+                audioListener = cameraObject.AddComponent<AudioListener>();
+            }
+
+            DisableOtherCamerasAndListeners(scene, camera, audioListener);
+        }
+
+        private static void CreateRuntimeManagers(Scene scene)
+        {
+            GameObject group = GetOrCreateRoot(scene, "MainGame_RuntimeManagers");
+            ClearChildren(group.transform);
+
+            GameObject gameManagerObject = CreateEmpty("GameManager", group.transform, Vector3.zero);
+            GameObject dataManagerObject = CreateEmpty("GameDataManager", group.transform, Vector3.zero);
+            GameObject objectManagerObject = CreateEmpty("GameObjectManager", group.transform, Vector3.zero);
+            GameObject uiManagerObject = CreateEmpty("UIManager", group.transform, Vector3.zero);
+            GameObject soundManagerObject = CreateEmpty("SoundManager", group.transform, Vector3.zero);
+            GameObject objectRoot = CreateEmpty("Transform_RuntimeObjectRoot", group.transform, Vector3.zero);
+
+            GameManager gameManager = GetOrAddComponent<GameManager>(gameManagerObject);
+            GameDataManager dataManager = GetOrAddComponent<GameDataManager>(dataManagerObject);
+            GameObjectManager objectManager = GetOrAddComponent<GameObjectManager>(objectManagerObject);
+            UIManager uiManager = GetOrAddComponent<UIManager>(uiManagerObject);
+            SoundManager soundManager = GetOrAddComponent<SoundManager>(soundManagerObject);
+
+            AudioSource bgmSource = GetOrAddComponent<AudioSource>(CreateEmpty("AudioSource_Bgm", soundManagerObject.transform, Vector3.zero));
+            AudioSource effectSource = GetOrAddComponent<AudioSource>(CreateEmpty("AudioSource_Effect", soundManagerObject.transform, Vector3.zero));
+            bgmSource.playOnAwake = false;
+            effectSource.playOnAwake = false;
+
+            SetObjectReference(gameManager, "GameDataManager_GameDataManager", dataManager);
+            SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", objectManager);
+            SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
+            SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
+            SetObjectReference(objectManager, "Transform_ObjectRoot", objectRoot.transform);
+            SetObjectReference(soundManager, "AudioSource_Bgm", bgmSource);
+            SetObjectReference(soundManager, "AudioSource_Effect", effectSource);
+        }
+
+        private static void CreateTestHud(Scene scene)
+        {
+            GameObject canvasObject = GetOrCreateRoot(scene, "Canvas_GameHUD_Test");
+            ClearChildren(canvasObject.transform);
+
+            Canvas canvas = GetOrAddComponent<Canvas>(canvasObject);
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+            CanvasScaler scaler = GetOrAddComponent<CanvasScaler>(canvasObject);
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+
+            GetOrAddComponent<GraphicRaycaster>(canvasObject);
+
+            GameObject hudRoot = CreateUiPanel("Panel_HUDRoot", canvasObject.transform, new Vector2(20f, -20f), new Vector2(360f, 120f), new Color(0f, 0f, 0f, 0.45f));
+            CreateUiText("Text_HUD_Guide", hudRoot.transform, "HP / Stamina HUD 연결 자리", 24, TextAnchor.MiddleLeft);
+            GameObject inventoryRoot = CreateUiPanel("Panel_InventoryRoot_TestDisabled", canvasObject.transform, new Vector2(20f, -160f), new Vector2(360f, 120f), new Color(0f, 0f, 0f, 0.35f));
+            GameObject gameOverRoot = CreateUiPanel("Panel_GameOver_TestDisabled", canvasObject.transform, new Vector2(-240f, 140f), new Vector2(480f, 180f), new Color(0.08f, 0.02f, 0.02f, 0.75f));
+            CreateUiText("Text_GameOver_Guide", gameOverRoot.transform, "GameOver UI 연결 자리", 24, TextAnchor.MiddleCenter);
+            inventoryRoot.SetActive(false);
+            gameOverRoot.SetActive(false);
+
+            GameObject managerGroup = GetOrCreateRoot(scene, "MainGame_RuntimeManagers");
+            Transform uiManagerTransform = FindChildByName(managerGroup.transform, "UIManager");
+            if (uiManagerTransform == null)
+            {
+                return;
+            }
+
+            UIManager uiManager = uiManagerTransform.GetComponent<UIManager>();
+            if (uiManager == null)
+            {
+                return;
+            }
+
+            SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);
+            SetObjectReference(uiManager, "GameObject_InventoryRoot", inventoryRoot);
+            SetObjectReference(uiManager, "GameObject_GameOverPanel", gameOverRoot);
+        }
+
+        private static GameObject CreatePrimitive(PrimitiveType type, string objectName, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)
+        {
+            GameObject createdObject = GameObject.CreatePrimitive(type);
+            createdObject.name = objectName;
+            createdObject.transform.SetParent(parent);
+            createdObject.transform.localPosition = localPosition;
+            createdObject.transform.localRotation = Quaternion.identity;
+            createdObject.transform.localScale = localScale;
+
+            Renderer renderer = createdObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.sharedMaterial = material;
+            }
+
+            return createdObject;
+        }
+
+        private static GameObject CreateEmpty(string objectName, Transform parent, Vector3 localPosition)
+        {
+            GameObject createdObject = new GameObject(objectName);
+            createdObject.transform.SetParent(parent);
+            createdObject.transform.localPosition = localPosition;
+            createdObject.transform.localRotation = Quaternion.identity;
+            createdObject.transform.localScale = Vector3.one;
+            return createdObject;
+        }
+
+        private static void CreateMarker(Transform parent, string objectName, Vector3 position)
+        {
+            GameObject marker = CreateEmpty(objectName, parent, position);
+            marker.transform.localScale = Vector3.one;
+        }
+
+        private static void CreatePointLight(string objectName, Transform parent, Vector3 localPosition, Color color, float intensity, float range)
+        {
+            GameObject lightObject = CreateEmpty(objectName, parent, localPosition);
+            Light pointLight = lightObject.AddComponent<Light>();
+            pointLight.type = LightType.Point;
+            pointLight.color = color;
+            pointLight.intensity = intensity;
+            pointLight.range = range;
+        }
+
+        private static GameObject CreateUiPanel(string objectName, Transform parent, Vector2 anchoredPosition, Vector2 size, Color color)
+        {
+            GameObject panel = new GameObject(objectName);
+            panel.transform.SetParent(parent);
+
+            RectTransform rectTransform = panel.AddComponent<RectTransform>();
+            rectTransform.anchorMin = new Vector2(0f, 1f);
+            rectTransform.anchorMax = new Vector2(0f, 1f);
+            rectTransform.pivot = new Vector2(0f, 1f);
+            rectTransform.anchoredPosition = anchoredPosition;
+            rectTransform.sizeDelta = size;
+
+            Image image = panel.AddComponent<Image>();
+            image.color = color;
+            return panel;
+        }
+
+        private static void CreateUiText(string objectName, Transform parent, string message, int fontSize, TextAnchor alignment)
+        {
+            GameObject textObject = new GameObject(objectName);
+            textObject.transform.SetParent(parent);
+
+            RectTransform rectTransform = textObject.AddComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = new Vector2(16f, 12f);
+            rectTransform.offsetMax = new Vector2(-16f, -12f);
+
+            Text text = textObject.AddComponent<Text>();
+            text.text = message;
+            text.fontSize = fontSize;
+            text.alignment = alignment;
+            text.color = Color.white;
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        }
+
+        private static Material GetOrCreateMaterial(string path, Color color)
+        {
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material != null)
+            {
+                material.color = color;
+                EditorUtility.SetDirty(material);
+                return material;
+            }
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null)
+            {
+                shader = Shader.Find("Standard");
+            }
+
+            Material createdMaterial = new Material(shader);
+            createdMaterial.color = color;
+            AssetDatabase.CreateAsset(createdMaterial, path);
+            return createdMaterial;
+        }
+
+        private static GameObject GetOrCreateRoot(Scene scene, string objectName)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                if (rootObjects[i].name == objectName)
+                {
+                    return rootObjects[i];
+                }
+            }
+
+            GameObject createdObject = new GameObject(objectName);
+            SceneManager.MoveGameObjectToScene(createdObject, scene);
+            return createdObject;
+        }
+
+        private static Transform FindChildByName(Transform root, string objectName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform child = root.GetChild(i);
+                if (child.name == objectName)
+                {
+                    return child;
+                }
+
+                Transform found = FindChildByName(child, objectName);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        private static void ClearChildren(Transform parent)
+        {
+            while (parent.childCount > 0)
+            {
+                UnityEngine.Object.DestroyImmediate(parent.GetChild(0).gameObject);
+            }
+        }
+
+        private static TComponent GetOrAddComponent<TComponent>(GameObject targetObject)
+            where TComponent : Component
+        {
+            TComponent component = targetObject.GetComponent<TComponent>();
+            if (component == null)
+            {
+                component = targetObject.AddComponent<TComponent>();
+            }
+
+            return component;
+        }
+
+        private static void SetObjectReference(Object targetObject, string propertyName, Object value)
+        {
+            SerializedObject serializedObject = new SerializedObject(targetObject);
+            SerializedProperty property = serializedObject.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogWarning("Cinderkeep_TestMapSceneBuilder: property was not found. " + propertyName);
+                return;
+            }
+
+            property.objectReferenceValue = value;
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private static void DisableOtherCamerasAndListeners(Scene scene, Camera keepCamera, AudioListener keepListener)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                DisableOtherCamerasAndListenersInChildren(rootObjects[i].transform, keepCamera, keepListener);
+            }
+        }
+
+        private static void DisableOtherCamerasAndListenersInChildren(Transform root, Camera keepCamera, AudioListener keepListener)
+        {
+            Camera camera = root.GetComponent<Camera>();
+            if (camera != null && camera != keepCamera)
+            {
+                camera.enabled = false;
+            }
+
+            AudioListener audioListener = root.GetComponent<AudioListener>();
+            if (audioListener != null && audioListener != keepListener)
+            {
+                audioListener.enabled = false;
+            }
+
+            for (int i = 0; i < root.childCount; i++)
+            {
+                DisableOtherCamerasAndListenersInChildren(root.GetChild(i), keepCamera, keepListener);
+            }
+        }
+
+        private static void ClearScene(Scene scene)
+        {
+            GameObject[] rootObjects = scene.GetRootGameObjects();
+            for (int i = 0; i < rootObjects.Length; i++)
+            {
+                UnityEngine.Object.DestroyImmediate(rootObjects[i]);
+            }
+        }
+
+    }
+}

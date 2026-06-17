@@ -1,0 +1,70 @@
+﻿Cinderkeep Player Movement Branch Troubleshooting
+
+이번 이슈
+- 플레이어 담당자 쪽에서 새 플레이어/카메라 스크립트가 Unity Inspector에 바로 붙지 않을 수 있다는 문제가 공유되었습니다.
+- Unity는 프로젝트 안에 컴파일 에러가 하나라도 있으면 새 스크립트를 컴포넌트로 인식하지 못합니다.
+- Git 커밋/푸시는 가능하지만, Unity에서 붙이고 테스트하려면 컴파일 에러가 없어야 합니다.
+- C:\0_UnityProject 같은 예전 로컬 경로가 에러에 나오면, 현재 main 소스보다 로컬 Unity/IDE 캐시 문제일 가능성이 높습니다.
+
+이번 정리 내용
+- Cinderkeep_Game 씬에 Player 오브젝트를 준비했습니다.
+- Player에는 CharacterController가 붙어 있습니다.
+- Player 하위에 Camera_FirstPerson을 준비했습니다.
+- 중앙에는 빨간 네모 Cube_FlameHeart를 두었습니다.
+- Cube_FlameHeart를 중심으로 넓은 테스트 평지와 Cube_HorizonRidge를 배치했습니다.
+- 본편 씬 안에는 팀원 실명 기반 오브젝트 이름을 쓰지 않습니다.
+
+플레이어 담당자 작업 위치
+- Assets/Scripts/Player
+
+우선 올려주면 되는 파일
+- PlayerMovement.cs
+
+권장 작업 순서
+1. main에서 [8차] 이후 최신 내용을 받습니다.
+2. 개인 브랜치를 새로 만듭니다.
+3. Assets/Scripts/Player 안에 PlayerMovement.cs를 만듭니다.
+4. Cinderkeep_Game 씬의 Player 오브젝트에 PlayerMovement.cs를 붙입니다.
+5. 개인 브랜치에 커밋하고 푸시합니다.
+
+Unity에서 붙이는 위치
+- Cinderkeep_Game 씬을 엽니다.
+- Hierarchy에서 Player를 선택합니다.
+- PlayerMovement.cs를 Player에 컴포넌트로 붙입니다.
+- 카메라 회전 스크립트가 따로 있다면 Transform_CameraRoot_FirstPerson에 붙입니다.
+- 붙인 뒤 개인 브랜치에 커밋하고 푸시합니다.
+
+처음 목표
+- WASD 이동
+- 마우스 시점 회전
+- Space 점프
+- Shift 달리기
+
+아직 안 해도 되는 것
+- 예쁜 HUD
+- 손 모델
+- 무기
+- 애니메이션
+- 완성형 카메라 연출
+
+로컬에서 Unity가 스크립트를 못 읽을 때
+1. Unity와 IDE를 닫습니다.
+2. main을 최신으로 받습니다.
+3. 개인 브랜치를 만듭니다.
+4. 그래도 안 되면 Unity/IDE 캐시를 지웁니다.
+
+캐시 정리 예시
+cd D:\3D_Basic_Assets\Cinderkeep
+Remove-Item -Recurse -Force .\Temp -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\Obj -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\.vs -ErrorAction SilentlyContinue
+Remove-Item -Force .\*.csproj -ErrorAction SilentlyContinue
+Remove-Item -Force .\*.sln -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\Library\ScriptAssemblies -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .\Library\Bee -ErrorAction SilentlyContinue
+
+중요
+- 개인 브랜치에는 이동 스크립트만 먼저 올려도 됩니다.
+- 이동 스크립트가 완성본이 아니어도 됩니다. 먼저 Player가 움직이는 최소 버전이면 됩니다.
+- main에 머지하기 전에는 반드시 컴파일 에러를 제거합니다.
+- Console에 빨간 에러가 여러 개 보이면 제일 위 첫 번째 에러부터 공유합니다.
