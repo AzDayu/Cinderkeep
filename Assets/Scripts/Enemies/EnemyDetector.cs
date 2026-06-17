@@ -18,7 +18,7 @@ public class EnemyDetector : MonoBehaviour
     {
         get
         {
-            return _isHashDetectedPlayer != null;
+            return Transform_DetectedPlayer != null;
         }
     }
 
@@ -99,7 +99,8 @@ public class EnemyDetector : MonoBehaviour
             }
 
             Transform_DetectedPlayer = col.transform;
-            Debug.Log($"[{gameObject.name}] 시야각 외 피격 주변 범위 내 플레이어를 강제 포착해 타겟을 고정합니다.");
+            Debug.Log($"[{gameObject.name}] 시야각 외 피격! 주변 범위 내 플레이어를 강제 포착해 타겟을 고정합니다.");
+            return;
         }
         Debug.Log($"[{gameObject.name}] 피격당했으나 감지 범위 내에 플레이어 태그가 존재하지 않아 맞고 끝납니다.");
     }
