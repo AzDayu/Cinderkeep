@@ -1,69 +1,57 @@
 Cinderkeep - Code Style Rules
 
-This project follows the code-consistency AI PDF style used by the class.
+This project follows the class code-consistency style.
 Use this as the team coding baseline.
 
 Core Architecture
-- Controllers only coordinate scene order, flow, and queues.
+- GameManager is the only singleton.
+- GameManager owns the game flow and initialization order.
+- Other managers prepare through Initialize instead of starting their own flow in Awake.
+- Controllers coordinate flow only.
 - Do not collect many unrelated Inspector references in one controller.
 - Each actor GameObject owns the component that performs its own role.
-- Examples:
-  Movement belongs on the moving actor.
-  Interaction belongs on the interactable actor.
-  View belongs on the UI or visual actor.
-  DropTarget belongs on the receiving actor.
-- Prefer loose coupling.
-- Use GetComponent, events, interfaces, or manager lookup before hard-wiring many references.
-- If one controller needs 5 or more Inspector references, split the responsibility.
+- Prefer loose coupling through GetComponent, events, interfaces, or manager access.
+
+Component Rules
+- Keep MonoBehaviours small.
+- A component should have one clear job.
+- PlayerMovement moves the Player.
+- PlayerView handles view-related work.
+- UI components update prepared UI objects.
+- Systems handle feature logic such as building, crafting, inventory, and combat.
 
 UI Rules
-- Do not build normal UI with runtime new GameObject() calls.
-- Create UI in the scene, with prefabs, or through editor tooling.
-- Runtime code should activate, deactivate, bind, or update prepared UI objects.
-- Reusable UI must become a prefab.
+- Do not build normal UI with runtime new GameObject calls.
+- Create UI in scenes, prefabs, or editor tooling.
+- Runtime UI code should activate, deactivate, bind, or update prepared objects.
+- Reusable UI should become a prefab.
 
 Data Rules
-- Static data is planning data that does not change during play.
-- Static data should be loaded through a data manager when the project grows.
-- Instance data is play-state data that changes during play or save/load.
-- Instance data should use Model naming, for example PlayerModel or ItemModel.
-- Keep static data and instance data separate.
+- Static Data is planning data that does not change during play.
+- Static Data is loaded through GameDataManager when needed.
+- Instance Data changes during play or save/load.
+- Instance Data uses Model naming, such as PlayerModel or GameRunModel.
+- Keep data and behavior separated when the code grows.
 
 Naming Rules
 - Private member fields use _prefix.
 - Unity references are [SerializeField] private.
-- Public access uses properties when needed.
-- Methods start with verbs:
-  LoadScene, SetProfile, RegisterInputEvents, ValidateSampleScene.
+- Unity reference field names start with their type role, such as Button_StartGame.
+- Public access uses properties or clear Get/Set methods when needed.
+- Methods start with verbs, such as LoadScene, SetState, RegisterObject.
 - Class names use PascalCase.
 - One main class per file.
 
-Component Rules
-- Keep MonoBehaviours small.
-- A component should have one clear reason to change.
-- Avoid giant manager classes.
-- Managers are allowed for common services or data ownership.
-- Actors should not wait for a controller to do their own simple job.
-
-Scene/Hierarchy Rules
-- Important work objects must be visible in the Hierarchy.
-- Name objects by role, not by vague labels like Object1.
-- Shared work goes under WorkspaceRoot_Shared.
-- Personal work goes under WorkRoot_Class_OwnerEnglishName.
-- Placeholder objects are allowed early, but name their purpose clearly.
-
-Current Project Examples
-- CharacterSlot is owned by each character card object.
-- CharacterSelectCanvas discovers CharacterSlot objects with GetComponentsInChildren.
-- CharacterSceneLoadButton owns scene-loading behavior on the button object.
-- CinderkeepWorkspaceActor stores role data on each shared workspace placeholder.
-- CharacterSelectSceneBuilder is editor-only tooling for scene generation and validation.
+Folder Rules
+- Official scripts go under Assets/Scripts by role.
+- Experimental scripts go under Assets/_Sandbox/Scripts.
+- Disabled scripts must use .cs.disabled.
+- Editor-only scripts go under Assets/Scripts/Editor.
 
 Review Checklist
 - Does this component do one job?
 - Is a controller holding too many references?
-- Is this UI prepared in the scene or prefab instead of built at runtime?
-- Is data separated from behavior when it starts growing?
-- Can another team member understand the Hierarchy object name?
+- Is this UI prepared in a scene or prefab instead of built at runtime?
+- Is static data separated from runtime model data?
+- Can another team member understand the object and file names?
 - Did this change touch only the intended system?
-

@@ -152,6 +152,8 @@ Assets/ThirdParty_PriAsset/
 Assets/ThirdParty_PriAsset.meta
 Assets/ThirdParty_Premium/
 Assets/ThirdParty_Premium.meta
+Assets/ThirdParty/AssetStore/Paid/**
+Assets/ThirdParty/PrivateAssets/**
 
 # Local plugin/editor preferences
 ProjectSettings/HueFolders_Prefs.json

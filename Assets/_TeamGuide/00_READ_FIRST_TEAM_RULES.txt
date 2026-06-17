@@ -1,50 +1,37 @@
 Cinderkeep - Read First
 
 Purpose
-- This project is shared by 9 team members.
-- Each person chooses one character/class and works through that character's personal scene.
-- Shared team planning work belongs in Cinderkeep_Workspace.
-- Playable game work belongs in Cinderkeep_Game under Assets/Scenes/MainGame.
+- This project is the shared Cinderkeep game project.
+- The old lobby convenience scenes are no longer part of the active project flow.
+- Main_Lobby is the game main menu.
+- Cinderkeep_Game is the actual game development scene.
 
 Main Scenes
-- Cinderkeep_Game: playable Cinderkeep game scene.
-- Cinderkeep_Workspace: shared team workspace scene for task objects and design placeholders.
-- Main_Lobby: menu scene. Use this as the team entrance when you need character select or workspace links.
-- SampleScene: character select scene.
-- MainWorkspaceRoom_ForBuild: important integration room for completed work before commit, push, merge, and build checks.
-- PersonalWorkspaceRoom: general personal workspace room.
-- Archer_KwonSeonghyeok, Assassin_KimDonghyuk, Bard_CheonWooyoung, Blacksmith_ChoiJaeho, Healer_KangHeewon, Mage_JeongDongwon, Spellblade_KimMinseok, Summoner_JiJaewook, Tactician_Daniel, Tanker_KimSeonggwang: personal character scenes.
+- Main_Lobby: main menu scene. Play Mode starts here.
+- MainGame/Cinderkeep_Game: actual game scene. Open this scene when editing gameplay.
+
+Editor Flow
+- When Unity opens, the editor should show Cinderkeep_Game for direct game work.
+- When Play is pressed, the project starts from Main_Lobby.
+- This keeps editing focused on the real game while preserving the player-facing menu flow.
 
 Team Rules
-- Do not make large unrelated refactors.
-- Do not edit another person's personal scene unless the owner agrees.
-- Put shared prototype objects under WorkspaceRoot_Shared.
-- Put personal experiment objects under your own WorkRoot_* object.
-- Every room has a Main Camera with SceneCameraController.
-- Every room canvas has UIManager linked to the scene camera.
-- Name objects clearly so they are understandable in the Hierarchy.
-- Prefer small components with one job over one large controller.
-- Before changing shared code, check who depends on it.
-- If a scene looks empty, confirm that you opened the correct scene from Assets/Scenes.
+- Work on a personal branch, not directly on main.
+- Put new files in the correct role folder.
+- Use _Sandbox for experiments.
+- Move useful _Sandbox work into official folders before merging.
+- Put removed or inactive files in _Disabled.
+- Do not leave active C# files in _Disabled. Use .cs.disabled.
+- Keep components small and named by role.
+- Do not collect unrelated references in one controller.
+- Check changed files before commit and push.
 
-Current Character Owners
-- Archer: KwonSeonghyeok
-- Assassin: KimDonghyuk
-- Bard: CheonWooyoung
-- Blacksmith: ChoiJaeho
-- Healer: KangHeewon
-- Mage: JeongDongwon
-- Spellblade: KimMinseok
-- Summoner: JiJaewook
-- Tactician: Daniel
-- Tanker: KimSeonggwang
-
-Unity Entry Flow
-- Press Play from Main_Lobby when you need the team hub.
-- Click Back To Lobby when you need Main_Lobby.
-- Click !! Play Our Game (Prototype) to open Cinderkeep_Game.
-- Click Team ID Cards to see class badges and member roles.
-- Click Personal Work Rooms to enter a member's personal scene.
-- Select a character card.
-- Read Member, Class Badge, and Role Note.
-- Click Open Personal Workspace to enter that character's scene.
+Important Folders
+- Assets/Scripts/Managers: GameManager, UIManager, SoundManager, GameDataManager, GameObjectManager.
+- Assets/Scripts/Player: Player object components.
+- Assets/Scripts/UI: UI object components.
+- Assets/Scripts/Systems: feature systems such as crafting, building, combat, inventory.
+- Assets/Tests: official Unity Test Runner tests.
+- Assets/_Sandbox: prototype and experiment work.
+- Assets/_Disabled: inactive files kept for reference.
+- Assets/_TeamGuide: team guide documents.

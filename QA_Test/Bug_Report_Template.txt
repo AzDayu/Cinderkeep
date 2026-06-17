@@ -1,0 +1,23 @@
+Cinderkeep Bug Report Template
+
+Title:
+
+Scene:
+
+Build / Commit:
+
+Steps To Reproduce:
+1.
+2.
+3.
+
+Expected Result:
+
+Actual Result:
+
+Severity:
+- High / Medium / Low
+
+Owner:
+
+Notes:

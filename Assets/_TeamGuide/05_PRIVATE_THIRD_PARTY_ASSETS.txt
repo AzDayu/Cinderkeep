@@ -6,12 +6,14 @@ Purpose
 - Portfolio Git history should show code style, scene structure, and team work history, not paid asset files.
 
 Required Folder
-- Put purchased/private assets only under:
-  Assets/ThirdParty_PriAsset
+- Put purchased Asset Store files only under:
+  Assets/ThirdParty/AssetStore/Paid
+- Put team-private or locally shared files only under:
+  Assets/ThirdParty/PrivateAssets
 
 Git Rule
-- Assets/ThirdParty_PriAsset is ignored by .gitignore.
-- Assets/ThirdParty_PriAsset.meta is also ignored.
+- Assets/ThirdParty/AssetStore/Paid is ignored by .gitignore.
+- Assets/ThirdParty/PrivateAssets is ignored by .gitignore.
 - Files inside that folder should not appear in Fork, GitHub Desktop, or git status.
 
 Team Sharing Rule
@@ -24,7 +26,8 @@ Safe Import Flow
 - Import the external asset into that empty project.
 - Avoid importing sample scenes, scripts, and shaders unless the team agrees.
 - Move compatible files such as FBX, textures, sprites, materials, and animation clips into this project.
-- Place those files under Assets/ThirdParty_PriAsset only.
+- Place paid files under Assets/ThirdParty/AssetStore/Paid only.
+- Place private team-shared files under Assets/ThirdParty/PrivateAssets only.
 
 Before Push Checklist
 - Run git status.

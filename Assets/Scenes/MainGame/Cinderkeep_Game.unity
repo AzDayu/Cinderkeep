@@ -958,8 +958,8 @@ GameObject:
   - component: {fileID: 715811393}
   - component: {fileID: 715811392}
   m_Layer: 0
-  m_Name: Cube_FlameHeart
-  m_TagString: Untagged
+  m_Name: CinderHeart
+  m_TagString: CinderHeart
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2209,7 +2209,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ed5ae9b8d4599848b348d041a6e2a39, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterGroundCheck
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGroundCheck
 --- !u!135 &1310550263
 SphereCollider:
   m_ObjectHideFlags: 0

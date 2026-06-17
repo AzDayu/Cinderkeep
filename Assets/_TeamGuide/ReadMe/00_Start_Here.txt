@@ -1,0 +1,25 @@
+Cinderkeep - Start Here
+
+이 폴더는 팀원이 먼저 읽는 공용 안내 폴더입니다.
+
+먼저 읽을 순서
+1. 01_Team_Workflow.txt
+2. 02_Foldering_Rules.txt
+3. 03_Code_Style_Summary.txt
+4. 04_Game_Framework_Skeleton.txt
+5. 05_Git_Checklist.txt
+
+현재 프로젝트 기준
+- Main_Lobby는 메인 메뉴입니다.
+- Cinderkeep_Game은 실제 게임 작업 씬입니다.
+- Unity 에디터를 열면 Cinderkeep_Game에서 작업합니다.
+- Play 버튼을 누르면 Main_Lobby부터 시작합니다.
+- 이전 로비 편의 기능은 현재 활성 흐름에서 제외했습니다.
+
+팀 작업 원칙
+- main에 직접 작업하지 않습니다.
+- 새 파일은 역할 폴더에 넣습니다.
+- 실험은 Assets/_Sandbox에서 먼저 합니다.
+- 정식 기능은 _Sandbox에서 역할 폴더로 옮깁니다.
+- 현재 사용하지 않는 파일은 Assets/_Disabled로 옮깁니다.
+- _Disabled 안의 C# 파일은 .cs.disabled로 바꿉니다.

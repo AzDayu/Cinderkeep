@@ -9,50 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Main_Lobby.unity
     guid: bf9027c6c0f77a14d83e410c155b9348
   - enabled: 1
-    path: Assets/Scenes/CharacterScenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
     path: Assets/Scenes/MainGame/Cinderkeep_Game.unity
     guid: fb3c3a6c7b20dd8448184b1f55d5686a
-  - enabled: 1
-    path: Assets/Scenes/MainWorkspace/Cinderkeep_Workspace.unity
-    guid: e8b53665e0b472b41af50e0db7a6f3e3
-  - enabled: 1
-    path: Assets/Scenes/MainWorkspace/MainWorkspaceRoom_ForBuild.unity
-    guid: 2cd72e6b7b802d41c2f4b805c791ce41
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/PersonalWorkspaceRoom.unity
-    guid: 3ab258d95c475864387654816a41dfff
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Archer_KwonSeonghyeok.unity
-    guid: 232079883034491499a5bfc3e099e4d2
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Assassin_KimDonghyuk.unity
-    guid: 64cf267d5d69a4145b09e269f662bcd0
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Bard_CheonWooyoung.unity
-    guid: a7d10beb3bd8c6441aac008ae50c270c
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Blacksmith_ChoiJaeho.unity
-    guid: 22e69c3c130e93840ac54555a1121d54
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Healer_KangHeewon.unity
-    guid: cfad94352cce88742b977b6922621020
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Mage_JeongDongwon.unity
-    guid: 7c2875ccf5b05ae48aa53c0d1ef153c0
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Spellblade_KimMinseok.unity
-    guid: a1b1d5df41561eb45bf83ef0425bdd5e
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Summoner_JiJaewook.unity
-    guid: 056f14c67c77fb2488297f038702442d
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Tactician_Daniel.unity
-    guid: 57ccb4ab13837364aa7f357142e31b11
-  - enabled: 1
-    path: Assets/Scenes/CharacterScenes/Tanker_KimSeonggwang.unity
-    guid: c23edd1574c64814087f02ec31bd8b35
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

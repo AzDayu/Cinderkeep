@@ -1,0 +1,24 @@
+코드 스타일 요약
+
+기준
+- 강사님의 코드일관화용 AI PDF 스타일을 기준으로 유지합니다.
+
+핵심 원칙
+- GameManager만 싱글톤으로 둡니다.
+- GameManager는 초기화 순서와 큰 흐름만 관리합니다.
+- 다른 매니저는 Initialize로 준비합니다.
+- Controller는 장면 흐름과 큐 관리만 담당합니다.
+- 오브젝트는 자기 역할 컴포넌트를 직접 가집니다.
+- UI는 가능한 프리팹이나 미리 만든 오브젝트를 사용합니다.
+- 한 Controller에 참조가 과하게 몰리면 컴포넌트로 분리합니다.
+- 멤버 변수는 _prefix를 사용합니다.
+- Unity 참조는 [SerializeField] private로 둡니다.
+- 메서드 이름은 동사로 시작합니다.
+
+예시
+- PlayerMovement: 이동만 담당
+- PlayerJump: 점프만 담당
+- PlayerView: 시점과 시각 표현 담당
+- MainMenuController: 메인 메뉴 버튼 흐름 담당
+- GameDataManager: 정적 데이터 로드 담당
+- GameObjectManager: 동적 오브젝트 관리 담당

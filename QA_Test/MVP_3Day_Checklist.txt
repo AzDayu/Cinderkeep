@@ -1,0 +1,24 @@
+Cinderkeep MVP 3-Day Manual QA Checklist
+
+Scene Flow
+- Main_Lobby opens first when the game starts.
+- Game start button enters Cinderkeep_Game.
+- Quit button is visible in the main menu.
+
+Player
+- Player exists in Cinderkeep_Game.
+- Player can move on the test map.
+- Camera view follows the player as expected.
+
+Map
+- CinderHeart exists in the game scene.
+- Basic floor, light, and play area are visible.
+- No old character selection or personal workspace scene is required.
+
+Folder Rule
+- New gameplay scripts are added under Assets/Scripts.
+- New prefabs are added under Assets/Prefabs.
+- QA notes are added under QA_Test.
+
+Issue Log
+- Write bug details in Bug_Report_Template.txt format.

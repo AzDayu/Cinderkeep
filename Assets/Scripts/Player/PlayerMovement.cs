@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 public sealed class PlayerMovement : MonoBehaviour
@@ -25,7 +25,7 @@ public sealed class PlayerMovement : MonoBehaviour
         Move();
     }
 
-    public void MoveCharacter(Vector3 moveDirection)
+    public void MovePlayer(Vector3 moveDirection)
     {
         _moveDirection = moveDirection;
     }
@@ -56,7 +56,7 @@ public sealed class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // CharacterController는 Rigidbody가 없으므로 Move로 직접 이동시킵니다.
+        // CharacterController는 Rigidbody가 없으므로 Move 함수로 직접 이동시킵니다.
         bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
         bool isMoving = _moveDirection.magnitude > 0.01f;
         bool isRunning = isMoving && isShiftPressed;
