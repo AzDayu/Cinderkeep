@@ -115,7 +115,7 @@ namespace MainHub.CharacterSelect
 
             if (Text_Status != null)
             {
-                Text_Status.text = $"?? ?? ? - {_ownerEnglishName} {GetWorkingDots()}";
+                Text_Status.text = $"작업 시간 기록 중 - {_ownerEnglishName} {GetWorkingDots()}";
             }
 
             if (Text_Experience != null)

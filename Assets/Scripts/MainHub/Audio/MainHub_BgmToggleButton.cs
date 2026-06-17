@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 namespace MainHub.Audio
 {
-    // Main_Lobby? ??? BGM ON/OFF ??? ?????.
-    // ??? ?????? ??/??? ???? ?? ?? ??? ????? ????.
+    // Main_Lobby에서 BGM ON/OFF 버튼을 관리합니다.
+    // 버튼 문구와 실제 BGM 컨트롤러 상태를 함께 맞춥니다.
     public sealed class MainHub_BgmToggleButton : MonoBehaviour
     {
         [SerializeField] private Button Button_Toggle;
@@ -57,7 +57,7 @@ namespace MainHub.Audio
             }
 
             bool isEnabled = MainHubBgmController_BgmController == null || MainHubBgmController_BgmController.IsBgmEnabled;
-            Text_Label.text = isEnabled ? "BGM ON" : "BGM OFF";
+            Text_Label.text = isEnabled ? "\u266a BGM ON" : "\u266a BGM OFF";
         }
 
         private void ResolveReferences()

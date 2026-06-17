@@ -4,9 +4,9 @@ using UnityEngine.SceneManagement;
 
 namespace MainHub.Audio
 {
-    // MainHub ??? ?? ??????? BGM? ???? ???????.
-    // ?? ?? ?(Cinderkeep_Game)? ???? BGM? ?? ????? ??? ?????.
-    // ? BGM? ???? ?? ??? 0.4? ????.
+    // MainHub 영역에서만 BGM을 재생하는 컨트롤러입니다.
+    // 실제 게임 씬(Cinderkeep_Game)으로 들어가면 BGM을 멈춥니다.
+    // 새 BGM을 넣어도 기본 볼륨은 0.4로 유지합니다.
     public sealed class MainHub_BgmController : MonoBehaviour
     {
         private const string BgmEnabledKey = "MainHub.Cinderkeep.BgmEnabled";
@@ -90,6 +90,11 @@ namespace MainHub.Audio
             }
         }
 
+        private void Start()
+        {
+            RefreshPlayback();
+        }
+
         private void Update()
         {
             if (AudioSource_BgmSource == null || !IsBgmEnabled || !IsScenePlaybackAllowed)
@@ -121,7 +126,7 @@ namespace MainHub.Audio
         {
             AudioSource_BgmSource = bgmSource;
             SetPlaylist(bgmPlaylist);
-            // ?? ?? BGM? ? ?? ?? 0.4? ?????.
+            // 모든 MainHub BGM은 기본 볼륨 0.4를 기준으로 맞춥니다.
             _volume = DefaultVolume;
             ResolveReferences();
             ApplySourceSettings();
@@ -282,6 +287,8 @@ namespace MainHub.Audio
             AudioSource_BgmSource.clip = AudioClip_BgmClip;
             AudioSource_BgmSource.loop = false;
             AudioSource_BgmSource.playOnAwake = false;
+            AudioSource_BgmSource.mute = false;
+            AudioSource_BgmSource.ignoreListenerPause = true;
             AudioSource_BgmSource.spatialBlend = 0f;
             AudioSource_BgmSource.volume = _volume;
         }

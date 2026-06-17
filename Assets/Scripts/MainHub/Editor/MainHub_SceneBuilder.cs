@@ -134,11 +134,15 @@ namespace MainHub.CharacterSelect.Editor
         public static void RebuildMainLobbyScene()
         {
             Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            MainHub_SceneCameraController cameraController = CreateMainLobbyCamera();
-            CreateEventSystem();
-            MainHub_BgmController bgmController = CreateMainHubBgmController();
-            CreateMainLobbyCanvas(cameraController, bgmController);
-            CreateMainLobbyCharacterRoster();
+            GameObject mainLobbyGroup = new GameObject("MainLobbyGroup");
+            Transform mainLobbyTransform = mainLobbyGroup.transform;
+
+            MainHub_SceneCameraController cameraController = CreateMainLobbyCamera(mainLobbyTransform);
+            CreateEventSystem(mainLobbyTransform);
+            MainHub_BgmController bgmController = CreateMainHubBgmController(mainLobbyTransform);
+            CreateMainLobbyCanvas(cameraController, bgmController, mainLobbyTransform);
+            CreateMainLobbyCharacterRoster(mainLobbyTransform);
+            CreateMainLobbyPlayerEntry();
             EditorSceneManager.SaveScene(scene, GetScenePath(MainLobbySceneName));
         }
 
@@ -225,10 +229,15 @@ namespace MainHub.CharacterSelect.Editor
             Scene lobbyScene = EditorSceneManager.OpenScene(GetScenePath(MainLobbySceneName), OpenSceneMode.Single);
             ValidateCameraAndUIManager(lobbyScene.name);
             MainHub_SceneLoadButton[] lobbyButtons = GetComponentsInOpenScene<MainHub_SceneLoadButton>(true);
-            int expectedLoadButtonCount = (CharacterScenes.Length * 2) + 5;
+            int expectedLoadButtonCount = (CharacterScenes.Length * 2) + 6;
             if (lobbyButtons.Length != expectedLoadButtonCount)
             {
                 throw new System.InvalidOperationException($"{lobbyScene.name} expected {expectedLoadButtonCount} load buttons, but found {lobbyButtons.Length}.");
+            }
+
+            if (GetRootGameObjectByName(lobbyScene, "Player") == null)
+            {
+                throw new System.InvalidOperationException($"{lobbyScene.name} has no root Player entry.");
             }
 
             if (GetTransformByNameIncludingInactive("!! Play Our Game (V1) Button") == null)
@@ -251,7 +260,7 @@ namespace MainHub.CharacterSelect.Editor
                 throw new System.InvalidOperationException($"{lobbyScene.name} has no visible finish work button.");
             }
 
-            if (GetTransformByNameIncludingInactive("BGM Toggle Button") == null)
+            if (GetTransformByNameIncludingInactive("Button_BgmToggle") == null)
             {
                 throw new System.InvalidOperationException($"{lobbyScene.name} has no BGM toggle button.");
             }
@@ -294,9 +303,10 @@ namespace MainHub.CharacterSelect.Editor
             }
         }
 
-        private static void CreateEventSystem()
+        private static void CreateEventSystem(Transform parent = null)
         {
             GameObject eventSystemObject = new GameObject("EventSystem");
+            SetParent(eventSystemObject, parent);
             eventSystemObject.AddComponent<EventSystem>();
 
 #if ENABLE_INPUT_SYSTEM
@@ -306,14 +316,15 @@ namespace MainHub.CharacterSelect.Editor
 #endif
         }
 
-        private static MainHub_SceneCameraController CreateMainLobbyCamera()
+        private static MainHub_SceneCameraController CreateMainLobbyCamera(Transform parent = null)
         {
-            return CreateSceneCamera(Color.black, 5f, new Vector3(0f, 0f, -10f), Quaternion.identity);
+            return CreateSceneCamera(Color.black, 5f, new Vector3(0f, 0f, -10f), Quaternion.identity, parent);
         }
 
-        private static void CreateMainLobbyCharacterRoster()
+        private static void CreateMainLobbyCharacterRoster(Transform parent = null)
         {
-            GameObject rosterRoot = new GameObject("Character Scene Objects");
+            GameObject rosterRoot = new GameObject("CharacterSceneObjects");
+            SetParent(rosterRoot, parent);
 
             for (int i = 0; i < CharacterScenes.Length; i++)
             {
@@ -365,17 +376,18 @@ namespace MainHub.CharacterSelect.Editor
             EditorUtility.SetDirty(controller);
         }
 
-        private static void CreateMainLobbyCanvas(MainHub_SceneCameraController cameraController, MainHub_BgmController bgmController)
+        private static void CreateMainLobbyCanvas(MainHub_SceneCameraController cameraController, MainHub_BgmController bgmController, Transform parent = null)
         {
             EnsureLobbyArtSprites();
 
             GameObject canvasObject = new GameObject(
-                "Canvas_MainLobby",
+                "MainLobbyCanvas",
                 typeof(RectTransform),
                 typeof(Canvas),
                 typeof(CanvasScaler),
                 typeof(GraphicRaycaster),
                 typeof(MainHub_UIManager));
+            SetParent(canvasObject, parent);
 
             RectTransform root = canvasObject.GetComponent<RectTransform>();
             Stretch(root);
@@ -390,13 +402,13 @@ namespace MainHub.CharacterSelect.Editor
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.matchWidthOrHeight = 0.5f;
 
-            Image background = CreateImage("Main_Lobby_Background_Image", root, new Color(0.01f, 0.012f, 0.018f, 1f));
+            Image background = CreateImage("Main_Lobby_Background_Image", root, Color.white);
             background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(LobbyBackgroundSpritePath);
             background.type = Image.Type.Simple;
             background.preserveAspect = false;
             Stretch(background.rectTransform);
 
-            Image darkWash = CreateImage("Main_Lobby_Dark_Wash", root, new Color(0f, 0f, 0f, 0.72f));
+            Image darkWash = CreateImage("Main_Lobby_Dark_Wash", root, new Color(0f, 0f, 0f, 0.42f));
             Stretch(darkWash.rectTransform);
 
             RectTransform header = CreateRect("Lobby Header", root);
@@ -411,7 +423,7 @@ namespace MainHub.CharacterSelect.Editor
             title.rectTransform.offsetMin = Vector2.zero;
             title.rectTransform.offsetMax = Vector2.zero;
 
-            Text subtitle = CreateText("Lobby Subtitle", header, "? ??: ??? ??, ????, ?? ??? ?????", 20, new Color(0.9f, 0.78f, 0.45f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text subtitle = CreateText("Lobby Subtitle", header, "팀 허브: 작업 공간, 캐릭터, 게임 실행 관리", 20, new Color(0.9f, 0.78f, 0.45f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             subtitle.rectTransform.anchorMin = new Vector2(0f, 0f);
             subtitle.rectTransform.anchorMax = new Vector2(1f, 0.28f);
             subtitle.rectTransform.offsetMin = Vector2.zero;
@@ -441,16 +453,16 @@ namespace MainHub.CharacterSelect.Editor
             CreateLobbyLoadButton(menu, "!! Play Our Game (V1)", PlayableGameSceneName, new Color(0.18f, 0.5f, 0.32f, 1f), Color.white);
             CreateLobbyLoadButton(menu, "Select My Character", "SampleScene", new Color(0.92f, 0.7f, 0.18f, 1f), new Color(0.055f, 0.06f, 0.07f, 1f));
             CreateOpenReadMeFolderButton(menu);
-            CreateLobbyLoadButton(menu, "?? ???? ??", SharedWorkspaceSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
-            CreateLobbyLoadButton(menu, "?? ???? ??", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
-            CreateLobbyLoadButton(menu, "!! Play Our Game ????", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "공용 작업 공간", PlayableGameSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "개인 작업 공간", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
+            CreateLobbyLoadButton(menu, "게임 작업 공간", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
 
-            CreateBgmToggleButton(menu, bgmController);
+            CreateBgmToggleButton(root, bgmController);
 
             RectTransform finishButton = CreateButton(
                 "Finish Work Button",
                 menu,
-                "?? ??",
+                "작업 종료",
                 24,
                 new Color(0.24f, 0.25f, 0.29f, 1f),
                 new Color(0.86f, 0.88f, 0.94f, 1f));
@@ -467,12 +479,66 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterWorkplaceButtons(root);
         }
 
-        private static MainHub_BgmController CreateMainHubBgmController()
+        private static void CreateMainLobbyPlayerEntry()
+        {
+            GameObject playerObject = new GameObject(
+                "Player",
+                typeof(RectTransform),
+                typeof(Canvas),
+                typeof(CanvasScaler),
+                typeof(GraphicRaycaster),
+                typeof(MainHub_SceneLoadButton));
+
+            RectTransform root = playerObject.GetComponent<RectTransform>();
+            Stretch(root);
+
+            Canvas canvas = playerObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 20;
+
+            CanvasScaler scaler = playerObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            MainHub_SceneLoadButton loader = playerObject.GetComponent<MainHub_SceneLoadButton>();
+            loader.SetSceneName(PlayableGameSceneName);
+
+            RectTransform buttonRoot = CreateButton(
+                "Player_Click_Area",
+                root,
+                "Player\n게임 작업 시작",
+                24,
+                new Color(0.07f, 0.34f, 0.29f, 0.96f),
+                Color.white);
+
+            buttonRoot.anchorMin = new Vector2(0.07f, 0.69f);
+            buttonRoot.anchorMax = new Vector2(0.43f, 0.745f);
+            buttonRoot.offsetMin = Vector2.zero;
+            buttonRoot.offsetMax = Vector2.zero;
+            AddButtonFrame(buttonRoot, new Color(0.7f, 1f, 0.88f, 0.85f));
+
+            Shadow shadow = buttonRoot.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.7f);
+            shadow.effectDistance = new Vector2(4f, -4f);
+
+            Text label = buttonRoot.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.gameObject.name = "Text_PlayerEntry";
+            }
+
+            UnityEventTools.AddPersistentListener(buttonRoot.GetComponent<Button>().onClick, loader.LoadScene);
+            EditorUtility.SetDirty(loader);
+        }
+
+        private static MainHub_BgmController CreateMainHubBgmController(Transform parent = null)
         {
             GameObject bgmObject = new GameObject(
                 "MainHub_BGM_Controller",
                 typeof(AudioSource),
                 typeof(MainHub_BgmController));
+            SetParent(bgmObject, parent);
 
             AudioSource audioSource = bgmObject.GetComponent<AudioSource>();
             audioSource.playOnAwake = false;
@@ -507,20 +573,32 @@ namespace MainHub.CharacterSelect.Editor
         private static void CreateBgmToggleButton(RectTransform parent, MainHub_BgmController bgmController)
         {
             RectTransform buttonRoot = CreateButton(
-                "BGM Toggle Button",
+                "Button_BgmToggle",
                 parent,
                 "BGM ON",
-                24,
-                new Color(0.1f, 0.13f, 0.18f, 1f),
+                26,
+                new Color(0.02f, 0.08f, 0.14f, 0.96f),
                 Color.white);
 
-            LayoutElement layoutElement = buttonRoot.gameObject.AddComponent<LayoutElement>();
-            layoutElement.minHeight = 46f;
-            layoutElement.preferredHeight = 52f;
-            AddButtonFrame(buttonRoot, new Color(0.7f, 0.86f, 1f, 0.36f));
+            buttonRoot.anchorMin = new Vector2(1f, 1f);
+            buttonRoot.anchorMax = new Vector2(1f, 1f);
+            buttonRoot.pivot = new Vector2(1f, 1f);
+            buttonRoot.anchoredPosition = new Vector2(-34f, -28f);
+            buttonRoot.sizeDelta = new Vector2(172f, 52f);
+            AddButtonFrame(buttonRoot, new Color(0.78f, 0.9f, 1f, 0.78f));
+
+            Shadow shadow = buttonRoot.gameObject.AddComponent<Shadow>();
+            shadow.effectColor = new Color(0f, 0f, 0f, 0.72f);
+            shadow.effectDistance = new Vector2(4f, -4f);
 
             Button button = buttonRoot.GetComponent<Button>();
             Text label = buttonRoot.GetComponentInChildren<Text>(true);
+            if (label != null)
+            {
+                label.gameObject.name = "Text_BgmToggle";
+                label.text = "\u266a BGM ON";
+            }
+
             MainHub_BgmToggleButton toggleButton = buttonRoot.gameObject.AddComponent<MainHub_BgmToggleButton>();
             toggleButton.SetReferences(button, label, bgmController);
             EditorUtility.SetDirty(toggleButton);
@@ -561,7 +639,7 @@ namespace MainHub.CharacterSelect.Editor
             outline.effectColor = new Color(0.84f, 0.58f, 0.16f, 0.5f);
             outline.effectDistance = new Vector2(3f, -3f);
 
-            Text title = CreateText("Character_Workplace_Title", panel, "?? ???? ????", 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text title = CreateText("Character_Workplace_Title", panel, "개인 작업공간 바로가기", 28, Color.white, TextAnchor.MiddleLeft, FontStyle.Bold);
             title.rectTransform.anchorMin = new Vector2(0.055f, 0.91f);
             title.rectTransform.anchorMax = new Vector2(0.95f, 0.98f);
             title.rectTransform.offsetMin = Vector2.zero;
@@ -1087,7 +1165,7 @@ namespace MainHub.CharacterSelect.Editor
             Stretch(workBack.rectTransform);
             AddButtonFrame(workRoot, new Color(0.26f, 0.72f, 0.82f, 0.28f));
 
-            Text workText = CreateText("Work Root Label", workRoot, "?? ???? ?? ??\nHierarchy? Custom_Decoration_Root ??? ??? ??? ?????", 24, new Color(0.88f, 0.94f, 0.96f, 1f), TextAnchor.MiddleCenter, FontStyle.Bold);
+            Text workText = CreateText("Work Root Label", workRoot, "개인 작업물을 배치하는 영역입니다.\nHierarchy의 Custom_Decoration_Root 아래에 작업물을 넣어주세요.", 24, new Color(0.88f, 0.94f, 0.96f, 1f), TextAnchor.MiddleCenter, FontStyle.Bold);
             Stretch(workText.rectTransform, 22f, 18f);
 
             RectTransform buttonPanel = CreateRect("Personal_Workspace_Link_Buttons", root);
@@ -1099,7 +1177,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Go_To_Build_Check_Scene_Button",
                 buttonPanel,
-                "?? ?? ??? ??",
+                "게임 작업공간으로 이동",
                 MainBuildWorkspaceSceneName,
                 new Vector2(0f, 0.55f),
                 new Vector2(0.49f, 1f),
@@ -1109,7 +1187,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Go_To_Playable_Game_Scene_Button",
                 buttonPanel,
-                "?? ?? ??? ??",
+                "게임 테스트 씬으로 이동",
                 PlayableGameSceneName,
                 new Vector2(0.51f, 0.55f),
                 new Vector2(1f, 1f),
@@ -1119,7 +1197,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Back_To_Main_Hub_Button",
                 buttonPanel,
-                "?? ??? ????",
+                "메인 허브로 돌아가기",
                 MainLobbySceneName,
                 new Vector2(0f, 0f),
                 new Vector2(0.49f, 0.42f),
@@ -1129,7 +1207,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateCharacterSceneLoadButton(
                 "Back_To_Character_Select_Button",
                 buttonPanel,
-                "??? ????",
+                "캐릭터 선택",
                 "SampleScene",
                 new Vector2(0.51f, 0f),
                 new Vector2(1f, 0.42f),
@@ -1202,7 +1280,7 @@ namespace MainHub.CharacterSelect.Editor
             levelText.rectTransform.offsetMin = Vector2.zero;
             levelText.rectTransform.offsetMax = Vector2.zero;
 
-            Text statusText = CreateText("Developer_Status_Text", panel, "?? ?? ?? ?", 18, new Color(0.78f, 0.86f, 0.88f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            Text statusText = CreateText("Developer_Status_Text", panel, "작업 시간 기록 중", 18, new Color(0.78f, 0.86f, 0.88f, 1f), TextAnchor.MiddleLeft, FontStyle.Bold);
             statusText.rectTransform.anchorMin = new Vector2(0.04f, 0.31f);
             statusText.rectTransform.anchorMax = new Vector2(0.96f, 0.55f);
             statusText.rectTransform.offsetMin = Vector2.zero;
@@ -1343,9 +1421,10 @@ namespace MainHub.CharacterSelect.Editor
             return CreateSceneCamera(new Color(0.08f, 0.1f, 0.14f), 10f, new Vector3(0f, 0f, -10f), Quaternion.identity);
         }
 
-        private static MainHub_SceneCameraController CreateSceneCamera(Color backgroundColor, float orthographicSize, Vector3 position, Quaternion rotation)
+        private static MainHub_SceneCameraController CreateSceneCamera(Color backgroundColor, float orthographicSize, Vector3 position, Quaternion rotation, Transform parent = null)
         {
             GameObject cameraObject = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener), typeof(MainHub_SceneCameraController));
+            SetParent(cameraObject, parent);
             Camera camera = cameraObject.GetComponent<Camera>();
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = backgroundColor;
@@ -1358,6 +1437,19 @@ namespace MainHub.CharacterSelect.Editor
             cameraController.SetCamera(camera);
             EditorUtility.SetDirty(cameraController);
             return cameraController;
+        }
+
+        private static void SetParent(GameObject targetObject, Transform parent)
+        {
+            if (targetObject == null || parent == null)
+            {
+                return;
+            }
+
+            targetObject.transform.SetParent(parent, false);
+            targetObject.transform.localPosition = Vector3.zero;
+            targetObject.transform.localRotation = Quaternion.identity;
+            targetObject.transform.localScale = Vector3.one;
         }
 
         private static void ConfigureUIManager(GameObject canvasObject, MainHub_SceneCameraController cameraController)

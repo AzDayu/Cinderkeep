@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터의 부모 클래스입니다.
-    // 예: 몬스터 기본 체력, 이동 속도, 공격력, 제작 레시피, 불꽃 강화 등.
+    // 몬스터, 자원, 제작법처럼 JSON에서 읽는 Static Data는 이 클래스를 기준으로 확장합니다.
     [Serializable]
     public class GameDataBase
     {
@@ -20,9 +20,9 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // JaeUk-MonsterAI 브랜치에서 만든 Enemy 데이터 필드를 현재 규칙에 맞춰 반영했습니다.
-    // 3일 MVP 루프에서는 밤 웨이브와 보스 접근의 기초 스탯으로 사용합니다.
-    // JSON 필드명은 _id, _displayName, _health 같은 이름을 그대로 사용합니다.
+    // Enemy JSON의 한 줄을 담는 데이터 클래스입니다.
+    // 3일 MVP에서는 일반 몬스터의 체력, 이동, 공격 값을 먼저 사용합니다.
+    // JSON 필드명은 _id, _displayName, _health처럼 변수명과 맞춥니다.
     [Serializable]
     public sealed class EnemyData : GameDataBase
     {
@@ -91,8 +91,8 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // JsonUtility는 배열만 있는 JSON을 바로 읽지 못해서 감싸는 클래스가 필요합니다.
-    // JSON 루트가 "Items"라서 이 필드명은 대문자로 유지합니다.
+    // JsonUtility는 배열만 있는 JSON을 바로 읽기 어렵습니다.
+    // 그래서 JSON 루트는 대문자 Items 필드를 가진 감싸는 클래스로 둡니다.
     [Serializable]
     public sealed class EnemyDataCatalog
     {
