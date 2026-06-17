@@ -4,7 +4,7 @@ using UnityEngine.Serialization;
 public sealed class PlayerView : MonoBehaviour
 {
     [FormerlySerializedAs("mouseSensitivity")]
-    [SerializeField] private float _mouseSensitivity = 200f;
+    [SerializeField] private float _mouseSensitivity = 260f;
     [FormerlySerializedAs("playerBody")]
     [SerializeField] private Transform Transform_PlayerBody;
     [SerializeField] private Transform Transform_Camera;

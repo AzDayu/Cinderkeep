@@ -5,14 +5,11 @@ public sealed class PlayerJump : MonoBehaviour
 {
     [FormerlySerializedAs("m_jumpForce")]
     [SerializeField] private float _jumpForce = 5f;
-    [FormerlySerializedAs("m_groundCheck")]
-    [SerializeField] private CharacterGroundCheck CharacterGroundCheck_GroundCheck;
-
-    private Rigidbody _rigidbody;
+    [SerializeField] private PlayerMovement PlayerMovement_PlayerMovement;
 
     private void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        ResolveReferences();
     }
 
     private void Update()
@@ -23,20 +20,22 @@ public sealed class PlayerJump : MonoBehaviour
         }
     }
 
+    private void ResolveReferences()
+    {
+        if (PlayerMovement_PlayerMovement == null)
+        {
+            PlayerMovement_PlayerMovement = GetComponent<PlayerMovement>();
+        }
+    }
+
     private void Jump()
     {
-        if (_rigidbody == null || CharacterGroundCheck_GroundCheck == null)
+        if (PlayerMovement_PlayerMovement == null)
         {
             return;
         }
 
-        if (!CharacterGroundCheck_GroundCheck.GetIsGrounded())
-        {
-            return;
-        }
-
-        // 점프 직전에 y 속도를 0으로 맞춰서 점프 높이가 흔들리지 않게 합니다.
-        _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, 0f, _rigidbody.linearVelocity.z);
-        _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        // 실제 점프 처리는 이동 컴포넌트가 CharacterController 기준으로 수행합니다.
+        PlayerMovement_PlayerMovement.Jump(_jumpForce);
     }
 }

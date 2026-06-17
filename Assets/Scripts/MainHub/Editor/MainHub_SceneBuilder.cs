@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using System.Collections.Generic;
@@ -30,6 +30,7 @@ namespace MainHub.CharacterSelect.Editor
         private const string MainWorkspaceSceneFolder = "Assets/Scenes/MainWorkspace";
         private const string CharacterSceneFolder = "Assets/Scenes/CharacterScenes";
         private const string LobbyBackgroundSpritePath = "Assets/Image/MainHubImage/MainLobby_Background.png";
+        private const string CharacterPortraitFolderPath = "Assets/Image/MainHubImage";
         private const string KoreanFallbackFontPath = "Assets/Fonts/ChosunCentennial.ttf";
         private const string ReadMeFolderPath = "Assets/ReadMe";
         private const string BgmClipPath = "Assets/Sounds/MainHubBGM/Cinderkeep_BGM_V1.mp3";
@@ -638,7 +639,30 @@ namespace MainHub.CharacterSelect.Editor
         private static void EnsureLobbyArtSprites()
         {
             ConfigureTextureAsSprite(LobbyBackgroundSpritePath);
+            ConfigureCharacterPortraitSprites();
             AssetDatabase.ImportAsset(KoreanFallbackFontPath, ImportAssetOptions.ForceSynchronousImport);
+        }
+
+        private static void ConfigureCharacterPortraitSprites()
+        {
+            string[] portraitIds =
+            {
+                "Archer",
+                "Assassin",
+                "Bard",
+                "Blacksmith",
+                "Healer",
+                "Mage",
+                "Spellblade",
+                "Summoner",
+                "Tactician",
+                "Tanker"
+            };
+
+            for (int i = 0; i < portraitIds.Length; i++)
+            {
+                ConfigureTextureAsSprite($"{CharacterPortraitFolderPath}/{portraitIds[i]}.png");
+            }
         }
 
         private static void ConfigureTextureAsSprite(string path)
@@ -1220,7 +1244,7 @@ namespace MainHub.CharacterSelect.Editor
             accentLine.rectTransform.offsetMax = Vector2.zero;
 
             Image portrait = CreateImage("Character Portrait", root, Color.white);
-            portrait.sprite = Resources.Load<Sprite>($"CharacterPortraits/{sceneInfo.ResourceId}");
+            portrait.sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{CharacterPortraitFolderPath}/{sceneInfo.RoleName}.png");
             portrait.preserveAspect = true;
             portrait.rectTransform.anchorMin = new Vector2(0.62f, 0.04f);
             portrait.rectTransform.anchorMax = new Vector2(0.98f, 0.96f);

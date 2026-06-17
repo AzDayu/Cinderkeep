@@ -1,4 +1,4 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -86,7 +86,7 @@ namespace Cinderkeep.MainGame.Editor
             GameObject player = GetOrCreateRoot(scene, "Player");
             ClearChildren(player.transform);
 
-            player.transform.position = new Vector3(0f, 1.05f, -8f);
+            player.transform.position = new Vector3(0f, 0.05f, -8f);
             player.transform.rotation = Quaternion.identity;
 
             CharacterController characterController = player.GetComponent<CharacterController>();

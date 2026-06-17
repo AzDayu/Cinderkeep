@@ -7,28 +7,37 @@ public sealed class PlayerMovement : MonoBehaviour
     [SerializeField] private float _moveSpeed = 5f;
     [FormerlySerializedAs("runSpeed")]
     [SerializeField] private float _runSpeed = 10f;
+    [SerializeField] private float _gravity = -20f;
+    [SerializeField] private float _groundStickVelocity = -2f;
 
-    private Rigidbody _rigidbody;
+    private CharacterController _characterController;
     private Vector3 _moveDirection;
+    private float _verticalVelocity;
 
     private void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
+        _characterController = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
         ReadMoveInput();
-    }
-
-    private void FixedUpdate()
-    {
         Move();
     }
 
     public void MoveCharacter(Vector3 moveDirection)
     {
         _moveDirection = moveDirection;
+    }
+
+    public void Jump(float jumpForce)
+    {
+        if (_characterController == null || !_characterController.isGrounded)
+        {
+            return;
+        }
+
+        _verticalVelocity = jumpForce;
     }
 
     private void ReadMoveInput()
@@ -42,20 +51,32 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        if (_rigidbody == null)
+        if (_characterController == null)
         {
             return;
         }
 
-        // Shift를 누르면 같은 이동 입력을 달리기 속도로 적용합니다.
+        // CharacterController는 Rigidbody가 없으므로 Move로 직접 이동시킵니다.
         bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
         bool isMoving = _moveDirection.magnitude > 0.01f;
         bool isRunning = isMoving && isShiftPressed;
 
         float currentSpeed = isRunning ? _runSpeed : _moveSpeed;
-        Vector3 targetVelocity = _moveDirection * currentSpeed;
+        Vector3 horizontalVelocity = _moveDirection * currentSpeed;
+        Vector3 velocity = horizontalVelocity + Vector3.up * _verticalVelocity;
 
-        targetVelocity.y = _rigidbody.linearVelocity.y;
-        _rigidbody.linearVelocity = targetVelocity;
+        _characterController.Move(velocity * Time.deltaTime);
+        ApplyGravity();
+    }
+
+    private void ApplyGravity()
+    {
+        if (_characterController.isGrounded && _verticalVelocity < 0f)
+        {
+            _verticalVelocity = _groundStickVelocity;
+            return;
+        }
+
+        _verticalVelocity += _gravity * Time.deltaTime;
     }
 }
