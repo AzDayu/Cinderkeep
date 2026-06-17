@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7934774353648916610}
   - component: {fileID: 181461203220097565}
   m_Layer: 0
-  m_Name: Stone
+  m_Name: PF_Resource_Stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
