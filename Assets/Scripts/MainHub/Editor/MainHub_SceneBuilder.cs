@@ -219,6 +219,11 @@ namespace MainHub.CharacterSelect.Editor
                 }
 
                 ValidateCameraAndUIManager(scene.name);
+
+                if (GetTransformByNameIncludingInactive("Discard_Work_And_Reset_Button") == null)
+                {
+                    throw new System.InvalidOperationException($"{scene.name} has no personal workspace reset button.");
+                }
             }
 
             Debug.Log($"MainHub_SceneBuilder: {CharacterScenes.Length} character scenes validated.");
@@ -229,7 +234,7 @@ namespace MainHub.CharacterSelect.Editor
             Scene lobbyScene = EditorSceneManager.OpenScene(GetScenePath(MainLobbySceneName), OpenSceneMode.Single);
             ValidateCameraAndUIManager(lobbyScene.name);
             MainHub_SceneLoadButton[] lobbyButtons = GetComponentsInOpenScene<MainHub_SceneLoadButton>(true);
-            int expectedLoadButtonCount = (CharacterScenes.Length * 2) + 6;
+            int expectedLoadButtonCount = (CharacterScenes.Length * 2) + 5;
             if (lobbyButtons.Length != expectedLoadButtonCount)
             {
                 throw new System.InvalidOperationException($"{lobbyScene.name} expected {expectedLoadButtonCount} load buttons, but found {lobbyButtons.Length}.");
@@ -454,7 +459,7 @@ namespace MainHub.CharacterSelect.Editor
             CreateLobbyLoadButton(menu, "Select My Character", "SampleScene", new Color(0.92f, 0.7f, 0.18f, 1f), new Color(0.055f, 0.06f, 0.07f, 1f));
             CreateOpenReadMeFolderButton(menu);
             CreateLobbyLoadButton(menu, "공용 작업 공간", PlayableGameSceneName, new Color(0.14f, 0.2f, 0.28f, 1f), Color.white);
-            CreateLobbyLoadButton(menu, "개인 작업 공간", PersonalWorkspaceSceneName, new Color(0.3f, 0.34f, 0.76f, 1f), Color.white);
+            CreateRememberedPersonalWorkspaceButton(menu);
             CreateLobbyLoadButton(menu, "게임 작업 공간", MainBuildWorkspaceSceneName, new Color(0.5f, 0.08f, 0.08f, 1f), Color.white);
 
             CreateBgmToggleButton(root, bgmController);
@@ -927,6 +932,12 @@ namespace MainHub.CharacterSelect.Editor
             introRect.offsetMin = Vector2.zero;
             introRect.offsetMax = Vector2.zero;
 
+            Text rememberedStatus = CreateText("Remembered Character Status", panel, "기억된 캐릭터: 없음", 17, new Color(0.18f, 0.22f, 0.24f), TextAnchor.MiddleLeft, FontStyle.Bold);
+            rememberedStatus.rectTransform.anchorMin = new Vector2(0.04f, 0.305f);
+            rememberedStatus.rectTransform.anchorMax = new Vector2(0.34f, 0.35f);
+            rememberedStatus.rectTransform.offsetMin = Vector2.zero;
+            rememberedStatus.rectTransform.offsetMax = Vector2.zero;
+
             RectTransform personalButton = CreateButton(
                 "Open Personal Workspace Button",
                 panel,
@@ -942,8 +953,40 @@ namespace MainHub.CharacterSelect.Editor
             MainHub_SceneLoadButton personalLoader = personalButton.gameObject.AddComponent<MainHub_SceneLoadButton>();
             UnityEventTools.AddPersistentListener(personalButton.GetComponent<Button>().onClick, personalLoader.LoadScene);
 
+            RectTransform rememberButton = CreateButton(
+                "Remember My Character Button",
+                panel,
+                "내 캐릭터로 기억",
+                16,
+                new Color(0.18f, 0.34f, 0.52f, 1f),
+                Color.white);
+            rememberButton.anchorMin = new Vector2(0.04f, 0.025f);
+            rememberButton.anchorMax = new Vector2(0.185f, 0.105f);
+            rememberButton.offsetMin = Vector2.zero;
+            rememberButton.offsetMax = Vector2.zero;
+
+            RectTransform cancelButton = CreateButton(
+                "Cancel Remembered Character Button",
+                panel,
+                "선택 취소",
+                16,
+                new Color(0.42f, 0.08f, 0.08f, 1f),
+                Color.white);
+            cancelButton.anchorMin = new Vector2(0.195f, 0.025f);
+            cancelButton.anchorMax = new Vector2(0.34f, 0.105f);
+            cancelButton.offsetMin = Vector2.zero;
+            cancelButton.offsetMax = Vector2.zero;
+
             MainHub_CharacterDetailPanel detailPanel = panelObject.GetComponent<MainHub_CharacterDetailPanel>();
-            detailPanel.SetViewReferences(detailTitle, detailRole, ownerInput, introInput, personalLoader);
+            detailPanel.SetViewReferences(
+                detailTitle,
+                detailRole,
+                ownerInput,
+                introInput,
+                personalLoader,
+                rememberButton.GetComponent<Button>(),
+                cancelButton.GetComponent<Button>(),
+                rememberedStatus);
             panelObject.SetActive(false);
             EditorUtility.SetDirty(personalLoader);
             EditorUtility.SetDirty(detailPanel);
@@ -1034,6 +1077,26 @@ namespace MainHub.CharacterSelect.Editor
             loader.SetEditorAssetPathsToOpen(editorAssetPathsToOpen);
             UnityEventTools.AddPersistentListener(buttonRoot.GetComponent<Button>().onClick, loader.LoadScene);
             EditorUtility.SetDirty(loader);
+        }
+
+        private static void CreateRememberedPersonalWorkspaceButton(RectTransform parent)
+        {
+            RectTransform buttonRoot = CreateButton(
+                "개인 작업 공간 Button",
+                parent,
+                "개인 작업 공간",
+                28,
+                new Color(0.3f, 0.34f, 0.76f, 1f),
+                Color.white);
+
+            LayoutElement layoutElement = buttonRoot.gameObject.AddComponent<LayoutElement>();
+            layoutElement.minHeight = 54f;
+            layoutElement.preferredHeight = 60f;
+
+            MainHub_RememberedCharacterWorkspaceButton rememberedButton = buttonRoot.gameObject.AddComponent<MainHub_RememberedCharacterWorkspaceButton>();
+            rememberedButton.SetFallbackSceneName(PersonalWorkspaceSceneName);
+            UnityEventTools.AddPersistentListener(buttonRoot.GetComponent<Button>().onClick, rememberedButton.LoadRememberedWorkspace);
+            EditorUtility.SetDirty(rememberedButton);
         }
 
         private static void CreateOpenReadMeFolderButton(RectTransform parent)
@@ -1169,8 +1232,8 @@ namespace MainHub.CharacterSelect.Editor
             Stretch(workText.rectTransform, 22f, 18f);
 
             RectTransform buttonPanel = CreateRect("Personal_Workspace_Link_Buttons", root);
-            buttonPanel.anchorMin = new Vector2(0.06f, 0.075f);
-            buttonPanel.anchorMax = new Vector2(0.56f, 0.29f);
+            buttonPanel.anchorMin = new Vector2(0.06f, 0.055f);
+            buttonPanel.anchorMax = new Vector2(0.56f, 0.305f);
             buttonPanel.offsetMin = Vector2.zero;
             buttonPanel.offsetMax = Vector2.zero;
 
@@ -1179,7 +1242,7 @@ namespace MainHub.CharacterSelect.Editor
                 buttonPanel,
                 "게임 작업공간으로 이동",
                 MainBuildWorkspaceSceneName,
-                new Vector2(0f, 0.55f),
+                new Vector2(0f, 0.68f),
                 new Vector2(0.49f, 1f),
                 new Color(0.72f, 0.16f, 0.14f, 1f),
                 Color.white);
@@ -1189,7 +1252,7 @@ namespace MainHub.CharacterSelect.Editor
                 buttonPanel,
                 "게임 테스트 씬으로 이동",
                 PlayableGameSceneName,
-                new Vector2(0.51f, 0.55f),
+                new Vector2(0.51f, 0.68f),
                 new Vector2(1f, 1f),
                 new Color(0.15f, 0.48f, 0.31f, 1f),
                 Color.white);
@@ -1199,8 +1262,8 @@ namespace MainHub.CharacterSelect.Editor
                 buttonPanel,
                 "메인 허브로 돌아가기",
                 MainLobbySceneName,
-                new Vector2(0f, 0f),
-                new Vector2(0.49f, 0.42f),
+                new Vector2(0f, 0.34f),
+                new Vector2(0.49f, 0.62f),
                 new Color(0.9f, 0.64f, 0.2f, 1f),
                 new Color(0.055f, 0.06f, 0.07f, 1f));
 
@@ -1209,10 +1272,15 @@ namespace MainHub.CharacterSelect.Editor
                 buttonPanel,
                 "캐릭터 선택",
                 "SampleScene",
-                new Vector2(0.51f, 0f),
-                new Vector2(1f, 0.42f),
+                new Vector2(0.51f, 0.34f),
+                new Vector2(1f, 0.62f),
                 new Color(0.16f, 0.2f, 0.28f, 1f),
                 Color.white);
+
+            CreateWorkspaceResetButton(
+                buttonPanel,
+                new Vector2(0f, 0f),
+                new Vector2(1f, 0.25f));
 
             RectTransform backButton = CreateButton(
                 "Back To Main Menu Button",
@@ -1413,7 +1481,38 @@ namespace MainHub.CharacterSelect.Editor
             UnityEventTools.AddPersistentListener(backButton.GetComponent<Button>().onClick, backLoader.LoadScene);
             EditorUtility.SetDirty(backLoader);
 
+            if (sceneName == PersonalWorkspaceSceneName)
+            {
+                CreateWorkspaceResetButton(
+                    root,
+                    new Vector2(0.29f, 0.1f),
+                    new Vector2(0.54f, 0.17f));
+            }
+
             EditorSceneManager.SaveScene(scene, GetScenePath(sceneName));
+        }
+
+        private static void CreateWorkspaceResetButton(
+            RectTransform parent,
+            Vector2 anchorMin,
+            Vector2 anchorMax)
+        {
+            RectTransform buttonRoot = CreateButton(
+                "Discard_Work_And_Reset_Button",
+                parent,
+                "작업한 내용 폐기하기",
+                21,
+                new Color(0.56f, 0.08f, 0.08f, 1f),
+                Color.white);
+            buttonRoot.anchorMin = anchorMin;
+            buttonRoot.anchorMax = anchorMax;
+            buttonRoot.offsetMin = Vector2.zero;
+            buttonRoot.offsetMax = Vector2.zero;
+            AddButtonFrame(buttonRoot, new Color(1f, 1f, 1f, 0.2f));
+
+            MainHub_WorkspaceResetButton resetButton = buttonRoot.gameObject.AddComponent<MainHub_WorkspaceResetButton>();
+            UnityEventTools.AddPersistentListener(buttonRoot.GetComponent<Button>().onClick, resetButton.ResetCurrentWorkspace);
+            EditorUtility.SetDirty(resetButton);
         }
 
         private static MainHub_SceneCameraController CreateWorkspaceCamera()
@@ -1686,6 +1785,11 @@ namespace MainHub.CharacterSelect.Editor
             if (GetRootGameObjectByName(SceneManager.GetActiveScene(), workspaceRootName) == null)
             {
                 throw new System.InvalidOperationException($"{sceneName} has no {workspaceRootName}.");
+            }
+
+            if (sceneName == PersonalWorkspaceSceneName && GetTransformByNameIncludingInactive("Discard_Work_And_Reset_Button") == null)
+            {
+                throw new System.InvalidOperationException($"{sceneName} has no workspace reset button.");
             }
         }
 

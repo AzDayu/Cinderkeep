@@ -18,6 +18,9 @@ namespace MainHub.CharacterSelect
         [SerializeField] private InputField InputField_Intro;
         [FormerlySerializedAs("_personalSpaceButton")]
         [SerializeField] private MainHub_SceneLoadButton CharacterSceneLoadButton_PersonalSpace;
+        [SerializeField] private Button Button_RememberCharacter;
+        [SerializeField] private Button Button_CancelRememberedCharacter;
+        [SerializeField] private Text Text_RememberedStatus;
         [SerializeField] private bool _saveIntroductionsToPlayerPrefs = true;
 
         private MainHub_CharacterEntry _selectedEntry;
@@ -45,13 +48,19 @@ namespace MainHub.CharacterSelect
             Text detailRole,
             InputField ownerInput,
             InputField introInput,
-            MainHub_SceneLoadButton personalSpaceButton)
+            MainHub_SceneLoadButton personalSpaceButton,
+            Button rememberCharacterButton,
+            Button cancelRememberedCharacterButton,
+            Text rememberedStatus)
         {
             Text_DetailTitle = detailTitle;
             Text_DetailRole = detailRole;
             InputField_Owner = ownerInput;
             InputField_Intro = introInput;
             CharacterSceneLoadButton_PersonalSpace = personalSpaceButton;
+            Button_RememberCharacter = rememberCharacterButton;
+            Button_CancelRememberedCharacter = cancelRememberedCharacterButton;
+            Text_RememberedStatus = rememberedStatus;
         }
 
         public void Show(MainHub_CharacterEntry entry)
@@ -93,12 +102,32 @@ namespace MainHub.CharacterSelect
                 CharacterSceneLoadButton_PersonalSpace.SetSceneName(GetPersonalSceneName(entry));
                 CharacterSceneLoadButton_PersonalSpace.gameObject.SetActive(true);
             }
+
+            RememberSelectedCharacter();
+            RefreshRememberedStatus();
         }
 
         public void Hide()
         {
             _selectedEntry = null;
             gameObject.SetActive(false);
+        }
+
+        public void RememberSelectedCharacter()
+        {
+            if (_selectedEntry == null)
+            {
+                return;
+            }
+
+            MainHub_CharacterSelectionStorage.SaveRememberedCharacter(_selectedEntry, GetPersonalSceneName(_selectedEntry));
+            RefreshRememberedStatus();
+        }
+
+        public void CancelRememberedCharacter()
+        {
+            MainHub_CharacterSelectionStorage.ClearRememberedCharacter();
+            RefreshRememberedStatus();
         }
 
         private void RegisterInputEvents()
@@ -112,6 +141,16 @@ namespace MainHub.CharacterSelect
             {
                 InputField_Intro.onEndEdit.AddListener(HandleEditEnded);
             }
+
+            if (Button_RememberCharacter != null)
+            {
+                Button_RememberCharacter.onClick.AddListener(RememberSelectedCharacter);
+            }
+
+            if (Button_CancelRememberedCharacter != null)
+            {
+                Button_CancelRememberedCharacter.onClick.AddListener(CancelRememberedCharacter);
+            }
         }
 
         private void UnregisterInputEvents()
@@ -124,6 +163,16 @@ namespace MainHub.CharacterSelect
             if (InputField_Intro != null)
             {
                 InputField_Intro.onEndEdit.RemoveListener(HandleEditEnded);
+            }
+
+            if (Button_RememberCharacter != null)
+            {
+                Button_RememberCharacter.onClick.RemoveListener(RememberSelectedCharacter);
+            }
+
+            if (Button_CancelRememberedCharacter != null)
+            {
+                Button_CancelRememberedCharacter.onClick.RemoveListener(CancelRememberedCharacter);
             }
         }
 
@@ -163,6 +212,25 @@ namespace MainHub.CharacterSelect
         private static string GetPersonalSceneName(MainHub_CharacterEntry entry)
         {
             return $"{entry.EnglishRole}_{entry.OwnerName}";
+        }
+
+        private void RefreshRememberedStatus()
+        {
+            if (Text_RememberedStatus == null)
+            {
+                return;
+            }
+
+            if (!MainHub_CharacterSelectionStorage.HasRememberedCharacter())
+            {
+                Text_RememberedStatus.text = "기억된 캐릭터: 없음";
+                return;
+            }
+
+            Text_RememberedStatus.text = "기억된 캐릭터: "
+                + MainHub_CharacterSelectionStorage.GetRememberedRoleName()
+                + " / "
+                + MainHub_CharacterSelectionStorage.GetRememberedOwnerName();
         }
     }
 }
