@@ -1,100 +1,102 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 
+// 플레이어의 체력과 스태미나를 화면에 표시하는 HUD입니다.
+// 실제 수치 계산은 PlayerStatus가 담당하고, 이 스크립트는 UI 표시만 담당합니다.
 public sealed class PlayerHUD : MonoBehaviour
 {
     [Header("연동할 대상 스크립트")]
-    [SerializeField] private PlayerStatus _playerStatus;
+    [SerializeField] private PlayerStatus PlayerStatus_Target;
 
-    [Header("HUD 슬라이더 UI 컴포넌트")]
-    [SerializeField] private Slider _hpSlider;
-    [SerializeField] private TMP_Text _hpSliderCurrent;
-    [SerializeField] private TMP_Text _hpSliderMax;
+    [Header("체력 UI")]
+    [SerializeField] private Slider Slider_Health;
+    [SerializeField] private TMP_Text Text_HealthCurrent;
+    [SerializeField] private TMP_Text Text_HealthMax;
 
-    [SerializeField] private Slider _staminaSlider;
-    [SerializeField] private TMP_Text _staminaSliderCurrent;
-    [SerializeField] private TMP_Text _staminaSliderMax;
-
-
-
+    [Header("스태미나 UI")]
+    [SerializeField] private Slider Slider_Stamina;
+    [SerializeField] private TMP_Text Text_StaminaCurrent;
+    [SerializeField] private TMP_Text Text_StaminaMax;
 
     private void Start()
     {
-        if (_playerStatus == null)
-        {
-            _playerStatus = FindFirstObjectByType<PlayerStatus>();
-        }
-
         InitializeHUD();
     }
 
     private void Update()
     {
-        UpdateHUD();
+        RefreshHUD();
+    }
+
+    public void SetPlayerStatus(PlayerStatus playerStatus)
+    {
+        PlayerStatus_Target = playerStatus;
+        InitializeHUD();
     }
 
     private void InitializeHUD()
     {
-        if (_playerStatus == null)
+        if (HasPlayerStatus() == false)
         {
             return;
         }
 
-        if (_hpSlider != null)
-        {
-            _hpSlider.minValue = 0f;
-            _hpSlider.maxValue = _playerStatus.GetMaxHealth();
-            _hpSlider.value = _playerStatus.GetCurrentHealth();
-        }
-
-        if (_staminaSlider != null)
-        {
-            _staminaSlider.minValue = 0f;
-            _staminaSlider.maxValue = _playerStatus.GetMaxStamina();
-            _staminaSlider.value = _playerStatus.GetCurrentStamina();
-        }
+        InitializeSlider(Slider_Health, PlayerStatus_Target.GetMaxHealth(), PlayerStatus_Target.GetCurrentHealth());
+        InitializeSlider(Slider_Stamina, PlayerStatus_Target.GetMaxStamina(), PlayerStatus_Target.GetCurrentStamina());
+        RefreshHUD();
     }
 
-    private void UpdateHUD()
+    private void RefreshHUD()
     {
-        if (_playerStatus == null)
+        if (HasPlayerStatus() == false)
         {
             return;
         }
 
-        if (_hpSlider != null)
+        RefreshSlider(Slider_Health, PlayerStatus_Target.GetCurrentHealth());
+        RefreshSlider(Slider_Stamina, PlayerStatus_Target.GetCurrentStamina());
+
+        RefreshText(Text_HealthCurrent, PlayerStatus_Target.GetCurrentHealth());
+        RefreshText(Text_HealthMax, PlayerStatus_Target.GetMaxHealth());
+        RefreshText(Text_StaminaCurrent, PlayerStatus_Target.GetCurrentStamina());
+        RefreshText(Text_StaminaMax, PlayerStatus_Target.GetMaxStamina());
+    }
+
+    private void InitializeSlider(Slider slider, float maxValue, float currentValue)
+    {
+        if (slider == null)
         {
-            _hpSlider.value = _playerStatus.GetCurrentHealth();
+            return;
         }
 
-        if (_staminaSlider != null)
+        slider.minValue = 0f;
+        slider.maxValue = maxValue;
+        slider.value = currentValue;
+    }
+
+    private void RefreshSlider(Slider slider, float currentValue)
+    {
+        if (slider == null)
         {
-            _staminaSlider.value = _playerStatus.GetCurrentStamina();
+            return;
         }
 
-        if (_hpSliderCurrent != null)
+        slider.value = currentValue;
+    }
+
+    private void RefreshText(TMP_Text text, float value)
+    {
+        if (text == null)
         {
-            string currentHp = _playerStatus.GetCurrentHealth().ToString("F0");
-            _hpSliderCurrent.text = currentHp;
-        }
-        if (_hpSliderMax != null)
-        {
-            string MaxHp = _playerStatus.GetMaxHealth().ToString("F0");
-            _hpSliderMax.text = MaxHp;
+            return;
         }
 
-        if (_staminaSliderCurrent != null)
-        {
-            string currentSt = _playerStatus.GetCurrentStamina().ToString("F0");
-            _staminaSliderCurrent.text = currentSt;
-        }
+        text.text = value.ToString("F0");
+    }
 
-        if (_staminaSliderMax != null)
-        {
-            string MaxSt = _playerStatus.GetMaxStamina().ToString("F0");
-            _staminaSliderMax.text = MaxSt;
-        }
-
+    private bool HasPlayerStatus()
+    {
+        return PlayerStatus_Target != null;
     }
 }
