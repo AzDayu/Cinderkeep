@@ -73,14 +73,15 @@ namespace Cinderkeep.Gameplay
             // 생성 주기 순서:
             // 1. 3일 MVP 루프에 필요한 Static Data 로드
             // 2. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
-            // 3. BGM과 효과음 관리자 준비
-            // 4. HUD, 인벤토리, 게임오버 UI 관리자 준비
-            // 5. 저장이 필요한 Instance Model 기본값 준비
+            // 3. 테스트맵과 이후 모듈형 맵 생성을 맡을 관리자 준비
+            // 4. BGM과 효과음 관리자 준비
+            // 5. HUD, 인벤토리, 게임오버 UI 관리자 준비
+            // 6. 저장이 필요한 Instance Model 기본값 준비
             InitializeManager(GameDataManager_GameDataManager, "GameDataManager");
             InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");
+            InitializeManager(MapManager_MapManager, "MapManager");
             InitializeManager(SoundManager_SoundManager, "SoundManager");
             InitializeManager(UIManager_UIManager, "UIManager");
-            InitializeManager(MapManager_MapManager, "MapManager");
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
@@ -131,6 +132,11 @@ namespace Cinderkeep.Gameplay
         public SoundManager GetSoundManager()
         {
             return SoundManager_SoundManager;
+        }
+
+        public MapManager GetMapManager()
+        {
+            return MapManager_MapManager;
         }
 
         private void RegisterSingleton()
