@@ -1,12 +1,14 @@
 ﻿using Cinderkeep.Gameplay;
 using UnityEngine;
-// 게임 시작 시 팀원들이 만든 컴포넌트를 서로 연결하는 얇은 연결 컴포넌트입니다.
-// 실제 기능은 각 전용 컴포넌트가 담당하고, 이 클래스는 시작 시점의 연결 순서만 관리합니다.
-
-// 메인 게임 루프 씬에서 팀원들이 만든 컴포넌트를 서로 연결하는 얇은 연결 컴포넌트입니다.
-// 실제 기능은 각 컴포넌트가 담당하고, 이 클래스는 시작 시점의 연결 순서만 관리합니다.
+// 메인 게임 루프 씬의 연결 순서를 관리하는 임시 루트 컴포넌트입니다.
+// 실제 연결 책임은 PlayerLoopConnector, ResourceLoopConnector, EnemyLoopConnector, GameFlowLoopConnector로 분리합니다.
 public sealed class CinderkeepGameLoopConnector : MonoBehaviour
 {
+    [Header("Loop Connectors")]
+    [SerializeField] private PlayerLoopConnector _playerLoopConnector;
+    [SerializeField] private ResourceLoopConnector _resourceLoopConnector;
+    [SerializeField] private GameFlowLoopConnector _gameFlowLoopConnector;
+
     [Header("Managers")]
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameDataManager _gameDataManager;
@@ -29,46 +31,34 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
 
     private void Start()
     {
-        ConnectPlayerHud();
-        ConnectResourceHud();
+        ConnectPlayerLoop();
+        ConnectResourceLoop();
         ConnectEnemies();
-        ConnectEnemySpawnPoints();
-        InitializeGameFlow();
+        ConnectGameFlowLoop();
     }
 
-    private void InitializeGameFlow()
+    private void ConnectPlayerLoop()
     {
-        if (_gameManager == null)
+        PlayerLoopConnector playerLoopConnector = GetPlayerLoopConnector();
+        if (playerLoopConnector == null)
         {
             return;
         }
 
-        _gameManager.StartNewGame();
+        playerLoopConnector.Initialize(_playerStatus, _playerHud);
+        playerLoopConnector.ConnectPlayerHud();
     }
 
-    private void ConnectPlayerHud()
+    private void ConnectResourceLoop()
     {
-        if (_playerHud == null)
+        ResourceLoopConnector resourceLoopConnector = GetResourceLoopConnector();
+        if (resourceLoopConnector == null)
         {
             return;
         }
 
-        _playerHud.SetPlayerStatus(_playerStatus);
-    }
-
-    private void ConnectResourceHud()
-    {
-        if (_resourceUi == null)
-        {
-            return;
-        }
-
-        if (_gameManager == null)
-        {
-            return;
-        }
-
-        _resourceUi.SetPlayerModel(_gameManager.PlayerModel);
+        resourceLoopConnector.Initialize(_gameManager, _resourceUi);
+        resourceLoopConnector.ConnectResourceHud();
     }
 
     private void ConnectEnemies()
@@ -91,21 +81,16 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
         _enemyLoopConnector.InitializeEnemies();
     }
 
-    private void ConnectEnemySpawnPoints()
+    private void ConnectGameFlowLoop()
     {
-        if (_gameManager == null)
+        GameFlowLoopConnector gameFlowLoopConnector = GetGameFlowLoopConnector();
+        if (gameFlowLoopConnector == null)
         {
             return;
         }
 
-        GameFlowController gameFlowController = _gameManager.GetGameFlowController();
-        if (gameFlowController == null)
-        {
-            return;
-        }
-
-        GameObjectManager gameObjectManager = GetGameObjectManager();
-        gameFlowController.InitializeEnemySpawnPoints(gameObjectManager, _enemyLoopConnector);
+        gameFlowLoopConnector.Initialize(_gameManager, GetGameObjectManager(), _enemyLoopConnector);
+        gameFlowLoopConnector.ConnectGameFlow();
     }
 
     private GameObjectManager GetGameObjectManager()
@@ -122,5 +107,56 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
 
         _gameObjectManager = _gameManager.GetGameObjectManager();
         return _gameObjectManager;
+    }
+
+    private PlayerLoopConnector GetPlayerLoopConnector()
+    {
+        if (_playerLoopConnector != null)
+        {
+            return _playerLoopConnector;
+        }
+
+        _playerLoopConnector = GetComponent<PlayerLoopConnector>();
+        if (_playerLoopConnector != null)
+        {
+            return _playerLoopConnector;
+        }
+
+        _playerLoopConnector = gameObject.AddComponent<PlayerLoopConnector>();
+        return _playerLoopConnector;
+    }
+
+    private ResourceLoopConnector GetResourceLoopConnector()
+    {
+        if (_resourceLoopConnector != null)
+        {
+            return _resourceLoopConnector;
+        }
+
+        _resourceLoopConnector = GetComponent<ResourceLoopConnector>();
+        if (_resourceLoopConnector != null)
+        {
+            return _resourceLoopConnector;
+        }
+
+        _resourceLoopConnector = gameObject.AddComponent<ResourceLoopConnector>();
+        return _resourceLoopConnector;
+    }
+
+    private GameFlowLoopConnector GetGameFlowLoopConnector()
+    {
+        if (_gameFlowLoopConnector != null)
+        {
+            return _gameFlowLoopConnector;
+        }
+
+        _gameFlowLoopConnector = GetComponent<GameFlowLoopConnector>();
+        if (_gameFlowLoopConnector != null)
+        {
+            return _gameFlowLoopConnector;
+        }
+
+        _gameFlowLoopConnector = gameObject.AddComponent<GameFlowLoopConnector>();
+        return _gameFlowLoopConnector;
     }
 }
