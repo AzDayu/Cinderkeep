@@ -17,6 +17,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private UIManager _uiManager;
         [SerializeField] private SoundManager _soundManager;
         [SerializeField] private MapManager _mapManager;
+        [SerializeField] private GameFlowController _gameFlowController;
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
@@ -80,6 +81,7 @@ namespace Cinderkeep.Gameplay
             // 4. BGM과 효과음 관리자 준비
             // 5. HUD, 인벤토리, 게임오버 UI 관리자 준비
             // 6. 저장이 필요한 Instance Model 기본값 준비
+            // 7. 3일 게임 루프 진행 컨트롤러 준비
             InitializeManager(_gameDataManager, "GameDataManager");
             InitializeManager(_gameObjectManager, "GameObjectManager");
             ConnectBuildingManager();
@@ -90,13 +92,22 @@ namespace Cinderkeep.Gameplay
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
+            ConnectGameFlowController();
+            InitializeGameFlowControllerIfExists();
             _isInitialized = true;
         }
 
         public void StartNewGame()
         {
             Initialize();
-            _gameRunModel.StartRun();
+            if (_gameFlowController != null)
+            {
+                _gameFlowController.StartFlow();
+            }
+            else
+            {
+                _gameRunModel.StartRun();
+            }
 
             if (_uiManager != null)
             {
@@ -112,6 +123,10 @@ namespace Cinderkeep.Gameplay
             }
 
             _gameRunModel.EndRun();
+            if (_gameFlowController != null)
+            {
+                _gameFlowController.StopFlowAsGameOver();
+            }
 
             if (_uiManager != null)
             {
@@ -149,6 +164,11 @@ namespace Cinderkeep.Gameplay
             return _mapManager;
         }
 
+        public GameFlowController GetGameFlowController()
+        {
+            return _gameFlowController;
+        }
+
         private void RegisterSingleton()
         {
             if (Inst == null)
@@ -184,6 +204,26 @@ namespace Cinderkeep.Gameplay
             }
 
             _buildingManager.Initialize();
+        }
+
+        private void ConnectGameFlowController()
+        {
+            if (_gameFlowController == null)
+            {
+                return;
+            }
+
+            _gameFlowController.SetGameManager(this);
+        }
+
+        private void InitializeGameFlowControllerIfExists()
+        {
+            if (_gameFlowController == null)
+            {
+                return;
+            }
+
+            _gameFlowController.Initialize();
         }
 
         private void InitializeManager<TManager>(TManager manager, string managerName)
