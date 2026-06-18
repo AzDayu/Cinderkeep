@@ -1,5 +1,6 @@
-using UnityEngine;
 using Cinderkeep.Gameplay;
+using System.Collections;
+using UnityEngine;
 
 public sealed class EnemyDetector : MonoBehaviour
 {
@@ -7,9 +8,11 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
+    private const float DetectionInterval = 0.2f;
 
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
 
+    private Coroutine _detectionRoutine;
     private float _detectorDistance;
 
     public Transform DetectedPlayer { get; private set; }
@@ -22,9 +25,14 @@ public sealed class EnemyDetector : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        DetectPlayer();
+        StartDetectionRoutine();
+    }
+
+    private void OnDisable()
+    {
+        StopDetectionRoutine();
     }
 
     public void Initialize(EnemyData enemyData)
@@ -44,6 +52,65 @@ public sealed class EnemyDetector : MonoBehaviour
             return;
         }
 
+        DetectPlayerWithoutViewAngle();
+    }
+
+    private void StartDetectionRoutine()
+    {
+        StopDetectionRoutine();
+        _detectionRoutine = StartCoroutine(DetectPlayerRoutine());
+    }
+
+    private void StopDetectionRoutine()
+    {
+        if (_detectionRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_detectionRoutine);
+        _detectionRoutine = null;
+    }
+
+    private IEnumerator DetectPlayerRoutine()
+    {
+        WaitForSeconds waitInterval = new WaitForSeconds(DetectionInterval);
+
+        while (true)
+        {
+            DetectPlayer();
+            yield return waitInterval;
+        }
+    }
+
+    private void DetectPlayer()
+    {
+        if (HasDetectedPlayer)
+        {
+            ClearPlayerIfOutOfRange();
+            return;
+        }
+
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectorDistance, _overlapColliders);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider targetCollider = _overlapColliders[i];
+            if (IsPlayerTarget(targetCollider) == false)
+            {
+                continue;
+            }
+
+            if (IsInViewAngle(targetCollider.transform))
+            {
+                DetectedPlayer = targetCollider.transform;
+                return;
+            }
+        }
+    }
+
+    private void DetectPlayerWithoutViewAngle()
+    {
         int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectorDistance, _overlapColliders);
 
         for (int i = 0; i < hitCount; i++)
@@ -60,28 +127,17 @@ public sealed class EnemyDetector : MonoBehaviour
         Debug.Log(gameObject.name + ": 피격되었지만 감지 범위 안에 플레이어가 없습니다.");
     }
 
-    private void DetectPlayer()
+    private void ClearPlayerIfOutOfRange()
     {
-        if (HasDetectedPlayer)
+        if (DetectedPlayer == null)
         {
             return;
         }
 
-        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _detectorDistance, _overlapColliders);
-
-        for (int i = 0; i < hitCount; i++)
+        float currentDistance = Vector3.Distance(transform.position, DetectedPlayer.position);
+        if (currentDistance > _detectorDistance)
         {
-            Collider targetCollider = _overlapColliders[i];
-            if (!IsPlayerTarget(targetCollider))
-            {
-                continue;
-            }
-
-            if (IsInViewAngle(targetCollider.transform))
-            {
-                DetectedPlayer = targetCollider.transform;
-                return;
-            }
+            DetectedPlayer = null;
         }
     }
 

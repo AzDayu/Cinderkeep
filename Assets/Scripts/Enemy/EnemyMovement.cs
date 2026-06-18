@@ -1,36 +1,172 @@
-using UnityEngine;
 using Cinderkeep.Gameplay;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
 
 public sealed class EnemyMovement : MonoBehaviour
 {
+    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
+    [SerializeField] private Transform Transform_CinderHeartTarget;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _stopDistance;
 
+    private const float PathUpdateInterval = 0.2f;
+
+    private NavMeshAgent _navMeshAgent;
+    private Coroutine _movementRoutine;
+    private bool _isInitialized;
+
+    private void OnEnable()
+    {
+        StartMovementRoutine();
+    }
+
+    private void OnDisable()
+    {
+        StopMovementRoutine();
+    }
+
     public void Initialize(EnemyData enemyData)
+    {
+        Initialize(enemyData, EnemyDetector_EnemyDetector);
+    }
+
+    public void Initialize(EnemyData enemyData, EnemyDetector enemyDetector)
     {
         if (enemyData == null)
         {
             return;
         }
 
+        ConnectComponents(enemyDetector);
         _moveSpeed = enemyData.MoveSpeed;
         _stopDistance = enemyData.StopDistance;
+        ApplyNavMeshAgentSettings();
+
+        _isInitialized = true;
+        StartMovementRoutine();
+    }
+
+    public void SetCinderHeartTarget(Transform cinderHeartTarget)
+    {
+        Transform_CinderHeartTarget = cinderHeartTarget;
     }
 
     public void MoveToTarget(Transform targetTransform)
     {
         if (targetTransform == null)
         {
+            StopMoving();
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, targetTransform.position);
-        if (distance <= _stopDistance)
+        if (CanStopAtTarget(targetTransform))
         {
+            StopMoving();
+            return;
+        }
+
+        MoveWithNavMeshOrTransform(targetTransform);
+    }
+
+    private void ConnectComponents(EnemyDetector enemyDetector)
+    {
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (enemyDetector != null)
+        {
+            EnemyDetector_EnemyDetector = enemyDetector;
+        }
+
+        if (EnemyDetector_EnemyDetector == null)
+        {
+            EnemyDetector_EnemyDetector = GetComponent<EnemyDetector>();
+        }
+    }
+
+    private void ApplyNavMeshAgentSettings()
+    {
+        if (_navMeshAgent == null)
+        {
+            return;
+        }
+
+        _navMeshAgent.speed = _moveSpeed;
+        _navMeshAgent.stoppingDistance = _stopDistance;
+    }
+
+    private void StartMovementRoutine()
+    {
+        if (_isInitialized == false)
+        {
+            return;
+        }
+
+        StopMovementRoutine();
+        _movementRoutine = StartCoroutine(MoveToPriorityTargetRoutine());
+    }
+
+    private void StopMovementRoutine()
+    {
+        if (_movementRoutine == null)
+        {
+            return;
+        }
+
+        StopCoroutine(_movementRoutine);
+        _movementRoutine = null;
+    }
+
+    private IEnumerator MoveToPriorityTargetRoutine()
+    {
+        WaitForSeconds waitInterval = new WaitForSeconds(PathUpdateInterval);
+
+        while (true)
+        {
+            MoveToPriorityTarget();
+            yield return waitInterval;
+        }
+    }
+
+    private void MoveToPriorityTarget()
+    {
+        Transform targetTransform = GetPriorityTarget();
+        MoveToTarget(targetTransform);
+    }
+
+    private Transform GetPriorityTarget()
+    {
+        if (EnemyDetector_EnemyDetector != null && EnemyDetector_EnemyDetector.HasDetectedPlayer)
+        {
+            return EnemyDetector_EnemyDetector.DetectedPlayer;
+        }
+
+        return Transform_CinderHeartTarget;
+    }
+
+    private bool CanStopAtTarget(Transform targetTransform)
+    {
+        float distance = Vector3.Distance(transform.position, targetTransform.position);
+        return distance <= _stopDistance;
+    }
+
+    private void MoveWithNavMeshOrTransform(Transform targetTransform)
+    {
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        {
+            _navMeshAgent.SetDestination(targetTransform.position);
             return;
         }
 
         Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetTransform.position, _moveSpeed * Time.deltaTime);
         transform.position = nextPosition;
+    }
+
+    private void StopMoving()
+    {
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh && _navMeshAgent.hasPath)
+        {
+            _navMeshAgent.ResetPath();
+        }
     }
 }
