@@ -785,6 +785,7 @@ public static class CinderkeepGameLoopSceneBuilder
         GameObject managerRoot = GetOrCreateRootObject("MainGame_Managers");
         GameManager gameManager = GetComponentInChildrenByName<GameManager>(managerRoot.transform, "GameManager");
         GameDataManager gameDataManager = GetComponentInChildrenByName<GameDataManager>(managerRoot.transform, "GameDataManager");
+        ResourceManager resourceManager = GetComponentInChildrenByName<ResourceManager>(managerRoot.transform, "ResourceManager");
         GameObjectManager gameObjectManager = GetComponentInChildrenByName<GameObjectManager>(managerRoot.transform, "GameObjectManager");
 
         if (gameManager == null)
@@ -797,10 +798,17 @@ public static class CinderkeepGameLoopSceneBuilder
             gameDataManager = EnsureComponent<GameDataManager>(GetOrCreateChild(managerRoot.transform, "GameDataManager").gameObject);
         }
 
+        if (resourceManager == null)
+        {
+            resourceManager = EnsureComponent<ResourceManager>(GetOrCreateChild(managerRoot.transform, "ResourceManager").gameObject);
+        }
+
         if (gameObjectManager == null)
         {
             gameObjectManager = EnsureComponent<GameObjectManager>(GetOrCreateChild(managerRoot.transform, "GameObjectManager").gameObject);
         }
+
+        SetObjectReference(gameManager, "_resourceManager", resourceManager);
 
         SetObjectReference(playerLoopConnector, "_playerStatus", player.GetComponent<PlayerStatus>());
         SetObjectReference(playerLoopConnector, "_playerHud", GetSceneComponentByName<PlayerHUD>("Panel_PlayerHUD"));
@@ -828,6 +836,7 @@ public static class CinderkeepGameLoopSceneBuilder
         GameObject managerRoot = GetOrCreateRootObject("MainGame_Managers");
         GameManager gameManager = EnsureComponent<GameManager>(GetOrCreateChild(managerRoot.transform, "GameManager").gameObject);
         GameDataManager gameDataManager = EnsureComponent<GameDataManager>(GetOrCreateChild(managerRoot.transform, "GameDataManager").gameObject);
+        ResourceManager resourceManager = EnsureComponent<ResourceManager>(GetOrCreateChild(managerRoot.transform, "ResourceManager").gameObject);
         GameObjectManager gameObjectManager = EnsureComponent<GameObjectManager>(GetOrCreateChild(managerRoot.transform, "GameObjectManager").gameObject);
         BuildingManager buildingManager = EnsureComponent<BuildingManager>(GetOrCreateChild(managerRoot.transform, "BuildingManager").gameObject);
         UIManager uiManager = EnsureComponent<UIManager>(GetOrCreateChild(managerRoot.transform, "UIManager").gameObject);
@@ -838,6 +847,7 @@ public static class CinderkeepGameLoopSceneBuilder
         SetObjectReference(gameObjectManager, "_objectRoot", objectRoot);
 
         SetObjectReference(gameManager, "_gameDataManager", gameDataManager);
+        SetObjectReference(gameManager, "_resourceManager", resourceManager);
         SetObjectReference(gameManager, "_gameObjectManager", gameObjectManager);
         SetObjectReference(gameManager, "_buildingManager", buildingManager);
         SetObjectReference(gameManager, "_uiManager", uiManager);

@@ -54,6 +54,7 @@ public static class CinderkeepHierarchyOrganizer
         {
             "GameManager",
             "GameDataManager",
+            "ResourceManager",
             "GameObjectManager",
             "UIManager",
             "SoundManager",
@@ -131,6 +132,7 @@ public static class CinderkeepHierarchyOrganizer
         GameObject cinderHeartObject = FindRootObject(scene, "CinderHeart");
         GameObject managerRoot = FindRootObject(scene, "MainGame_Managers");
 
+        ResourceManager resourceManager = EnsureManagerComponent<ResourceManager>(managerRoot, "ResourceManager");
         PlayerStatus playerStatus = GetComponentFromObject<PlayerStatus>(playerObject);
         PlayerHUD playerHud = GetComponentByName<PlayerHUD>(scene, "Panel_PlayerHUD");
         ResourceUI resourceUi = GetComponentByName<ResourceUI>(scene, "Panel_ResourceUI");
@@ -139,6 +141,8 @@ public static class CinderkeepHierarchyOrganizer
         GameObjectManager gameObjectManager = GetComponentInRootChild<GameObjectManager>(managerRoot, "GameObjectManager");
         Camera gameCamera = GetComponentInChildrenFromObject<Camera>(playerObject);
         Transform cinderHeartTarget = GetTransformFromObject(cinderHeartObject);
+
+        SetObjectReference(gameManager, "_resourceManager", resourceManager);
 
         SetObjectReference(playerLoopConnector, "_playerStatus", playerStatus);
         SetObjectReference(playerLoopConnector, "_playerHud", playerHud);
@@ -369,6 +373,18 @@ public static class CinderkeepHierarchyOrganizer
         }
 
         return child.GetComponent<TComponent>();
+    }
+
+    private static TComponent EnsureManagerComponent<TComponent>(GameObject managerRoot, string childName)
+        where TComponent : Component
+    {
+        if (managerRoot == null)
+        {
+            return null;
+        }
+
+        Transform child = GetOrCreateChild(managerRoot.transform, childName);
+        return EnsureComponent<TComponent>(child.gameObject);
     }
 
     private static Transform GetTransformFromObject(GameObject targetObject)

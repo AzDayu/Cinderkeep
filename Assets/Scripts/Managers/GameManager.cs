@@ -12,6 +12,7 @@ namespace Cinderkeep.Gameplay
     public sealed class GameManager : MonoBehaviour
     {
         [SerializeField] private GameDataManager _gameDataManager;
+        [SerializeField] private ResourceManager _resourceManager;
         [SerializeField] private GameObjectManager _gameObjectManager;
         [SerializeField] private BuildingManager _buildingManager;
         [SerializeField] private UIManager _uiManager;
@@ -76,13 +77,15 @@ namespace Cinderkeep.Gameplay
 
             // 생성 주기 순서:
             // 1. 3일 게임 루프에 필요한 Static Data 로드
-            // 2. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
-            // 3. 테스트맵과 이후 모듈형 맵 생성을 맡을 관리자 준비
-            // 4. BGM과 효과음 관리자 준비
-            // 5. HUD, 인벤토리, 게임오버 UI 관리자 준비
-            // 6. 저장이 필요한 Instance Model 기본값 준비
-            // 7. 3일 게임 루프 진행 컨트롤러 준비
+            // 2. 프리팹, 사운드, UI 프리팹 같은 에셋 로딩 관리자 준비
+            // 3. 몬스터, 자원, 건축물 생성을 맡을 관리자 준비
+            // 4. 테스트맵과 이후 모듈형 맵 생성을 맡을 관리자 준비
+            // 5. BGM과 효과음 관리자 준비
+            // 6. HUD, 인벤토리, 게임오버 UI 관리자 준비
+            // 7. 저장이 필요한 Instance Model 기본값 준비
+            // 8. 3일 게임 루프 진행 컨트롤러 준비
             InitializeManager(_gameDataManager, "GameDataManager");
+            InitializeManager(_resourceManager, "ResourceManager");
             InitializeManager(_gameObjectManager, "GameObjectManager");
             ConnectBuildingManager();
             InitializeBuildingManagerIfExists();
@@ -137,6 +140,11 @@ namespace Cinderkeep.Gameplay
         public GameDataManager GetGameDataManager()
         {
             return _gameDataManager;
+        }
+
+        public ResourceManager GetResourceManager()
+        {
+            return _resourceManager;
         }
 
         public GameObjectManager GetGameObjectManager()
