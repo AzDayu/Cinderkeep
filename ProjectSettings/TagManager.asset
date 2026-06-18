@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - CinderHeart
+  - Build
+  - Resource
   layers:
   - Default
   - TransparentFX
