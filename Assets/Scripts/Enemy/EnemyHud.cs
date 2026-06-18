@@ -1,78 +1,79 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyHud : MonoBehaviour
+// 몬스터 머리 위 체력 UI를 표시하는 컴포넌트입니다.
+// 체력 계산은 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
+public sealed class EnemyHud : MonoBehaviour
 {
-    [Header("Enemy Hud")]
-    [SerializeField] private GameObject Layout_HudRoot;
-    [SerializeField] private Image Image_HpFill; // ü�¹ٿ��� ä������ �̹���
+    [SerializeField] private GameObject GameObject_HudRoot;
+    [SerializeField] private Image Image_HpFill;
     [SerializeField] private Text Text_Hp;
-
-    private Camera _mainCamera;
+    [SerializeField] private Camera Camera_Target;
 
     private void Awake()
     {
-        ResolveComponents();
+        InitializeHudRoot();
     }
 
     private void LateUpdate()
     {
-        LookAtCamera();
+        RotateToCamera();
     }
 
-    private void ResolveComponents()
+    public void SetTargetCamera(Camera targetCamera)
     {
-        _mainCamera = Camera.main;
+        Camera_Target = targetCamera;
+    }
 
-        if (Layout_HudRoot == null)
+    public void RefreshHealth(float currentHealth, float maxHealth)
+    {
+        RefreshHpBar(currentHealth, maxHealth);
+        RefreshHpText(currentHealth, maxHealth);
+    }
+
+    private void InitializeHudRoot()
+    {
+        if (GameObject_HudRoot == null)
         {
-            Layout_HudRoot = gameObject;
+            GameObject_HudRoot = gameObject;
         }
     }
 
-    public void RefreshHp(int curHp, int maxHp)
+    private void RefreshHpBar(float currentHealth, float maxHealth)
     {
-        RefreshHpBar(curHp, maxHp);
-        RefreshHpText(curHp, maxHp);
-    }
-
-    private void RefreshHpBar(int curHp, int maxHp)
-    {
-        if(Image_HpFill == null)
+        if (Image_HpFill == null)
         {
             return;
         }
 
-        if(maxHp <= 0)
+        if (maxHealth <= 0f)
         {
             Image_HpFill.fillAmount = 0f;
             return;
         }
 
-        float hpRatio = (float)curHp / maxHp;
-        Image_HpFill.fillAmount = Mathf.Clamp01(hpRatio);
-
+        Image_HpFill.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
     }
 
-    private void RefreshHpText(int curHp, int maxHp)
+    private void RefreshHpText(float currentHealth, float maxHealth)
     {
         if (Text_Hp == null)
         {
             return;
         }
 
-        Text_Hp.text = $"{curHp} / {maxHp}";
+        int currentHealthText = Mathf.RoundToInt(currentHealth);
+        int maxHealthText = Mathf.RoundToInt(maxHealth);
+        Text_Hp.text = currentHealthText + " / " + maxHealthText;
     }
 
-    // World Space Canvas�� ī�޶� ������ �ٶ󺸰� �Ѵ�.
-    private void LookAtCamera()
+    private void RotateToCamera()
     {
-        if (_mainCamera == null)
+        if (Camera_Target == null)
         {
             return;
         }
 
-        transform.rotation = _mainCamera.transform.rotation;
+        transform.rotation = Camera_Target.transform.rotation;
     }
-
 }
