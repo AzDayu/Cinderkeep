@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.Serialization;
@@ -15,12 +15,9 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private int _mapRadius = 2;
 
         [Header("Chunk Prefabs")]
-        [FormerlySerializedAs("_centerChunkPrefab")]
-        [SerializeField] private GameObject GameObject_CenterChunkPrefab;
-        [FormerlySerializedAs("_normalChunkPrefabs")]
-        [SerializeField] private List<GameObject> GameObjects_NormalChunkPrefabs = new List<GameObject>();
-        [FormerlySerializedAs("_edgeChunkPrefabs")]
-        [SerializeField] private List<GameObject> GameObjects_EdgeChunkPrefabs = new List<GameObject>();
+        [SerializeField] private GameObject _centerChunkPrefab;
+        [SerializeField] private List<GameObject> _normalChunkPrefabs = new List<GameObject>();
+        [SerializeField] private List<GameObject> _edgeChunkPrefabs = new List<GameObject>();
 
         private Dictionary<Vector2Int, GameObject> _spawnedChunks = new Dictionary<Vector2Int, GameObject>();
         private bool _isInitialized;
@@ -99,19 +96,19 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (GameObject_CenterChunkPrefab == null)
+            if (_centerChunkPrefab == null)
             {
                 Debug.LogWarning("MapManager: Center chunk prefab is empty.");
                 return false;
             }
 
-            if (GameObjects_NormalChunkPrefabs == null || GameObjects_NormalChunkPrefabs.Count == 0)
+            if (_normalChunkPrefabs == null || _normalChunkPrefabs.Count == 0)
             {
                 Debug.LogWarning("MapManager: Normal chunk prefab list is empty.");
                 return false;
             }
 
-            if (GameObjects_EdgeChunkPrefabs == null || GameObjects_EdgeChunkPrefabs.Count == 0)
+            if (_edgeChunkPrefabs == null || _edgeChunkPrefabs.Count == 0)
             {
                 Debug.LogWarning("MapManager: Edge chunk prefab list is empty.");
                 return false;
@@ -124,15 +121,15 @@ namespace Cinderkeep.Gameplay
         {
             if (CheckIsCenterPosition(gridPosition) == true)
             {
-                return GameObject_CenterChunkPrefab;
+                return _centerChunkPrefab;
             }
 
             if (CheckIsEdgePosition(gridPosition) == true)
             {
-                return GetRandomPrefabCanBeNull(GameObjects_EdgeChunkPrefabs);
+                return GetRandomPrefabCanBeNull(_edgeChunkPrefabs);
             }
 
-            return GetRandomPrefabCanBeNull(GameObjects_NormalChunkPrefabs);
+            return GetRandomPrefabCanBeNull(_normalChunkPrefabs);
         }
 
         private bool CheckIsCenterPosition(Vector2Int gridPosition)

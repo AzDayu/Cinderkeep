@@ -1,12 +1,12 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 public sealed class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
-    [SerializeField] private Transform Transform_CinderHeartTarget;
+    [SerializeField] private EnemyDetector _enemyDetector;
+    [SerializeField] private Transform _cinderHeartTarget;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _stopDistance;
 
@@ -28,7 +28,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     public void Initialize(EnemyData enemyData)
     {
-        Initialize(enemyData, EnemyDetector_EnemyDetector);
+        Initialize(enemyData, _enemyDetector);
     }
 
     public void Initialize(EnemyData enemyData, EnemyDetector enemyDetector)
@@ -49,7 +49,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     public void SetCinderHeartTarget(Transform cinderHeartTarget)
     {
-        Transform_CinderHeartTarget = cinderHeartTarget;
+        _cinderHeartTarget = cinderHeartTarget;
     }
 
     public void MoveToTarget(Transform targetTransform)
@@ -75,12 +75,12 @@ public sealed class EnemyMovement : MonoBehaviour
 
         if (enemyDetector != null)
         {
-            EnemyDetector_EnemyDetector = enemyDetector;
+            _enemyDetector = enemyDetector;
         }
 
-        if (EnemyDetector_EnemyDetector == null)
+        if (_enemyDetector == null)
         {
-            EnemyDetector_EnemyDetector = GetComponent<EnemyDetector>();
+            _enemyDetector = GetComponent<EnemyDetector>();
         }
     }
 
@@ -136,12 +136,12 @@ public sealed class EnemyMovement : MonoBehaviour
 
     private Transform GetPriorityTarget()
     {
-        if (EnemyDetector_EnemyDetector != null && EnemyDetector_EnemyDetector.HasDetectedPlayer)
+        if (_enemyDetector != null && _enemyDetector.HasDetectedPlayer)
         {
-            return EnemyDetector_EnemyDetector.DetectedPlayer;
+            return _enemyDetector.DetectedPlayer;
         }
 
-        return Transform_CinderHeartTarget;
+        return _cinderHeartTarget;
     }
 
     private bool CanStopAtTarget(Transform targetTransform)

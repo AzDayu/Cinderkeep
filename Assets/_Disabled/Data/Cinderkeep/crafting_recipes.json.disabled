@@ -87,7 +87,7 @@
       ],
       "_requiredToolId": "",
       "_unlockDay": 3,
-      "_description": "Cold gauge mitigation hook. MVP does not run a cold gauge yet."
+      "_description": "Cold gauge mitigation hook. The current loop does not run a cold gauge yet."
     },
     {
       "_id": "equipment_ember_pack",
@@ -116,7 +116,7 @@
       ],
       "_requiredToolId": "",
       "_unlockDay": 1,
-      "_description": "Wood gathering hook. MVP map has dead trees, but no runtime wood node yet."
+      "_description": "Wood gathering hook. The current map has dead trees, but no runtime wood node yet."
     },
     {
       "_id": "tool_iron_pickaxe",

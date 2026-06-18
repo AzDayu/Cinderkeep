@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 using UnityEngine.Serialization;
 
@@ -9,10 +9,8 @@ namespace Cinderkeep.Gameplay
     // BGM과 효과음 AudioSource는 Inspector에서 연결하고, 다른 스크립트는 이 매니저 함수만 호출합니다.
     public sealed class SoundManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("_bgmAudioSource")]
-        [SerializeField] private AudioSource AudioSource_Bgm;
-        [FormerlySerializedAs("_effectAudioSource")]
-        [SerializeField] private AudioSource AudioSource_Effect;
+        [SerializeField] private AudioSource _bgmAudioSource;
+        [SerializeField] private AudioSource _effectAudioSource;
         [SerializeField] private float _defaultVolume = 0.3f;
 
         private bool _isInitialized;
@@ -38,48 +36,48 @@ namespace Cinderkeep.Gameplay
 
         public void PlayBgm(AudioClip bgmClip)
         {
-            if (AudioSource_Bgm == null || bgmClip == null)
+            if (_bgmAudioSource == null || bgmClip == null)
             {
                 return;
             }
 
-            AudioSource_Bgm.clip = bgmClip;
-            AudioSource_Bgm.loop = true;
-            AudioSource_Bgm.Play();
+            _bgmAudioSource.clip = bgmClip;
+            _bgmAudioSource.loop = true;
+            _bgmAudioSource.Play();
         }
 
         public void StopBgm()
         {
-            if (AudioSource_Bgm == null)
+            if (_bgmAudioSource == null)
             {
                 return;
             }
 
-            AudioSource_Bgm.Stop();
+            _bgmAudioSource.Stop();
         }
 
         public void PlayEffect(AudioClip effectClip)
         {
-            if (AudioSource_Effect == null || effectClip == null)
+            if (_effectAudioSource == null || effectClip == null)
             {
                 return;
             }
 
-            AudioSource_Effect.PlayOneShot(effectClip);
+            _effectAudioSource.PlayOneShot(effectClip);
         }
 
         public void SetVolume(float volume)
         {
             float safeVolume = Mathf.Clamp01(volume);
 
-            if (AudioSource_Bgm != null)
+            if (_bgmAudioSource != null)
             {
-                AudioSource_Bgm.volume = safeVolume;
+                _bgmAudioSource.volume = safeVolume;
             }
 
-            if (AudioSource_Effect != null)
+            if (_effectAudioSource != null)
             {
-                AudioSource_Effect.volume = safeVolume;
+                _effectAudioSource.volume = safeVolume;
             }
         }
     }

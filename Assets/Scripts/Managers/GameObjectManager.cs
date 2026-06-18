@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.Serialization;
@@ -10,8 +10,7 @@ namespace Cinderkeep.Gameplay
     // 생성된 오브젝트는 instanceId를 받아서, 이후 수정/제거 요청을 같은 id로 처리할 수 있습니다.
     public sealed class GameObjectManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("_objectRoot")]
-        [SerializeField] private Transform Transform_ObjectRoot;
+        [SerializeField] private Transform _objectRoot;
 
         private readonly Dictionary<int, GameObjectIdentity> _createdObjectById = new Dictionary<int, GameObjectIdentity>();
         private int _objectInstanceKeyGenerator;
@@ -47,7 +46,7 @@ namespace Cinderkeep.Gameplay
                 return null;
             }
 
-            GameObject createdObject = Instantiate(prefab, position, rotation, Transform_ObjectRoot);
+            GameObject createdObject = Instantiate(prefab, position, rotation, _objectRoot);
             RegisterGameObject(createdObject);
             return createdObject;
         }

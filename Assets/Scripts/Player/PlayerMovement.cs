@@ -21,7 +21,7 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         get
         {
-            bool isShiftPressed = Input.GetKey(KeyCode.LeftShift);
+            bool isShiftPressed = CinderkeepInput.IsKeyPressed(KeyCode.LeftShift);
             bool isMoving = _moveDirection.magnitude > 0.01f;
             bool canRun = CheckCanRun();
 
@@ -58,10 +58,9 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void ReadMoveInput()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        Vector2 moveInput = CinderkeepInput.GetMoveAxisRaw();
 
-        Vector3 moveDirection = transform.right * horizontal + transform.forward * vertical;
+        Vector3 moveDirection = transform.right * moveInput.x + transform.forward * moveInput.y;
         _moveDirection = moveDirection.normalized;
     }
 

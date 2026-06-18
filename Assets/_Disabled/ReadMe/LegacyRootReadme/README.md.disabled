@@ -224,7 +224,7 @@ Builds/
 유료 에셋은 반드시 아래 폴더에만 보관합니다.
 
 ```text
-Assets/ThirdParty_PriAsset/
+Assets/ThirdParty/PrivateAssets/
 ```
 
 이 폴더는 Git에 올라가지 않도록 ignore 처리합니다.

@@ -8,7 +8,7 @@ namespace OODong.Cinderkeep
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(CinderkeepInventory))]
     // 1인칭 플레이어 입력 허브.
-    // 현재 MVP에서는 이동/시야/상호작용/퀵슬롯 사용을 한 파일에 모아두었다.
+    // 현재 구현에서는 이동/시야/상호작용/퀵슬롯 사용을 한 파일에 모아두었다.
     // TODO(팀원 작업 요청): 작업량이 늘어나면 Movement, Interaction, QuickSlotUse 컴포넌트로 분리해 주세요.
     public sealed class CinderkeepFirstPersonPlayer : MonoBehaviour
     {

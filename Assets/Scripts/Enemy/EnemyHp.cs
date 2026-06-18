@@ -4,8 +4,8 @@
 // 실제 체력 원본은 EnemyStatus가 담당하고, 이 스크립트는 테스트 호출과 HUD 갱신을 돕습니다.
 public sealed class EnemyHp : MonoBehaviour
 {
-    [SerializeField] private EnemyStatus EnemyStatus_Target;
-    [SerializeField] private EnemyHud EnemyHud_EnemyHud;
+    [SerializeField] private EnemyStatus _targetEnemyStatus;
+    [SerializeField] private EnemyHud _enemyHud;
 
     private void Awake()
     {
@@ -21,34 +21,34 @@ public sealed class EnemyHp : MonoBehaviour
             return;
         }
 
-        if (EnemyStatus_Target == null)
+        if (_targetEnemyStatus == null)
         {
             Debug.LogWarning("EnemyHp: EnemyStatus가 연결되지 않았습니다.");
             return;
         }
 
-        EnemyStatus_Target.TakeDamage(damage);
+        _targetEnemyStatus.TakeDamage(damage);
         RefreshHud();
     }
 
     public int GetCurHp()
     {
-        if (EnemyStatus_Target == null)
+        if (_targetEnemyStatus == null)
         {
             return 0;
         }
 
-        return Mathf.RoundToInt(EnemyStatus_Target.GetCurrentHealth());
+        return Mathf.RoundToInt(_targetEnemyStatus.GetCurrentHealth());
     }
 
     public int GetMaxHp()
     {
-        if (EnemyStatus_Target == null)
+        if (_targetEnemyStatus == null)
         {
             return 0;
         }
 
-        return Mathf.RoundToInt(EnemyStatus_Target.GetMaxHealth());
+        return Mathf.RoundToInt(_targetEnemyStatus.GetMaxHealth());
     }
 
     public void PrintHp()
@@ -58,24 +58,24 @@ public sealed class EnemyHp : MonoBehaviour
 
     private void ConnectComponents()
     {
-        if (EnemyStatus_Target == null)
+        if (_targetEnemyStatus == null)
         {
-            EnemyStatus_Target = GetComponent<EnemyStatus>();
+            _targetEnemyStatus = GetComponent<EnemyStatus>();
         }
 
-        if (EnemyHud_EnemyHud == null)
+        if (_enemyHud == null)
         {
-            EnemyHud_EnemyHud = GetComponentInChildren<EnemyHud>();
+            _enemyHud = GetComponentInChildren<EnemyHud>();
         }
     }
 
     private void RefreshHud()
     {
-        if (EnemyHud_EnemyHud == null)
+        if (_enemyHud == null)
         {
             return;
         }
 
-        EnemyHud_EnemyHud.RefreshHealth(GetCurHp(), GetMaxHp());
+        _enemyHud.RefreshHealth(GetCurHp(), GetMaxHp());
     }
 }

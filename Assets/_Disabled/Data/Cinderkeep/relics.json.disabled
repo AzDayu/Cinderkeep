@@ -3,7 +3,7 @@
     {
       "_id": "ember_speed",
       "_displayName": "Ember Pace",
-      "_description": "Presentation MVP relic: movement pressure reward.",
+      "_description": "Presentation relic: movement pressure reward.",
       "_value": 1.1
     }
   ]

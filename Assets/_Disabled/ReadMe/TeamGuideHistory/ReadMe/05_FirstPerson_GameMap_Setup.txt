@@ -1,0 +1,45 @@
+Cinderkeep_Game 씬 작업 안내
+
+목적
+- Cinderkeep_Game 씬에서 플레이어 이동, HUD, CinderHeart, 자원, 적 루프를 바로 테스트할 수 있게 합니다.
+- 팀원은 자신의 담당 기능을 이 씬에서 붙이고 확인합니다.
+
+씬 위치
+- Assets/Scenes/MainGame/Cinderkeep_Game.unity
+
+주요 오브젝트
+- Player
+  플레이어 이동, 시점, 점프, 상태, 공격, 채집 입력이 붙는 오브젝트입니다.
+
+- CinderHeart
+  방어 목표이자 중앙 기준 오브젝트입니다.
+
+- MainGame_Managers
+  GameManager, GameDataManager, GameObjectManager, UIManager, SoundManager, MapManager가 들어갑니다.
+
+- Canvas_GameHUD
+  체력, 스태미나, 자원 UI가 들어가는 인게임 HUD Canvas입니다.
+
+- MainGame_MapGroup
+  현재 게임 맵과 CinderHeart 주변 환경이 들어갑니다.
+
+작업 기준
+- Player 관련 스크립트는 Assets/Scripts/Player에 둡니다.
+- Enemy 관련 스크립트는 Assets/Scripts/Enemy에 둡니다.
+- HUD와 메뉴 UI 스크립트는 Assets/Scripts/UI에 둡니다.
+- 자원, 건축, 전투 공용 로직은 Assets/Scripts/Systems에 둡니다.
+- 자동으로 씬 전체를 찾는 FindObject 계열 사용은 피합니다.
+- 필요한 연결은 Inspector, GetComponent, GetComponentInChildren, 또는 명시적인 Set 함수로 합니다.
+
+테스트 기준
+- 메인 메뉴에서 게임 시작 후 Cinderkeep_Game으로 들어가는지 확인합니다.
+- Player가 WASD, 마우스 회전, Space 점프, Shift 달리기를 수행하는지 확인합니다.
+- 1번 도끼, 2번 곡괭이, 3번 맨손 전환이 되는지 확인합니다.
+- 나무는 도끼로, 바위와 광석은 곡괭이로 채집되는지 확인합니다.
+- 적이 플레이어를 감지하고 공격하는지 확인합니다.
+- 플레이어 공격으로 적 체력이 감소하는지 확인합니다.
+
+주의
+- HUD 위치는 디자이너가 수동으로 맞출 수 있으므로 씬 빌더로 임의 초기화하지 않습니다.
+- 맵 구조가 크게 바뀌면 NavMesh Bake를 다시 해야 적 이동이 안정적입니다.
+- _Sandbox/4_0_CandidateAssets의 에셋은 후보 에셋입니다. 확정 에셋이 되면 정식 폴더로 옮깁니다.

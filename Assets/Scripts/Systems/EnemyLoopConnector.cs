@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
@@ -7,11 +7,11 @@ using UnityEngine;
 public sealed class EnemyLoopConnector : MonoBehaviour
 {
     [Header("Managers")]
-    [SerializeField] private GameDataManager GameDataManager_GameDataManager;
+    [SerializeField] private GameDataManager _gameDataManager;
 
     [Header("World")]
-    [SerializeField] private Transform Transform_CinderHeartTarget;
-    [SerializeField] private Camera Camera_GameCamera;
+    [SerializeField] private Transform _cinderHeartTarget;
+    [SerializeField] private Camera _gameCamera;
 
     [Header("Enemies")]
     [SerializeField] private EnemyRuntimeSet[] _enemyRuntimeSets;
@@ -22,9 +22,9 @@ public sealed class EnemyLoopConnector : MonoBehaviour
         Camera gameCamera,
         EnemyRuntimeSet[] enemyRuntimeSets)
     {
-        GameDataManager_GameDataManager = gameDataManager;
-        Transform_CinderHeartTarget = cinderHeartTarget;
-        Camera_GameCamera = gameCamera;
+        _gameDataManager = gameDataManager;
+        _cinderHeartTarget = cinderHeartTarget;
+        _gameCamera = gameCamera;
         _enemyRuntimeSets = enemyRuntimeSets;
     }
 
@@ -89,13 +89,13 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
     private EnemyData GetEnemyData(string enemyDataId)
     {
-        if (GameDataManager_GameDataManager == null)
+        if (_gameDataManager == null)
         {
             return null;
         }
 
-        GameDataManager_GameDataManager.Initialize();
-        return GameDataManager_GameDataManager.GetEnemy(enemyDataId);
+        _gameDataManager.Initialize();
+        return _gameDataManager.GetEnemy(enemyDataId);
     }
 
     private void InitializeEnemyComponents(
@@ -123,13 +123,13 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
         if (enemyMovement != null)
         {
-            enemyMovement.SetCinderHeartTarget(Transform_CinderHeartTarget);
+            enemyMovement.SetCinderHeartTarget(_cinderHeartTarget);
             enemyMovement.Initialize(enemyData, enemyDetector);
         }
 
         if (enemyHud != null)
         {
-            enemyHud.SetTargetCamera(Camera_GameCamera);
+            enemyHud.SetTargetCamera(_gameCamera);
         }
     }
 }
@@ -138,11 +138,11 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 public sealed class EnemyRuntimeSet
 {
     [SerializeField] private string _enemyDataId = "ice_zombie";
-    [SerializeField] private EnemyStatus EnemyStatus_EnemyStatus;
-    [SerializeField] private EnemyAttack EnemyAttack_EnemyAttack;
-    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
-    [SerializeField] private EnemyMovement EnemyMovement_EnemyMovement;
-    [SerializeField] private EnemyHud EnemyHud_EnemyHud;
+    [SerializeField] private EnemyStatus _enemyStatus;
+    [SerializeField] private EnemyAttack _enemyAttack;
+    [SerializeField] private EnemyDetector _enemyDetector;
+    [SerializeField] private EnemyMovement _enemyMovement;
+    [SerializeField] private EnemyHud _enemyHud;
 
     public string EnemyDataId
     {
@@ -151,26 +151,26 @@ public sealed class EnemyRuntimeSet
 
     public EnemyStatus EnemyStatus
     {
-        get { return EnemyStatus_EnemyStatus; }
+        get { return _enemyStatus; }
     }
 
     public EnemyAttack EnemyAttack
     {
-        get { return EnemyAttack_EnemyAttack; }
+        get { return _enemyAttack; }
     }
 
     public EnemyDetector EnemyDetector
     {
-        get { return EnemyDetector_EnemyDetector; }
+        get { return _enemyDetector; }
     }
 
     public EnemyMovement EnemyMovement
     {
-        get { return EnemyMovement_EnemyMovement; }
+        get { return _enemyMovement; }
     }
 
     public EnemyHud EnemyHud
     {
-        get { return EnemyHud_EnemyHud; }
+        get { return _enemyHud; }
     }
 }

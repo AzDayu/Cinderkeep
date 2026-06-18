@@ -5,10 +5,10 @@ using UnityEngine.UI;
 // 체력 계산은 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
 public sealed class EnemyHud : MonoBehaviour
 {
-    [SerializeField] private GameObject GameObject_HudRoot;
-    [SerializeField] private Image Image_HpFill;
-    [SerializeField] private Text Text_Hp;
-    [SerializeField] private Camera Camera_Target;
+    [SerializeField] private GameObject _hudRoot;
+    [SerializeField] private Image _hpFillImage;
+    [SerializeField] private Text _hpText;
+    [SerializeField] private Camera _targetCamera;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public sealed class EnemyHud : MonoBehaviour
 
     public void SetTargetCamera(Camera targetCamera)
     {
-        Camera_Target = targetCamera;
+        _targetCamera = targetCamera;
     }
 
     public void RefreshHealth(float currentHealth, float maxHealth)
@@ -33,47 +33,47 @@ public sealed class EnemyHud : MonoBehaviour
 
     private void InitializeHudRoot()
     {
-        if (GameObject_HudRoot == null)
+        if (_hudRoot == null)
         {
-            GameObject_HudRoot = gameObject;
+            _hudRoot = gameObject;
         }
     }
 
     private void RefreshHpBar(float currentHealth, float maxHealth)
     {
-        if (Image_HpFill == null)
+        if (_hpFillImage == null)
         {
             return;
         }
 
         if (maxHealth <= 0f)
         {
-            Image_HpFill.fillAmount = 0f;
+            _hpFillImage.fillAmount = 0f;
             return;
         }
 
-        Image_HpFill.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
+        _hpFillImage.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
     }
 
     private void RefreshHpText(float currentHealth, float maxHealth)
     {
-        if (Text_Hp == null)
+        if (_hpText == null)
         {
             return;
         }
 
         int currentHealthText = Mathf.RoundToInt(currentHealth);
         int maxHealthText = Mathf.RoundToInt(maxHealth);
-        Text_Hp.text = currentHealthText + " / " + maxHealthText;
+        _hpText.text = currentHealthText + " / " + maxHealthText;
     }
 
     private void RotateToCamera()
     {
-        if (Camera_Target == null)
+        if (_targetCamera == null)
         {
             return;
         }
 
-        transform.rotation = Camera_Target.transform.rotation;
+        transform.rotation = _targetCamera.transform.rotation;
     }
 }

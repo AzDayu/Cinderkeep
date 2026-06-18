@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using TMPro;
 using UnityEngine;
 
@@ -7,12 +7,12 @@ using UnityEngine;
 public sealed class ResourceUI : MonoBehaviour
 {
     [Header("Resource Text UI")]
-    [SerializeField] private TMP_Text Text_Wood;
-    [SerializeField] private TMP_Text Text_Stone;
-    [SerializeField] private TMP_Text Text_Iron;
-    [SerializeField] private TMP_Text Text_Gold;
-    [SerializeField] private TMP_Text Text_Mithril;
-    [SerializeField] private TMP_Text Text_Adamantium;
+    [SerializeField] private TMP_Text _woodText;
+    [SerializeField] private TMP_Text _stoneText;
+    [SerializeField] private TMP_Text _ironText;
+    [SerializeField] private TMP_Text _goldText;
+    [SerializeField] private TMP_Text _mithrilText;
+    [SerializeField] private TMP_Text _adamantiumText;
 
     private PlayerModel _playerModel;
 
@@ -78,12 +78,12 @@ public sealed class ResourceUI : MonoBehaviour
             return;
         }
 
-        RefreshText(Text_Wood, _playerModel.Wood);
-        RefreshText(Text_Stone, _playerModel.Stone);
-        RefreshText(Text_Iron, _playerModel.Iron);
-        RefreshText(Text_Gold, _playerModel.Gold);
-        RefreshText(Text_Mithril, _playerModel.Mithril);
-        RefreshText(Text_Adamantium, _playerModel.Adamantium);
+        RefreshText(_woodText, _playerModel.Wood);
+        RefreshText(_stoneText, _playerModel.Stone);
+        RefreshText(_ironText, _playerModel.Iron);
+        RefreshText(_goldText, _playerModel.Gold);
+        RefreshText(_mithrilText, _playerModel.Mithril);
+        RefreshText(_adamantiumText, _playerModel.Adamantium);
     }
 
     private void RefreshText(TMP_Text textResource, int amount)

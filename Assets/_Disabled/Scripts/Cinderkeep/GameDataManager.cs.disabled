@@ -136,7 +136,7 @@ namespace OODong.Cinderkeep
             where TCatalog : class
             where TData : GameDataBase
         {
-            // Resources.Load는 MVP용 동기 로딩이다.
+            // Resources.Load는 초기 구현용 동기 로딩이다.
             // TODO(팀원 작업 요청): 데이터 크기가 커지면 Addressables 비동기 로딩으로 ResourceManager에 이관해 주세요.
             TextAsset json = Resources.Load<TextAsset>(resourcePath);
             if (json == null || string.IsNullOrWhiteSpace(json.text))
@@ -269,7 +269,7 @@ namespace OODong.Cinderkeep
             {
                 Id = "ember_speed",
                 DisplayName = "Ember Pace",
-                Description = "Presentation MVP relic: movement pressure reward.",
+                Description = "Presentation relic: movement pressure reward.",
                 Value = 1.1f
             };
 
@@ -382,7 +382,7 @@ namespace OODong.Cinderkeep
             {
                 CreateDayRuleData(1, 180f, 120f, 15f, 180f, 6, 10, 4.4f, 32f, "plant", false, "First gather route: stone, ore, first chest, first wall."),
                 CreateDayRuleData(2, 180f, 120f, 15f, 180f, 8, 12, 3.7f, 36f, "wolf", false, "Upgrade route: second resource tier and turret repair rhythm."),
-                CreateDayRuleData(3, 180f, 120f, 15f, 180f, 10, 14, 3.1f, 40f, "wolf", false, "MVP finale prep: hold structures and stock arrows before the target-day boss."),
+                CreateDayRuleData(3, 180f, 120f, 15f, 180f, 10, 14, 3.1f, 40f, "wolf", false, "Finale prep: hold structures and stock arrows before the target-day boss."),
                 CreateDayRuleData(4, 210f, 150f, 15f, 210f, 12, 16, 2.8f, 46f, "wolf", false, "Extended map route: outer ruins and additional traps."),
                 CreateDayRuleData(5, 210f, 150f, 15f, 210f, 14, 18, 2.5f, 52f, "wolf", false, "Softlock check: higher tier tools but base resources still accessible."),
                 CreateDayRuleData(6, 240f, 180f, 15f, 240f, 16, 20, 2.2f, 58f, "wolf", false, "Long-run pressure: larger patrol radius and repair stress."),

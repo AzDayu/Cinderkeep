@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-// 4.00 게임 루프를 Cinderkeep_Game 씬에 연결하는 에디터 도구입니다.
+// Cinderkeep_Game 씬의 메인 게임 루프 연결을 갱신하는 에디터 도구입니다.
 // 팀원이 반복해서 수동 배치해야 하는 작업을 줄이기 위한 준비용 코드입니다.
-public static class Cinderkeep_4_0_GameSceneBuilder
+public static class CinderkeepGameLoopSceneBuilder
 {
     private const string ScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
     private const string SandboxRootPath = "Assets/_Sandbox/4_0_CandidateAssets";
@@ -16,7 +16,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
     private const string SandboxMaterialPath = SandboxRootPath + "/Materials";
     private const string SandboxModelPath = SandboxRootPath + "/Models";
     private const string SandboxReadMePath = SandboxRootPath + "/ReadMe";
-    private const string MaterialTemplatePath = "Assets/Materials/Generated/FlameHeart_Core.mat";
+    private const string MaterialTemplatePath = "Assets/Materials/Generated/CinderHeart_Core.mat";
     private const string CinderHeartTag = "CinderHeart";
     private const string PlayerTag = "Player";
     private const string EnemyTag = "Enemy";
@@ -35,7 +35,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
     private const string FireBowlPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
     private const string FontPath = "Assets/Fonts/NotoSansKR-Medium SDF3.asset";
 
-    [MenuItem("Cinderkeep/Main Game/Apply 4.00 GameLoop")]
+    [MenuItem("Cinderkeep/Main Game/Apply Game Loop")]
     public static void ApplyGameLoop()
     {
         EnsureProjectFolders();
@@ -68,10 +68,10 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log("Cinderkeep 4.00 game loop setup completed.");
+        Debug.Log("Cinderkeep game loop setup completed.");
     }
 
-    [MenuItem("Cinderkeep/Main Game/Fix 4.00 Visual Only")]
+    [MenuItem("Cinderkeep/Main Game/Fix Game Visuals")]
     public static void FixVisualOnly()
     {
         EnsureProjectFolders();
@@ -98,7 +98,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log("Cinderkeep 4.00 visual only setup completed.");
+        Debug.Log("Cinderkeep visual setup completed.");
     }
 
     private static void AdjustSceneLight()
@@ -458,13 +458,13 @@ public static class Cinderkeep_4_0_GameSceneBuilder
 
         SetupFirstPersonTools(cameraObject.transform, playerToolController);
 
-        SetObjectReference(playerJump, "PlayerMovement_PlayerMovement", playerMovement);
-        SetObjectReference(playerView, "Transform_PlayerBody", player.transform);
-        SetObjectReference(playerView, "Transform_Camera", cameraObject.transform);
-        SetObjectReference(playerInteraction, "Transform_Camera", cameraObject.transform);
+        SetObjectReference(playerJump, "_playerMovement", playerMovement);
+        SetObjectReference(playerView, "_playerBody", player.transform);
+        SetObjectReference(playerView, "_cameraTransform", cameraObject.transform);
+        SetObjectReference(playerInteraction, "_cameraTransform", cameraObject.transform);
         SetInt(playerInteraction, "_interactionLayerMask", -1);
-        SetObjectReference(playerAttack, "Transform_AttackOrigin", cameraObject.transform);
-        SetObjectReference(playerAttack, "FirstPersonToolView_FirstPersonToolView", cameraObject.GetComponentInChildren<FirstPersonToolView>());
+        SetObjectReference(playerAttack, "_attackOrigin", cameraObject.transform);
+        SetObjectReference(playerAttack, "_firstPersonToolView", cameraObject.GetComponentInChildren<FirstPersonToolView>());
 
         EditorUtility.SetDirty(playerMovement);
         EditorUtility.SetDirty(playerStatus);
@@ -496,10 +496,10 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         ClearChildren(handView.transform);
         AddCubeChild(handView.transform, "Cube_BlockHand", new Vector3(0f, -0.03f, 0.03f), new Vector3(0.3f, 0.3f, 0.62f), handMaterial);
 
-        SetObjectReference(toolView, "PlayerToolController_PlayerToolController", playerToolController);
-        SetObjectReference(toolView, "GameObject_AxeView", axeView);
-        SetObjectReference(toolView, "GameObject_PickaxeView", pickaxeView);
-        SetObjectReference(toolView, "GameObject_HandView", handView);
+        SetObjectReference(toolView, "_playerToolController", playerToolController);
+        SetObjectReference(toolView, "_axeView", axeView);
+        SetObjectReference(toolView, "_pickaxeView", pickaxeView);
+        SetObjectReference(toolView, "_handView", handView);
     }
 
     private static void SetupResources(Transform runtimeRoot, Material woodMaterial, Material stoneMaterial, Material ironMaterial, Material goldMaterial)
@@ -619,14 +619,14 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         SetRect(hpText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(150f, 22f), Vector2.zero);
 
         EnemyHud enemyHud = EnsureComponent<EnemyHud>(hudRoot);
-        SetObjectReference(enemyHud, "GameObject_HudRoot", hudRoot);
-        SetObjectReference(enemyHud, "Image_HpFill", hpFill);
-        SetObjectReference(enemyHud, "Text_Hp", hpText);
+        SetObjectReference(enemyHud, "_hudRoot", hudRoot);
+        SetObjectReference(enemyHud, "_hpFillImage", hpFill);
+        SetObjectReference(enemyHud, "_hpText", hpText);
 
-        SetObjectReference(enemyStatus, "EnemyHud_EnemyHud", enemyHud);
-        SetObjectReference(enemyBrain, "EnemyDetector_EnemyDetector", enemyDetector);
-        SetObjectReference(enemyBrain, "EnemyAttack_EnemyAttack", enemyAttack);
-        SetObjectReference(enemyMovement, "EnemyDetector_EnemyDetector", enemyDetector);
+        SetObjectReference(enemyStatus, "_enemyHud", enemyHud);
+        SetObjectReference(enemyBrain, "_enemyDetector", enemyDetector);
+        SetObjectReference(enemyBrain, "_enemyAttack", enemyAttack);
+        SetObjectReference(enemyMovement, "_enemyDetector", enemyDetector);
 
         return enemy;
     }
@@ -680,7 +680,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
             SetRect(guideText.rectTransform, new Vector2(0f, 0f), new Vector2(760f, 40f), new Vector2(24f, 24f));
         }
 
-        SetObjectReference(playerHud, "PlayerStatus_Target", player.GetComponent<PlayerStatus>());
+        SetObjectReference(playerHud, "_targetPlayerStatus", player.GetComponent<PlayerStatus>());
         EditorUtility.SetDirty(resourceUi);
         EditorUtility.SetDirty(cinderHeart);
         EditorUtility.SetDirty(enemy);
@@ -713,13 +713,13 @@ public static class Cinderkeep_4_0_GameSceneBuilder
             staminaLabel.color = Color.white;
         }
 
-        SetObjectReference(playerHud, "PlayerStatus_Target", playerStatus);
-        SetObjectReference(playerHud, "Slider_Health", healthSlider);
-        SetObjectReference(playerHud, "Text_HealthCurrent", healthCurrent);
-        SetObjectReference(playerHud, "Text_HealthMax", healthMax);
-        SetObjectReference(playerHud, "Slider_Stamina", staminaSlider);
-        SetObjectReference(playerHud, "Text_StaminaCurrent", staminaCurrent);
-        SetObjectReference(playerHud, "Text_StaminaMax", staminaMax);
+        SetObjectReference(playerHud, "_targetPlayerStatus", playerStatus);
+        SetObjectReference(playerHud, "_healthSlider", healthSlider);
+        SetObjectReference(playerHud, "_healthCurrentText", healthCurrent);
+        SetObjectReference(playerHud, "_healthMaxText", healthMax);
+        SetObjectReference(playerHud, "_staminaSlider", staminaSlider);
+        SetObjectReference(playerHud, "_staminaCurrentText", staminaCurrent);
+        SetObjectReference(playerHud, "_staminaMaxText", staminaMax);
         return playerHud;
     }
 
@@ -742,12 +742,12 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         TMP_Text mithrilText = CreateOrGetResourceRow(resourceUiObject.transform, "Mithril", "Mithril", 4, resourceUiAlreadyExists);
         TMP_Text adamantiumText = CreateOrGetResourceRow(resourceUiObject.transform, "Adamantium", "Adamantium", 5, resourceUiAlreadyExists);
 
-        SetObjectReference(resourceUi, "Text_Wood", woodText);
-        SetObjectReference(resourceUi, "Text_Stone", stoneText);
-        SetObjectReference(resourceUi, "Text_Iron", ironText);
-        SetObjectReference(resourceUi, "Text_Gold", goldText);
-        SetObjectReference(resourceUi, "Text_Mithril", mithrilText);
-        SetObjectReference(resourceUi, "Text_Adamantium", adamantiumText);
+        SetObjectReference(resourceUi, "_woodText", woodText);
+        SetObjectReference(resourceUi, "_stoneText", stoneText);
+        SetObjectReference(resourceUi, "_ironText", ironText);
+        SetObjectReference(resourceUi, "_goldText", goldText);
+        SetObjectReference(resourceUi, "_mithrilText", mithrilText);
+        SetObjectReference(resourceUi, "_adamantiumText", adamantiumText);
         return resourceUi;
     }
 
@@ -788,13 +788,13 @@ public static class Cinderkeep_4_0_GameSceneBuilder
             gameDataManager = EnsureComponent<GameDataManager>(GetOrCreateChild(managerRoot.transform, "GameDataManager").gameObject);
         }
 
-        SetObjectReference(connector, "GameManager_GameManager", gameManager);
-        SetObjectReference(connector, "GameDataManager_GameDataManager", gameDataManager);
-        SetObjectReference(connector, "PlayerStatus_PlayerStatus", player.GetComponent<PlayerStatus>());
-        SetObjectReference(connector, "PlayerHUD_PlayerHUD", GetSceneComponentByName<PlayerHUD>("Panel_PlayerHUD"));
-        SetObjectReference(connector, "ResourceUI_ResourceUI", GetSceneComponentByName<ResourceUI>("Panel_ResourceUI"));
-        SetObjectReference(connector, "Transform_CinderHeartTarget", cinderHeart.transform);
-        SetObjectReference(connector, "Camera_GameCamera", player.GetComponentInChildren<Camera>());
+        SetObjectReference(connector, "_gameManager", gameManager);
+        SetObjectReference(connector, "_gameDataManager", gameDataManager);
+        SetObjectReference(connector, "_playerStatus", player.GetComponent<PlayerStatus>());
+        SetObjectReference(connector, "_playerHud", GetSceneComponentByName<PlayerHUD>("Panel_PlayerHUD"));
+        SetObjectReference(connector, "_resourceUi", GetSceneComponentByName<ResourceUI>("Panel_ResourceUI"));
+        SetObjectReference(connector, "_cinderHeartTarget", cinderHeart.transform);
+        SetObjectReference(connector, "_gameCamera", player.GetComponentInChildren<Camera>());
         SetEnemyRuntimeSet(connector, enemy);
     }
 
@@ -810,19 +810,19 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         MapManager mapManager = EnsureComponent<MapManager>(GetOrCreateChild(managerRoot.transform, "MapManager").gameObject);
 
         Transform objectRoot = GetOrCreateChild(managerRoot.transform, "Transform_RuntimeObjectRoot");
-        SetObjectReference(gameObjectManager, "Transform_ObjectRoot", objectRoot);
+        SetObjectReference(gameObjectManager, "_objectRoot", objectRoot);
 
-        SetObjectReference(gameManager, "GameDataManager_GameDataManager", gameDataManager);
-        SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", gameObjectManager);
-        SetObjectReference(gameManager, "BuildingManager_BuildingManager", buildingManager);
-        SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
-        SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
-        SetObjectReference(gameManager, "MapManager_MapManager", mapManager);
+        SetObjectReference(gameManager, "_gameDataManager", gameDataManager);
+        SetObjectReference(gameManager, "_gameObjectManager", gameObjectManager);
+        SetObjectReference(gameManager, "_buildingManager", buildingManager);
+        SetObjectReference(gameManager, "_uiManager", uiManager);
+        SetObjectReference(gameManager, "_soundManager", soundManager);
+        SetObjectReference(gameManager, "_mapManager", mapManager);
 
-        SetObjectReference(buildingManager, "GameObjectManager_GameObjectManager", gameObjectManager);
+        SetObjectReference(buildingManager, "_gameObjectManager", gameObjectManager);
 
         GameObject hudRoot = GetSceneObjectByName("Panel_HUDRoot");
-        SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);
+        SetObjectReference(uiManager, "_hudRoot", hudRoot);
     }
 
     private static void SetEnemyRuntimeSet(CinderkeepGameLoopConnector connector, GameObject enemy)
@@ -833,11 +833,11 @@ public static class Cinderkeep_4_0_GameSceneBuilder
 
         SerializedProperty enemySet = enemySets.GetArrayElementAtIndex(0);
         enemySet.FindPropertyRelative("_enemyDataId").stringValue = "ice_zombie";
-        enemySet.FindPropertyRelative("EnemyStatus_EnemyStatus").objectReferenceValue = enemy.GetComponent<EnemyStatus>();
-        enemySet.FindPropertyRelative("EnemyAttack_EnemyAttack").objectReferenceValue = enemy.GetComponent<EnemyAttack>();
-        enemySet.FindPropertyRelative("EnemyDetector_EnemyDetector").objectReferenceValue = enemy.GetComponent<EnemyDetector>();
-        enemySet.FindPropertyRelative("EnemyMovement_EnemyMovement").objectReferenceValue = enemy.GetComponent<EnemyMovement>();
-        enemySet.FindPropertyRelative("EnemyHud_EnemyHud").objectReferenceValue = enemy.GetComponentInChildren<EnemyHud>();
+        enemySet.FindPropertyRelative("_enemyStatus").objectReferenceValue = enemy.GetComponent<EnemyStatus>();
+        enemySet.FindPropertyRelative("_enemyAttack").objectReferenceValue = enemy.GetComponent<EnemyAttack>();
+        enemySet.FindPropertyRelative("_enemyDetector").objectReferenceValue = enemy.GetComponent<EnemyDetector>();
+        enemySet.FindPropertyRelative("_enemyMovement").objectReferenceValue = enemy.GetComponent<EnemyMovement>();
+        enemySet.FindPropertyRelative("_enemyHud").objectReferenceValue = enemy.GetComponentInChildren<EnemyHud>();
 
         serializedObject.ApplyModifiedProperties();
         EditorUtility.SetDirty(connector);
@@ -1216,7 +1216,7 @@ public static class Cinderkeep_4_0_GameSceneBuilder
         GameObject rootObject = GetSceneObjectByName(rootObjectName);
         if (rootObject == null)
         {
-            Debug.LogWarning("4.00 material check skipped. Missing root object: " + rootObjectName);
+            Debug.LogWarning("Game loop material check skipped. Missing root object: " + rootObjectName);
             return;
         }
 
@@ -1227,24 +1227,24 @@ public static class Cinderkeep_4_0_GameSceneBuilder
             Material material = renderer.sharedMaterial;
             if (material == null)
             {
-                Debug.LogWarning("4.00 material missing: " + GetHierarchyPath(renderer.transform));
+                Debug.LogWarning("Game loop material missing: " + GetHierarchyPath(renderer.transform));
                 continue;
             }
 
             Shader shader = material.shader;
             if (shader == null)
             {
-                Debug.LogWarning("4.00 shader missing: " + GetHierarchyPath(renderer.transform) + " / " + material.name);
+                Debug.LogWarning("Game loop shader missing: " + GetHierarchyPath(renderer.transform) + " / " + material.name);
                 continue;
             }
 
             if (shader.name == "Hidden/InternalErrorShader")
             {
-                Debug.LogWarning("4.00 shader error: " + GetHierarchyPath(renderer.transform) + " / " + material.name);
+                Debug.LogWarning("Game loop shader error: " + GetHierarchyPath(renderer.transform) + " / " + material.name);
                 continue;
             }
 
-            Debug.Log("4.00 material ok: " + GetHierarchyPath(renderer.transform) + " / " + material.name + " / " + shader.name);
+            Debug.Log("Game loop material ok: " + GetHierarchyPath(renderer.transform) + " / " + material.name + " / " + shader.name);
         }
     }
 

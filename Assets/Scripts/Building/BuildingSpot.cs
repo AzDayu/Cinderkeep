@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class BuildingSpot : MonoBehaviour
 {
     [Header("Build Position")]
-    [SerializeField] private Transform Transform_SpawnAnchor;
+    [SerializeField] private Transform _spawnAnchor;
 
     private GameObject _currentBuildingObject;
     private bool _isEmpty = true;
@@ -33,13 +33,13 @@ public sealed class BuildingSpot : MonoBehaviour
     public Vector3 GetBuildPosition()
     {
         InitializeAnchor();
-        return Transform_SpawnAnchor.position;
+        return _spawnAnchor.position;
     }
 
     public Quaternion GetBuildRotation()
     {
         InitializeAnchor();
-        return Transform_SpawnAnchor.rotation;
+        return _spawnAnchor.rotation;
     }
 
     public void PlaceBuilding(GameObject buildingObject)
@@ -56,7 +56,7 @@ public sealed class BuildingSpot : MonoBehaviour
         }
 
         _currentBuildingObject = buildingObject;
-        _currentBuildingObject.transform.SetParent(Transform_SpawnAnchor);
+        _currentBuildingObject.transform.SetParent(_spawnAnchor);
         _isEmpty = false;
     }
 
@@ -68,11 +68,11 @@ public sealed class BuildingSpot : MonoBehaviour
 
     private void InitializeAnchor()
     {
-        if (Transform_SpawnAnchor != null)
+        if (_spawnAnchor != null)
         {
             return;
         }
 
-        Transform_SpawnAnchor = transform;
+        _spawnAnchor = transform;
     }
 }

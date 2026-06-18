@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // 몬스터가 어떤 대상을 공격할지 판단하는 컴포넌트입니다.
 // 이동은 EnemyMovement, 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
@@ -7,8 +7,8 @@ public sealed class EnemyBrain : MonoBehaviour
     private const string PlayerTag = "Player";
     private const string BuildTag = "Build";
 
-    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
-    [SerializeField] private EnemyAttack EnemyAttack_EnemyAttack;
+    [SerializeField] private EnemyDetector _enemyDetector;
+    [SerializeField] private EnemyAttack _enemyAttack;
 
     private Damageable _currentAttackTarget;
 
@@ -41,30 +41,30 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void ConnectComponents()
     {
-        if (EnemyDetector_EnemyDetector == null)
+        if (_enemyDetector == null)
         {
-            EnemyDetector_EnemyDetector = GetComponent<EnemyDetector>();
+            _enemyDetector = GetComponent<EnemyDetector>();
         }
 
-        if (EnemyAttack_EnemyAttack == null)
+        if (_enemyAttack == null)
         {
-            EnemyAttack_EnemyAttack = GetComponent<EnemyAttack>();
+            _enemyAttack = GetComponent<EnemyAttack>();
         }
     }
 
     private void UpdatePlayerTargetFromDetector()
     {
-        if (EnemyDetector_EnemyDetector == null)
+        if (_enemyDetector == null)
         {
             return;
         }
 
-        if (EnemyDetector_EnemyDetector.HasDetectedPlayer == false)
+        if (_enemyDetector.HasDetectedPlayer == false)
         {
             return;
         }
 
-        Damageable detectedPlayerDamageable = GetDamageableFromTransform(EnemyDetector_EnemyDetector.DetectedPlayer);
+        Damageable detectedPlayerDamageable = GetDamageableFromTransform(_enemyDetector.DetectedPlayer);
         if (detectedPlayerDamageable == null)
         {
             return;
@@ -85,12 +85,12 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        if (EnemyAttack_EnemyAttack == null)
+        if (_enemyAttack == null)
         {
             return;
         }
 
-        EnemyAttack_EnemyAttack.TryAttack(_currentAttackTarget);
+        _enemyAttack.TryAttack(_currentAttackTarget);
     }
 
     private bool CanAttackTarget(GameObject targetObject)

@@ -7,16 +7,16 @@ using UnityEngine.UI;
 
 namespace Cinderkeep.MainGame.Editor
 {
-    // Cinderkeep_Game 씬에 검증용 플레이어와 기본 UI를 배치하는 에디터 도구입니다.
+    // Cinderkeep_Game 씬에 기본 플레이어, CinderHeart, HUD 뼈대를 배치하는 에디터 도구입니다.
     // 씬 오브젝트 이름도 실제 게임 기준 네이밍으로 맞춰 팀원이 Hierarchy를 쉽게 읽게 합니다.
-    public static class Cinderkeep_GameMapSceneBuilder
+    public static class CinderkeepGameMapSceneBuilder
     {
         private const string _gameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
         private const string _materialFolderPath = "Assets/Materials/MainGame";
         private const string _iceMaterialPath = _materialFolderPath + "/GameMap_Ice.mat";
         private const string _wallMaterialPath = _materialFolderPath + "/GameMap_Wall.mat";
         private const string _markerMaterialPath = _materialFolderPath + "/GameMap_Marker.mat";
-        private const string _flameHeartMaterialPath = _materialFolderPath + "/FlameHeart_Red.mat";
+        private const string _cinderHeartMaterialPath = _materialFolderPath + "/CinderHeart_Red.mat";
         private const string _horizonMaterialPath = _materialFolderPath + "/GameMap_Horizon.mat";
         private const string _centerChunkPrefabPath = "Assets/Prefabs/Map/PF_Map_GameMapGroup.prefab";
         private const string _cinderHeartTagName = "CinderHeart";
@@ -30,7 +30,7 @@ namespace Cinderkeep.MainGame.Editor
             Material iceMaterial = GetOrCreateMaterial(_iceMaterialPath, new Color(0.48f, 0.68f, 0.8f, 1f));
             Material wallMaterial = GetOrCreateMaterial(_wallMaterialPath, new Color(0.12f, 0.17f, 0.22f, 1f));
             Material markerMaterial = GetOrCreateMaterial(_markerMaterialPath, new Color(1f, 0.47f, 0.12f, 1f));
-            Material flameHeartMaterial = GetOrCreateMaterial(_flameHeartMaterialPath, new Color(0.95f, 0.05f, 0.03f, 1f));
+            Material cinderHeartMaterial = GetOrCreateMaterial(_cinderHeartMaterialPath, new Color(0.95f, 0.05f, 0.03f, 1f));
             Material horizonMaterial = GetOrCreateMaterial(_horizonMaterialPath, new Color(0.22f, 0.32f, 0.42f, 1f));
 
             EnsureTag(_cinderHeartTagName);
@@ -38,16 +38,16 @@ namespace Cinderkeep.MainGame.Editor
             GameObject root = GetOrCreateRoot(scene, "MainGame_GameMapGroup");
             ClearChildren(root.transform);
 
-            CreateGameMap(root.transform, iceMaterial, wallMaterial, markerMaterial, flameHeartMaterial, horizonMaterial);
-            CreatePlayerTestRig(scene);
+            CreateGameMap(root.transform, iceMaterial, wallMaterial, markerMaterial, cinderHeartMaterial, horizonMaterial);
+            CreatePlayerRig(scene);
             CreateRuntimeManagers(scene);
-            CreateTestHud(scene);
+            CreateHud(scene);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
 
-            Debug.Log("Cinderkeep_GameMapSceneBuilder: first person test map was rebuilt.");
+            Debug.Log("CinderkeepGameMapSceneBuilder: first person game map was rebuilt.");
         }
 
         [MenuItem("Cinderkeep/Main Game/Normalize Main Game Hierarchy")]
@@ -65,7 +65,7 @@ namespace Cinderkeep.MainGame.Editor
             RenameCenterChunkPrefabObjects();
             AssetDatabase.SaveAssets();
 
-            Debug.Log("Cinderkeep_GameMapSceneBuilder: main game hierarchy was normalized.");
+            Debug.Log("CinderkeepGameMapSceneBuilder: main game hierarchy was normalized.");
         }
 
         private static void CreateGameMap(
@@ -73,7 +73,7 @@ namespace Cinderkeep.MainGame.Editor
             Material iceMaterial,
             Material wallMaterial,
             Material markerMaterial,
-            Material flameHeartMaterial,
+            Material cinderHeartMaterial,
             Material horizonMaterial)
         {
             GameObject ground = CreatePrimitive(
@@ -91,9 +91,9 @@ namespace Cinderkeep.MainGame.Editor
             CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_East", root, new Vector3(54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
             CreatePrimitive(PrimitiveType.Cube, "HorizonRidge_West", root, new Vector3(-54f, 0.45f, 0f), new Vector3(2f, 0.9f, 120f), horizonMaterial);
 
-            GameObject flameHeart = CreatePrimitive(PrimitiveType.Cube, "CinderHeart", root, new Vector3(0f, 1f, 0f), new Vector3(1.8f, 1.8f, 1.8f), flameHeartMaterial);
-            flameHeart.tag = _cinderHeartTagName;
-            CreatePointLight("Light_CinderHeart_Red", flameHeart.transform, new Vector3(0f, 1.2f, 0f), new Color(1f, 0.12f, 0.04f, 1f), 3f, 9f);
+            GameObject cinderHeart = CreatePrimitive(PrimitiveType.Cube, "CinderHeart", root, new Vector3(0f, 1f, 0f), new Vector3(1.8f, 1.8f, 1.8f), cinderHeartMaterial);
+            cinderHeart.tag = _cinderHeartTagName;
+            CreatePointLight("Light_CinderHeart_Red", cinderHeart.transform, new Vector3(0f, 1.2f, 0f), new Color(1f, 0.12f, 0.04f, 1f), 3f, 9f);
             CreateMarker(root, "Marker_PlayerSpawn", new Vector3(0f, 0f, -8f));
             CreateMarker(root, "Marker_EnemySpawn_North", new Vector3(0f, 0f, 15f));
             CreateMarker(root, "Marker_EnemySpawn_East", new Vector3(15f, 0f, 0f));
@@ -104,7 +104,7 @@ namespace Cinderkeep.MainGame.Editor
             CreatePrimitive(PrimitiveType.Cylinder, "BuildPoint_Turret_East", root, new Vector3(4f, 0.1f, 5f), new Vector3(1.2f, 0.2f, 1.2f), markerMaterial);
         }
 
-        private static void CreatePlayerTestRig(Scene scene)
+        private static void CreatePlayerRig(Scene scene)
         {
             GameObject player = GetOrCreateRoot(scene, "Player");
             ClearChildren(player.transform);
@@ -179,16 +179,16 @@ namespace Cinderkeep.MainGame.Editor
             bgmSource.playOnAwake = false;
             effectSource.playOnAwake = false;
 
-            SetObjectReference(gameManager, "GameDataManager_GameDataManager", dataManager);
-            SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", objectManager);
-            SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
-            SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
-            SetObjectReference(objectManager, "Transform_ObjectRoot", objectRoot.transform);
-            SetObjectReference(soundManager, "AudioSource_Bgm", bgmSource);
-            SetObjectReference(soundManager, "AudioSource_Effect", effectSource);
+            SetObjectReference(gameManager, "_gameDataManager", dataManager);
+            SetObjectReference(gameManager, "_gameObjectManager", objectManager);
+            SetObjectReference(gameManager, "_uiManager", uiManager);
+            SetObjectReference(gameManager, "_soundManager", soundManager);
+            SetObjectReference(objectManager, "_objectRoot", objectRoot.transform);
+            SetObjectReference(soundManager, "_bgmAudioSource", bgmSource);
+            SetObjectReference(soundManager, "_effectAudioSource", effectSource);
         }
 
-        private static void CreateTestHud(Scene scene)
+        private static void CreateHud(Scene scene)
         {
             GameObject canvasObject = GetOrCreateRoot(scene, "Canvas_GameHUD");
             ClearChildren(canvasObject.transform);
@@ -223,9 +223,9 @@ namespace Cinderkeep.MainGame.Editor
                 return;
             }
 
-            SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);
-            SetObjectReference(uiManager, "GameObject_InventoryRoot", inventoryRoot);
-            SetObjectReference(uiManager, "GameObject_GameOverPanel", gameOverRoot);
+            SetObjectReference(uiManager, "_hudRoot", hudRoot);
+            SetObjectReference(uiManager, "_inventoryRoot", inventoryRoot);
+            SetObjectReference(uiManager, "_gameOverPanel", gameOverRoot);
         }
 
         private static GameObject CreatePrimitive(PrimitiveType type, string objectName, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)
@@ -378,18 +378,12 @@ namespace Cinderkeep.MainGame.Editor
             RenameObjectInScene(scene, "Cube_HorizonRidge_South", "HorizonRidge_South");
             RenameObjectInScene(scene, "Cube_HorizonRidge_East", "HorizonRidge_East");
             RenameObjectInScene(scene, "Cube_HorizonRidge_West", "HorizonRidge_West");
-            RenameObjectInScene(scene, "Light_FlameHeart_Red", "Light_CinderHeart_Red");
-            RenameObjectInScene(scene, "Marker_PlayerSpawn_Test", "Marker_PlayerSpawn");
             RenameObjectInScene(scene, "Cube_ResourceNode_Stone_01", "ResourceNode_Stone_01");
             RenameObjectInScene(scene, "Cube_ResourceNode_Wood_01", "ResourceNode_Wood_01");
             RenameObjectInScene(scene, "Cylinder_BuildPoint_Wall_North", "BuildPoint_Wall_North");
             RenameObjectInScene(scene, "Cylinder_BuildPoint_Turret_East", "BuildPoint_Turret_East");
-            RenameObjectInScene(scene, "Capsule_PlayerVisual_Test", "PlayerVisual_DebugCapsule");
             RenameObjectInScene(scene, "GroundCheck", "Transform_GroundCheck");
             RenameObjectInScene(scene, "MainGame_RuntimeManagers", "MainGame_Managers");
-            RenameObjectInScene(scene, "Canvas_GameHUD_Test", "Canvas_GameHUD");
-            RenameObjectInScene(scene, "Panel_InventoryRoot_TestDisabled", "Panel_InventoryRoot_Disabled");
-            RenameObjectInScene(scene, "Panel_GameOver_TestDisabled", "Panel_GameOver_Disabled");
         }
 
         private static void RenameCenterChunkPrefabObjects()
@@ -397,7 +391,7 @@ namespace Cinderkeep.MainGame.Editor
             GameObject prefabRoot = PrefabUtility.LoadPrefabContents(_centerChunkPrefabPath);
             if (prefabRoot == null)
             {
-                Debug.LogWarning("Cinderkeep_GameMapSceneBuilder: center chunk prefab was not found.");
+                Debug.LogWarning("CinderkeepGameMapSceneBuilder: center chunk prefab was not found.");
                 return;
             }
 
@@ -406,8 +400,6 @@ namespace Cinderkeep.MainGame.Editor
             RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_South", "HorizonRidge_South");
             RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_East", "HorizonRidge_East");
             RenameObjectInChildren(prefabRoot.transform, "Cube_HorizonRidge_West", "HorizonRidge_West");
-            RenameObjectInChildren(prefabRoot.transform, "Light_FlameHeart_Red", "Light_CinderHeart_Red");
-            RenameObjectInChildren(prefabRoot.transform, "Marker_PlayerSpawn_Test", "Marker_PlayerSpawn");
             RenameObjectInChildren(prefabRoot.transform, "Cube_ResourceNode_Stone_01", "ResourceNode_Stone_01");
             RenameObjectInChildren(prefabRoot.transform, "Cube_ResourceNode_Wood_01", "ResourceNode_Wood_01");
             RenameObjectInChildren(prefabRoot.transform, "Cylinder_BuildPoint_Wall_North", "BuildPoint_Wall_North");
@@ -518,7 +510,7 @@ namespace Cinderkeep.MainGame.Editor
             SerializedProperty property = serializedObject.FindProperty(propertyName);
             if (property == null)
             {
-                Debug.LogWarning("Cinderkeep_GameMapSceneBuilder: property was not found. " + propertyName);
+                Debug.LogWarning("CinderkeepGameMapSceneBuilder: property was not found. " + propertyName);
                 return;
             }
 

@@ -123,7 +123,7 @@ namespace OODong.Cinderkeep.Tests
                 Time.timeScale = 1f;
 
                 Assert.GreaterOrEqual(elapsedGameSeconds, TargetGameSeconds - 0.5f, "게임 시간 3분까지 루프가 흘러야 합니다.");
-                Assert.AreNotEqual("Defeat", finalPhase, "3분 기본 검증 중 패배하면 MVP 초반 루프가 너무 빡빡합니다.");
+                Assert.AreNotEqual("Defeat", finalPhase, "3분 기본 검증 중 패배하면 초반 루프가 너무 빡빡합니다.");
             }
         }
 

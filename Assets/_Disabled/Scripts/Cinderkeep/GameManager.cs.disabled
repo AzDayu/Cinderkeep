@@ -107,7 +107,7 @@ namespace OODong.Cinderkeep
 
         public void GrantMorningReward()
         {
-            // MVP 발표용 보상: 밤을 버티면 화살/사과/FlameHeart 수리 제공.
+            // 발표용 보상: 밤을 버티면 화살/사과/FlameHeart 수리 제공.
             // TODO(팀원 작업 요청): 이후에는 relics.json 또는 reward table JSON으로 보상 후보를 데이터화해 주세요.
             if (CinderkeepInventory_Inventory == null)
             {

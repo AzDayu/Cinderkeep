@@ -246,7 +246,7 @@ Unity 씬 파일에서 특히 자주 문제가 됩니다.
 
 유료 에셋은 반드시 아래 폴더에만 넣습니다.
 
-Assets/ThirdParty_PriAsset
+Assets/ThirdParty/PrivateAssets
 
 이 폴더는 Git에 올라가지 않도록 설정합니다.
 

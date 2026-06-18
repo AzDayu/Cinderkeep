@@ -7,7 +7,7 @@ Planning Deck Summary
 - Night is for survival and base defense.
 - Chests create random growth and replay variety.
 - Better resources should be farther away and riskier.
-- The MVP should prove a fun short session first.
+- The build should prove a fun short session first.
 
 Current Cinderkeep_Workspace Preview
 - Cinderkeep_Green_Ground
@@ -31,7 +31,7 @@ Current Cinderkeep_Workspace Preview
 - Enemy_Red_Dot_BaseBreaker
   Enemy type that pressures the base core.
 
-Suggested MVP Systems
+Suggested Core Systems
 Implement these in Cinderkeep_Game, not directly in the workspace scene.
 
 - First-person movement and camera.
@@ -47,7 +47,7 @@ Implement these in Cinderkeep_Game, not directly in the workspace scene.
 - Restart loop.
 
 Suggested Team Split
-- Planning/PM: MVP priority, task board, decisions.
+- Planning/PM: feature priority, task board, decisions.
 - Player/HUD: movement, zoom, health, hunger, stamina.
 - Gathering/Crafting/Building: resources, tools, tier upgrades, structures.
 - Combat/AI/Boss: wave enemies, player chaser, base breaker, first boss.

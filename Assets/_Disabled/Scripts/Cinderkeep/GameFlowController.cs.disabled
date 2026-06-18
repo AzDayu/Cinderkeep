@@ -25,7 +25,7 @@ namespace OODong.Cinderkeep
 
         private void Start()
         {
-            // 현재 MVP 루프: Day 3분 -> Night 2분 -> MorningReward 15초 -> 3일차 BossNight 3분.
+            // 현재 게임 루프: Day 3분 -> Night 2분 -> MorningReward 15초 -> 3일차 BossNight 3분.
             // 발표 15분 루프를 목표로 하되, 수업 시연 편의를 위해 Inspector에서 시간을 줄여 테스트할 수 있다.
             ResolveReferences();
             GameManager_GameManager?.StartRun();

@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // 공격 판정용 Trigger Collider에 붙이는 컴포넌트입니다.
 // 충돌 감지만 담당하고, 실제 데미지 값은 DamageDealer가 관리합니다.
 public sealed class AttackHitbox : MonoBehaviour
 {
-    [SerializeField] private DamageDealer DamageDealer_DamageDealer;
+    [SerializeField] private DamageDealer _damageDealer;
 
     private void Awake()
     {
@@ -13,7 +13,7 @@ public sealed class AttackHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider otherCollider)
     {
-        if (DamageDealer_DamageDealer == null)
+        if (_damageDealer == null)
         {
             Debug.LogWarning(gameObject.name + ": DamageDealer가 연결되지 않았습니다.");
             return;
@@ -25,17 +25,17 @@ public sealed class AttackHitbox : MonoBehaviour
             return;
         }
 
-        DamageDealer_DamageDealer.ApplyDamage(damageable);
+        _damageDealer.ApplyDamage(damageable);
     }
 
     private void ConnectDamageDealerIfNeeded()
     {
-        if (DamageDealer_DamageDealer != null)
+        if (_damageDealer != null)
         {
             return;
         }
 
-        DamageDealer_DamageDealer = GetComponent<DamageDealer>();
+        _damageDealer = GetComponent<DamageDealer>();
     }
 
     private Damageable GetDamageableFromCollider(Collider otherCollider)

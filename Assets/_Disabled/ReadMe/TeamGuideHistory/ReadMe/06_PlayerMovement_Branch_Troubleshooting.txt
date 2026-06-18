@@ -10,8 +10,8 @@
 - Cinderkeep_Game 씬에 Player 오브젝트를 준비했습니다.
 - Player에는 CharacterController가 붙어 있습니다.
 - Player 하위에 Camera_FirstPerson을 준비했습니다.
-- 중앙에는 빨간 네모 Cube_FlameHeart를 두었습니다.
-- Cube_FlameHeart를 중심으로 넓은 테스트 평지와 Cube_HorizonRidge를 배치했습니다.
+- 중앙에는 CinderHeart 오브젝트를 두었습니다.
+- CinderHeart를 중심으로 넓은 평지와 HorizonRidge를 배치했습니다.
 - 본편 씬 안에는 팀원 실명 기반 오브젝트 이름을 쓰지 않습니다.
 
 플레이어 담당자 작업 위치
@@ -21,7 +21,7 @@
 - PlayerMovement.cs
 
 권장 작업 순서
-1. main에서 [8차] 이후 최신 내용을 받습니다.
+1. main에서 최신 내용을 받습니다.
 2. 개인 브랜치를 새로 만듭니다.
 3. Assets/Scripts/Player 안에 PlayerMovement.cs를 만듭니다.
 4. Cinderkeep_Game 씬의 Player 오브젝트에 PlayerMovement.cs를 붙입니다.

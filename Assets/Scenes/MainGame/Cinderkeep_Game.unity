@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -361,12 +361,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a61a94a3801576245bfe7fc7d7a9cec7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceUI
-  Text_Wood: {fileID: 1709384583}
-  Text_Stone: {fileID: 2365153}
-  Text_Iron: {fileID: 2006638750}
-  Text_Gold: {fileID: 1825594858}
-  Text_Mithril: {fileID: 577058407}
-  Text_Adamantium: {fileID: 389035421}
+  _woodText: {fileID: 1709384583}
+  _stoneText: {fileID: 2365153}
+  _ironText: {fileID: 2006638750}
+  _goldText: {fileID: 1825594858}
+  _mithrilText: {fileID: 577058407}
+  _adamantiumText: {fileID: 389035421}
 --- !u!224 &32302954
 RectTransform:
   m_ObjectHideFlags: 0
@@ -483,10 +483,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57ea9d036c485c49a39d6d67c30d9d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonToolView
-  PlayerToolController_PlayerToolController: {fileID: 356893302}
-  GameObject_AxeView: {fileID: 1948628595}
-  GameObject_PickaxeView: {fileID: 1799215033}
-  GameObject_HandView: {fileID: 439919297}
+  _playerToolController: {fileID: 356893302}
+  _axeView: {fileID: 1948628595}
+  _pickaxeView: {fileID: 1799215033}
+  _handView: {fileID: 439919297}
   _swingAngle: 22
   _swingSpeed: 18
 --- !u!1 &105654867
@@ -1348,8 +1348,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
   _mouseSensitivity: 260
-  Transform_PlayerBody: {fileID: 356893296}
-  Transform_Camera: {fileID: 432202584}
+  _playerBody: {fileID: 356893296}
+  _cameraTransform: {fileID: 432202584}
 --- !u!114 &356893298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1379,7 +1379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
   _jumpForce: 5
-  PlayerMovement_PlayerMovement: {fileID: 356893298}
+  _playerMovement: {fileID: 356893298}
 --- !u!114 &356893300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1462,8 +1462,8 @@ MonoBehaviour:
   _attackLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  Transform_AttackOrigin: {fileID: 432202584}
-  FirstPersonToolView_FirstPersonToolView: {fileID: 76818956}
+  _attackOrigin: {fileID: 432202584}
+  _firstPersonToolView: {fileID: 76818956}
 --- !u!114 &356893305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1481,7 +1481,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   _interactionKey: 101
-  Transform_Camera: {fileID: 432202584}
+  _cameraTransform: {fileID: 432202584}
 --- !u!1 &373348580
 GameObject:
   m_ObjectHideFlags: 0
@@ -1748,8 +1748,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6e26d4a4e433f4c8eb46dc97bae73f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
-  EnemyDetector_EnemyDetector: {fileID: 381350381}
-  EnemyAttack_EnemyAttack: {fileID: 381350382}
+  _enemyDetector: {fileID: 381350381}
+  _enemyAttack: {fileID: 381350382}
 --- !u!114 &381350379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1775,8 +1775,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f574aa547d328af4cbf708966b938649, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  EnemyDetector_EnemyDetector: {fileID: 381350381}
-  Transform_CinderHeartTarget: {fileID: 0}
+  _enemyDetector: {fileID: 381350381}
+  _cinderHeartTarget: {fileID: 0}
   _moveSpeed: 0
   _stopDistance: 0
 --- !u!114 &381350381
@@ -1820,7 +1820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatus
   _maxHealth: 1
   _deactivateOnDeath: 1
-  EnemyHud_EnemyHud: {fileID: 476487253}
+  _enemyHud: {fileID: 476487253}
 --- !u!1 &389035420
 GameObject:
   m_ObjectHideFlags: 0
@@ -2200,10 +2200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcfb53beeca09fc4baa950400f631c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHud
-  GameObject_HudRoot: {fileID: 476487252}
-  Image_HpFill: {fileID: 1757821198}
-  Text_Hp: {fileID: 1422654433}
-  Camera_Target: {fileID: 0}
+  _hudRoot: {fileID: 476487252}
+  _hpFillImage: {fileID: 1757821198}
+  _hpText: {fileID: 1422654433}
+  _targetCamera: {fileID: 0}
 --- !u!224 &476487254
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3115,13 +3115,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0af75869a36802429377eb312a248aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
-  PlayerStatus_Target: {fileID: 356893301}
-  Slider_Health: {fileID: 1455183289}
-  Text_HealthCurrent: {fileID: 354759937}
-  Text_HealthMax: {fileID: 788111152}
-  Slider_Stamina: {fileID: 105654871}
-  Text_StaminaCurrent: {fileID: 1885954521}
-  Text_StaminaMax: {fileID: 1113409566}
+  _targetPlayerStatus: {fileID: 356893301}
+  _healthSlider: {fileID: 1455183289}
+  _healthCurrentText: {fileID: 354759937}
+  _healthMaxText: {fileID: 788111152}
+  _staminaSlider: {fileID: 105654871}
+  _staminaCurrentText: {fileID: 1885954521}
+  _staminaMaxText: {fileID: 1113409566}
 --- !u!1001 &903542177
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6080,20 +6080,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0f643d3bb1221a48af623074030d003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CinderkeepGameLoopConnector
-  GameManager_GameManager: {fileID: 1095121553}
-  GameDataManager_GameDataManager: {fileID: 982475664}
-  PlayerStatus_PlayerStatus: {fileID: 356893301}
-  PlayerHUD_PlayerHUD: {fileID: 887005351}
-  ResourceUI_ResourceUI: {fileID: 32302953}
-  Transform_CinderHeartTarget: {fileID: 1417106094}
-  Camera_GameCamera: {fileID: 432202586}
+  _gameManager: {fileID: 1095121553}
+  _gameDataManager: {fileID: 982475664}
+  _playerStatus: {fileID: 356893301}
+  _playerHud: {fileID: 887005351}
+  _resourceUi: {fileID: 32302953}
+  _cinderHeartTarget: {fileID: 1417106094}
+  _gameCamera: {fileID: 432202586}
   _enemyRuntimeSets:
   - _enemyDataId: ice_zombie
-    EnemyStatus_EnemyStatus: {fileID: 381350383}
-    EnemyAttack_EnemyAttack: {fileID: 381350382}
-    EnemyDetector_EnemyDetector: {fileID: 381350381}
-    EnemyMovement_EnemyMovement: {fileID: 381350380}
-    EnemyHud_EnemyHud: {fileID: 476487253}
+    _enemyStatus: {fileID: 381350383}
+    _enemyAttack: {fileID: 381350382}
+    _enemyDetector: {fileID: 381350381}
+    _enemyMovement: {fileID: 381350380}
+    _enemyHud: {fileID: 476487253}
 --- !u!4 &1776252044
 Transform:
   m_ObjectHideFlags: 0

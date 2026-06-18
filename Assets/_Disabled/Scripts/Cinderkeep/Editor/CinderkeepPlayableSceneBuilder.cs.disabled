@@ -318,7 +318,7 @@ namespace OODong.Cinderkeep.Editor
 
         private static Renderer CreateFlameHeartCoreVisual(Transform parent, Material coreMaterial)
         {
-            // 프로젝트 내부에 heart/flame 전용 prefab이 없으므로 MVP용 절차형 FlameHeart를 만든다.
+            // 프로젝트 내부에 heart/flame 전용 prefab이 없으므로 초기 구현용 절차형 FlameHeart를 만든다.
             // TODO(팀원 작업 요청): 전용 하트/불꽃 VFX prefab이 준비되면 이 메서드 내부를 prefab Instantiate로 교체해 주세요.
             GameObject coreRoot = new GameObject("FlameHeart_Procedural_HeartFlame");
             coreRoot.transform.SetParent(parent, false);

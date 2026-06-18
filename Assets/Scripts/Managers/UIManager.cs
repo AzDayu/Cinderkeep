@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 using UnityEngine.Serialization;
 
@@ -9,12 +9,9 @@ namespace Cinderkeep.Gameplay
     // UI는 코드에서 새로 만들지 않고, 씬이나 프리팹에 준비된 오브젝트를 켜고 끄는 방식으로 관리합니다.
     public sealed class UIManager : MonoBehaviour, IGameInitializable
     {
-        [FormerlySerializedAs("_hudRoot")]
-        [SerializeField] private GameObject GameObject_HudRoot;
-        [FormerlySerializedAs("_inventoryRoot")]
-        [SerializeField] private GameObject GameObject_InventoryRoot;
-        [FormerlySerializedAs("_gameOverPanel")]
-        [SerializeField] private GameObject GameObject_GameOverPanel;
+        [SerializeField] private GameObject _hudRoot;
+        [SerializeField] private GameObject _inventoryRoot;
+        [SerializeField] private GameObject _gameOverPanel;
 
         private bool _isInitialized;
 
@@ -41,32 +38,32 @@ namespace Cinderkeep.Gameplay
 
         public void OpenHud()
         {
-            SetActive(GameObject_HudRoot, true);
+            SetActive(_hudRoot, true);
         }
 
         public void CloseHud()
         {
-            SetActive(GameObject_HudRoot, false);
+            SetActive(_hudRoot, false);
         }
 
         public void OpenInventory()
         {
-            SetActive(GameObject_InventoryRoot, true);
+            SetActive(_inventoryRoot, true);
         }
 
         public void CloseInventory()
         {
-            SetActive(GameObject_InventoryRoot, false);
+            SetActive(_inventoryRoot, false);
         }
 
         public void OpenGameOverPanel()
         {
-            SetActive(GameObject_GameOverPanel, true);
+            SetActive(_gameOverPanel, true);
         }
 
         public void CloseGameOverPanel()
         {
-            SetActive(GameObject_GameOverPanel, false);
+            SetActive(_gameOverPanel, false);
         }
 
         private void SetActive(GameObject targetObject, bool isActive)

@@ -1,0 +1,152 @@
+﻿Cinderkeep 폴더 정리
+
+팀원 공유용 문서입니다.
+새 파일을 추가할 때 "이 파일이 어느 역할인가?"를 먼저 보고 아래 위치에 넣어 주세요.
+
+Assets/
+|
+|-- Animations/                         <- 애니메이션 클립, Animator Controller를 넣으세요. Player, Enemy, UI처럼 주체별 하위 폴더가 필요해지면 그때 만드세요.
+|
+|-- Arts/                               <- 팀이 직접 만든 시각 에셋 원본에 가까운 파일을 넣으세요. 3D 모델, 2D 이미지, 텍스처 같은 파일이 여기에 들어갑니다.
+|   |-- 3DModels/                       <- FBX, OBJ 같은 3D 모델 파일을 넣으세요.
+|   |   |-- Equipment/                  <- 도끼, 곡괭이, 무기, 도구 같은 장비 모델을 넣으세요.
+|   |   `-- Harvestables/               <- 나무, 돌, 광석처럼 채집 가능한 자원 모델을 넣으세요.
+|   `-- MainMenu/                       <- 메인 메뉴 배경, 로고, 메뉴 장식 이미지를 넣으세요.
+|
+|-- Audio/                              <- 사운드 파일을 넣으세요.
+|   `-- BGM/                            <- 배경음악 파일을 넣으세요. 효과음이 늘어나면 SFX 폴더를 추가하세요.
+|
+|-- Data/                               <- JSON, CSV, ScriptableObject처럼 게임 규칙이나 기획 데이터를 넣으세요.
+|
+|-- Fonts/                              <- 폰트 파일, TextMesh Pro 폰트 에셋을 넣으세요.
+|
+|-- Materials/                          <- 여러 오브젝트가 공유하는 Unity Material을 넣으세요.
+|   |-- Generated/                      <- 에디터 도구나 임시 작업으로 생성된 머티리얼을 넣으세요. 확정되면 용도별 폴더로 옮기세요.
+|   `-- MainGame/                       <- 메인 게임 씬에서 쓰는 지형, 벽, 표식, 핵심 오브젝트 머티리얼을 넣으세요.
+|
+|-- Prefabs/                            <- 재사용할 GameObject 프리팹을 넣으세요. 씬에 반복 배치될 오브젝트는 여기에 두는 것이 기본입니다.
+|   |-- Building/                       <- 벽, 타워, 작업대, 방어 구조물 같은 건축 프리팹을 넣으세요.
+|   |-- Enemy/                          <- 일반 몬스터, 보스, 적 HUD가 포함된 적 프리팹을 넣으세요.
+|   |-- Equipment/                      <- 플레이어가 들거나 장착하는 장비 프리팹을 넣으세요.
+|   |-- Harvestables/                   <- 나무, 돌, 광석처럼 채집 대상이 되는 자원 프리팹을 넣으세요.
+|   |-- Map/                            <- 맵 청크, 지형 묶음, 배치용 맵 프리팹을 넣으세요.
+|   |   `-- NavMesh/                    <- NavMesh 베이크나 길찾기 검증에 필요한 맵 프리팹을 넣으세요.
+|   |-- Player/                         <- 플레이어 본체, 플레이어 시각 모델, 플레이어 관련 프리팹을 넣으세요.
+|   `-- UI/                             <- HUD, 버튼, 팝업, 패널 같은 UI 프리팹을 넣으세요.
+|
+|-- Resources/                          <- 코드에서 Resources.Load로 직접 불러야 하는 파일만 넣으세요. 일반 보관용으로 쓰지 마세요.
+|   `-- Cinderkeep/                     <- Cinderkeep 런타임 로드 전용 리소스를 넣으세요.
+|       `-- data/                       <- Resources.Load 대상 JSON, 데이터 파일을 넣으세요.
+|
+|-- Scenes/                             <- Unity 씬 파일을 넣으세요.
+|   `-- MainGame/                       <- 실제 게임 플레이 씬을 넣으세요.
+|
+|-- Scripts/                            <- 공식 C# 스크립트를 넣으세요. 오브젝트 역할 기준으로 나눕니다.
+|   |-- Building/                       <- 건축 지점, 건축물, 설치 가능 여부 같은 건축 관련 컴포넌트를 넣으세요.
+|   |-- CinderHeart/                    <- CinderHeart 전용 체력, 피격, 상태 표시 컴포넌트를 넣으세요.
+|   |-- Data/                           <- EnemyData, ItemData, RecipeData처럼 변하지 않는 기획 데이터 구조를 넣으세요.
+|   |-- Editor/                         <- 씬 자동 생성, 테스트맵 생성처럼 Unity Editor에서만 쓰는 도구를 넣으세요.
+|   |-- Enemy/                          <- EnemyMovement, EnemyAttack, EnemyStatus처럼 적 오브젝트에 붙는 컴포넌트를 넣으세요.
+|   |-- Interfaces/                     <- IDamageable, IInteractable처럼 여러 스크립트가 공유하는 인터페이스를 넣으세요.
+|   |-- Managers/                       <- GameManager, UIManager, SoundManager처럼 게임 전체 흐름이나 공통 관리를 맡는 스크립트를 넣으세요.
+|   |-- Models/                         <- PlayerModel, InventoryModel처럼 플레이 중 변하고 저장이 필요한 데이터를 넣으세요.
+|   |-- Player/                         <- PlayerMovement, PlayerView, PlayerAttack처럼 Player 오브젝트에 직접 붙는 컴포넌트를 넣으세요.
+|   |-- Systems/                        <- 채집, 제작, 건축, 전투, 입력 보조처럼 기능 단위 시스템을 넣으세요.
+|   |   `-- Combat/                     <- AttackHitbox, Damageable처럼 공격 판정과 데미지 처리 공통 로직을 넣으세요.
+|   |-- UI/                             <- HUD, ResourceUI, MainMenu처럼 UI 오브젝트에 붙는 스크립트를 넣으세요.
+|   |   `-- Editor/                     <- UI 자동 배치, UI 점검 같은 에디터 전용 UI 도구를 넣으세요.
+|   `-- Utils/                          <- MonoBehaviour가 아닌 순수 계산, 변환, 공용 헬퍼를 넣으세요.
+|
+|-- Settings/                           <- Unity 기능별 설정 에셋을 넣으세요.
+|   `-- InputSystem/                    <- Input System 설정 파일을 넣으세요.
+|
+|-- Tests/                              <- Unity Test Runner 테스트 코드를 넣으세요.
+|   |-- EditMode/                       <- Unity 에디터 상태에서 빠르게 검증하는 테스트를 넣으세요.
+|   `-- PlayMode/                       <- 실제 플레이 모드에서 동작을 검증하는 테스트를 넣으세요.
+|
+|-- TextMesh Pro/                       <- TextMesh Pro가 생성한 기본 리소스를 유지하세요. 팀원이 임의로 정리하지 마세요.
+|   |-- Fonts/                          <- TMP 관련 폰트 리소스가 들어갑니다.
+|   |-- Resources/                      <- TMP가 런타임에서 참조하는 기본 리소스가 들어갑니다.
+|   |   |-- Fonts & Materials/           <- TMP 폰트와 머티리얼이 들어갑니다.
+|   |   |-- Sprite Assets/               <- TMP 스프라이트 에셋이 들어갑니다.
+|   |   `-- Style Sheets/               <- TMP 스타일시트가 들어갑니다.
+|   |-- Shaders/                        <- TMP 셰이더가 들어갑니다.
+|   `-- Sprites/                        <- TMP 스프라이트 리소스가 들어갑니다.
+|
+|-- ThirdParty/                         <- 외부 에셋, 플러그인, 에셋스토어 파일을 넣으세요. 루트에 별도 외부 에셋 폴더를 만들지 마세요.
+|   |-- AssetStore/                     <- 에셋스토어에서 받은 에셋을 넣으세요.
+|   |   |-- Free/                       <- Git에 올려도 되는 무료 외부 에셋만 넣으세요.
+|   |   |   |-- BrokenVector/             <- BrokenVector 무료 에셋을 넣으세요.
+|   |   |   |-- CinderkeepExternalAssets/  <- Cinderkeep에서 쓰는 무료 외부 에셋을 넣으세요.
+|   |   |   `-- HQP_STUDIOS/             <- HQP_STUDIOS 무료 에셋을 넣으세요.
+|   |   `-- Paid/                       <- 유료 에셋을 넣으세요. 이 폴더는 Git에 올리지 마세요.
+|   |       `-- HueFolders/             <- HueFolders 유료 에셋을 넣으세요. Git에 올리지 마세요.
+|   |-- Plugins/                        <- 팀이 공유하기로 한 외부 플러그인 코드를 넣으세요.
+|   `-- PrivateAssets/                  <- 개인 또는 팀 내부 공유 에셋을 넣으세요. 이 폴더는 Git에 올리지 마세요.
+|
+|-- UI/                                 <- UI 전용 이미지, 스프라이트, 스타일 에셋을 넣으세요.
+|   `-- Images/                         <- UI에 쓰는 이미지 파일을 넣으세요.
+|       |-- HUD/                        <- 체력바, 자원 표시, 게임 HUD 이미지를 넣으세요.
+|       `-- Lobby/                      <- 로비와 메인 메뉴 UI 이미지를 넣으세요.
+|
+|-- _Disabled/                          <- 폐기했지만 당장 삭제하지 않을 파일을 넣으세요. 활성 게임에서 쓰는 파일은 넣지 마세요.
+|   |-- Audio/                          <- 비활성화한 사운드 파일을 보관하세요.
+|   |-- Data/                           <- 비활성화한 데이터 파일을 보관하세요.
+|   |   |-- Cinderkeep/                  <- 예전 Cinderkeep 데이터 파일을 보관하세요.
+|   |   `-- JsonConverter/              <- 예전 JSON 변환 관련 파일을 보관하세요.
+|   |-- Images/                         <- 비활성화한 이미지 파일을 보관하세요.
+|   |   `-- MainHubLegacy/              <- 예전 MainHub 이미지 파일을 보관하세요.
+|   |-- Prefabs/                        <- 비활성화한 프리팹을 보관하세요.
+|   |   `-- UI/                         <- 비활성화한 UI 프리팹을 보관하세요.
+|   |-- ReadMe/                         <- 예전 문서와 기록을 보관하세요.
+|   |   |-- LegacyRootReadme/            <- 예전 루트 README 문서를 보관하세요.
+|   |   `-- TeamGuideHistory/           <- 예전 팀 가이드 기록을 보관하세요.
+|   |-- Recovery/                       <- Unity 복구 파일이나 임시 구조 파일을 보관하세요.
+|   |-- Scenes/                         <- 비활성화한 씬을 보관하세요.
+|   |   `-- MainHubLegacy/              <- 예전 MainHub 씬을 보관하세요.
+|   |-- Scripts/                        <- 비활성화한 스크립트를 보관하세요. C# 파일은 .cs.disabled로 끝나야 합니다.
+|   |   |-- Cinderkeep/                  <- 예전 Cinderkeep 스크립트를 보관하세요.
+|   |   |-- MainHub/                     <- 예전 MainHub 스크립트를 보관하세요.
+|   |   |-- MainHubLegacy/               <- MainHub legacy 스크립트를 보관하세요.
+|   |   `-- OODong/                     <- OODong 관련 예전 스크립트를 보관하세요.
+|   |-- Tests/                          <- 비활성화한 테스트를 보관하세요.
+|   |   `-- LegacyPlayModeTests/        <- 예전 PlayMode 테스트를 보관하세요.
+|   `-- TutorialInfo/                   <- Unity 튜토리얼 정보 파일을 보관하세요.
+|       `-- UnityTutorialInfo/          <- Unity 튜토리얼 기본 파일을 보관하세요.
+|
+|-- _Sandbox/                           <- 실험 중인 파일을 넣으세요. 확정된 파일은 공식 폴더로 옮기세요.
+|   |-- 4_0_CandidateAssets/            <- 현재 검토 중인 후보 에셋을 넣으세요. 확정되면 Prefabs, Arts, Materials로 옮기세요.
+|   |   |-- Materials/                  <- 후보 머티리얼을 넣으세요.
+|   |   |-- Models/                     <- 후보 모델을 넣으세요.
+|   |   |-- Prefabs/                    <- 후보 프리팹을 넣으세요.
+|   |   `-- ReadMe/                     <- 후보 에셋 설명 문서를 넣으세요.
+|   |-- Prefabs/                        <- 실험용 프리팹을 넣으세요.
+|   |-- Scenes/                         <- 실험용 씬을 넣으세요.
+|   `-- Scripts/                        <- 실험용 스크립트를 넣으세요.
+|
+`-- _TeamGuide/                         <- 팀원이 같이 보는 규칙 문서를 넣으세요.
+    `-- ReadMe/                         <- 팀 공유용 상세 README 문서를 넣으세요.
+
+
+폴더 생성 기준
+
+1. 스크립트가 1~2개뿐인 작은 기능이면 전용 하위 폴더를 만들지 말고 기존 폴더 바로 아래에 둡니다.
+   예: 간단한 점수 계산, 간단한 낮밤 전환, 단일 보조 컴포넌트
+
+2. 스크립트가 3개 이상이고 서로 유기적으로 얽혀 있으면 전용 폴더를 만들어 격리합니다.
+   예: Combat, Inventory, Crafting, Building, Enemy, Player
+
+3. Controller는 장면 순서 지휘와 큐 관리만 담당합니다.
+   많은 참조를 Controller 하나에 몰지 말고, 각 오브젝트가 자기 역할 컴포넌트를 직접 가지게 합니다.
+
+4. UI는 런타임에서 new GameObject로 만들지 않습니다.
+   미리 만든 씬 오브젝트나 Prefab을 연결해서 사용합니다.
+
+5. Resources 폴더는 일반 보관소가 아닙니다.
+   코드에서 Resources.Load가 필요한 파일만 넣습니다.
+
+6. 외부 에셋은 Assets/ThirdParty 아래에만 넣습니다.
+   유료 에셋과 개인 공유 에셋은 Git에 올리지 않습니다.
+
+7. _Sandbox에 있는 파일은 임시 상태입니다.
+   실제 게임에 연결하기 전에 공식 폴더로 승격하거나, 폐기할 파일은 _Disabled로 옮깁니다.

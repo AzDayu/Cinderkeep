@@ -17,7 +17,7 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(_buildKey))
+        if (CinderkeepInput.WasKeyPressedThisFrame(_buildKey))
         {
             SpawnBuilding();
         }

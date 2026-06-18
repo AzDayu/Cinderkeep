@@ -1,0 +1,81 @@
+Cinderkeep Assets Foldering
+
+Assets/
+│
+├── _Disabled/                 <- 비활성화한 파일 보관소. 활성 게임에서는 쓰지 않음
+├── _Sandbox/                  <- 임시 실험, 후보 씬, 후보 프리팹, 임시 스크립트
+├── _TeamGuide/                <- 팀 규칙, 폴더링, Git, 에셋 관리 가이드 문서
+│
+├── Animations/                <- 캐릭터, 몬스터, UI 애니메이션 클립과 Animator
+├── Arts/                      <- 팀 제작 3D 모델, 2D 이미지, 텍스처 등 원본에 가까운 시각 에셋
+├── Audio/                     <- BGM, SFX 등 사운드 파일
+├── Data/                      <- JSON, CSV, ScriptableObject 등 게임 데이터 파일
+├── Fonts/                     <- 폰트, TMP 폰트 에셋
+├── Materials/                 <- 공용 Unity Material 파일
+├── Resources/                 <- Resources.Load로 직접 불러야 하는 파일만 배치
+├── Settings/                  <- Unity 기능별 설정 에셋
+├── Tests/                     <- Unity Test Runner 테스트
+│   ├── EditMode/              <- 에디터 모드 테스트
+│   └── PlayMode/              <- 플레이 모드 테스트
+│
+├── TextMesh Pro/              <- TextMesh Pro 기본 리소스
+│
+├── Prefabs/                   <- 재사용 가능한 GameObject 프리팹
+│   ├── Building/              <- 벽, 타워, 구조물 등 건축 프리팹
+│   ├── Enemy/                 <- 몬스터, 보스 관련 프리팹
+│   ├── Equipment/             <- 도끼, 곡괭이 등 장비 프리팹
+│   ├── Harvestables/          <- 나무, 돌, 광석 등 채집 자원 프리팹
+│   ├── Map/                   <- 맵 조각, 지형, 배치용 프리팹
+│   ├── Player/                <- 플레이어 관련 프리팹
+│   └── UI/                    <- HUD, 버튼, 팝업 등 UI 프리팹
+│
+├── Scenes/                    <- Unity 씬 파일
+│   └── MainGame/              <- 실제 게임 플레이 씬
+│
+├── Scripts/                   <- 공식 C# 스크립트
+│   ├── Building/              <- 건축 지점, 건축물 등 건축 오브젝트용 컴포넌트
+│   ├── CinderHeart/           <- CinderHeart 전용 컴포넌트
+│   ├── Data/                  <- 변하지 않는 기획 데이터 구조
+│   ├── Editor/                <- Unity Editor에서만 쓰는 자동화 도구
+│   ├── Enemy/                 <- 적 감지, 이동, 공격, 체력, HUD 등 적 전용 컴포넌트
+│   ├── Interfaces/            <- IDamageable, IInteractable 등 공유 인터페이스
+│   ├── Managers/              <- GameManager, UIManager, SoundManager 등 게임 전체 관리
+│   ├── Models/                <- 플레이 중 변하고 저장이 필요한 런타임 데이터
+│   ├── Player/                <- Player 오브젝트에 직접 붙는 Movement, View, Attack 등 컴포넌트
+│   ├── Systems/               <- 채집, 전투, 입력 보조 등 기능 단위 시스템
+│   │   └── Combat/            <- 공격 판정, 데미지 처리 등 전투 공통 로직
+│   ├── UI/                    <- HUD, ResourceUI, MainMenu 등 UI 오브젝트용 스크립트
+│   └── Utils/                 <- 순수 계산, 변환, 공용 보조 기능
+│
+├── ThirdParty/                <- 외부 에셋, 플러그인, 에셋스토어 파일
+│   ├── AssetStore/            <- 에셋스토어 에셋
+│   │   ├── Free/              <- Git에 올려도 되는 무료 외부 에셋
+│   │   └── Paid/              <- 유료 에셋. Git에 올리지 않음
+│   ├── Plugins/               <- 팀이 공유하기로 한 외부 플러그인 코드
+│   └── PrivateAssets/         <- 개인/팀 내부 공유 에셋. Git에 올리지 않음
+│
+└── UI/                        <- UI 전용 이미지, 스프라이트, 스타일 에셋
+
+
+Foldering Rule
+
+1. 스크립트가 1~2개뿐인 작은 기능은 전용 하위 폴더를 억지로 만들지 않는다.
+   예: 간단한 낮밤 전환, 단일 점수 계산, 단일 보조 컴포넌트
+
+2. 스크립트가 3개 이상이고 서로 유기적으로 얽혀 있으면 전용 폴더로 격리한다.
+   예: Combat, Inventory, Crafting, Building, Enemy, Player
+
+3. Controller는 장면 순서 지휘와 큐 관리만 맡는다.
+   많은 참조를 Controller 하나에 몰지 않고, 각 오브젝트가 자기 역할 컴포넌트를 가진다.
+
+4. UI는 런타임에서 new GameObject로 만들지 않는다.
+   미리 만든 씬 오브젝트나 Prefab을 연결해서 사용한다.
+
+5. Resources 폴더는 일반 보관소가 아니다.
+   코드에서 Resources.Load가 필요한 파일만 넣는다.
+
+6. 외부 에셋은 루트에 ThirdParty_Premium, ThirdParty_PriAsset 같은 별도 폴더로 만들지 않는다.
+   Assets/ThirdParty/AssetStore/Paid 또는 Assets/ThirdParty/PrivateAssets 아래에 둔다.
+
+7. _Sandbox에 있는 파일은 임시 상태다.
+   실제 게임에 연결하기 전에 공식 폴더로 승격하거나, 폐기할 파일은 _Disabled로 옮긴다.

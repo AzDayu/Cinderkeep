@@ -1,16 +1,16 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // 1인칭 카메라 앞에 현재 장착한 도구를 보여주는 View 전용 컴포넌트입니다.
 // 실제 채집 판정은 PlayerInteraction이 담당하고, 이 클래스는 화면 표시와 짧은 휘두르기만 담당합니다.
 public sealed class FirstPersonToolView : MonoBehaviour
 {
     [Header("Connected Components")]
-    [SerializeField] private PlayerToolController PlayerToolController_PlayerToolController;
+    [SerializeField] private PlayerToolController _playerToolController;
 
     [Header("Tool View Objects")]
-    [SerializeField] private GameObject GameObject_AxeView;
-    [SerializeField] private GameObject GameObject_PickaxeView;
-    [SerializeField] private GameObject GameObject_HandView;
+    [SerializeField] private GameObject _axeView;
+    [SerializeField] private GameObject _pickaxeView;
+    [SerializeField] private GameObject _handView;
 
     [Header("Simple Swing")]
     [SerializeField] private float _swingAngle = 22f;
@@ -47,44 +47,44 @@ public sealed class FirstPersonToolView : MonoBehaviour
 
     private void ConnectComponents()
     {
-        if (PlayerToolController_PlayerToolController != null)
+        if (_playerToolController != null)
         {
             return;
         }
 
-        PlayerToolController_PlayerToolController = GetComponentInParent<PlayerToolController>();
+        _playerToolController = GetComponentInParent<PlayerToolController>();
     }
 
     private void RefreshToolView()
     {
-        if (PlayerToolController_PlayerToolController == null)
+        if (_playerToolController == null)
         {
             SetToolActive(null);
             return;
         }
 
-        GatherToolType currentToolType = PlayerToolController_PlayerToolController.CurrentToolType;
+        GatherToolType currentToolType = _playerToolController.CurrentToolType;
 
         if (currentToolType == GatherToolType.Axe)
         {
-            SetToolActive(GameObject_AxeView);
+            SetToolActive(_axeView);
             return;
         }
 
         if (currentToolType == GatherToolType.Pickaxe)
         {
-            SetToolActive(GameObject_PickaxeView);
+            SetToolActive(_pickaxeView);
             return;
         }
 
-        SetToolActive(GameObject_HandView);
+        SetToolActive(_handView);
     }
 
     private void SetToolActive(GameObject activeToolObject)
     {
-        SetActive(GameObject_AxeView, activeToolObject == GameObject_AxeView);
-        SetActive(GameObject_PickaxeView, activeToolObject == GameObject_PickaxeView);
-        SetActive(GameObject_HandView, activeToolObject == GameObject_HandView);
+        SetActive(_axeView, activeToolObject == _axeView);
+        SetActive(_pickaxeView, activeToolObject == _pickaxeView);
+        SetActive(_handView, activeToolObject == _handView);
 
         if (activeToolObject == null)
         {
@@ -118,7 +118,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
 
     private void ReadSwingInput()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E))
+        if (CinderkeepInput.WasLeftMousePressedThisFrame() || CinderkeepInput.WasKeyPressedThisFrame(KeyCode.E))
         {
             PlaySwing();
         }

@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -9,24 +9,17 @@ public sealed class PlayerHUD : MonoBehaviour
 {
     [Header("Connected Components")]
     [FormerlySerializedAs("PlayerStatus_Target")]
-    [FormerlySerializedAs("_targetPlayerStatus")]
-    [SerializeField] private PlayerStatus PlayerStatus_Target;
+    [SerializeField] private PlayerStatus _targetPlayerStatus;
 
     [Header("Health UI")]
-    [FormerlySerializedAs("_healthSlider")]
-    [SerializeField] private Slider Slider_Health;
-    [FormerlySerializedAs("_healthCurrentText")]
-    [SerializeField] private TMP_Text Text_HealthCurrent;
-    [FormerlySerializedAs("_healthMaxText")]
-    [SerializeField] private TMP_Text Text_HealthMax;
+    [SerializeField] private Slider _healthSlider;
+    [SerializeField] private TMP_Text _healthCurrentText;
+    [SerializeField] private TMP_Text _healthMaxText;
 
     [Header("Stamina UI")]
-    [FormerlySerializedAs("_staminaSlider")]
-    [SerializeField] private Slider Slider_Stamina;
-    [FormerlySerializedAs("_staminaCurrentText")]
-    [SerializeField] private TMP_Text Text_StaminaCurrent;
-    [FormerlySerializedAs("_staminaMaxText")]
-    [SerializeField] private TMP_Text Text_StaminaMax;
+    [SerializeField] private Slider _staminaSlider;
+    [SerializeField] private TMP_Text _staminaCurrentText;
+    [SerializeField] private TMP_Text _staminaMaxText;
 
     private void Start()
     {
@@ -40,7 +33,7 @@ public sealed class PlayerHUD : MonoBehaviour
 
     public void SetPlayerStatus(PlayerStatus playerStatus)
     {
-        PlayerStatus_Target = playerStatus;
+        _targetPlayerStatus = playerStatus;
         InitializeHUD();
     }
 
@@ -51,8 +44,8 @@ public sealed class PlayerHUD : MonoBehaviour
             return;
         }
 
-        InitializeSlider(Slider_Health, PlayerStatus_Target.GetMaxHealth(), PlayerStatus_Target.GetCurrentHealth());
-        InitializeSlider(Slider_Stamina, PlayerStatus_Target.GetMaxStamina(), PlayerStatus_Target.GetCurrentStamina());
+        InitializeSlider(_healthSlider, _targetPlayerStatus.GetMaxHealth(), _targetPlayerStatus.GetCurrentHealth());
+        InitializeSlider(_staminaSlider, _targetPlayerStatus.GetMaxStamina(), _targetPlayerStatus.GetCurrentStamina());
         RefreshHUD();
     }
 
@@ -63,13 +56,13 @@ public sealed class PlayerHUD : MonoBehaviour
             return;
         }
 
-        RefreshSlider(Slider_Health, PlayerStatus_Target.GetCurrentHealth());
-        RefreshSlider(Slider_Stamina, PlayerStatus_Target.GetCurrentStamina());
+        RefreshSlider(_healthSlider, _targetPlayerStatus.GetCurrentHealth());
+        RefreshSlider(_staminaSlider, _targetPlayerStatus.GetCurrentStamina());
 
-        RefreshText(Text_HealthCurrent, PlayerStatus_Target.GetCurrentHealth());
-        RefreshText(Text_HealthMax, PlayerStatus_Target.GetMaxHealth());
-        RefreshText(Text_StaminaCurrent, PlayerStatus_Target.GetCurrentStamina());
-        RefreshText(Text_StaminaMax, PlayerStatus_Target.GetMaxStamina());
+        RefreshText(_healthCurrentText, _targetPlayerStatus.GetCurrentHealth());
+        RefreshText(_healthMaxText, _targetPlayerStatus.GetMaxHealth());
+        RefreshText(_staminaCurrentText, _targetPlayerStatus.GetCurrentStamina());
+        RefreshText(_staminaMaxText, _targetPlayerStatus.GetMaxStamina());
     }
 
     private void InitializeSlider(Slider slider, float maxValue, float currentValue)
@@ -106,6 +99,6 @@ public sealed class PlayerHUD : MonoBehaviour
 
     private bool HasPlayerStatus()
     {
-        return PlayerStatus_Target != null;
+        return _targetPlayerStatus != null;
     }
 }

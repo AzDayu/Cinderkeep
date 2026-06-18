@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 // 플레이어의 기본 근접 공격을 담당하는 컴포넌트입니다.
 // 좌클릭으로 도끼/곡괭이 채집을 먼저 시도하고, 자원이 아니면 적에게 피해를 줍니다.
@@ -12,8 +12,8 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private LayerMask _attackLayerMask = ~0;
 
     [Header("Connected Objects")]
-    [SerializeField] private Transform Transform_AttackOrigin;
-    [SerializeField] private FirstPersonToolView FirstPersonToolView_FirstPersonToolView;
+    [SerializeField] private Transform _attackOrigin;
+    [SerializeField] private FirstPersonToolView _firstPersonToolView;
 
     private PlayerToolController _playerToolController;
     private float _lastAttackTime;
@@ -44,24 +44,24 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         _playerToolController = GetComponent<PlayerToolController>();
 
-        if (Transform_AttackOrigin == null)
+        if (_attackOrigin == null)
         {
             Camera camera = GetComponentInChildren<Camera>();
             if (camera != null)
             {
-                Transform_AttackOrigin = camera.transform;
+                _attackOrigin = camera.transform;
             }
         }
 
-        if (FirstPersonToolView_FirstPersonToolView == null)
+        if (_firstPersonToolView == null)
         {
-            FirstPersonToolView_FirstPersonToolView = GetComponentInChildren<FirstPersonToolView>();
+            _firstPersonToolView = GetComponentInChildren<FirstPersonToolView>();
         }
     }
 
     private void ReadAttackInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
             TryAttack();
         }
@@ -74,22 +74,22 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void PlayAttackView()
     {
-        if (FirstPersonToolView_FirstPersonToolView == null)
+        if (_firstPersonToolView == null)
         {
             return;
         }
 
-        FirstPersonToolView_FirstPersonToolView.PlaySwing();
+        _firstPersonToolView.PlaySwing();
     }
 
     private void ApplyAttack()
     {
-        if (Transform_AttackOrigin == null)
+        if (_attackOrigin == null)
         {
             return;
         }
 
-        Ray attackRay = new Ray(Transform_AttackOrigin.position, Transform_AttackOrigin.forward);
+        Ray attackRay = new Ray(_attackOrigin.position, _attackOrigin.forward);
         RaycastHit hitInfo;
 
         if (Physics.SphereCast(attackRay, _attackRadius, out hitInfo, _attackDistance, _attackLayerMask) == false)

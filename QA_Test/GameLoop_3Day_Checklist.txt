@@ -1,4 +1,4 @@
-Cinderkeep MVP 3-Day Manual QA Checklist
+Cinderkeep 3-Day Game Loop Manual QA Checklist
 
 Scene Flow
 - Main_Lobby opens first when the game starts.

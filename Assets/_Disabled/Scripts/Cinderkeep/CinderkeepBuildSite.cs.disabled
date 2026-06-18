@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace OODong.Cinderkeep
 {
-    // 고정 건설 지점. 자유 건축 대신 발표용 MVP에서는 지정된 위치에만 건설한다.
+    // 고정 건설 지점. 자유 건축 대신 발표용 빌드에서는 지정된 위치에만 건설한다.
     // 사용자는 E로 상호작용하고, 실제 비용/체력 값은 buildings.json에서 가져온다.
     public sealed class CinderkeepBuildSite : MonoBehaviour, ICinderkeepInteractable
     {

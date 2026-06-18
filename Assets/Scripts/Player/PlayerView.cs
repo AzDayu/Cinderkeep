@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 // 1인칭 마우스 시점 회전을 담당하는 컴포넌트입니다.
@@ -12,11 +12,9 @@ public sealed class PlayerView : MonoBehaviour
     [Header("Connected Objects")]
     [FormerlySerializedAs("playerBody")]
     [FormerlySerializedAs("Transform_PlayerBody")]
-    [FormerlySerializedAs("_playerBody")]
-    [SerializeField] private Transform Transform_PlayerBody;
+    [SerializeField] private Transform _playerBody;
     [FormerlySerializedAs("Transform_Camera")]
-    [FormerlySerializedAs("_cameraTransform")]
-    [SerializeField] private Transform Transform_Camera;
+    [SerializeField] private Transform _cameraTransform;
 
     private float _xRotation;
 
@@ -33,12 +31,12 @@ public sealed class PlayerView : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (Transform_PlayerBody == null)
+        if (_playerBody == null)
         {
-            Transform_PlayerBody = transform;
+            _playerBody = transform;
         }
 
-        if (Transform_Camera != null)
+        if (_cameraTransform != null)
         {
             return;
         }
@@ -46,24 +44,25 @@ public sealed class PlayerView : MonoBehaviour
         Camera camera = GetComponentInChildren<Camera>(true);
         if (camera != null)
         {
-            Transform_Camera = camera.transform;
+            _cameraTransform = camera.transform;
         }
     }
 
     private void RotateView()
     {
-        if (Transform_Camera == null || Transform_PlayerBody == null)
+        if (_cameraTransform == null || _playerBody == null)
         {
             return;
         }
 
-        float mouseX = Input.GetAxis("Mouse X") * _mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * _mouseSensitivity * Time.deltaTime;
+        Vector2 mouseAxis = CinderkeepInput.GetMouseAxis();
+        float mouseX = mouseAxis.x * _mouseSensitivity * Time.deltaTime;
+        float mouseY = mouseAxis.y * _mouseSensitivity * Time.deltaTime;
 
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -45f, 45f);
 
-        Transform_Camera.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-        Transform_PlayerBody.Rotate(Vector3.up * mouseX);
+        _cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+        _playerBody.Rotate(Vector3.up * mouseX);
     }
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 // 플레이어 점프 입력을 담당하는 컴포넌트입니다.
@@ -10,7 +10,7 @@ public sealed class PlayerJump : MonoBehaviour
 
     [Header("Connected Components")]
     [FormerlySerializedAs("PlayerMovement_PlayerMovement")]
-    [SerializeField] private PlayerMovement PlayerMovement_PlayerMovement;
+    [SerializeField] private PlayerMovement _playerMovement;
 
     private void Start()
     {
@@ -19,7 +19,7 @@ public sealed class PlayerJump : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Space))
         {
             Jump();
         }
@@ -27,19 +27,19 @@ public sealed class PlayerJump : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (PlayerMovement_PlayerMovement == null)
+        if (_playerMovement == null)
         {
-            PlayerMovement_PlayerMovement = GetComponent<PlayerMovement>();
+            _playerMovement = GetComponent<PlayerMovement>();
         }
     }
 
     private void Jump()
     {
-        if (PlayerMovement_PlayerMovement == null)
+        if (_playerMovement == null)
         {
             return;
         }
 
-        PlayerMovement_PlayerMovement.Jump(_jumpForce);
+        _playerMovement.Jump(_jumpForce);
     }
 }

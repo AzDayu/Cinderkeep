@@ -14,8 +14,8 @@ public enum EnemySpawnStep
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
     [Header("Managers")]
-    [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
-    [SerializeField] private EnemyLoopConnector EnemyLoopConnector_EnemyLoopConnector;
+    [SerializeField] private GameObjectManager _gameObjectManager;
+    [SerializeField] private EnemyLoopConnector _enemyLoopConnector;
 
     [Header("Spawn Point")]
     [SerializeField] private int _spawnPointId;
@@ -28,9 +28,9 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private string _step3EnemyDataId = "ice_zombie";
 
     [Header("Enemy Prefabs")]
-    [SerializeField] private GameObject[] GameObjects_Step1Enemies;
-    [SerializeField] private GameObject[] GameObjects_Step2Enemies;
-    [SerializeField] private GameObject[] GameObjects_Step3Enemies;
+    [SerializeField] private GameObject[] _step1EnemyPrefabs;
+    [SerializeField] private GameObject[] _step2EnemyPrefabs;
+    [SerializeField] private GameObject[] _step3EnemyPrefabs;
 
     [Header("Spawn Rule")]
     [SerializeField] private float _spawnInterval = 300f;
@@ -38,7 +38,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private bool _spawnOnStart;
 
     [Header("Spawn Position")]
-    [SerializeField] private Transform Transform_Center;
+    [SerializeField] private Transform _centerTransform;
 
     [Header("Gizmo")]
     [SerializeField] private bool _showGizmo = true;
@@ -58,8 +58,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public void Initialize(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
     {
-        GameObjectManager_GameObjectManager = gameObjectManager;
-        EnemyLoopConnector_EnemyLoopConnector = enemyLoopConnector;
+        _gameObjectManager = gameObjectManager;
+        _enemyLoopConnector = enemyLoopConnector;
     }
 
     private void Start()
@@ -96,9 +96,9 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private void InitializeCenter()
     {
-        if (Transform_Center == null)
+        if (_centerTransform == null)
         {
-            Transform_Center = transform;
+            _centerTransform = transform;
         }
     }
 
@@ -130,7 +130,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return false;
         }
 
-        if (GameObjectManager_GameObjectManager == null)
+        if (_gameObjectManager == null)
         {
             return false;
         }
@@ -168,18 +168,18 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         Vector3 spawnPosition = GetSpawnPosition(index, totalCount);
         Quaternion spawnRotation = GetSpawnRotation();
-        GameObject createdEnemy = GameObjectManager_GameObjectManager.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
+        GameObject createdEnemy = _gameObjectManager.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
         InitializeCreatedEnemy(createdEnemy, enemyDataId);
     }
 
     private void InitializeCreatedEnemy(GameObject createdEnemy, string enemyDataId)
     {
-        if (EnemyLoopConnector_EnemyLoopConnector == null)
+        if (_enemyLoopConnector == null)
         {
             return;
         }
 
-        EnemyLoopConnector_EnemyLoopConnector.InitializeEnemyObject(createdEnemy, enemyDataId);
+        _enemyLoopConnector.InitializeEnemyObject(createdEnemy, enemyDataId);
     }
 
     private GameObject[] GetEnemyPrefabsByStep()
@@ -187,14 +187,14 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         switch (_spawnStep)
         {
             case EnemySpawnStep.Step1:
-                return GameObjects_Step1Enemies;
+                return _step1EnemyPrefabs;
             case EnemySpawnStep.Step2:
-                return GameObjects_Step2Enemies;
+                return _step2EnemyPrefabs;
             case EnemySpawnStep.Step3:
-                return GameObjects_Step3Enemies;
+                return _step3EnemyPrefabs;
         }
 
-        return GameObjects_Step1Enemies;
+        return _step1EnemyPrefabs;
     }
 
     private string GetEnemyDataIdByStep()
@@ -214,7 +214,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private Vector3 GetSpawnPosition(int index, int totalCount)
     {
-        Vector3 spawnPosition = Transform_Center.position;
+        Vector3 spawnPosition = _centerTransform.position;
         float centerOffset = (totalCount - 1) * 0.5f;
         float xOffset = (index - centerOffset) * _spawnSpacing;
         spawnPosition.x += xOffset;
@@ -223,7 +223,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private Quaternion GetSpawnRotation()
     {
-        return Transform_Center.rotation;
+        return _centerTransform.rotation;
     }
 
     private void OnValidate()
@@ -246,16 +246,16 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
-        Transform center = Transform_Center;
+        Transform center = _centerTransform;
         if (center == null)
         {
             center = transform;
         }
 
         Gizmos.color = _gizmoColor;
-        DrawSpawnPositionGizmo(center.position, GameObjects_Step1Enemies);
-        DrawSpawnPositionGizmo(center.position, GameObjects_Step2Enemies);
-        DrawSpawnPositionGizmo(center.position, GameObjects_Step3Enemies);
+        DrawSpawnPositionGizmo(center.position, _step1EnemyPrefabs);
+        DrawSpawnPositionGizmo(center.position, _step2EnemyPrefabs);
+        DrawSpawnPositionGizmo(center.position, _step3EnemyPrefabs);
     }
 
     private void DrawSpawnPositionGizmo(Vector3 centerPosition, GameObject[] enemyPrefabs)

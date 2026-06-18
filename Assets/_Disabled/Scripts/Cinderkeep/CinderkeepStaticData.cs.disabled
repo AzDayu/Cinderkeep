@@ -15,7 +15,7 @@ namespace OODong.Cinderkeep
     }
 
     [System.Serializable]
-    // Static Data: 제작식. MVP에서는 화살 묶음 정도만 쓰지만, 이후 장비/건축 제작으로 확장한다.
+    // Static Data: 제작식. 현재 구현에서는 화살 묶음 정도만 쓰지만, 이후 장비/건축 제작으로 확장한다.
     public sealed class CinderkeepRecipeData : GameDataBase
     {
         [SerializeField] private string _displayName = string.Empty;

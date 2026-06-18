@@ -7,8 +7,8 @@ namespace Cinderkeep.Gameplay
     // 건축물 생성은 GameObjectManager를 통하고, 자리 상태는 BuildingSpot이 담당합니다.
     public sealed class BuildingManager : MonoBehaviour, IGameInitializable
     {
-        [SerializeField] private List<BuildingSpot> List_BuildingSpots = new List<BuildingSpot>();
-        [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
+        [SerializeField] private List<BuildingSpot> _buildingSpots = new List<BuildingSpot>();
+        [SerializeField] private GameObjectManager _gameObjectManager;
 
         private readonly List<BuildingHp> _activeBuildings = new List<BuildingHp>();
         private bool _isInitialized;
@@ -31,7 +31,7 @@ namespace Cinderkeep.Gameplay
 
         public void SetGameObjectManager(GameObjectManager gameObjectManager)
         {
-            GameObjectManager_GameObjectManager = gameObjectManager;
+            _gameObjectManager = gameObjectManager;
         }
 
         public bool TryBuildAtSpot(BuildingSpot buildingSpot, GameObject buildingPrefab)
@@ -43,7 +43,7 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            GameObject createdBuilding = GameObjectManager_GameObjectManager.CreateGameObject(
+            GameObject createdBuilding = _gameObjectManager.CreateGameObject(
                 buildingPrefab,
                 buildingSpot.GetBuildPosition(),
                 buildingSpot.GetBuildRotation());
@@ -65,12 +65,12 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            if (List_BuildingSpots.Contains(buildingSpot))
+            if (_buildingSpots.Contains(buildingSpot))
             {
                 return;
             }
 
-            List_BuildingSpots.Add(buildingSpot);
+            _buildingSpots.Add(buildingSpot);
         }
 
         public void RegisterBuilding(BuildingHp building)
@@ -133,7 +133,7 @@ namespace Cinderkeep.Gameplay
 
         private bool CanBuildAtSpot(BuildingSpot buildingSpot, GameObject buildingPrefab)
         {
-            if (GameObjectManager_GameObjectManager == null)
+            if (_gameObjectManager == null)
             {
                 Debug.LogWarning("BuildingManager: GameObjectManager 연결이 필요합니다.");
                 return false;
@@ -178,9 +178,9 @@ namespace Cinderkeep.Gameplay
 
         private void RegisterSceneBuildings()
         {
-            for (int i = 0; i < List_BuildingSpots.Count; i++)
+            for (int i = 0; i < _buildingSpots.Count; i++)
             {
-                BuildingSpot buildingSpot = List_BuildingSpots[i];
+                BuildingSpot buildingSpot = _buildingSpots[i];
                 if (buildingSpot == null)
                 {
                     continue;
@@ -206,9 +206,9 @@ namespace Cinderkeep.Gameplay
 
         private void ClearSpotByBuilding(GameObject buildingObject)
         {
-            for (int i = 0; i < List_BuildingSpots.Count; i++)
+            for (int i = 0; i < _buildingSpots.Count; i++)
             {
-                BuildingSpot buildingSpot = List_BuildingSpots[i];
+                BuildingSpot buildingSpot = _buildingSpots[i];
                 if (buildingSpot == null)
                 {
                     continue;

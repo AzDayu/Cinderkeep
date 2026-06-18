@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // 몬스터의 체력을 관리하는 컴포넌트입니다.
@@ -10,7 +10,7 @@ public sealed class EnemyStatus : MonoBehaviour
     [SerializeField] private bool _deactivateOnDeath = true;
 
     [Header("Connected Components")]
-    [SerializeField] private EnemyHud EnemyHud_EnemyHud;
+    [SerializeField] private EnemyHud _enemyHud;
 
     private EnemyDetector _enemyDetector;
     private float _currentHealth;
@@ -88,9 +88,9 @@ public sealed class EnemyStatus : MonoBehaviour
     {
         _enemyDetector = GetComponent<EnemyDetector>();
 
-        if (EnemyHud_EnemyHud == null)
+        if (_enemyHud == null)
         {
-            EnemyHud_EnemyHud = GetComponentInChildren<EnemyHud>();
+            _enemyHud = GetComponentInChildren<EnemyHud>();
         }
     }
 
@@ -113,12 +113,12 @@ public sealed class EnemyStatus : MonoBehaviour
 
     private void RefreshHud()
     {
-        if (EnemyHud_EnemyHud == null)
+        if (_enemyHud == null)
         {
             return;
         }
 
-        EnemyHud_EnemyHud.RefreshHealth(_currentHealth, _maxHealth);
+        _enemyHud.RefreshHealth(_currentHealth, _maxHealth);
     }
 
     private void ProcessDeath()

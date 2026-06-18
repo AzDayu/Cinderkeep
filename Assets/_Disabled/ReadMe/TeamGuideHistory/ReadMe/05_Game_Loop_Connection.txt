@@ -1,0 +1,29 @@
+Game Loop Connection Guide
+
+Purpose
+- This document records the current Cinderkeep_Game scene connection rules.
+- The scene should connect prepared actors and components instead of concentrating logic in one controller.
+- Candidate assets stay under Assets/_Sandbox/4_0_CandidateAssets until they are promoted to official folders.
+
+Current Flow
+- GameManager owns initialization order.
+- GameDataManager loads enemies.json into EnemyData.
+- CinderkeepGameLoopConnector connects scene-level Player, HUD, Enemy, and CinderHeart references.
+- EnemyLoopConnector handles enemy data binding so the game loop connector does not hold every enemy component directly.
+- Player components keep separate roles: movement, jump, view, status, tool, attack, and interaction.
+- UI components display prepared UI objects and do not build runtime UI with new GameObject.
+
+Folder Rule
+- Player code: Assets/Scripts/Player
+- Enemy code: Assets/Scripts/Enemy
+- UI code: Assets/Scripts/UI
+- Combat shared code: Assets/Scripts/Systems/Combat
+- Resource/building/system code: Assets/Scripts/Systems or a dedicated role folder when it grows
+- Managers: Assets/Scripts/Managers
+- Candidate assets: Assets/_Sandbox/4_0_CandidateAssets
+
+Notes
+- GameManager stays the only gameplay singleton.
+- Other managers are prepared through GameManager initialization.
+- Avoid scene-wide object search in gameplay scripts.
+- Promote useful candidate assets into official folders before treating them as production assets.

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 // 플레이어가 바라보는 오브젝트와 상호작용하는 입구 컴포넌트입니다.
@@ -12,8 +12,7 @@ public sealed class PlayerInteraction : MonoBehaviour
 
     [Header("Connected Objects")]
     [FormerlySerializedAs("Transform_Camera")]
-    [FormerlySerializedAs("_cameraTransform")]
-    [SerializeField] private Transform Transform_Camera;
+    [SerializeField] private Transform _cameraTransform;
 
     private void Start()
     {
@@ -44,7 +43,7 @@ public sealed class PlayerInteraction : MonoBehaviour
 
     private void ReadInteractionInput()
     {
-        if (Input.GetKeyDown(_interactionKey))
+        if (CinderkeepInput.WasKeyPressedThisFrame(_interactionKey))
         {
             TryInteract();
         }
@@ -52,7 +51,7 @@ public sealed class PlayerInteraction : MonoBehaviour
 
     private void ConnectCameraIfNeeded()
     {
-        if (Transform_Camera != null)
+        if (_cameraTransform != null)
         {
             return;
         }
@@ -64,17 +63,17 @@ public sealed class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        Transform_Camera = camera.transform;
+        _cameraTransform = camera.transform;
     }
 
     private IInteractable GetInteractableFromRay()
     {
-        if (Transform_Camera == null)
+        if (_cameraTransform == null)
         {
             return null;
         }
 
-        Ray ray = new Ray(Transform_Camera.position, Transform_Camera.forward);
+        Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
         RaycastHit hitInfo;
 
         if (Physics.Raycast(ray, out hitInfo, _interactionDistance, _interactionLayerMask) == false)

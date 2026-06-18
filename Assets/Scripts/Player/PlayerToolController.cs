@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // 플레이어가 현재 들고 있는 도구를 관리하는 컴포넌트입니다.
-// 4.00 현재 단계에서는 1번 도끼, 2번 곡괭이, 3번 맨손으로만 단순하게 연결합니다.
+// 현재 단계에서는 1번 도끼, 2번 곡괭이, 3번 맨손으로만 단순하게 연결합니다.
 public sealed class PlayerToolController : MonoBehaviour
 {
     [Header("Tool Keys")]
@@ -42,19 +42,19 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void ReadToolInput()
     {
-        if (Input.GetKeyDown(_axeKey))
+        if (CinderkeepInput.WasKeyPressedThisFrame(_axeKey))
         {
             EquipTool(GatherToolType.Axe);
             return;
         }
 
-        if (Input.GetKeyDown(_pickaxeKey))
+        if (CinderkeepInput.WasKeyPressedThisFrame(_pickaxeKey))
         {
             EquipTool(GatherToolType.Pickaxe);
             return;
         }
 
-        if (Input.GetKeyDown(_emptyHandKey))
+        if (CinderkeepInput.WasKeyPressedThisFrame(_emptyHandKey))
         {
             EquipTool(GatherToolType.None);
         }
