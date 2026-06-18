@@ -1,58 +1,127 @@
-﻿using UnityEngine;
-using Cinderkeep.Gameplay;
+using UnityEngine;
 
-public class EnemyBrain : MonoBehaviour
+// 몬스터가 어떤 대상을 우선 공격할지 판단하는 행동 조정 컴포넌트입니다.
+// 이동은 EnemyMovement, 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
+public sealed class EnemyBrain : MonoBehaviour
 {
-    private EnemyAttack _enemyAttack;
-    private EnemyMovement _enemyMovement;   // 추후 이동 판단 관련 추가 가능성 열어둠
-    private Damageable _currentTarget;
-    private bool _attacked;
+    private const string PlayerTag = "Player";
+    private const string BuildTag = "Build";
 
-    public void Awake()
+    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
+    [SerializeField] private EnemyAttack EnemyAttack_EnemyAttack;
+
+    private Damageable _currentAttackTarget;
+
+    private void Awake()
     {
-        _enemyAttack = GetComponent<EnemyAttack>();
-        _enemyMovement = GetComponent<EnemyMovement>();
+        ConnectComponents();
     }
 
-    // 추후 EnemyDetector의 거리계산 로직 불러와서 사용할 예정
-    private void EnemyDetectorDistanceLogic()
+    private void Update()
     {
-        if (_currentTarget == null) return;
+        UpdatePlayerTargetFromDetector();
+        TryAttackCurrentTarget();
+    }
 
-        DecideAttackTarget(_currentTarget.gameObject);
+    // 구조물, 플레이어처럼 외부에서 지정한 대상도 공격 대상으로 받을 수 있게 둡니다.
+    // 예: CinderHeart로 가는 길이 벽에 막혔을 때 벽의 Damageable을 넘겨서 공격합니다.
+    public void SetAttackTarget(Damageable targetDamageable)
+    {
+        _currentAttackTarget = targetDamageable;
+    }
 
-        if (_attacked)
+    public void ClearAttackTarget(Damageable targetDamageable)
+    {
+        if (_currentAttackTarget != targetDamageable)
         {
-            // 공격 성공 시 로직
+            return;
+        }
+
+        _currentAttackTarget = null;
+    }
+
+    private void ConnectComponents()
+    {
+        if (EnemyDetector_EnemyDetector == null)
+        {
+            EnemyDetector_EnemyDetector = GetComponent<EnemyDetector>();
+        }
+
+        if (EnemyAttack_EnemyAttack == null)
+        {
+            EnemyAttack_EnemyAttack = GetComponent<EnemyAttack>();
         }
     }
 
-    private void DecideAttackTarget(GameObject targetObject)
+    private void UpdatePlayerTargetFromDetector()
     {
-        if (targetObject == null) return;
-
-        var damageable = targetObject.GetComponent<Damageable>();
-        if (damageable == null) return;
-
-        if (targetObject.CompareTag("Build"))
+        if (EnemyDetector_EnemyDetector == null)
         {
-            if (_enemyAttack.TryAttack(damageable))
-            {
-                _attacked = true;
-            }
+            return;
         }
 
-        else if (targetObject.CompareTag("Player"))
+        if (EnemyDetector_EnemyDetector.HasDetectedPlayer == false)
         {
-            if (_enemyAttack.TryAttack(damageable))
-            {
-                _attacked = true;
-            }
+            return;
         }
 
-        else
+        Damageable detectedPlayerDamageable = GetDamageableFromTransform(EnemyDetector_EnemyDetector.DetectedPlayer);
+        if (detectedPlayerDamageable == null)
         {
-            _attacked = false;
+            return;
         }
+
+        _currentAttackTarget = detectedPlayerDamageable;
+    }
+
+    private void TryAttackCurrentTarget()
+    {
+        if (_currentAttackTarget == null)
+        {
+            return;
+        }
+
+        if (CanAttackTarget(_currentAttackTarget.gameObject) == false)
+        {
+            return;
+        }
+
+        if (EnemyAttack_EnemyAttack == null)
+        {
+            return;
+        }
+
+        EnemyAttack_EnemyAttack.TryAttack(_currentAttackTarget);
+    }
+
+    private bool CanAttackTarget(GameObject targetObject)
+    {
+        if (targetObject == null)
+        {
+            return false;
+        }
+
+        if (targetObject.CompareTag(PlayerTag))
+        {
+            return true;
+        }
+
+        return targetObject.CompareTag(BuildTag);
+    }
+
+    private Damageable GetDamageableFromTransform(Transform targetTransform)
+    {
+        if (targetTransform == null)
+        {
+            return null;
+        }
+
+        Damageable damageable = targetTransform.GetComponent<Damageable>();
+        if (damageable != null)
+        {
+            return damageable;
+        }
+
+        return targetTransform.GetComponentInParent<Damageable>();
     }
 }
