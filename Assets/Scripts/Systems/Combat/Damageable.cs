@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // 피해를 받을 수 있는 오브젝트에 붙이는 공통 컴포넌트입니다.
-// PlayerStatus나 EnemyStatus가 있으면 해당 상태 컴포넌트로 피해 처리를 넘깁니다.
+// 실제 체력 처리는 PlayerStatus, EnemyStatus, BuildingHp, CinderHeart 같은 역할 컴포넌트로 넘깁니다.
 public sealed class Damageable : MonoBehaviour
 {
     [Header("Fallback Health")]
@@ -10,6 +10,7 @@ public sealed class Damageable : MonoBehaviour
     private PlayerStatus _playerStatus;
     private EnemyStatus _enemyStatus;
     private BuildingHp _buildingHp;
+    private CinderHeart _cinderHeart;
     private float _currentHealth;
     private bool _isDead;
 
@@ -69,6 +70,7 @@ public sealed class Damageable : MonoBehaviour
         _playerStatus = GetComponent<PlayerStatus>();
         _enemyStatus = GetComponent<EnemyStatus>();
         _buildingHp = GetComponent<BuildingHp>();
+        _cinderHeart = GetComponent<CinderHeart>();
     }
 
     private void InitializeFallbackHealth()
@@ -94,6 +96,12 @@ public sealed class Damageable : MonoBehaviour
         if (_buildingHp != null)
         {
             _buildingHp.TakeDamage(damage);
+            return true;
+        }
+
+        if (_cinderHeart != null)
+        {
+            _cinderHeart.TakeDamage(damage);
             return true;
         }
 
