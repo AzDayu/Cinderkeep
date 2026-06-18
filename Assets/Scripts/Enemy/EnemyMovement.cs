@@ -1,127 +1,172 @@
-﻿using UnityEngine;
-using UnityEngine.AI;
 using Cinderkeep.Gameplay;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
 
-namespace Cinderkeep.Gameplay
+public sealed class EnemyMovement : MonoBehaviour
 {
-    public class EnemyMovement : MonoBehaviour
+    [SerializeField] private EnemyDetector EnemyDetector_EnemyDetector;
+    [SerializeField] private Transform Transform_CinderHeartTarget;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _stopDistance;
+
+    private const float PathUpdateInterval = 0.2f;
+
+    private NavMeshAgent _navMeshAgent;
+    private Coroutine _movementRoutine;
+    private bool _isInitialized;
+
+    private void OnEnable()
     {
-        [SerializeField]
-        private EnemyDetector _detectorEnemy;
+        StartMovementRoutine();
+    }
 
-        private NavMeshAgent _navMeshAgent;
-        private Transform _currentTrackingTarget;
-        [SerializeField]
-        private const float PathUpdateInterval = 0.2f;  //코루틴 주기.
+    private void OnDisable()
+    {
+        StopMovementRoutine();
+    }
 
-        private Coroutine _corutineMovementRoutine;
-        private bool _isInitialized;
+    public void Initialize(EnemyData enemyData)
+    {
+        Initialize(enemyData, EnemyDetector_EnemyDetector);
+    }
 
-
-                                                                                                        //scene 단계에서 생성할시, 초기화가 안이루어져 버그가 발생.
-        [SerializeField] private string _testEnemyId = "ice_zombie";    //초기 테스트를 위한 데이터       때문에 Start단계에서 초기화가 안이뤄져있다면, 초기화를 하는 로직을 추가
-
-
-
-        private void OnEnable()
+    public void Initialize(EnemyData enemyData, EnemyDetector enemyDetector)
+    {
+        if (enemyData == null)
         {
-            StartMovementRoutine();
+            return;
         }
 
-        private void OnDisable()
+        ConnectComponents(enemyDetector);
+        _moveSpeed = enemyData.MoveSpeed;
+        _stopDistance = enemyData.StopDistance;
+        ApplyNavMeshAgentSettings();
+
+        _isInitialized = true;
+        StartMovementRoutine();
+    }
+
+    public void SetCinderHeartTarget(Transform cinderHeartTarget)
+    {
+        Transform_CinderHeartTarget = cinderHeartTarget;
+    }
+
+    public void MoveToTarget(Transform targetTransform)
+    {
+        if (targetTransform == null)
         {
-            StopMovementRoutine();
+            StopMoving();
+            return;
         }
 
-        public void Initialize(EnemyData enemyData, EnemyDetector detectorEnemy)
+        if (CanStopAtTarget(targetTransform))
         {
-            if (enemyData == null)
-            {
-                return;
-            }
-
-            _navMeshAgent = GetComponent<NavMeshAgent>();
-            _detectorEnemy = detectorEnemy;
-
-            _navMeshAgent.speed = enemyData.MoveSpeed;
-            _navMeshAgent.stoppingDistance = enemyData.StopDistance;
-
-            _isInitialized = true;
-
-            StartMovementRoutine();
+            StopMoving();
+            return;
         }
 
-        private IEnumerator CoPerformMovementRoutine()
-        {
-            WaitForSeconds waitInterval = new WaitForSeconds(PathUpdateInterval);
+        MoveWithNavMeshOrTransform(targetTransform);
+    }
 
-            while (true)
-            {
-                if (_isInitialized && _detectorEnemy != null)
-                {
-                    PerformPriorityMovement();
-                }
-                yield return waitInterval;
-            }
+    private void ConnectComponents(EnemyDetector enemyDetector)
+    {
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (enemyDetector != null)
+        {
+            EnemyDetector_EnemyDetector = enemyDetector;
         }
 
-        private void PerformPriorityMovement()
+        if (EnemyDetector_EnemyDetector == null)
         {
-            Transform nextTarget = null;
+            EnemyDetector_EnemyDetector = GetComponent<EnemyDetector>();
+        }
+    }
 
-            if (_detectorEnemy.HasDetectedPlayer)
-            {
-                nextTarget = _detectorEnemy.DetectedPlayer;
-            }
-            else if (CinderHeart.InstanceTransform != null)
-            {
-                nextTarget = CinderHeart.InstanceTransform;
-            }
-            if(nextTarget != null)
-            {
-                UpdateNavMeshDestination(nextTarget);
-            }
-            else
-            {
-                if(_navMeshAgent.hasPath)
-                {
-                    _navMeshAgent.ResetPath();
-                }
-            }
+    private void ApplyNavMeshAgentSettings()
+    {
+        if (_navMeshAgent == null)
+        {
+            return;
         }
 
-        private void UpdateNavMeshDestination(Transform targetTransform)
+        _navMeshAgent.speed = _moveSpeed;
+        _navMeshAgent.stoppingDistance = _stopDistance;
+    }
+
+    private void StartMovementRoutine()
+    {
+        if (_isInitialized == false)
         {
-            if(_currentTrackingTarget != targetTransform || _navMeshAgent.destination != targetTransform.position)
-            {
-                _currentTrackingTarget = targetTransform;
-                _navMeshAgent.SetDestination(_currentTrackingTarget.position);
-            }
+            return;
         }
 
+        StopMovementRoutine();
+        _movementRoutine = StartCoroutine(MoveToPriorityTargetRoutine());
+    }
 
-
-        private void StartMovementRoutine()
+    private void StopMovementRoutine()
+    {
+        if (_movementRoutine == null)
         {
-            if (!_isInitialized)
-            {
-                return;
-            }
-            StopMovementRoutine();
-            _corutineMovementRoutine = StartCoroutine(CoPerformMovementRoutine());
+            return;
         }
 
-        private void StopMovementRoutine()
+        StopCoroutine(_movementRoutine);
+        _movementRoutine = null;
+    }
+
+    private IEnumerator MoveToPriorityTargetRoutine()
+    {
+        WaitForSeconds waitInterval = new WaitForSeconds(PathUpdateInterval);
+
+        while (true)
         {
-            if (_corutineMovementRoutine != null)
-            {
-                StopCoroutine(_corutineMovementRoutine);
-                _corutineMovementRoutine = null;
-            }
+            MoveToPriorityTarget();
+            yield return waitInterval;
+        }
+    }
+
+    private void MoveToPriorityTarget()
+    {
+        Transform targetTransform = GetPriorityTarget();
+        MoveToTarget(targetTransform);
+    }
+
+    private Transform GetPriorityTarget()
+    {
+        if (EnemyDetector_EnemyDetector != null && EnemyDetector_EnemyDetector.HasDetectedPlayer)
+        {
+            return EnemyDetector_EnemyDetector.DetectedPlayer;
         }
 
+        return Transform_CinderHeartTarget;
+    }
 
+    private bool CanStopAtTarget(Transform targetTransform)
+    {
+        float distance = Vector3.Distance(transform.position, targetTransform.position);
+        return distance <= _stopDistance;
+    }
 
+    private void MoveWithNavMeshOrTransform(Transform targetTransform)
+    {
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        {
+            _navMeshAgent.SetDestination(targetTransform.position);
+            return;
+        }
+
+        Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetTransform.position, _moveSpeed * Time.deltaTime);
+        transform.position = nextPosition;
+    }
+
+    private void StopMoving()
+    {
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh && _navMeshAgent.hasPath)
+        {
+            _navMeshAgent.ResetPath();
+        }
     }
 }
