@@ -137,7 +137,7 @@ try {
   Add-Text $s "Cinderkeep" 92 154 520 78 60 $C.ink $true 1 | Out-Null
   Add-Text $s "잿불 성채: 마지막 불씨" 96 240 520 42 32 $C.ink $true 1 | Out-Null
   Add-Text $s "1인칭 생존 로그라이트 + 베이스 방어" 98 326 500 34 24 $C.cyan $true 1 | Out-Null
-  Add-Text $s "개발 기간: 2026.06.16 - 2026.07.03`nMVP 목표: 3일 생존, 15분 플레이 루프`n승리 조건: 3일차 밤 최종 보스 처치" 98 384 500 106 21 $C.ink $false 1 | Out-Null
+  Add-Text $s "개발 기간: 2026.06.16 - 2026.07.03`n핵심 목표: 3일 생존, 15분 플레이 루프`n승리 조건: 3일차 밤 최종 보스 처치" 98 384 500 106 21 $C.ink $false 1 | Out-Null
   Add-Text $s "팀: 천우영, 정동원, 지재욱, 김성광, 최재호, 김동혁, 권성혁, 강희원, 김민석" 98 528 500 36 15 $C.mute $false 1 | Out-Null
   Add-Footer $s 1
 
@@ -156,7 +156,7 @@ try {
   Add-Image $s (MoreImg "ck-more-02-day-gathering.png") 0 0 $W $H | Out-Null
   Add-Rect $s 0 0 $W $H $C.black 0.34 "none" $false | Out-Null
   Add-Panel $s 70 76 1140 500 0.02 $C.line | Out-Null
-  Add-Header $s "FIRST BUILD GUIDE (빠른 1차 개발 가이드)" "MVP는 3일, 약 15분짜리 한 판이다" "첫 버전은 기능 욕심보다 3일 생존 루프가 실제로 도는 것을 우선한다."
+  Add-Header $s "FIRST BUILD GUIDE (빠른 1차 개발 가이드)" "첫 빌드는 3일, 약 15분짜리 한 판이다" "첫 버전은 기능 욕심보다 3일 생존 루프가 실제로 도는 것을 우선한다."
   Add-Text $s "이번 버전에 반드시 넣는다" 112 246 430 34 26 $C.green $true 1 | Out-Null
   Add-Text $s "나중에 확장한다" 720 246 360 34 26 $C.dim $true 1 | Out-Null
   Add-Text $s "• 1인칭 이동 / 시점 / 공격`n• 낮 3분, 밤 2분, 아침 보상 15초`n• 자원 채집, 장비 제작, 상자 유물`n• 불꽃 심장 체력 / 온기 / 레이저`n• 고정 건축 지점: 벽, 포탑, 함정`n• 3일차 밤 보스 접근 3분 + 처치 클리어" 116 296 520 220 22 $C.ink $false 1 | Out-Null
@@ -165,10 +165,10 @@ try {
 
   # 4 team
   $s = New-Slide $pres 4
-  Add-Header $s "TEAM R&R (팀원 역할)" "파트별로 무엇을 만들지 먼저 고정한다" "역할은 개발 중 바뀔 수 있지만, MVP 기준 책임 범위는 이 표를 따른다."
+  Add-Header $s "TEAM R&R (팀원 역할)" "파트별로 무엇을 만들지 먼저 고정한다" "역할은 개발 중 바뀔 수 있지만, 현재 빌드 기준 책임 범위는 이 표를 따른다."
   Add-Panel $s 70 220 1140 410 0.03 $C.line | Out-Null
   $rows = @(
-    @("기획 / PM", "천우영, 정동원", "MVP 우선순위, 마일스톤, 회의록, 게임 루프/낮밤 전환 구조"),
+    @("기획 / PM", "천우영, 정동원", "핵심 기능 우선순위, 마일스톤, 회의록, 게임 루프/낮밤 전환 구조"),
     @("플레이어 / HUD", "김성광", "1인칭 조작, 카메라, 체력/배고픔/스태미나, 기본 HUD"),
     @("채집 / 제작 / 건축", "최재호, 김동혁", "자원 상호작용, 리스폰, 도구/장비 티어, 고정 건축 지점"),
     @("전투 / AI / 보스", "김민석, 권성혁, 지재욱", "밤 웨이브, 몬스터 AI, 구조물 파괴, 최종 보스"),
@@ -319,7 +319,7 @@ try {
   # 12 base defense
   $s = New-Slide $pres 12
   Add-Image $s (MoreImg "ck-more-03-fixed-build-site.png") 704 122 500 281 | Out-Null
-  Add-Header $s "BASE BUILDING (거점 건축)" "MVP는 고정 건축 지점으로 만든다" "자유 건축은 확장으로 남기고, 첫 버전은 정해진 자리에서 건설/수리/업그레이드를 검증한다."
+  Add-Header $s "BASE BUILDING (거점 건축)" "첫 빌드는 고정 건축 지점으로 만든다" "자유 건축은 확장으로 남기고, 첫 버전은 정해진 자리에서 건설/수리/업그레이드를 검증한다."
   Add-Panel $s 80 250 560 330 0.02 $C.line | Out-Null
   Add-Text $s "건설 방식" 112 290 180 30 25 $C.cyan $true 1 | Out-Null
   Add-Text $s "처음부터 모든 건축 지점이 보인다. 자원을 들고 E를 길게 눌러 건설한다." 300 292 290 54 19 $C.ink $false 1 | Out-Null
@@ -418,7 +418,7 @@ try {
 
   # 18 roadmap
   $s = New-Slide $pres 18
-  Add-Header $s "ROADMAP (개발 로드맵)" "6/16 - 7/3 MVP, 이후 7일 루프로 확장" "MVP 3일/15분 루프를 안정화한 뒤 7일 생존과 30분 이상 플레이로 늘린다."
+  Add-Header $s "ROADMAP (개발 로드맵)" "6/16 - 7/3 핵심 빌드, 이후 7일 루프로 확장" "3일/15분 루프를 안정화한 뒤 7일 생존과 30분 이상 플레이로 늘린다."
   Add-Panel $s 64 250 1150 280 0.02 $C.line | Out-Null
   $phases = @(
     @("6/16-6/18", "기초 루프", "이동/시점`n낮밤 타이머`n자원 채집"),

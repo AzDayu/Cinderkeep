@@ -155,7 +155,7 @@ async function build() {
     addTitle(s, "HIGH CONCEPT", "게임을 한 문장으로", "빠른 파밍과 상자 성장의 쾌감을 불꽃 심장 방어라는 단일 목표로 압축한다.");
     addMetric(s, "낮/밤 한 사이클", "5분", 80, C.cyan);
     addMetric(s, "목표 플레이타임", "15분", 330, C.ember);
-    addMetric(s, "MVP 생존 목표", "3일", 580, C.green);
+    addMetric(s, "생존 목표", "3일", 580, C.green);
     addBullet(s, "남기는 것", "즉시 채집, 빠른 장비 제작, 코인 상자, 유물 누적, 점점 커지는 전투 밀도", 88, 382, 520, C.green);
     addBullet(s, "바꾸는 것", "무작정 오래 버티는 게임이 아니라, 불꽃 심장과 방어선을 중심으로 판단하게 만든다.", 88, 520, 520, C.ember);
     addFooter(s, 2);
@@ -183,10 +183,10 @@ async function build() {
     addFooter(s, 3);
   }
 
-  // 4 MVP scope
+  // 4 core build scope
   {
     const s = p.slides.add(); addBg(s);
-    addTitle(s, "MVP SCOPE", "이번 버전에서 만들 것 / 만들지 않을 것", "확장 가능성은 열어두되, 첫 구현은 고정 건축 지점과 3일 생존 루프로 잠근다.");
+    addTitle(s, "CORE BUILD SCOPE", "이번 버전에서 만들 것 / 만들지 않을 것", "확장 가능성은 열어두되, 첫 구현은 고정 건축 지점과 3일 생존 루프로 잠근다.");
     addText(s, "반드시 만든다", { left: 92, top: 230, width: 360, height: 40 }, { size: 30, bold: true, color: C.green });
     addText(s, "나중에 확장한다", { left: 732, top: 230, width: 360, height: 40 }, { size: 30, bold: true, color: C.dim });
     const must = [
@@ -335,7 +335,7 @@ async function build() {
     const s = p.slides.add(); addBg(s);
     await addImage(s, imgs.night, { left: 0, top: 0, width: W, height: H }, 0.36);
     s.shapes.add({ geometry: "rect", position: { left: 0, top: 0, width: W, height: H }, fill: "#000000", opacity: 0.28, line: { style: "solid", fill: "none", width: 0 } });
-    addTitle(s, "BASE DEFENSE", "고정 건축 지점으로 MVP를 단단하게 만든다", "처음부터 모든 건축 지점이 보이며, 플레이어는 자원을 들고 E를 길게 눌러 건설한다.");
+    addTitle(s, "BASE DEFENSE", "고정 건축 지점으로 핵심 빌드를 단단하게 만든다", "처음부터 모든 건축 지점이 보이며, 플레이어는 자원을 들고 E를 길게 눌러 건설한다.");
     const items = [
       ["벽", "외곽 / 중간 / 불꽃 근처 순서로 방어선 형성\n체력 보유, 막히면 적이 파괴", 95, C.green],
       ["포탑", "자동 공격. 적은 포탑을 최우선 타깃으로 보지 않지만\n맞거나 길이 막히면 파괴 대상이 된다.", 470, C.cyan],
@@ -416,7 +416,7 @@ async function build() {
   // 15 roadmap
   {
     const s = p.slides.add(); addBg(s);
-    addTitle(s, "GDR 6/16 - 7/3", "개발 로드맵", "MVP 15분 생존 루프를 먼저 고정하고, 이후 30분 이상 확장 가능한 구조를 붙인다.");
+    addTitle(s, "GDR 6/16 - 7/3", "개발 로드맵", "15분 생존 루프를 먼저 고정하고, 이후 30분 이상 확장 가능한 구조를 붙인다.");
     const phases = [
       ["6/16-6/18", "기초 루프", "이동/시점, 낮밤 타이머, 자원 채집, 기본 제작"],
       ["6/19-6/22", "성장", "상자/코인/유물, 장비 슬롯, 허기/스태미나"],
@@ -432,7 +432,7 @@ async function build() {
       addText(s, p[2], { left: x - 8, top: 394, width: 206, height: 116 }, { size: 16, color: C.mute, align: "center" });
       if (i < 4) arrowText(s, x + 184, 286, C.line);
     });
-    addText(s, "확장 예약: 자유 건축, 장기 모드, 희귀 장비, 추위 게이지, 추가 보스는 MVP 구조가 안정된 뒤 분기한다.", { left: 118, top: 602, width: 1040, height: 36 }, { size: 21, color: C.ink, align: "center" });
+    addText(s, "확장 예약: 자유 건축, 장기 모드, 희귀 장비, 추위 게이지, 추가 보스는 핵심 구조가 안정된 뒤 분기한다.", { left: 118, top: 602, width: 1040, height: 36 }, { size: 21, color: C.ink, align: "center" });
     addFooter(s, 15);
   }
 
@@ -450,7 +450,7 @@ async function build() {
       "상자 유물은 영구 누적이며 화면에서 확인 가능",
     ];
     const right = [
-      "건축은 MVP에서 고정 지점 + E 홀드 게이지",
+      "건축은 현재 빌드에서 고정 지점 + E 홀드 게이지",
       "피격 시 건설 취소가 아니라 건설 속도 감소",
       "함정은 저피해, 감속/기절 중심. 보스 효율 감소",
       "장비 티어는 소프트락: 상위 자원 채집 가능하지만 느림",
