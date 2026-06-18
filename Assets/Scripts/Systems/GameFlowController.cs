@@ -2,7 +2,8 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // 3일 게임 루프의 시간표를 지휘하는 컨트롤러입니다.
-// 실제 전투, UI 표시, 적 행동은 각 전용 컴포넌트가 맡고, 이 클래스는 진행 순서만 관리합니다.
+// 실제 전투, UI 표시, 적 행동, 스폰 지점 제어는 각 전용 컴포넌트가 맡습니다.
+// 이 클래스는 현재 페이즈와 다음 페이즈로 넘어가는 순서만 관리합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     [Header("Day Loop Time")]
@@ -13,8 +14,8 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     [Header("Boss Flow Time")]
     [SerializeField] private float _bossApproachDuration = 180f;
 
-    [Header("Enemy Spawn")]
-    [SerializeField] private EnemySpawnPoint[] _enemySpawnPoints;
+    [Header("Enemy Spawn Director")]
+    [SerializeField] private GameFlowEnemySpawnDirector _enemySpawnDirector;
 
     private GameManager _gameManager;
     private GameRunModel _gameRunModel;
@@ -48,28 +49,19 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             return;
         }
 
-        StopEnemySpawnPoints();
+        StopEnemySpawn();
         _isFlowRunning = false;
         _isInitialized = true;
     }
 
     public void InitializeEnemySpawnPoints(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
     {
-        if (_enemySpawnPoints == null)
+        if (_enemySpawnDirector == null)
         {
             return;
         }
 
-        for (int i = 0; i < _enemySpawnPoints.Length; i++)
-        {
-            EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
-            if (spawnPoint == null)
-            {
-                continue;
-            }
-
-            spawnPoint.Initialize(gameObjectManager, enemyLoopConnector);
-        }
+        _enemySpawnDirector.Initialize(gameObjectManager, enemyLoopConnector);
     }
 
     private void Update()
@@ -93,7 +85,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     public void StopFlowAsGameOver()
     {
         _isFlowRunning = false;
-        StopEnemySpawnPoints();
+        StopEnemySpawn();
     }
 
     public void ClearFlow()
@@ -104,7 +96,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _isFlowRunning = false;
-        StopEnemySpawnPoints();
+        StopEnemySpawn();
         _gameRunModel.ClearRun();
     }
 
@@ -175,21 +167,19 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetRemainingTime(_dayDuration);
-        SetEnemySpawnStepByDay();
-        StartEnemySpawnPoints(EnemySpawnMode.Day);
+        StartEnemySpawn(EnemySpawnMode.Day);
     }
 
     private void StartNight()
     {
         _gameRunModel.SetPhase(GameRunPhase.Night);
         _gameRunModel.SetRemainingTime(_nightDuration);
-        SetEnemySpawnStepByDay();
-        StartEnemySpawnPoints(EnemySpawnMode.Night);
+        StartEnemySpawn(EnemySpawnMode.Night);
     }
 
     private void FinishNight()
     {
-        StopEnemySpawnPoints();
+        StopEnemySpawn();
 
         if (_gameRunModel.IsFinalDay())
         {
@@ -216,91 +206,34 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
         _gameRunModel.SetRemainingTime(_bossApproachDuration);
-        SetEnemySpawnStep(EnemySpawnStep.Step3);
-        StartEnemySpawnPoints(EnemySpawnMode.Boss);
+        StartEnemySpawn(EnemySpawnMode.Boss);
     }
 
     private void StartBossFight()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetRemainingTime(0f);
-        SetEnemySpawnStep(EnemySpawnStep.Step3);
-        StartEnemySpawnPoints(EnemySpawnMode.Boss);
+        StartEnemySpawn(EnemySpawnMode.Boss);
     }
 
-    private void SetEnemySpawnStepByDay()
+    private void StartEnemySpawn(EnemySpawnMode spawnMode)
     {
-        if (_gameRunModel.Day <= 1)
+        if (_enemySpawnDirector == null)
         {
-            SetEnemySpawnStep(EnemySpawnStep.Step1);
             return;
         }
 
-        if (_gameRunModel.Day == 2)
-        {
-            SetEnemySpawnStep(EnemySpawnStep.Step2);
-            return;
-        }
-
-        SetEnemySpawnStep(EnemySpawnStep.Step3);
+        _enemySpawnDirector.StartSpawn(spawnMode, _gameRunModel.Day);
     }
 
-    private void SetEnemySpawnStep(EnemySpawnStep spawnStep)
+    private void StopEnemySpawn()
     {
-        if (_enemySpawnPoints == null)
+        if (_enemySpawnDirector == null)
         {
             return;
         }
 
-        for (int i = 0; i < _enemySpawnPoints.Length; i++)
-        {
-            EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
-            if (spawnPoint == null)
-            {
-                continue;
-            }
-
-            spawnPoint.SetSpawnStep(spawnStep);
-        }
-    }
-
-    private void StartEnemySpawnPoints(EnemySpawnMode spawnMode)
-    {
-        if (_enemySpawnPoints == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < _enemySpawnPoints.Length; i++)
-        {
-            EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
-            if (spawnPoint == null)
-            {
-                continue;
-            }
-
-            spawnPoint.SetSpawnPointActive(true);
-            spawnPoint.SetSpawnMode(spawnMode, _gameRunModel.Day);
-        }
-    }
-
-    private void StopEnemySpawnPoints()
-    {
-        if (_enemySpawnPoints == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < _enemySpawnPoints.Length; i++)
-        {
-            EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
-            if (spawnPoint == null)
-            {
-                continue;
-            }
-
-            spawnPoint.SetSpawnPointActive(false);
-        }
+        _enemySpawnDirector.StopSpawn();
     }
 
     private void OnValidate()

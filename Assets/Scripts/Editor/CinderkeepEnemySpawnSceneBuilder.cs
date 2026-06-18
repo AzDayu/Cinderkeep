@@ -57,6 +57,9 @@ public static class CinderkeepEnemySpawnSceneBuilder
         GameManager gameManager = GetComponentInScene<GameManager>();
         GameObjectManager gameObjectManager = GetComponentInScene<GameObjectManager>();
         GameFlowController gameFlowController = GetOrCreateComponentObject<GameFlowController>(runtimeRoot.transform, "GameFlowController");
+        GameFlowEnemySpawnDirector enemySpawnDirector = GetOrCreateComponentObject<GameFlowEnemySpawnDirector>(
+            runtimeRoot.transform,
+            "GameFlowEnemySpawnDirector");
         EnemyLoopConnector enemyLoopConnector = GetOrCreateComponentObject<EnemyLoopConnector>(runtimeRoot.transform, "EnemyLoopConnector");
         Transform cinderHeartTarget = GetOrCreateRootObject("CinderHeart").transform;
         Camera gameCamera = GetComponentInScene<Camera>();
@@ -92,7 +95,8 @@ public static class CinderkeepEnemySpawnSceneBuilder
 
         SetCandidatePoints(outerSpawnPoint, outerCandidates);
 
-        ConnectGameFlowController(gameFlowController, new EnemySpawnPoint[] { nearSpawnPoint, outerSpawnPoint });
+        ConnectGameFlowController(gameFlowController, enemySpawnDirector);
+        ConnectGameFlowEnemySpawnDirector(enemySpawnDirector, new EnemySpawnPoint[] { nearSpawnPoint, outerSpawnPoint });
         ConnectGameManager(gameManager, gameFlowController);
         ConnectEnemyLoopConnector(enemyLoopConnector, GetComponentInScene<GameDataManager>(), cinderHeartTarget, gameCamera);
         ConnectGameLoopConnector(gameManager, GetComponentInScene<GameDataManager>(), gameObjectManager, enemyLoopConnector, cinderHeartTarget, gameCamera);
@@ -258,12 +262,32 @@ public static class CinderkeepEnemySpawnSceneBuilder
         serializedObject.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    private static void ConnectGameFlowController(GameFlowController gameFlowController, EnemySpawnPoint[] spawnPoints)
+    private static void ConnectGameFlowController(
+        GameFlowController gameFlowController,
+        GameFlowEnemySpawnDirector enemySpawnDirector)
     {
         SerializedObject serializedObject = new SerializedObject(gameFlowController);
-        SerializedProperty spawnPointProperty = serializedObject.FindProperty("_enemySpawnPoints");
-        spawnPointProperty.arraySize = spawnPoints.Length;
+        SerializedProperty enemySpawnDirectorProperty = serializedObject.FindProperty("_enemySpawnDirector");
+        if (enemySpawnDirectorProperty != null)
+        {
+            enemySpawnDirectorProperty.objectReferenceValue = enemySpawnDirector;
+        }
 
+        serializedObject.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void ConnectGameFlowEnemySpawnDirector(
+        GameFlowEnemySpawnDirector enemySpawnDirector,
+        EnemySpawnPoint[] spawnPoints)
+    {
+        SerializedObject serializedObject = new SerializedObject(enemySpawnDirector);
+        SerializedProperty spawnPointProperty = serializedObject.FindProperty("_enemySpawnPoints");
+        if (spawnPointProperty == null)
+        {
+            return;
+        }
+
+        spawnPointProperty.arraySize = spawnPoints.Length;
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             spawnPointProperty.GetArrayElementAtIndex(i).objectReferenceValue = spawnPoints[i];

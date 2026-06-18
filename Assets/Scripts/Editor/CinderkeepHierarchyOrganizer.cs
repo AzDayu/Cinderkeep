@@ -64,7 +64,8 @@ public static class CinderkeepHierarchyOrganizer
 
         SetChildOrder(scene, "MainGame_RuntimeManagers", new string[]
         {
-            "GameFlowController"
+            "GameFlowController",
+            "GameFlowEnemySpawnDirector"
         });
 
         SetChildOrder(scene, "Player", new string[]
@@ -131,8 +132,13 @@ public static class CinderkeepHierarchyOrganizer
         GameObject playerObject = FindRootObject(scene, "Player");
         GameObject cinderHeartObject = FindRootObject(scene, "CinderHeart");
         GameObject managerRoot = FindRootObject(scene, "MainGame_Managers");
+        GameObject runtimeManagerRoot = FindRootObject(scene, "MainGame_RuntimeManagers");
 
         ResourceManager resourceManager = EnsureManagerComponent<ResourceManager>(managerRoot, "ResourceManager");
+        GameFlowController gameFlowController = GetComponentInRootChild<GameFlowController>(runtimeManagerRoot, "GameFlowController");
+        GameFlowEnemySpawnDirector enemySpawnDirector = EnsureChildComponent<GameFlowEnemySpawnDirector>(
+            runtimeManagerRoot,
+            "GameFlowEnemySpawnDirector");
         PlayerStatus playerStatus = GetComponentFromObject<PlayerStatus>(playerObject);
         PlayerHUD playerHud = GetComponentByName<PlayerHUD>(scene, "Panel_PlayerHUD");
         ResourceUI resourceUi = GetComponentByName<ResourceUI>(scene, "Panel_ResourceUI");
@@ -141,6 +147,13 @@ public static class CinderkeepHierarchyOrganizer
         GameObjectManager gameObjectManager = GetComponentInRootChild<GameObjectManager>(managerRoot, "GameObjectManager");
         Camera gameCamera = GetComponentInChildrenFromObject<Camera>(playerObject);
         Transform cinderHeartTarget = GetTransformFromObject(cinderHeartObject);
+
+        SetObjectReference(gameFlowController, "_enemySpawnDirector", enemySpawnDirector);
+        SetObjectArray(enemySpawnDirector, "_enemySpawnPoints", new Object[]
+        {
+            GetComponentByName<EnemySpawnPoint>(scene, "EnemySpawnPoint_Near_Required"),
+            GetComponentByName<EnemySpawnPoint>(scene, "EnemySpawnPoint_Outer_Random")
+        });
 
         SetObjectReference(gameManager, "_resourceManager", resourceManager);
 
@@ -387,6 +400,18 @@ public static class CinderkeepHierarchyOrganizer
         return EnsureComponent<TComponent>(child.gameObject);
     }
 
+    private static TComponent EnsureChildComponent<TComponent>(GameObject rootObject, string childName)
+        where TComponent : Component
+    {
+        if (rootObject == null)
+        {
+            return null;
+        }
+
+        Transform child = GetOrCreateChild(rootObject.transform, childName);
+        return EnsureComponent<TComponent>(child.gameObject);
+    }
+
     private static Transform GetTransformFromObject(GameObject targetObject)
     {
         if (targetObject == null)
@@ -412,6 +437,30 @@ public static class CinderkeepHierarchyOrganizer
         }
 
         property.objectReferenceValue = value;
+        serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(targetObject);
+    }
+
+    private static void SetObjectArray(Object targetObject, string propertyName, Object[] values)
+    {
+        if (targetObject == null)
+        {
+            return;
+        }
+
+        SerializedObject serializedObject = new SerializedObject(targetObject);
+        SerializedProperty property = serializedObject.FindProperty(propertyName);
+        if (property == null)
+        {
+            return;
+        }
+
+        property.arraySize = values.Length;
+        for (int i = 0; i < values.Length; i++)
+        {
+            property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+        }
+
         serializedObject.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(targetObject);
     }

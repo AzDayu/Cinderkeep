@@ -10,7 +10,7 @@ public enum EnemySpawnStep
 }
 
 // 씬에 배치되는 적 스폰 지점입니다.
-// GameFlowController가 낮/밤/보스 모드와 일차를 알려주면, 이 클래스가 실제 생성 숫자를 계산합니다.
+// GameFlowEnemySpawnDirector가 낮/밤/보스 모드와 일차를 알려주면, 이 클래스가 실제 생성 숫자를 계산합니다.
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
     [Header("Managers")]
