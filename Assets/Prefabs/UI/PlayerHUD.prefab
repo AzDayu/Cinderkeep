@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5462149867051187920}
   - component: {fileID: 8155272034711779872}
   m_Layer: 0
-  m_Name: Background
+  m_Name: Image_StaminaBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 8111228242122262710}
   - component: {fileID: 2702962360942166647}
   m_Layer: 0
-  m_Name: Max
+  m_Name: Text_HealthMax
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 1239836407926840156}
   - component: {fileID: 1241499672496619519}
   m_Layer: 0
-  m_Name: Fill
+  m_Name: Image_HealthFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 651793929057791696}
   - component: {fileID: 7168562106722110845}
   m_Layer: 0
-  m_Name: SP
+  m_Name: Group_StaminaRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -376,7 +376,7 @@ GameObject:
   - component: {fileID: 7848679198538619972}
   - component: {fileID: 7790249344499112376}
   m_Layer: 0
-  m_Name: Image
+  m_Name: Image_StaminaIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -439,82 +439,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &1854475355072405966
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1761754502923149556}
-  - component: {fileID: 1889091856521590097}
-  - component: {fileID: 6948239626230853017}
-  m_Layer: 0
-  m_Name: Panel_HUDRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1761754502923149556
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1854475355072405966}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5581838719712670767}
-  m_Father: {fileID: 6188796738291523226}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 360, y: 120}
-  m_Pivot: {x: 0, y: 1}
---- !u!222 &1889091856521590097
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1854475355072405966}
-  m_CullTransparentMesh: 1
---- !u!114 &6948239626230853017
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1854475355072405966}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.45}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2550103454317632982
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,7 +449,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4353381532869923303}
   m_Layer: 0
-  m_Name: Fill Area
+  m_Name: Group_StaminaFillArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -566,7 +490,7 @@ GameObject:
   - component: {fileID: 4285678435253902564}
   - component: {fileID: 5637385377796237800}
   m_Layer: 0
-  m_Name: HP
+  m_Name: Group_HealthRow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -643,7 +567,7 @@ GameObject:
   - component: {fileID: 3356966984691222156}
   - component: {fileID: 1668294601190221883}
   m_Layer: 0
-  m_Name: Max
+  m_Name: Text_StaminaMax
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -780,7 +704,7 @@ GameObject:
   - component: {fileID: 5475050418125267362}
   - component: {fileID: 5878011518985392821}
   m_Layer: 0
-  m_Name: Current
+  m_Name: Text_StaminaCurrent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -937,7 +861,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1761754502923149556}
   - {fileID: 9205136704773357518}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1039,7 +962,7 @@ GameObject:
   - component: {fileID: 4059594781355367090}
   - component: {fileID: 5820440017835512021}
   m_Layer: 0
-  m_Name: Slider
+  m_Name: Slider_Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1132,7 +1055,7 @@ GameObject:
   - component: {fileID: 3406779419742289201}
   - component: {fileID: 4124766243879216170}
   m_Layer: 0
-  m_Name: Background
+  m_Name: Image_HealthBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1207,7 +1130,7 @@ GameObject:
   - component: {fileID: 2976566106140083823}
   - component: {fileID: 4881731042349237348}
   m_Layer: 0
-  m_Name: /
+  m_Name: Text_HealthSeparator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1334,85 +1257,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &5649282287884962607
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5581838719712670767}
-  - component: {fileID: 2100573461278678935}
-  - component: {fileID: 8091712245538493568}
-  m_Layer: 0
-  m_Name: Text_HUD_Guide
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &5581838719712670767
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5649282287884962607}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1761754502923149556}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -32, y: -24}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &2100573461278678935
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5649282287884962607}
-  m_CullTransparentMesh: 1
---- !u!114 &8091712245538493568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5649282287884962607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 24
-    m_FontStyle: 0
-    m_BestFit: 0
-    m_MinSize: 10
-    m_MaxSize: 40
-    m_Alignment: 3
-    m_AlignByGeometry: 0
-    m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: "HP / Stamina HUD \uC5F0\uACB0 \uC790\uB9AC"
 --- !u!1 &5769732550561845703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1425,7 +1269,7 @@ GameObject:
   - component: {fileID: 8181490494983153886}
   - component: {fileID: 2854864899420190520}
   m_Layer: 0
-  m_Name: /
+  m_Name: Text_StaminaSeparator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1564,7 +1408,7 @@ GameObject:
   - component: {fileID: 5186686231792481676}
   - component: {fileID: 4712776355559153741}
   m_Layer: 0
-  m_Name: Panel
+  m_Name: Group_StatusRows
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1640,7 +1484,7 @@ GameObject:
   - component: {fileID: 5324939047548906865}
   - component: {fileID: 5316706381420880539}
   m_Layer: 0
-  m_Name: Slider
+  m_Name: Slider_Stamina
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1730,7 +1574,7 @@ GameObject:
   - component: {fileID: 3749419827968037952}
   - component: {fileID: 3237786388000690180}
   m_Layer: 0
-  m_Name: Current
+  m_Name: Text_HealthCurrent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1867,7 +1711,7 @@ GameObject:
   - component: {fileID: 5703329380670585199}
   - component: {fileID: 6392176308386335387}
   m_Layer: 0
-  m_Name: Fill
+  m_Name: Image_StaminaFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1940,7 +1784,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9199226972222964698}
   m_Layer: 0
-  m_Name: Fill Area
+  m_Name: Group_HealthFillArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1978,7 +1822,7 @@ GameObject:
   - component: {fileID: 8373665315170240531}
   - component: {fileID: 4804657468156926839}
   m_Layer: 0
-  m_Name: Image
+  m_Name: Image_HealthIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
