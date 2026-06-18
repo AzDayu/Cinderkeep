@@ -140,6 +140,25 @@ public class EnemySpawnPoint : MonoBehaviour
         }
     }
 
+
+    // 생성된 몬스터에 초기값 전달
+    private void InitializeCreatedEnemy(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        EnemyController enemyController = createdEnemy.GetComponent<EnemyController>();
+
+        if (enemyController == null)
+        {
+            return;
+        }
+
+        enemyController.InitializeEnemy(_spawnPointId, _enemyHp);
+    }
+
     // 생성된 몬스터에 스폰 정보를 전달
 
 
