@@ -172,3 +172,5 @@ Assets/_Recovery.meta
 # Extra crash / dump files
 *.dmp
 *.stackdump
+Assets/ThirdParty/PlayModeComponentSaver
+Assets/ThirdParty/PlayModeComponentSaver.meta
