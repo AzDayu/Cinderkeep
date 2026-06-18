@@ -5,7 +5,8 @@ public sealed class PlayerJump : MonoBehaviour
 {
     [FormerlySerializedAs("m_jumpForce")]
     [SerializeField] private float _jumpForce = 5f;
-    [SerializeField] private PlayerMovement PlayerMovement_PlayerMovement;
+    [FormerlySerializedAs("PlayerMovement_PlayerMovement")]
+    [SerializeField] private PlayerMovement _playerMovement;
 
     private void Start()
     {
@@ -22,20 +23,20 @@ public sealed class PlayerJump : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (PlayerMovement_PlayerMovement == null)
+        if (_playerMovement == null)
         {
-            PlayerMovement_PlayerMovement = GetComponent<PlayerMovement>();
+            _playerMovement = GetComponent<PlayerMovement>();
         }
     }
 
     private void Jump()
     {
-        if (PlayerMovement_PlayerMovement == null)
+        if (_playerMovement == null)
         {
             return;
         }
 
         // 실제 점프 처리는 이동 컴포넌트가 CharacterController 기준으로 수행합니다.
-        PlayerMovement_PlayerMovement.Jump(_jumpForce);
+        _playerMovement.Jump(_jumpForce);
     }
 }

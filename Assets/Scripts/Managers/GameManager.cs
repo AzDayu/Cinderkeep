@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+using UnityEngine.Serialization;
+
 namespace Cinderkeep.Gameplay
 {
     // 게임 전체 생성 주기를 잡는 최상위 매니저입니다.
@@ -9,11 +11,16 @@ namespace Cinderkeep.Gameplay
     // 규칙: 게임 영역에서는 GameManager만 싱글톤으로 둡니다.
     public sealed class GameManager : MonoBehaviour
     {
-        [SerializeField] private GameDataManager GameDataManager_GameDataManager;
-        [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
-        [SerializeField] private UIManager UIManager_UIManager;
-        [SerializeField] private SoundManager SoundManager_SoundManager;
-        [SerializeField] private MapManager MapManager_MapManager;
+        [FormerlySerializedAs("GameDataManager_GameDataManager")]
+        [SerializeField] private GameDataManager _gameDataManager;
+        [FormerlySerializedAs("GameObjectManager_GameObjectManager")]
+        [SerializeField] private GameObjectManager _gameObjectManager;
+        [FormerlySerializedAs("UIManager_UIManager")]
+        [SerializeField] private UIManager _uiManager;
+        [FormerlySerializedAs("SoundManager_SoundManager")]
+        [SerializeField] private SoundManager _soundManager;
+        [FormerlySerializedAs("MapManager_MapManager")]
+        [SerializeField] private MapManager _mapManager;
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
@@ -77,11 +84,11 @@ namespace Cinderkeep.Gameplay
             // 4. BGM과 효과음 관리자 준비
             // 5. HUD, 인벤토리, 게임오버 UI 관리자 준비
             // 6. 저장이 필요한 Instance Model 기본값 준비
-            InitializeManager(GameDataManager_GameDataManager, "GameDataManager");
-            InitializeManager(GameObjectManager_GameObjectManager, "GameObjectManager");
-            InitializeManager(MapManager_MapManager, "MapManager");
-            InitializeManager(SoundManager_SoundManager, "SoundManager");
-            InitializeManager(UIManager_UIManager, "UIManager");
+            InitializeManager(_gameDataManager, "GameDataManager");
+            InitializeManager(_gameObjectManager, "GameObjectManager");
+            InitializeManager(_mapManager, "MapManager");
+            InitializeManager(_soundManager, "SoundManager");
+            InitializeManager(_uiManager, "UIManager");
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
@@ -93,9 +100,9 @@ namespace Cinderkeep.Gameplay
             Initialize();
             _gameRunModel.StartRun();
 
-            if (UIManager_UIManager != null)
+            if (_uiManager != null)
             {
-                UIManager_UIManager.OpenHud();
+                _uiManager.OpenHud();
             }
         }
 
@@ -108,35 +115,35 @@ namespace Cinderkeep.Gameplay
 
             _gameRunModel.EndRun();
 
-            if (UIManager_UIManager != null)
+            if (_uiManager != null)
             {
-                UIManager_UIManager.OpenGameOverPanel();
+                _uiManager.OpenGameOverPanel();
             }
         }
 
         public GameDataManager GetGameDataManager()
         {
-            return GameDataManager_GameDataManager;
+            return _gameDataManager;
         }
 
         public GameObjectManager GetGameObjectManager()
         {
-            return GameObjectManager_GameObjectManager;
+            return _gameObjectManager;
         }
 
         public UIManager GetUIManager()
         {
-            return UIManager_UIManager;
+            return _uiManager;
         }
 
         public SoundManager GetSoundManager()
         {
-            return SoundManager_SoundManager;
+            return _soundManager;
         }
 
         public MapManager GetMapManager()
         {
-            return MapManager_MapManager;
+            return _mapManager;
         }
 
         private void RegisterSingleton()

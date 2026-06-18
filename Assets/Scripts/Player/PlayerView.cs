@@ -6,8 +6,10 @@ public sealed class PlayerView : MonoBehaviour
     [FormerlySerializedAs("mouseSensitivity")]
     [SerializeField] private float _mouseSensitivity = 260f;
     [FormerlySerializedAs("playerBody")]
-    [SerializeField] private Transform Transform_PlayerBody;
-    [SerializeField] private Transform Transform_Camera;
+    [FormerlySerializedAs("Transform_PlayerBody")]
+    [SerializeField] private Transform _playerBody;
+    [FormerlySerializedAs("Transform_Camera")]
+    [SerializeField] private Transform _cameraTransform;
 
     private float _xRotation;
 
@@ -24,24 +26,24 @@ public sealed class PlayerView : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (Transform_PlayerBody == null)
+        if (_playerBody == null)
         {
-            Transform_PlayerBody = transform;
+            _playerBody = transform;
         }
 
-        if (Transform_Camera == null)
+        if (_cameraTransform == null)
         {
             Camera camera = GetComponentInChildren<Camera>(true);
             if (camera != null)
             {
-                Transform_Camera = camera.transform;
+                _cameraTransform = camera.transform;
             }
         }
     }
 
     private void RotateView()
     {
-        if (Transform_Camera == null || Transform_PlayerBody == null)
+        if (_cameraTransform == null || _playerBody == null)
         {
             return;
         }
@@ -52,7 +54,7 @@ public sealed class PlayerView : MonoBehaviour
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -45f, 45f);
 
-        Transform_Camera.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
-        Transform_PlayerBody.Rotate(Vector3.up * mouseX);
+        _cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+        _playerBody.Rotate(Vector3.up * mouseX);
     }
 }

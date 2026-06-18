@@ -36,7 +36,7 @@ Data Rules
 Naming Rules
 - Private member fields use _prefix.
 - Unity references are [SerializeField] private.
-- Unity reference field names start with their type role, such as Button_StartGame.
+- Unity reference field names also use _prefix with a clear role, such as _startGameButton or _gameDataManager.
 - Public access uses properties or clear Get/Set methods when needed.
 - Methods start with verbs, such as LoadScene, SetState, RegisterObject.
 - Class names use PascalCase.

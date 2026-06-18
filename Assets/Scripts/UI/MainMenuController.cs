@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Cinderkeep.UI
@@ -9,11 +10,16 @@ namespace Cinderkeep.UI
     public sealed class MainMenuController : MonoBehaviour
     {
         [SerializeField] private string _gameSceneName = "Cinderkeep_Game";
-        [SerializeField] private Button Button_StartGame;
-        [SerializeField] private Button Button_Settings;
-        [SerializeField] private Button Button_QuitGame;
-        [SerializeField] private GameObject GameObject_SettingsPanel;
-        [SerializeField] private Button Button_CloseSettings;
+        [FormerlySerializedAs("Button_StartGame")]
+        [SerializeField] private Button _startGameButton;
+        [FormerlySerializedAs("Button_Settings")]
+        [SerializeField] private Button _settingsButton;
+        [FormerlySerializedAs("Button_QuitGame")]
+        [SerializeField] private Button _quitGameButton;
+        [FormerlySerializedAs("GameObject_SettingsPanel")]
+        [SerializeField] private GameObject _settingsPanel;
+        [FormerlySerializedAs("Button_CloseSettings")]
+        [SerializeField] private Button _closeSettingsButton;
 
         private void Start()
         {
@@ -28,11 +34,11 @@ namespace Cinderkeep.UI
 
         public void SetReferences(Button buttonStartGame, Button buttonSettings, Button buttonQuitGame, GameObject gameObjectSettingsPanel, Button buttonCloseSettings)
         {
-            Button_StartGame = buttonStartGame;
-            Button_Settings = buttonSettings;
-            Button_QuitGame = buttonQuitGame;
-            GameObject_SettingsPanel = gameObjectSettingsPanel;
-            Button_CloseSettings = buttonCloseSettings;
+            _startGameButton = buttonStartGame;
+            _settingsButton = buttonSettings;
+            _quitGameButton = buttonQuitGame;
+            _settingsPanel = gameObjectSettingsPanel;
+            _closeSettingsButton = buttonCloseSettings;
         }
 
         public void StartGame()
@@ -48,22 +54,22 @@ namespace Cinderkeep.UI
 
         public void OpenSettings()
         {
-            if (GameObject_SettingsPanel == null)
+            if (_settingsPanel == null)
             {
                 return;
             }
 
-            GameObject_SettingsPanel.SetActive(true);
+            _settingsPanel.SetActive(true);
         }
 
         public void CloseSettings()
         {
-            if (GameObject_SettingsPanel == null)
+            if (_settingsPanel == null)
             {
                 return;
             }
 
-            GameObject_SettingsPanel.SetActive(false);
+            _settingsPanel.SetActive(false);
         }
 
         public void QuitGame()
@@ -77,47 +83,47 @@ namespace Cinderkeep.UI
 
         private void InitializeButtons()
         {
-            if (Button_StartGame != null)
+            if (_startGameButton != null)
             {
-                Button_StartGame.onClick.AddListener(StartGame);
+                _startGameButton.onClick.AddListener(StartGame);
             }
 
-            if (Button_Settings != null)
+            if (_settingsButton != null)
             {
-                Button_Settings.onClick.AddListener(OpenSettings);
+                _settingsButton.onClick.AddListener(OpenSettings);
             }
 
-            if (Button_QuitGame != null)
+            if (_quitGameButton != null)
             {
-                Button_QuitGame.onClick.AddListener(QuitGame);
+                _quitGameButton.onClick.AddListener(QuitGame);
             }
 
-            if (Button_CloseSettings != null)
+            if (_closeSettingsButton != null)
             {
-                Button_CloseSettings.onClick.AddListener(CloseSettings);
+                _closeSettingsButton.onClick.AddListener(CloseSettings);
             }
         }
 
         private void ReleaseButtons()
         {
-            if (Button_StartGame != null)
+            if (_startGameButton != null)
             {
-                Button_StartGame.onClick.RemoveListener(StartGame);
+                _startGameButton.onClick.RemoveListener(StartGame);
             }
 
-            if (Button_Settings != null)
+            if (_settingsButton != null)
             {
-                Button_Settings.onClick.RemoveListener(OpenSettings);
+                _settingsButton.onClick.RemoveListener(OpenSettings);
             }
 
-            if (Button_QuitGame != null)
+            if (_quitGameButton != null)
             {
-                Button_QuitGame.onClick.RemoveListener(QuitGame);
+                _quitGameButton.onClick.RemoveListener(QuitGame);
             }
 
-            if (Button_CloseSettings != null)
+            if (_closeSettingsButton != null)
             {
-                Button_CloseSettings.onClick.RemoveListener(CloseSettings);
+                _closeSettingsButton.onClick.RemoveListener(CloseSettings);
             }
         }
     }

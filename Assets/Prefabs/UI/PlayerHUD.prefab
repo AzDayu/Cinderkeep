@@ -1021,13 +1021,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0af75869a36802429377eb312a248aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
-  PlayerStatus_Target: {fileID: 0}
-  Slider_Health: {fileID: 5820440017835512021}
-  Text_HealthCurrent: {fileID: 3237786388000690180}
-  Text_HealthMax: {fileID: 2702962360942166647}
-  Slider_Stamina: {fileID: 5316706381420880539}
-  Text_StaminaCurrent: {fileID: 5878011518985392821}
-  Text_StaminaMax: {fileID: 1668294601190221883}
+  _targetPlayerStatus: {fileID: 0}
+  _healthSlider: {fileID: 5820440017835512021}
+  _healthCurrentText: {fileID: 3237786388000690180}
+  _healthMaxText: {fileID: 2702962360942166647}
+  _staminaSlider: {fileID: 5316706381420880539}
+  _staminaCurrentText: {fileID: 5878011518985392821}
+  _staminaMaxText: {fileID: 1668294601190221883}
 --- !u!1 &4499262504117326271
 GameObject:
   m_ObjectHideFlags: 0

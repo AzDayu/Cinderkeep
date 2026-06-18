@@ -179,13 +179,13 @@ namespace Cinderkeep.MainGame.Editor
             bgmSource.playOnAwake = false;
             effectSource.playOnAwake = false;
 
-            SetObjectReference(gameManager, "GameDataManager_GameDataManager", dataManager);
-            SetObjectReference(gameManager, "GameObjectManager_GameObjectManager", objectManager);
-            SetObjectReference(gameManager, "UIManager_UIManager", uiManager);
-            SetObjectReference(gameManager, "SoundManager_SoundManager", soundManager);
-            SetObjectReference(objectManager, "Transform_ObjectRoot", objectRoot.transform);
-            SetObjectReference(soundManager, "AudioSource_Bgm", bgmSource);
-            SetObjectReference(soundManager, "AudioSource_Effect", effectSource);
+            SetObjectReference(gameManager, "_gameDataManager", dataManager);
+            SetObjectReference(gameManager, "_gameObjectManager", objectManager);
+            SetObjectReference(gameManager, "_uiManager", uiManager);
+            SetObjectReference(gameManager, "_soundManager", soundManager);
+            SetObjectReference(objectManager, "_objectRoot", objectRoot.transform);
+            SetObjectReference(soundManager, "_bgmAudioSource", bgmSource);
+            SetObjectReference(soundManager, "_effectAudioSource", effectSource);
         }
 
         private static void CreateTestHud(Scene scene)
@@ -223,9 +223,9 @@ namespace Cinderkeep.MainGame.Editor
                 return;
             }
 
-            SetObjectReference(uiManager, "GameObject_HudRoot", hudRoot);
-            SetObjectReference(uiManager, "GameObject_InventoryRoot", inventoryRoot);
-            SetObjectReference(uiManager, "GameObject_GameOverPanel", gameOverRoot);
+            SetObjectReference(uiManager, "_hudRoot", hudRoot);
+            SetObjectReference(uiManager, "_inventoryRoot", inventoryRoot);
+            SetObjectReference(uiManager, "_gameOverPanel", gameOverRoot);
         }
 
         private static GameObject CreatePrimitive(PrimitiveType type, string objectName, Transform parent, Vector3 localPosition, Vector3 localScale, Material material)

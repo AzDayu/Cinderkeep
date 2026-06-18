@@ -374,11 +374,11 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.UI.MainMenuController
   _gameSceneName: Cinderkeep_Game
-  Button_StartGame: {fileID: 1789468705}
-  Button_Settings: {fileID: 459917625}
-  Button_QuitGame: {fileID: 964034264}
-  GameObject_SettingsPanel: {fileID: 1688407816}
-  Button_CloseSettings: {fileID: 1236586008}
+  _startGameButton: {fileID: 1789468705}
+  _settingsButton: {fileID: 459917625}
+  _quitGameButton: {fileID: 964034264}
+  _settingsPanel: {fileID: 1688407816}
+  _closeSettingsButton: {fileID: 1236586008}
 --- !u!1 &390287850
 GameObject:
   m_ObjectHideFlags: 0
@@ -2871,14 +2871,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb38a8fce7f078549b19b2bc0116601e, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.UI.MainMenuBgmController
-  AudioSource_Bgm: {fileID: 1833534361}
-  Button_BgmToggle: {fileID: 806568673}
-  Toggle_VolumeMute: {fileID: 1749644723}
-  Slider_Volume: {fileID: 721848759}
-  Text_BgmToggle: {fileID: 993614622}
-  Text_VolumeMute: {fileID: 1895302834}
-  Text_VolumeValue: {fileID: 1138636335}
-  AudioClips_Bgm:
+  _bgmAudioSource: {fileID: 1833534361}
+  _bgmToggleButton: {fileID: 806568673}
+  _volumeMuteToggle: {fileID: 1749644723}
+  _volumeSlider: {fileID: 721848759}
+  _bgmToggleText: {fileID: 993614622}
+  _volumeMuteText: {fileID: 1895302834}
+  _volumeValueText: {fileID: 1138636335}
+  _bgmAudioClips:
   - {fileID: 8300000, guid: 9625e1710aa78284b921378e06f45bdd, type: 3}
   - {fileID: 8300000, guid: 3e623c423427a59458e7366b16e3b4da, type: 3}
   _volume: 0.3

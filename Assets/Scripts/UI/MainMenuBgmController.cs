@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Cinderkeep.UI
@@ -8,14 +9,22 @@ namespace Cinderkeep.UI
     // 이 오브젝트는 씬 전환 뒤에도 남아서 게임 작업 중에도 BGM 버튼을 사용할 수 있게 합니다.
     public sealed class MainMenuBgmController : MonoBehaviour
     {
-        [SerializeField] private AudioSource AudioSource_Bgm;
-        [SerializeField] private Button Button_BgmToggle;
-        [SerializeField] private Toggle Toggle_VolumeMute;
-        [SerializeField] private Slider Slider_Volume;
-        [SerializeField] private Text Text_BgmToggle;
-        [SerializeField] private Text Text_VolumeMute;
-        [SerializeField] private Text Text_VolumeValue;
-        [SerializeField] private AudioClip[] AudioClips_Bgm;
+        [FormerlySerializedAs("AudioSource_Bgm")]
+        [SerializeField] private AudioSource _bgmAudioSource;
+        [FormerlySerializedAs("Button_BgmToggle")]
+        [SerializeField] private Button _bgmToggleButton;
+        [FormerlySerializedAs("Toggle_VolumeMute")]
+        [SerializeField] private Toggle _volumeMuteToggle;
+        [FormerlySerializedAs("Slider_Volume")]
+        [SerializeField] private Slider _volumeSlider;
+        [FormerlySerializedAs("Text_BgmToggle")]
+        [SerializeField] private Text _bgmToggleText;
+        [FormerlySerializedAs("Text_VolumeMute")]
+        [SerializeField] private Text _volumeMuteText;
+        [FormerlySerializedAs("Text_VolumeValue")]
+        [SerializeField] private Text _volumeValueText;
+        [FormerlySerializedAs("AudioClips_Bgm")]
+        [SerializeField] private AudioClip[] _bgmAudioClips;
         [SerializeField] private float _volume = 0.3f;
 
         private static MainMenuBgmController _activeController;
@@ -47,14 +56,14 @@ namespace Cinderkeep.UI
 
         public void SetReferences(AudioSource audioSourceBgm, Button buttonBgmToggle, Toggle toggleVolumeMute, Slider sliderVolume, Text textBgmToggle, Text textVolumeMute, Text textVolumeValue, AudioClip[] audioClipsBgm, float volume)
         {
-            AudioSource_Bgm = audioSourceBgm;
-            Button_BgmToggle = buttonBgmToggle;
-            Toggle_VolumeMute = toggleVolumeMute;
-            Slider_Volume = sliderVolume;
-            Text_BgmToggle = textBgmToggle;
-            Text_VolumeMute = textVolumeMute;
-            Text_VolumeValue = textVolumeValue;
-            AudioClips_Bgm = audioClipsBgm;
+            _bgmAudioSource = audioSourceBgm;
+            _bgmToggleButton = buttonBgmToggle;
+            _volumeMuteToggle = toggleVolumeMute;
+            _volumeSlider = sliderVolume;
+            _bgmToggleText = textBgmToggle;
+            _volumeMuteText = textVolumeMute;
+            _volumeValueText = textVolumeValue;
+            _bgmAudioClips = audioClipsBgm;
             _volume = volume;
         }
 
@@ -102,54 +111,54 @@ namespace Cinderkeep.UI
 
         private void InitializeAudioSource()
         {
-            if (AudioSource_Bgm == null)
+            if (_bgmAudioSource == null)
             {
                 return;
             }
 
-            AudioSource_Bgm.playOnAwake = false;
-            AudioSource_Bgm.loop = false;
-            AudioSource_Bgm.spatialBlend = 0f;
+            _bgmAudioSource.playOnAwake = false;
+            _bgmAudioSource.loop = false;
+            _bgmAudioSource.spatialBlend = 0f;
             ApplyVolume();
         }
 
         private void InitializeControls()
         {
-            if (Button_BgmToggle != null)
+            if (_bgmToggleButton != null)
             {
-                Button_BgmToggle.onClick.AddListener(ToggleBgm);
+                _bgmToggleButton.onClick.AddListener(ToggleBgm);
             }
 
-            if (Toggle_VolumeMute != null)
+            if (_volumeMuteToggle != null)
             {
-                Toggle_VolumeMute.onValueChanged.AddListener(SetVolumeMute);
+                _volumeMuteToggle.onValueChanged.AddListener(SetVolumeMute);
             }
 
-            if (Slider_Volume != null)
+            if (_volumeSlider != null)
             {
-                Slider_Volume.minValue = 0f;
-                Slider_Volume.maxValue = 10f;
-                Slider_Volume.wholeNumbers = true;
-                Slider_Volume.value = Mathf.RoundToInt(Mathf.Clamp01(_volume) * 10f);
-                Slider_Volume.onValueChanged.AddListener(SetVolumeBySlider);
+                _volumeSlider.minValue = 0f;
+                _volumeSlider.maxValue = 10f;
+                _volumeSlider.wholeNumbers = true;
+                _volumeSlider.value = Mathf.RoundToInt(Mathf.Clamp01(_volume) * 10f);
+                _volumeSlider.onValueChanged.AddListener(SetVolumeBySlider);
             }
         }
 
         private void ReleaseControls()
         {
-            if (Button_BgmToggle != null)
+            if (_bgmToggleButton != null)
             {
-                Button_BgmToggle.onClick.RemoveListener(ToggleBgm);
+                _bgmToggleButton.onClick.RemoveListener(ToggleBgm);
             }
 
-            if (Toggle_VolumeMute != null)
+            if (_volumeMuteToggle != null)
             {
-                Toggle_VolumeMute.onValueChanged.RemoveListener(SetVolumeMute);
+                _volumeMuteToggle.onValueChanged.RemoveListener(SetVolumeMute);
             }
 
-            if (Slider_Volume != null)
+            if (_volumeSlider != null)
             {
-                Slider_Volume.onValueChanged.RemoveListener(SetVolumeBySlider);
+                _volumeSlider.onValueChanged.RemoveListener(SetVolumeBySlider);
             }
         }
 
@@ -176,7 +185,7 @@ namespace Cinderkeep.UI
                 return;
             }
 
-            _currentClipIndex = Random.Range(0, AudioClips_Bgm.Length);
+            _currentClipIndex = Random.Range(0, _bgmAudioClips.Length);
             PlayCurrentBgm();
         }
 
@@ -187,9 +196,9 @@ namespace Cinderkeep.UI
                 return;
             }
 
-            AudioSource_Bgm.clip = AudioClips_Bgm[_currentClipIndex];
+            _bgmAudioSource.clip = _bgmAudioClips[_currentClipIndex];
             ApplyVolume();
-            AudioSource_Bgm.Play();
+            _bgmAudioSource.Play();
         }
 
         private void PlayNextBgm()
@@ -205,22 +214,22 @@ namespace Cinderkeep.UI
 
         private void StopBgm()
         {
-            if (AudioSource_Bgm == null)
+            if (_bgmAudioSource == null)
             {
                 return;
             }
 
-            AudioSource_Bgm.Stop();
+            _bgmAudioSource.Stop();
         }
 
         private void UpdateBgmLoop()
         {
-            if (_isInitialized == false || _isBgmOn == false || AudioSource_Bgm == null)
+            if (_isInitialized == false || _isBgmOn == false || _bgmAudioSource == null)
             {
                 return;
             }
 
-            if (AudioSource_Bgm.isPlaying)
+            if (_bgmAudioSource.isPlaying)
             {
                 return;
             }
@@ -257,70 +266,70 @@ namespace Cinderkeep.UI
 
         private void UpdateButtonText()
         {
-            if (Text_BgmToggle == null)
+            if (_bgmToggleText == null)
             {
                 return;
             }
 
             if (_isBgmOn)
             {
-                Text_BgmToggle.text = "♪ BGM ON";
+                _bgmToggleText.text = "♪ BGM ON";
             }
             else
             {
-                Text_BgmToggle.text = "♪ BGM OFF";
+                _bgmToggleText.text = "♪ BGM OFF";
             }
         }
 
         private void UpdateMuteToggle()
         {
-            if (Toggle_VolumeMute != null)
+            if (_volumeMuteToggle != null)
             {
-                Toggle_VolumeMute.SetIsOnWithoutNotify(_isBgmOn == false);
+                _volumeMuteToggle.SetIsOnWithoutNotify(_isBgmOn == false);
             }
 
-            if (Text_VolumeMute != null)
+            if (_volumeMuteText != null)
             {
-                Text_VolumeMute.text = "볼륨 끄기";
+                _volumeMuteText.text = "볼륨 끄기";
             }
         }
 
         private void UpdateVolumeText()
         {
-            if (Text_VolumeValue == null)
+            if (_volumeValueText == null)
             {
                 return;
             }
 
             int volumeLevel = Mathf.RoundToInt(Mathf.Clamp01(_volume) * 10f);
-            Text_VolumeValue.text = volumeLevel.ToString() + " / 10";
+            _volumeValueText.text = volumeLevel.ToString() + " / 10";
         }
 
         private void ApplyVolume()
         {
-            if (AudioSource_Bgm == null)
+            if (_bgmAudioSource == null)
             {
                 return;
             }
 
-            AudioSource_Bgm.volume = Mathf.Clamp01(_volume);
+            _bgmAudioSource.volume = Mathf.Clamp01(_volume);
         }
 
         private int SelectNextClipIndex()
         {
-            if (AudioClips_Bgm == null || AudioClips_Bgm.Length <= 1)
+            if (_bgmAudioClips == null || _bgmAudioClips.Length <= 1)
             {
                 return 0;
             }
 
-            int nextClipIndex = Random.Range(0, AudioClips_Bgm.Length);
+            int nextClipIndex = Random.Range(0, _bgmAudioClips.Length);
 
             if (nextClipIndex == _currentClipIndex)
             {
                 nextClipIndex++;
             }
 
-            if (nextClipIndex >= AudioClips_Bgm.Length)
+            if (nextClipIndex >= _bgmAudioClips.Length)
             {
                 nextClipIndex = 0;
             }
@@ -330,12 +339,12 @@ namespace Cinderkeep.UI
 
         private bool CheckCanPlayBgm()
         {
-            if (AudioSource_Bgm == null || AudioClips_Bgm == null || AudioClips_Bgm.Length == 0)
+            if (_bgmAudioSource == null || _bgmAudioClips == null || _bgmAudioClips.Length == 0)
             {
                 return false;
             }
 
-            if (AudioClips_Bgm[_currentClipIndex] == null)
+            if (_bgmAudioClips[_currentClipIndex] == null)
             {
                 return false;
             }

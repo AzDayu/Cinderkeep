@@ -12,8 +12,9 @@ Lifecycle Rule
 - GameManager calls manager Initialize functions in this order:
   1. GameDataManager
   2. GameObjectManager
-  3. SoundManager
-  4. UIManager
+  3. MapManager
+  4. SoundManager
+  5. UIManager
 
 Coding Rule
 - Do not use scene-wide object search APIs in gameplay scripts.

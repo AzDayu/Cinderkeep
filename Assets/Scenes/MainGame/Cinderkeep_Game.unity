@@ -242,9 +242,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44743ca02faccc429ee3c48d4526bf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.UIManager
-  GameObject_HudRoot: {fileID: 1221738151}
-  GameObject_InventoryRoot: {fileID: 1231747372}
-  GameObject_GameOverPanel: {fileID: 1524120931}
+  _hudRoot: {fileID: 1221738151}
+  _inventoryRoot: {fileID: 1231747372}
+  _gameOverPanel: {fileID: 1524120931}
 --- !u!1 &356893294
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,8 +323,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
   _mouseSensitivity: 260
-  Transform_PlayerBody: {fileID: 356893296}
-  Transform_Camera: {fileID: 0}
+  _playerBody: {fileID: 356893296}
+  _cameraTransform: {fileID: 0}
 --- !u!114 &356893298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
   _jumpForce: 5
-  PlayerMovement_PlayerMovement: {fileID: 0}
+  _playerMovement: {fileID: 0}
 --- !u!114 &356893300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5977229879c95ab4ab19ee480f442720, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBuild
-  GameObject_BuildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
+  _buildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
   _spawnDistance: 3
   _buildKey: 98
 --- !u!114 &356893301
@@ -868,11 +868,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5b5911e6395db141b2d96c570bbaefa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.GameManager
-  GameDataManager_GameDataManager: {fileID: 982475664}
-  GameObjectManager_GameObjectManager: {fileID: 2064572603}
-  UIManager_UIManager: {fileID: 317245440}
-  SoundManager_SoundManager: {fileID: 1733528638}
-  MapManager_MapManager: {fileID: 2130000003}
+  _gameDataManager: {fileID: 982475664}
+  _gameObjectManager: {fileID: 2064572603}
+  _uiManager: {fileID: 317245440}
+  _soundManager: {fileID: 1733528638}
+  _mapManager: {fileID: 2130000003}
 --- !u!1 &1221738151
 GameObject:
   m_ObjectHideFlags: 0
@@ -1546,8 +1546,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f73a5ca18b1226644880b1a9d0b3e6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.SoundManager
-  AudioSource_Bgm: {fileID: 1696894092}
-  AudioSource_Effect: {fileID: 1012578978}
+  _bgmAudioSource: {fileID: 1696894092}
+  _effectAudioSource: {fileID: 1012578978}
   _defaultVolume: 0.3
 --- !u!1 &2064572601
 GameObject:
@@ -1593,7 +1593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69f9118ef21dd3409d86422aa1e9469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.GameObjectManager
-  Transform_ObjectRoot: {fileID: 1296498978}
+  _objectRoot: {fileID: 1296498978}
 --- !u!1 &2130000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,14 +1641,14 @@ MonoBehaviour:
   _generateOnInitialize: 1
   _chunkSize: 120
   _mapRadius: 2
-  GameObject_CenterChunkPrefab: {fileID: 1937059058961897434, guid: ef9c66bf274b779448e6f0a57b60b28d, type: 3}
-  GameObjects_NormalChunkPrefabs:
+  _centerChunkPrefab: {fileID: 1937059058961897434, guid: ef9c66bf274b779448e6f0a57b60b28d, type: 3}
+  _normalChunkPrefabs:
   - {fileID: 4251393647116105588, guid: ef4e5f7b66143e44aa9f351bf91581ed, type: 3}
   - {fileID: 4251393647116105588, guid: 6badf189e3d95b343a23621f4e271458, type: 3}
   - {fileID: 4251393647116105588, guid: f0e3574a2be57fa49979827738b66259, type: 3}
   - {fileID: 4251393647116105588, guid: 95766eeb580d94145865071ab78813d8, type: 3}
   - {fileID: 4251393647116105588, guid: 21e13a3fdb7f2f547846600b4fc0e94f, type: 3}
-  GameObjects_EdgeChunkPrefabs:
+  _edgeChunkPrefabs:
   - {fileID: 4251393647116105588, guid: da4550692e9f9bd468850a3d63adddcb, type: 3}
   - {fileID: 4251393647116105588, guid: 8b3683fcbee141344a37e57f1315b882, type: 3}
   - {fileID: 4251393647116105588, guid: 19042e9a3b7027c44b6d575a3c797ceb, type: 3}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
 {
@@ -6,20 +7,21 @@ namespace Cinderkeep.Gameplay
     // 실제 게임 로직이 아니라 검수용이므로, 필요한 오브젝트에만 직접 붙여서 사용합니다.
     public sealed class GameDataTester : MonoBehaviour
     {
-        [SerializeField] private GameDataManager GameDataManager_GameDataManager;
+        [FormerlySerializedAs("GameDataManager_GameDataManager")]
+        [SerializeField] private GameDataManager _gameDataManager;
         [SerializeField] private string _enemyId = "ice_zombie";
 
         public void StartDataTest()
         {
-            if (GameDataManager_GameDataManager == null)
+            if (_gameDataManager == null)
             {
                 Debug.LogWarning("GameDataTester: GameDataManager reference is empty.");
                 return;
             }
 
-            GameDataManager_GameDataManager.Initialize();
+            _gameDataManager.Initialize();
 
-            EnemyData enemyData = GameDataManager_GameDataManager.GetEnemy(_enemyId);
+            EnemyData enemyData = _gameDataManager.GetEnemy(_enemyId);
             if (enemyData == null)
             {
                 Debug.LogWarning("GameDataTester: enemy data was not found. id: " + _enemyId);

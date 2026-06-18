@@ -23,7 +23,7 @@ Core Folders
 
 - Assets/Prefabs
   Reusable GameObjects.
-  Use Player, Enemy, Building, Resources, and UI subfolders first.
+  Use Player, Enemy, Building, Harvestables, Map, and UI subfolders first.
 
 - Assets/Resources
   Only files loaded through Resources.Load.
@@ -64,7 +64,7 @@ Special Folders
 
 Scripts Folder
 - Assets/Scripts/Managers
-  GameManager, UIManager, SoundManager, GameDataManager, GameObjectManager.
+  GameManager, UIManager, SoundManager, GameDataManager, GameObjectManager, MapManager.
 
 - Assets/Scripts/Data
   Static data classes such as EnemyData, ItemData, RecipeData.
@@ -82,7 +82,7 @@ Scripts Folder
   Feature systems such as inventory, crafting, building, combat.
 
 - Assets/Scripts/Interfaces
-  Shared interfaces such as IDamageable and IInteractable.
+  Shared interfaces such as IDamageable, IInteractable, and IGameInitializable.
 
 - Assets/Scripts/Utils
   Pure utility methods and helper functions.
