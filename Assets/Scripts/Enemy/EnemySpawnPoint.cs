@@ -1,36 +1,41 @@
-using Cinderkeep.Gameplay;
+ï»¿using Cinderkeep.Gameplay;
 using UnityEngine;
-
 
 public enum EnemySpawnStep
 {
-    Step1 = 1, // ½ºÄÌ·¹Åæ
-    Step2 = 2, // ¾óÀ½Á»ºñ
-    Step3 = 3  // ¾óÀ½´Á´ë
+    Step1 = 1, // 1ë‹¨ê³„: ê¸°ë³¸ ëª¬ìŠ¤í„° í›„ë³´
+    Step2 = 2, // 2ë‹¨ê³„: ê°•í™” ëª¬ìŠ¤í„° í›„ë³´
+    Step3 = 3  // 3ë‹¨ê³„: íŠ¹ìˆ˜ ëª¬ìŠ¤í„° í›„ë³´
 }
 
-public class EnemySpawnPoint : MonoBehaviour
+// ì”¬ì— ë°°ì¹˜ë˜ëŠ” ì  ìŠ¤í° ì§€ì ì…ë‹ˆë‹¤.
+// ìƒì„±ì€ GameObjectManagerë¥¼ í†µí•˜ê³ , ìƒì„± ì§í›„ ì´ˆê¸°í™”ëŠ” EnemyLoopConnectorì— ë§¡ê¹ë‹ˆë‹¤.
+// ì´ í´ë˜ìŠ¤ëŠ” ì²´ë ¥ ê³„ì‚°ì´ë‚˜ ê³µê²© ë¡œì§ì„ ì§ì ‘ ì²˜ë¦¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
+public sealed class EnemySpawnPoint : MonoBehaviour
 {
+    [Header("Managers")]
+    [SerializeField] private GameObjectManager GameObjectManager_GameObjectManager;
+    [SerializeField] private EnemyLoopConnector EnemyLoopConnector_EnemyLoopConnector;
 
-    [Header("Manager")]
-    [SerializeField] private GameObjectManager GameObjectManager_Main;
-
-    [Header("spawn Point")]
-    [SerializeField] private int _spawnPointId = 0;
+    [Header("Spawn Point")]
+    [SerializeField] private int _spawnPointId;
     [SerializeField] private bool _isActive = true;
 
     [Header("Spawn Step")]
     [SerializeField] private EnemySpawnStep _spawnStep = EnemySpawnStep.Step1;
+    [SerializeField] private string _step1EnemyDataId = "ice_zombie";
+    [SerializeField] private string _step2EnemyDataId = "ice_zombie";
+    [SerializeField] private string _step3EnemyDataId = "ice_zombie";
 
-    [Header("Enemy Prefab")]
-    [SerializeField] private GameObject[] Prefab_Step1Enemies;
-    [SerializeField] private GameObject[] Prefab_Step2Enemies;
-    [SerializeField] private GameObject[] Prefab_Step3Enemies;
+    [Header("Enemy Prefabs")]
+    [SerializeField] private GameObject[] GameObjects_Step1Enemies;
+    [SerializeField] private GameObject[] GameObjects_Step2Enemies;
+    [SerializeField] private GameObject[] GameObjects_Step3Enemies;
 
     [Header("Spawn Rule")]
     [SerializeField] private float _spawnInterval = 300f;
     [SerializeField] private float _spawnSpacing = 1.2f;
-    [SerializeField] private int _enemyHp = 100;
+    [SerializeField] private bool _spawnOnStart;
 
     [Header("Spawn Position")]
     [SerializeField] private Transform Transform_Center;
@@ -39,7 +44,7 @@ public class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private bool _showGizmo = true;
     [SerializeField] private Color _gizmoColor = Color.red;
 
-    private float _lastSpawnTime = 0f;
+    private float _lastSpawnTime;
 
     public int SpawnPointId
     {
@@ -51,7 +56,13 @@ public class EnemySpawnPoint : MonoBehaviour
         get { return _spawnStep; }
     }
 
-    private void Awake()
+    public void Initialize(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
+    {
+        GameObjectManager_GameObjectManager = gameObjectManager;
+        EnemyLoopConnector_EnemyLoopConnector = enemyLoopConnector;
+    }
+
+    private void Start()
     {
         InitializeCenter();
         InitializeSpawnTime();
@@ -60,142 +71,6 @@ public class EnemySpawnPoint : MonoBehaviour
     private void Update()
     {
         UpdateSpawn();
-    }
-
-    private void InitializeCenter()
-    {
-        if (Transform_Center == null)
-        {
-            Transform_Center = transform;
-        }
-    }
-
-    // °ÔÀÓ ½ÃÀÛ ÈÄ 5ºĞ µÚ Ã¹ ½ºÆùµÇ°Ô ¼³Á¤
-    private void InitializeSpawnTime()
-    {
-        _lastSpawnTime = Time.time;
-    }
-
-    // ½ºÆù °¡´ÉÇÏ¸é ÇöÀç ´Ü°èÀÇ ¸ó½ºÅÍµéÀ» ÇÑ¹ø¿¡ ¼ÒÈ¯
-    private void UpdateSpawn()
-    {
-        if (CanSpawn() == false)
-        {
-            return;
-        }
-
-        SpawnNormalEnemies();
-    }
-
-
-    private bool CanSpawn()
-    {
-        if (_isActive == false)
-        {
-            return false;
-        }
-
-        if (GameObjectManager_Main == null)
-        {
-            return false;
-        }
-
-        if (Time.time < _lastSpawnTime + _spawnInterval)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    // ÇöÀç ´Ü°è¿¡ ÇØ´çÇÏ´Â ¸ó½ºÅÍµéÀ» ¸ğµÎ ¼ÒÈ¯
-    // ÇöÀç ´Ü°è¿¡ ¸Â´Â ÇÁ¸®ÆÕ ¹è¿­À» ÀüºÎ »ı¼º
-    // ÇöÀç ´Ü°è¿¡ ¸Â´Â ÇÁ¸®ÆÕ ¹è¿­À» ÀüºÎ »ı¼º
-    private void SpawnNormalEnemies()
-    {
-        GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
-
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
-        {
-            return;
-        }
-
-        _lastSpawnTime = Time.time;
-
-        for (int i = 0; i < enemyPrefabs.Length; i++)
-        {
-            GameObject enemyPrefab = enemyPrefabs[i];
-
-            if (enemyPrefab == null)
-            {
-                continue;
-            }
-
-            Vector3 spawnPosition = GetSpawnPosition(i, enemyPrefabs.Length);
-            Quaternion spawnRotation = GetSpawnRotation();
-
-            GameObject createdEnemy = GameObjectManager_Main.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
-
-            InitializeCreatedEnemy(createdEnemy);
-        }
-    }
-
-
-    // »ı¼ºµÈ ¸ó½ºÅÍ¿¡ ÃÊ±â°ª Àü´Ş
-    private void InitializeCreatedEnemy(GameObject createdEnemy)
-    {
-        if (createdEnemy == null)
-        {
-            return;
-        }
-
-        EnemyController enemyController = createdEnemy.GetComponent<EnemyController>();
-
-        if (enemyController == null)
-        {
-            return;
-        }
-
-        enemyController.InitializeEnemy(_spawnPointId, _enemyHp);
-    }
-
-    // »ı¼ºµÈ ¸ó½ºÅÍ¿¡ ½ºÆù Á¤º¸¸¦ Àü´Ş
-
-
-
-    private GameObject[] GetEnemyPrefabsByStep()
-    {
-        switch (_spawnStep)
-        {
-            case EnemySpawnStep.Step1:
-                return Prefab_Step1Enemies;
-
-            case EnemySpawnStep.Step2:
-                return Prefab_Step2Enemies;
-
-            case EnemySpawnStep.Step3:
-                return Prefab_Step3Enemies;
-        }
-
-        return Prefab_Step1Enemies;
-    }
-
-    // ¿©·¯ ¸¶¸®°¡ °°Àº À§Ä¡¿¡ °ãÄ¡Áö ¾Êµµ·Ï ÁÂ¿ì·Î ¹èÄ¡
-    private Vector3 GetSpawnPosition(int index, int totalCount)
-    {
-        Vector3 spawnPosition = Transform_Center.position;
-
-        float centerOffset = (totalCount - 1) * 0.5f;
-        float xOffset = (index - centerOffset) * _spawnSpacing;
-
-        spawnPosition.x += xOffset;
-
-        return spawnPosition;
-    }
-
-    private Quaternion GetSpawnRotation()
-    {
-        return Transform_Center.rotation;
     }
 
     public void SetSpawnStep(EnemySpawnStep spawnStep)
@@ -211,6 +86,144 @@ public class EnemySpawnPoint : MonoBehaviour
     public void ResetSpawnTime()
     {
         _lastSpawnTime = Time.time;
+    }
+
+    public void SpawnEnemiesOnce()
+    {
+        SpawnEnemiesByCurrentStep();
+        ResetSpawnTime();
+    }
+
+    private void InitializeCenter()
+    {
+        if (Transform_Center == null)
+        {
+            Transform_Center = transform;
+        }
+    }
+
+    private void InitializeSpawnTime()
+    {
+        if (_spawnOnStart)
+        {
+            _lastSpawnTime = Time.time - _spawnInterval;
+            return;
+        }
+
+        _lastSpawnTime = Time.time;
+    }
+
+    private void UpdateSpawn()
+    {
+        if (CanSpawn() == false)
+        {
+            return;
+        }
+
+        SpawnEnemiesOnce();
+    }
+
+    private bool CanSpawn()
+    {
+        if (_isActive == false)
+        {
+            return false;
+        }
+
+        if (GameObjectManager_GameObjectManager == null)
+        {
+            return false;
+        }
+
+        if (Time.time < _lastSpawnTime + _spawnInterval)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void SpawnEnemiesByCurrentStep()
+    {
+        GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+        {
+            return;
+        }
+
+        string enemyDataId = GetEnemyDataIdByStep();
+
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            SpawnEnemy(enemyPrefabs[i], i, enemyPrefabs.Length, enemyDataId);
+        }
+    }
+
+    private void SpawnEnemy(GameObject enemyPrefab, int index, int totalCount, string enemyDataId)
+    {
+        if (enemyPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = GetSpawnPosition(index, totalCount);
+        Quaternion spawnRotation = GetSpawnRotation();
+        GameObject createdEnemy = GameObjectManager_GameObjectManager.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
+        InitializeCreatedEnemy(createdEnemy, enemyDataId);
+    }
+
+    private void InitializeCreatedEnemy(GameObject createdEnemy, string enemyDataId)
+    {
+        if (EnemyLoopConnector_EnemyLoopConnector == null)
+        {
+            return;
+        }
+
+        EnemyLoopConnector_EnemyLoopConnector.InitializeEnemyObject(createdEnemy, enemyDataId);
+    }
+
+    private GameObject[] GetEnemyPrefabsByStep()
+    {
+        switch (_spawnStep)
+        {
+            case EnemySpawnStep.Step1:
+                return GameObjects_Step1Enemies;
+            case EnemySpawnStep.Step2:
+                return GameObjects_Step2Enemies;
+            case EnemySpawnStep.Step3:
+                return GameObjects_Step3Enemies;
+        }
+
+        return GameObjects_Step1Enemies;
+    }
+
+    private string GetEnemyDataIdByStep()
+    {
+        switch (_spawnStep)
+        {
+            case EnemySpawnStep.Step1:
+                return _step1EnemyDataId;
+            case EnemySpawnStep.Step2:
+                return _step2EnemyDataId;
+            case EnemySpawnStep.Step3:
+                return _step3EnemyDataId;
+        }
+
+        return _step1EnemyDataId;
+    }
+
+    private Vector3 GetSpawnPosition(int index, int totalCount)
+    {
+        Vector3 spawnPosition = Transform_Center.position;
+        float centerOffset = (totalCount - 1) * 0.5f;
+        float xOffset = (index - centerOffset) * _spawnSpacing;
+        spawnPosition.x += xOffset;
+        return spawnPosition;
+    }
+
+    private Quaternion GetSpawnRotation()
+    {
+        return Transform_Center.rotation;
     }
 
     private void OnValidate()
@@ -234,17 +247,15 @@ public class EnemySpawnPoint : MonoBehaviour
         }
 
         Transform center = Transform_Center;
-
         if (center == null)
         {
             center = transform;
         }
 
         Gizmos.color = _gizmoColor;
-
-        DrawSpawnPositionGizmo(center.position, Prefab_Step1Enemies);
-        DrawSpawnPositionGizmo(center.position, Prefab_Step2Enemies);
-        DrawSpawnPositionGizmo(center.position, Prefab_Step3Enemies);
+        DrawSpawnPositionGizmo(center.position, GameObjects_Step1Enemies);
+        DrawSpawnPositionGizmo(center.position, GameObjects_Step2Enemies);
+        DrawSpawnPositionGizmo(center.position, GameObjects_Step3Enemies);
     }
 
     private void DrawSpawnPositionGizmo(Vector3 centerPosition, GameObject[] enemyPrefabs)
@@ -254,17 +265,19 @@ public class EnemySpawnPoint : MonoBehaviour
             return;
         }
 
-        int count = enemyPrefabs.Length;
-
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < enemyPrefabs.Length; i++)
         {
-            float centerOffset = (count - 1) * 0.5f;
-            float xOffset = (i - centerOffset) * _spawnSpacing;
-
-            Vector3 position = centerPosition;
-            position.x += xOffset;
-
+            Vector3 position = GetGizmoPosition(centerPosition, i, enemyPrefabs.Length);
             Gizmos.DrawWireSphere(position, 0.25f);
         }
+    }
+
+    private Vector3 GetGizmoPosition(Vector3 centerPosition, int index, int totalCount)
+    {
+        float centerOffset = (totalCount - 1) * 0.5f;
+        float xOffset = (index - centerOffset) * _spawnSpacing;
+        Vector3 position = centerPosition;
+        position.x += xOffset;
+        return position;
     }
 }
