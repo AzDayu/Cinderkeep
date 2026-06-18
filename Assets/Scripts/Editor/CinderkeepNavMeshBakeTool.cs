@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEditor;
@@ -154,13 +154,5 @@ namespace Cinderkeep.EditorTools
             EditorUtility.SetDirty(savedNavMeshData);
             EditorUtility.SetDirty(navMeshSurface);
         }
-    }
-}
-
-public static class CinderkeepNavMeshBakeCommand
-{
-    public static void Bake()
-    {
-        Cinderkeep.EditorTools.CinderkeepNavMeshBakeTool.BakeMapNavMeshesFromCommandLine();
     }
 }

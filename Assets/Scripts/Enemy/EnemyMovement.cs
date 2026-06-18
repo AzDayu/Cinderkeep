@@ -154,12 +154,36 @@ public sealed class EnemyMovement : MonoBehaviour
     {
         if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
         {
-            _navMeshAgent.SetDestination(targetTransform.position);
+            _navMeshAgent.isStopped = false;
+            if (_navMeshAgent.SetDestination(targetTransform.position))
+            {
+                RotateToTarget(targetTransform.position);
+                return;
+            }
+        }
+
+        MoveDirectlyToTarget(targetTransform.position);
+    }
+
+    private void MoveDirectlyToTarget(Vector3 targetPosition)
+    {
+        targetPosition.y = transform.position.y;
+        Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
+        transform.position = nextPosition;
+        RotateToTarget(targetPosition);
+    }
+
+    private void RotateToTarget(Vector3 targetPosition)
+    {
+        Vector3 direction = targetPosition - transform.position;
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude <= 0.001f)
+        {
             return;
         }
 
-        Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetTransform.position, _moveSpeed * Time.deltaTime);
-        transform.position = nextPosition;
+        transform.rotation = Quaternion.LookRotation(direction.normalized);
     }
 
     private void StopMoving()

@@ -5,7 +5,10 @@ using UnityEngine;
 // 공격 대상 판단은 EnemyBrain이 맡고, 이 클래스는 쿨타임과 피해 적용만 처리합니다.
 public sealed class EnemyAttack : MonoBehaviour
 {
+    private const string CinderHeartTag = "CinderHeart";
+
     [SerializeField] private float _attackDamage;
+    [SerializeField] private float _cinderHeartAttackDamage = 10f;
     [SerializeField] private float _attackInterval = 1f;
 
     private float _lastAttackTime;
@@ -51,8 +54,19 @@ public sealed class EnemyAttack : MonoBehaviour
             return false;
         }
 
-        targetDamageable.TakeDamage(_attackDamage);
+        float attackDamage = GetAttackDamage(targetDamageable);
+        targetDamageable.TakeDamage(attackDamage);
         RecordAttackTime();
         return true;
+    }
+
+    private float GetAttackDamage(Damageable targetDamageable)
+    {
+        if (targetDamageable.CompareTag(CinderHeartTag))
+        {
+            return _cinderHeartAttackDamage;
+        }
+
+        return _attackDamage;
     }
 }

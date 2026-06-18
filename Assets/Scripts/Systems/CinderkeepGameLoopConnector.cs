@@ -10,6 +10,7 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
     [Header("Managers")]
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameDataManager _gameDataManager;
+    [SerializeField] private GameObjectManager _gameObjectManager;
 
     [Header("Player")]
     [SerializeField] private PlayerStatus _playerStatus;
@@ -28,10 +29,11 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
 
     private void Start()
     {
-        InitializeGameFlow();
         ConnectPlayerHud();
         ConnectResourceHud();
         ConnectEnemies();
+        ConnectEnemySpawnPoints();
+        InitializeGameFlow();
     }
 
     private void InitializeGameFlow()
@@ -87,5 +89,38 @@ public sealed class CinderkeepGameLoopConnector : MonoBehaviour
             _gameCamera,
             _enemyRuntimeSets);
         _enemyLoopConnector.InitializeEnemies();
+    }
+
+    private void ConnectEnemySpawnPoints()
+    {
+        if (_gameManager == null)
+        {
+            return;
+        }
+
+        GameFlowController gameFlowController = _gameManager.GetGameFlowController();
+        if (gameFlowController == null)
+        {
+            return;
+        }
+
+        GameObjectManager gameObjectManager = GetGameObjectManager();
+        gameFlowController.InitializeEnemySpawnPoints(gameObjectManager, _enemyLoopConnector);
+    }
+
+    private GameObjectManager GetGameObjectManager()
+    {
+        if (_gameObjectManager != null)
+        {
+            return _gameObjectManager;
+        }
+
+        if (_gameManager == null)
+        {
+            return null;
+        }
+
+        _gameObjectManager = _gameManager.GetGameObjectManager();
+        return _gameObjectManager;
     }
 }

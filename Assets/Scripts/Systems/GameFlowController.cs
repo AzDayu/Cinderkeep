@@ -53,6 +53,25 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _isInitialized = true;
     }
 
+    public void InitializeEnemySpawnPoints(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
+    {
+        if (_enemySpawnPoints == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _enemySpawnPoints.Length; i++)
+        {
+            EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
+            if (spawnPoint == null)
+            {
+                continue;
+            }
+
+            spawnPoint.Initialize(gameObjectManager, enemyLoopConnector);
+        }
+    }
+
     private void Update()
     {
         UpdateFlowTime();
@@ -156,14 +175,16 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetRemainingTime(_dayDuration);
-        StopEnemySpawnPoints();
+        SetEnemySpawnStepByDay();
+        StartEnemySpawnPoints(EnemySpawnMode.Day);
     }
 
     private void StartNight()
     {
         _gameRunModel.SetPhase(GameRunPhase.Night);
         _gameRunModel.SetRemainingTime(_nightDuration);
-        StartEnemySpawnPointsByDay();
+        SetEnemySpawnStepByDay();
+        StartEnemySpawnPoints(EnemySpawnMode.Night);
     }
 
     private void FinishNight()
@@ -196,7 +217,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
         _gameRunModel.SetRemainingTime(_bossApproachDuration);
         SetEnemySpawnStep(EnemySpawnStep.Step3);
-        StartEnemySpawnPoints();
+        StartEnemySpawnPoints(EnemySpawnMode.Boss);
     }
 
     private void StartBossFight()
@@ -204,13 +225,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetRemainingTime(0f);
         SetEnemySpawnStep(EnemySpawnStep.Step3);
-        StartEnemySpawnPoints();
-    }
-
-    private void StartEnemySpawnPointsByDay()
-    {
-        SetEnemySpawnStepByDay();
-        StartEnemySpawnPoints();
+        StartEnemySpawnPoints(EnemySpawnMode.Boss);
     }
 
     private void SetEnemySpawnStepByDay()
@@ -249,7 +264,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
     }
 
-    private void StartEnemySpawnPoints()
+    private void StartEnemySpawnPoints(EnemySpawnMode spawnMode)
     {
         if (_enemySpawnPoints == null)
         {
@@ -265,8 +280,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             }
 
             spawnPoint.SetSpawnPointActive(true);
-            spawnPoint.ResetSpawnTime();
-            spawnPoint.SpawnEnemiesOnce();
+            spawnPoint.SetSpawnMode(spawnMode, _gameRunModel.Day);
         }
     }
 

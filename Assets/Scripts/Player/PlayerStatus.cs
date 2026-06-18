@@ -19,6 +19,7 @@ public sealed class PlayerStatus : MonoBehaviour
     private bool _isExhausted;
     private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
+    private DeathCinderHeartView _deathCinderHeartView;
 
     public float CurrentHealth
     {
@@ -55,6 +56,7 @@ public sealed class PlayerStatus : MonoBehaviour
     private void Start()
     {
         _playerMovement = GetComponent<PlayerMovement>();
+        _deathCinderHeartView = GetComponent<DeathCinderHeartView>();
         ClampStatusValues();
     }
 
@@ -225,6 +227,7 @@ public sealed class PlayerStatus : MonoBehaviour
 
         _isGameOverRequested = true;
         Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 게임 오버를 요청합니다.");
+        ShowDeathView();
 
         if (GameManager.Inst == null)
         {
@@ -232,5 +235,15 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         GameManager.Inst.EndGame();
+    }
+
+    private void ShowDeathView()
+    {
+        if (_deathCinderHeartView == null)
+        {
+            return;
+        }
+
+        _deathCinderHeartView.ShowCinderHeartView();
     }
 }

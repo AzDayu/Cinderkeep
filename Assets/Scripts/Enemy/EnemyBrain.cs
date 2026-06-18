@@ -6,9 +6,13 @@ public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";
     private const string BuildTag = "Build";
+    private const string CinderHeartTag = "CinderHeart";
 
     [SerializeField] private EnemyDetector _enemyDetector;
     [SerializeField] private EnemyAttack _enemyAttack;
+    [SerializeField] private Damageable _cinderHeartDamageable;
+    [SerializeField] private float _attackDistance = 2.3f;
+    [SerializeField] private float _cinderHeartAttackDistance = 3f;
 
     private Damageable _currentAttackTarget;
 
@@ -20,7 +24,13 @@ public sealed class EnemyBrain : MonoBehaviour
     private void Update()
     {
         UpdatePlayerTargetFromDetector();
+        UpdateCinderHeartTargetIfNeeded();
         TryAttackCurrentTarget();
+    }
+
+    public void SetCinderHeartTarget(Damageable cinderHeartDamageable)
+    {
+        _cinderHeartDamageable = cinderHeartDamageable;
     }
 
     // 벽이나 구조물 공격이 필요할 때 외부에서 공격 대상을 지정하는 진입점입니다.
@@ -61,6 +71,7 @@ public sealed class EnemyBrain : MonoBehaviour
 
         if (_enemyDetector.HasDetectedPlayer == false)
         {
+            ClearPlayerAttackTarget();
             return;
         }
 
@@ -93,6 +104,33 @@ public sealed class EnemyBrain : MonoBehaviour
         _enemyAttack.TryAttack(_currentAttackTarget);
     }
 
+    private void UpdateCinderHeartTargetIfNeeded()
+    {
+        if (_enemyDetector != null && _enemyDetector.HasDetectedPlayer)
+        {
+            return;
+        }
+
+        if (_cinderHeartDamageable == null)
+        {
+            return;
+        }
+
+        if (IsInCinderHeartAttackDistance() == false)
+        {
+            ClearCinderHeartAttackTarget();
+            return;
+        }
+
+        _currentAttackTarget = _cinderHeartDamageable;
+    }
+
+    private bool IsInCinderHeartAttackDistance()
+    {
+        float distance = Vector3.Distance(transform.position, _cinderHeartDamageable.transform.position);
+        return distance <= _cinderHeartAttackDistance;
+    }
+
     private bool CanAttackTarget(GameObject targetObject)
     {
         if (targetObject == null)
@@ -102,10 +140,47 @@ public sealed class EnemyBrain : MonoBehaviour
 
         if (targetObject.CompareTag(PlayerTag))
         {
-            return true;
+            return IsInAttackDistance(targetObject.transform, _attackDistance);
         }
 
-        return targetObject.CompareTag(BuildTag);
+        if (targetObject.CompareTag(BuildTag))
+        {
+            return IsInAttackDistance(targetObject.transform, _attackDistance);
+        }
+
+        if (targetObject.CompareTag(CinderHeartTag))
+        {
+            return IsInAttackDistance(targetObject.transform, _cinderHeartAttackDistance);
+        }
+
+        return false;
+    }
+
+    private bool IsInAttackDistance(Transform targetTransform, float attackDistance)
+    {
+        float distance = Vector3.Distance(transform.position, targetTransform.position);
+        return distance <= attackDistance;
+    }
+
+    private void ClearPlayerAttackTarget()
+    {
+        if (_currentAttackTarget == null)
+        {
+            return;
+        }
+
+        if (_currentAttackTarget.CompareTag(PlayerTag))
+        {
+            _currentAttackTarget = null;
+        }
+    }
+
+    private void ClearCinderHeartAttackTarget()
+    {
+        if (_currentAttackTarget == _cinderHeartDamageable)
+        {
+            _currentAttackTarget = null;
+        }
     }
 
     private Damageable GetDamageableFromTransform(Transform targetTransform)

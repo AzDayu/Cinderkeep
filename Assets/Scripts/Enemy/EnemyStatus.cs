@@ -1,10 +1,13 @@
 ﻿using Cinderkeep.Gameplay;
+using System;
 using UnityEngine;
 
 // 몬스터의 체력을 관리하는 컴포넌트입니다.
 // 데미지 계산과 사망 처리를 담당하고, 이동/감지/공격 판단은 다른 컴포넌트가 담당합니다.
 public sealed class EnemyStatus : MonoBehaviour
 {
+    public static event Action<EnemyStatus> EnemyDamaged;
+
     [Header("Health")]
     [SerializeField] private float _maxHealth = 1f;
     [SerializeField] private bool _deactivateOnDeath = true;
@@ -55,8 +58,23 @@ public sealed class EnemyStatus : MonoBehaviour
         InitializeHealth(enemyData.Health);
     }
 
+    public void ResetHealth(float maxHealth)
+    {
+        InitializeHealth(maxHealth);
+    }
+
+    public void SetDeactivateOnDeath(bool deactivateOnDeath)
+    {
+        _deactivateOnDeath = deactivateOnDeath;
+    }
+
     public void TakeDamage(float damage)
     {
+        if (damage <= 0f)
+        {
+            return;
+        }
+
         if (IsDead)
         {
             return;
@@ -64,6 +82,7 @@ public sealed class EnemyStatus : MonoBehaviour
 
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         RefreshHud();
+        NotifyEnemyDamaged();
         AlertByDamage();
 
         Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
@@ -119,6 +138,16 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         _enemyHud.RefreshHealth(_currentHealth, _maxHealth);
+    }
+
+    private void NotifyEnemyDamaged()
+    {
+        if (EnemyDamaged == null)
+        {
+            return;
+        }
+
+        EnemyDamaged(this);
     }
 
     private void ProcessDeath()
