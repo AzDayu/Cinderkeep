@@ -1552,8 +1552,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 678607678}
   - {fileID: 1477472499}
+  - {fileID: 678607678}
   - {fileID: 1310550264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3365,8 +3365,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 903783281}
   - {fileID: 2024954680}
+  - {fileID: 903783281}
   - {fileID: 1457815264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5768,8 +5768,8 @@ Transform:
   - {fileID: 2064572602}
   - {fileID: 317245439}
   - {fileID: 1733528637}
-  - {fileID: 1296498978}
   - {fileID: 2130000002}
+  - {fileID: 1296498978}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1417106093
@@ -6490,11 +6490,11 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1231747373}
-  - {fileID: 1524120932}
   - {fileID: 140572684}
   - {fileID: 562275020}
   - {fileID: 1946040984}
+  - {fileID: 1231747373}
+  - {fileID: 1524120932}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7388,6 +7388,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0f643d3bb1221a48af623074030d003, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CinderkeepGameLoopConnector
+  _playerLoopConnector: {fileID: 0}
+  _resourceLoopConnector: {fileID: 0}
+  _gameFlowLoopConnector: {fileID: 0}
   _gameManager: {fileID: 1095121553}
   _gameDataManager: {fileID: 982475664}
   _gameObjectManager: {fileID: 2064572603}
@@ -9745,12 +9748,12 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 356893296}
   - {fileID: 1400517116}
-  - {fileID: 1482158122}
-  - {fileID: 1417106094}
-  - {fileID: 678734629}
   - {fileID: 1776252044}
   - {fileID: 876592644}
+  - {fileID: 356893296}
+  - {fileID: 1417106094}
   - {fileID: 1399162723}
+  - {fileID: 678734629}
+  - {fileID: 1482158122}
   - {fileID: 2134415030}

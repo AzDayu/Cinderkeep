@@ -1,4 +1,5 @@
 using UnityEngine;
+using Cinderkeep.Gameplay;
 
 // GameFlowController와 스폰 지점을 연결하고 게임 시작 흐름을 호출하는 컴포넌트입니다.
 // 시간 진행과 페이즈 전환은 GameFlowController가 담당하고 여기서는 시작 연결만 담당합니다.
