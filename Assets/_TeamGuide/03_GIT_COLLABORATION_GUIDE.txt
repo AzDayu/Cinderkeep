@@ -1,4 +1,4 @@
-Cinderkeep - Git Collaboration Guide
+﻿Cinderkeep - Git Collaboration Guide
 
 Branch Rule
 - Create every new task branch from the latest main.
@@ -38,6 +38,33 @@ Commit Rule
 - Bad commit scope:
   Massive random changes.
   Unrelated scene and script edits together.
+
+Branch Absorption Rule
+- 팀원 브랜치는 그대로 덮어쓰지 않습니다.
+- 먼저 작업 의도를 확인하고, 현재 main 구조에 맞게 필요한 부분만 흡수합니다.
+- 큰 main 업데이트 이전에 만들어진 브랜치는 좋은 아이디어만 살리고, 오래된 씬/스크립트 상태를 되살리지 않습니다.
+- main 씬 오브젝트, 매니저 연결, HUD 배치, ProjectSettings는 의도가 분명할 때만 변경합니다.
+
+Absorption Checklist
+- 살릴 의도:
+  어떤 게임플레이, 프리팹, 데이터, 모델, UI, 스크립트 책임을 살릴지 적습니다.
+- 제외할 코드 또는 파일:
+  오래된 씬 변경, 중복 스크립트, 테스트 파일, 깨진 에셋, 관련 없는 수정은 제외합니다.
+- main에 맞춰 수정한 파일:
+  폴더링, 네이밍, 코드 스타일에 맞추기 위해 수정한 파일을 적습니다.
+- 다음 작업 기준 파일:
+  팀원이 다음 작업을 이어갈 때 기준으로 봐야 할 파일을 적습니다.
+- 커밋 설명:
+  살린 것, 수정한 것, 일부러 제외한 것을 커밋 설명에 남깁니다.
+
+DM Template After Merge
+1) 브랜치:
+2) 살린 의도:
+3) 제외하거나 대체한 부분:
+4) main에 맞춰 수정한 파일:
+5) 다음 작업 기준 파일:
+6) 주의할 점:
+7) 추천 다음 작업:
 
 Before Pull Request Or Merge
 - Pull latest main.
