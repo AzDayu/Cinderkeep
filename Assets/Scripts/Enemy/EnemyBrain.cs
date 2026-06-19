@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 // 몬스터가 어떤 대상을 공격할지 판단하는 컴포넌트입니다.
 // 이동은 EnemyMovement, 감지는 EnemyDetector, 피해 적용은 EnemyAttack이 담당합니다.
@@ -7,6 +8,7 @@ public sealed class EnemyBrain : MonoBehaviour
     private const string PlayerTag = "Player";
     private const string BuildTag = "Build";
     private const string CinderHeartTag = "CinderHeart";
+    private const float DecisionInterval = 0.2f;
 
     [Tooltip("플레이어 감지 결과를 가져오는 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
@@ -14,11 +16,14 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private EnemyAttack _enemyAttack;
     [Tooltip("플레이어를 감지하지 못했을 때 공격할 CinderHeart 피해 대상입니다.")]
     [SerializeField] private Damageable _cinderHeartDamageable;
+    [Tooltip("판단된 좌표를 받아 실제로 움직이는 이동 컴포넌트입니다.")]
+    [SerializeField] private EnemyMovement _enemyMovement;
     [Tooltip("플레이어와 구조물을 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _attackDistance = 2.3f;
     [Tooltip("CinderHeart를 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _cinderHeartAttackDistance = 3f;
-
+    
+    private Coroutine _coroutineBrainDecisionRoutine;
     private Damageable _currentAttackTarget;
 
     private void Awake()
@@ -26,11 +31,14 @@ public sealed class EnemyBrain : MonoBehaviour
         ConnectComponents();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        UpdatePlayerTargetFromDetector();
-        UpdateCinderHeartTargetIfNeeded();
-        TryAttackCurrentTarget();
+        StartBrainRoutine();
+    }
+
+    private void OnDisable()
+    {
+        StopBrainRoutine();
     }
 
     public void SetCinderHeartTarget(Damageable cinderHeartDamageable)
@@ -65,7 +73,48 @@ public sealed class EnemyBrain : MonoBehaviour
         {
             _enemyAttack = GetComponent<EnemyAttack>();
         }
+        if (_enemyMovement == null)
+        {
+            _enemyMovement = GetComponent<EnemyMovement>();
+        }
     }
+
+    private void StartBrainRoutine()
+    {
+        StopBrainRoutine();
+        _coroutineBrainDecisionRoutine = StartCoroutine(BrainDecisionRoutine());
+    }
+
+    private void StopBrainRoutine()
+    {
+        if( _coroutineBrainDecisionRoutine == null )
+        {
+            return;
+        }
+        StopCoroutine(_coroutineBrainDecisionRoutine);
+        _coroutineBrainDecisionRoutine = null;
+    }
+
+    private IEnumerator BrainDecisionRoutine()
+    {
+        WaitForSeconds waitInterval = new WaitForSeconds(DecisionInterval);
+
+        while (true)
+        {
+            UpdatePlayerTargetFromDetector();
+            UpdateCinderHeartTargetIfNeeded();
+
+            if(_enemyMovement != null)
+            {
+                _enemyMovement.MoveToTarget(_currentAttackTarget != null ? _currentAttackTarget.transform : null);
+            }
+
+            TryAttackCurrentTarget();
+
+            yield return waitInterval;
+        }
+    }
+
 
     private void UpdatePlayerTargetFromDetector()
     {
@@ -116,25 +165,22 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
+        if (_currentAttackTarget != null && _currentAttackTarget != _cinderHeartDamageable)
+        {
+            return;
+        }
+
         if (_cinderHeartDamageable == null)
         {
             return;
         }
 
-        if (IsInCinderHeartAttackDistance() == false)
-        {
-            ClearCinderHeartAttackTarget();
-            return;
-        }
+        
 
         _currentAttackTarget = _cinderHeartDamageable;
     }
 
-    private bool IsInCinderHeartAttackDistance()
-    {
-        float distance = Vector3.Distance(transform.position, _cinderHeartDamageable.transform.position);
-        return distance <= _cinderHeartAttackDistance;
-    }
+   
 
     private bool CanAttackTarget(GameObject targetObject)
     {
@@ -175,14 +221,6 @@ public sealed class EnemyBrain : MonoBehaviour
         }
 
         if (_currentAttackTarget.CompareTag(PlayerTag))
-        {
-            _currentAttackTarget = null;
-        }
-    }
-
-    private void ClearCinderHeartAttackTarget()
-    {
-        if (_currentAttackTarget == _cinderHeartDamageable)
         {
             _currentAttackTarget = null;
         }
