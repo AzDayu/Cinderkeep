@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // 적 관련 런타임 연결만 담당하는 컴포넌트입니다.
-// 스폰된 오브젝트가 실제 적처럼 움직이고 공격하도록 필요한 컴포넌트를 연결합니다.
+// 정식 적 프리팹은 EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가지고 있어야 합니다.
+// 런타임 AddComponent는 아직 정리되지 않은 후보 프리팹을 살리기 위한 대체 연결로만 사용합니다.
 public sealed class EnemyLoopConnector : MonoBehaviour
 {
     [Header("Managers")]
@@ -16,6 +17,10 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
     [Header("Enemies")]
     [SerializeField] private EnemyRuntimeSet[] _enemyRuntimeSets;
+
+    [Header("Fallback")]
+    [Tooltip("적 프리팹에 필요한 컴포넌트가 없을 때 런타임으로 붙일지 결정합니다. 정식 프리팹은 이 옵션 없이도 동작해야 합니다.")]
+    [SerializeField] private bool _allowFallbackComponentAdd = true;
 
     public void Initialize(
         GameDataManager gameDataManager,
@@ -59,12 +64,12 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
         PrepareEnemyPhysics(enemyObject);
 
-        Damageable damageable = GetOrAddComponent<Damageable>(enemyObject);
-        EnemyStatus enemyStatus = GetOrAddComponent<EnemyStatus>(enemyObject);
-        EnemyAttack enemyAttack = GetOrAddComponent<EnemyAttack>(enemyObject);
-        EnemyDetector enemyDetector = GetOrAddComponent<EnemyDetector>(enemyObject);
-        EnemyMovement enemyMovement = GetOrAddComponent<EnemyMovement>(enemyObject);
-        EnemyBrain enemyBrain = GetOrAddComponent<EnemyBrain>(enemyObject);
+        Damageable damageable = GetRuntimeComponent<Damageable>(enemyObject, "Damageable");
+        EnemyStatus enemyStatus = GetRuntimeComponent<EnemyStatus>(enemyObject, "EnemyStatus");
+        EnemyAttack enemyAttack = GetRuntimeComponent<EnemyAttack>(enemyObject, "EnemyAttack");
+        EnemyDetector enemyDetector = GetRuntimeComponent<EnemyDetector>(enemyObject, "EnemyDetector");
+        EnemyMovement enemyMovement = GetRuntimeComponent<EnemyMovement>(enemyObject, "EnemyMovement");
+        EnemyBrain enemyBrain = GetRuntimeComponent<EnemyBrain>(enemyObject, "EnemyBrain");
         EnemyHud enemyHud = enemyObject.GetComponentInChildren<EnemyHud>();
 
         if (damageable == null)
@@ -188,7 +193,7 @@ public sealed class EnemyLoopConnector : MonoBehaviour
         }
     }
 
-    private TComponent GetOrAddComponent<TComponent>(GameObject targetObject)
+    private TComponent GetRuntimeComponent<TComponent>(GameObject targetObject, string componentName)
         where TComponent : Component
     {
         TComponent component = targetObject.GetComponent<TComponent>();
@@ -197,7 +202,30 @@ public sealed class EnemyLoopConnector : MonoBehaviour
             return component;
         }
 
+        return AddFallbackComponent<TComponent>(targetObject, componentName);
+    }
+
+    private TComponent AddFallbackComponent<TComponent>(GameObject targetObject, string componentName)
+        where TComponent : Component
+    {
+        if (_allowFallbackComponentAdd == false)
+        {
+            LogMissingComponent(targetObject, componentName);
+            return null;
+        }
+
+        LogFallbackComponentAdded(targetObject, componentName);
         return targetObject.AddComponent<TComponent>();
+    }
+
+    private void LogMissingComponent(GameObject targetObject, string componentName)
+    {
+        Debug.LogWarning("EnemyLoopConnector: " + targetObject.name + " 프리팹에 " + componentName + " 컴포넌트가 없습니다. 정식 적 프리팹에 미리 추가해주세요.");
+    }
+
+    private void LogFallbackComponentAdded(GameObject targetObject, string componentName)
+    {
+        Debug.LogWarning("EnemyLoopConnector: " + targetObject.name + " 프리팹에 " + componentName + " 컴포넌트가 없어 대체 연결로 추가했습니다. 정식 적 프리팹에는 미리 붙여주세요.");
     }
 
     private Damageable GetCinderHeartDamageable()
@@ -220,12 +248,19 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 [Serializable]
 public sealed class EnemyRuntimeSet
 {
+    [Tooltip("이 적 오브젝트에 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _enemyDataId = "ice_zombie";
+    [Tooltip("적 체력 원본 컴포넌트입니다.")]
     [SerializeField] private EnemyStatus _enemyStatus;
+    [Tooltip("적 공격 실행 컴포넌트입니다.")]
     [SerializeField] private EnemyAttack _enemyAttack;
+    [Tooltip("플레이어 감지 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
+    [Tooltip("CinderHeart 또는 플레이어를 향해 이동하는 컴포넌트입니다.")]
     [SerializeField] private EnemyMovement _enemyMovement;
+    [Tooltip("공격 대상을 판단하는 컴포넌트입니다.")]
     [SerializeField] private EnemyBrain _enemyBrain;
+    [Tooltip("적 머리 위 HP UI 컴포넌트입니다.")]
     [SerializeField] private EnemyHud _enemyHud;
 
     public string EnemyDataId
