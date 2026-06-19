@@ -1,22 +1,14 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 3일 게임 루프의 시간표를 지휘하는 컨트롤러입니다.
-// 실제 전투, UI 표시, 적 행동, 스폰 지점 제어는 각 전용 컴포넌트가 맡습니다.
-// 이 클래스는 현재 페이즈와 다음 페이즈로 넘어가는 순서만 관리합니다.
+// 3일 게임 루프의 페이즈 전환을 지휘하는 컨트롤러입니다.
+// 실제 전투, UI 표시, 적 행동, 스폰 지점 제어는 각 전용 컴포넌트가 담당합니다.
+// 이 클래스는 현재 페이즈에서 다음 페이즈로 넘어가는 순서만 관리합니다.
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
-    [Header("Day Loop Time")]
-    [Tooltip("낮 페이즈 지속 시간입니다. 180이면 3분입니다.")]
-    [SerializeField] private float _dayDuration = 180f;
-    [Tooltip("밤 페이즈 지속 시간입니다. 120이면 2분입니다.")]
-    [SerializeField] private float _nightDuration = 120f;
-    [Tooltip("밤이 끝난 뒤 다음 날로 넘어가기 전 보상 시간을 의미합니다.")]
-    [SerializeField] private float _morningRewardDuration = 15f;
-
-    [Header("Boss Flow Time")]
-    [Tooltip("마지막 날 밤 이후 보스 접근 페이즈가 지속되는 시간입니다.")]
-    [SerializeField] private float _bossApproachDuration = 180f;
+    [Header("Flow Settings")]
+    [Tooltip("낮, 밤, 아침 보상, 보스 접근 시간표입니다.")]
+    [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
 
     [Header("Enemy Spawn Director")]
     [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
@@ -171,14 +163,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
-        _gameRunModel.SetRemainingTime(_dayDuration);
+        _gameRunModel.SetRemainingTime(_gameFlowSettings.DayDuration);
         StartEnemySpawn(EnemySpawnMode.Day);
     }
 
     private void StartNight()
     {
         _gameRunModel.SetPhase(GameRunPhase.Night);
-        _gameRunModel.SetRemainingTime(_nightDuration);
+        _gameRunModel.SetRemainingTime(_gameFlowSettings.NightDuration);
         StartEnemySpawn(EnemySpawnMode.Night);
     }
 
@@ -198,7 +190,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartMorningReward()
     {
         _gameRunModel.SetPhase(GameRunPhase.MorningReward);
-        _gameRunModel.SetRemainingTime(_morningRewardDuration);
+        _gameRunModel.SetRemainingTime(_gameFlowSettings.MorningRewardDuration);
     }
 
     private void StartNextDay()
@@ -210,7 +202,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartBossApproach()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
-        _gameRunModel.SetRemainingTime(_bossApproachDuration);
+        _gameRunModel.SetRemainingTime(_gameFlowSettings.BossApproachDuration);
         StartEnemySpawn(EnemySpawnMode.Boss);
     }
 
@@ -243,29 +235,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void OnValidate()
     {
-        ClampDuration();
-    }
-
-    private void ClampDuration()
-    {
-        if (_dayDuration < 1f)
+        if (_gameFlowSettings == null)
         {
-            _dayDuration = 1f;
+            _gameFlowSettings = new GameFlowSettings();
         }
 
-        if (_nightDuration < 1f)
-        {
-            _nightDuration = 1f;
-        }
-
-        if (_morningRewardDuration < 1f)
-        {
-            _morningRewardDuration = 1f;
-        }
-
-        if (_bossApproachDuration < 1f)
-        {
-            _bossApproachDuration = 1f;
-        }
+        _gameFlowSettings.ClampValues();
     }
 }
