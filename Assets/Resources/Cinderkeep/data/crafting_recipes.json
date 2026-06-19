@@ -419,6 +419,182 @@
           "_amount": 1
         }
       ]
+    },
+    {
+      "_id": "recipe_wood_wall",
+      "_displayName": "Craft Wood Wall",
+      "_resultDataType": "Building",
+      "_resultItemId": "wood_wall",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 6
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_wall",
+      "_displayName": "Craft Iron Wall",
+      "_resultDataType": "Building",
+      "_resultItemId": "iron_wall",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 6
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_wall",
+      "_displayName": "Craft Gold Wall",
+      "_resultDataType": "Building",
+      "_resultItemId": "gold_wall",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_wall",
+      "_displayName": "Craft Adamantium Wall",
+      "_resultDataType": "Building",
+      "_resultItemId": "adamantium_wall",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_wood_tower",
+      "_displayName": "Craft Wood Tower",
+      "_resultDataType": "Building",
+      "_resultItemId": "wood_tower",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 10
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_tower",
+      "_displayName": "Craft Iron Tower",
+      "_resultDataType": "Building",
+      "_resultItemId": "iron_tower",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 8
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_tower",
+      "_displayName": "Craft Gold Tower",
+      "_resultDataType": "Building",
+      "_resultItemId": "gold_tower",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_tower",
+      "_displayName": "Craft Adamantium Tower",
+      "_resultDataType": "Building",
+      "_resultItemId": "adamantium_tower",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 3
+        }
+      ]
     }
   ]
 }

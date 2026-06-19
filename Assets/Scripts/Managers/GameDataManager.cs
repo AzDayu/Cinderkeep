@@ -11,12 +11,14 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private string _toolDataResourcePath = GameUtil.ToolDataResourcePath;
         [SerializeField] private string _weaponDataResourcePath = GameUtil.WeaponDataResourcePath;
         [SerializeField] private string _armorDataResourcePath = GameUtil.ArmorDataResourcePath;
+        [SerializeField] private string _buildingDataResourcePath = GameUtil.BuildingDataResourcePath;
         [SerializeField] private string _craftingRecipeDataResourcePath = GameUtil.CraftingRecipeDataResourcePath;
 
         private readonly Dictionary<string, EnemyData> _enemyDataList = new Dictionary<string, EnemyData>();
         private readonly Dictionary<string, ToolData> _toolDataList = new Dictionary<string, ToolData>();
         private readonly Dictionary<string, WeaponData> _weaponDataList = new Dictionary<string, WeaponData>();
         private readonly Dictionary<string, ArmorData> _armorDataList = new Dictionary<string, ArmorData>();
+        private readonly Dictionary<string, BuildingData> _buildingDataList = new Dictionary<string, BuildingData>();
         private readonly Dictionary<string, CraftingRecipeData> _craftingRecipeDataList = new Dictionary<string, CraftingRecipeData>();
         private bool _isInitialized;
 
@@ -57,6 +59,14 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _armorDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, BuildingData> BuildingDataList
+        {
+            get
+            {
+                return _buildingDataList;
             }
         }
 
@@ -235,6 +245,45 @@ namespace Cinderkeep.Gameplay
             return _armorDataList[id];
         }
 
+        public void LoadBuildingData(string resourcePath)
+        {
+            _buildingDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: building JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            BuildingDataCatalog catalog = JsonUtility.FromJson<BuildingDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: building JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_buildingDataList, catalog.Items[i]);
+            }
+        }
+
+        public BuildingData GetBuilding(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_buildingDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _buildingDataList[id];
+        }
+
         public void LoadCraftingRecipeData(string resourcePath)
         {
             _craftingRecipeDataList.Clear();
@@ -292,6 +341,11 @@ namespace Cinderkeep.Gameplay
         public string GetArmorDataResourcePath()
         {
             return _armorDataResourcePath;
+        }
+
+        public string GetBuildingDataResourcePath()
+        {
+            return _buildingDataResourcePath;
         }
 
         public string GetCraftingRecipeDataResourcePath()
