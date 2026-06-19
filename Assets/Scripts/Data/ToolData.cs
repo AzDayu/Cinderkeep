@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // Tool JSON의 한 줄을 담는 데이터 클래스입니다.
-    // 도끼와 곡괭이처럼 채집에 직접 쓰는 장비만 이 데이터로 관리합니다.
+    // tools.json의 한 줄을 담는 Static Data 클래스입니다.
+    // 도끼와 곡괭이처럼 채집에 쓰이는 도구의 수치와 제작 연결 정보를 관리합니다.
     [Serializable]
     public sealed class ToolData : GameDataBase
     {
@@ -119,7 +119,7 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // ToolData도 JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
+    // JsonUtility가 읽기 쉬운 Items 감싸기 구조입니다.
     [Serializable]
     public sealed class ToolDataCatalog
     {

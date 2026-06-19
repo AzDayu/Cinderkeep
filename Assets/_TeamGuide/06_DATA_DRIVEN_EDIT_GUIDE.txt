@@ -1,0 +1,113 @@
+﻿Cinderkeep - Data Driven Edit Guide
+
+Purpose
+- 이 문서는 JSON 수치를 바꿀 때 어떤 스크립트에 영향을 주는지 확인하기 위한 팀 가이드입니다.
+- Static Data는 Assets/Resources/Cinderkeep/data 아래 JSON에 둡니다.
+- JSON은 GameDataManager가 로드하고, 각 컴포넌트는 필요한 값만 가져와 사용합니다.
+- 데이터가 없거나 ID가 맞지 않으면 Inspector fallback 값으로 안전하게 동작해야 합니다.
+
+Basic Rule
+- JSON 필드명은 C# 멤버변수명과 맞춥니다.
+- 예: _id, _resourceId, _gatherAmount, _requiredToolType
+- _id는 다른 스크립트나 프리팹이 참조할 수 있으므로 함부로 바꾸지 않습니다.
+- 기능 테스트 전에는 한 번에 여러 JSON을 크게 바꾸지 않습니다.
+- 수치를 바꿨다면 반드시 어떤 플레이 체감이 바뀌는지 적습니다.
+
+Current Active Link
+1) harvest_nodes.json
+- 위치: Assets/Resources/Cinderkeep/data/harvest_nodes.json
+- 로드: GameDataManager.LoadHarvestNodeData()
+- 조회: GameDataManager.GetHarvestNode()
+- 사용: ResourceNode
+- 조절 가능:
+  _resourceId: 지급할 자원 종류
+  _requiredToolType: 필요한 도구 타입
+  _requiredToolTier: 필요한 도구 티어 후보
+  _gatherAmount: 한 번 채집할 때 지급량
+  _maxGatherCount: 추후 여러 번 채집용 후보
+  _respawnSeconds: 추후 리스폰 시간 후보
+- 현재 주의:
+  ResourceNode는 _gatherAmount, _resourceId, _requiredToolType을 우선 사용합니다.
+  _requiredToolTier는 아직 실제 도구 티어 판정에 강하게 연결하지 않았습니다.
+  데이터가 없으면 ResourceNode Inspector 값을 fallback으로 사용합니다.
+
+Existing Data Links
+2) enemies.json
+- 위치: Assets/Resources/Cinderkeep/data/enemies.json
+- 로드: GameDataManager.LoadEnemyData()
+- 사용 기준:
+  EnemyStatus: 체력
+  EnemyMovement: 이동 속도, 정지 거리
+  EnemyAttack: 공격력, 공격 간격
+  EnemyDetector: 감지 거리
+- 조절 가능:
+  _health
+  _moveSpeed
+  _stopDistance
+  _attackDamage
+  _attackInterval
+  _visualScale
+  _detectorDistance
+
+Next Data Driven Candidates
+3) tools.json
+- 위치: Assets/Resources/Cinderkeep/data/tools.json
+- 로드: GameDataManager.LoadToolData()
+- 다음 연결 후보:
+  PlayerToolUse: 도구 사용 거리, 범위, 쿨타임, 채집력
+  PlayerToolController: 현재 장착 도구의 tier 확인
+  ResourceNode: _requiredToolTier 판정
+
+4) weapons.json
+- 위치: Assets/Resources/Cinderkeep/data/weapons.json
+- 로드: GameDataManager.LoadWeaponData()
+- 다음 연결 후보:
+  PlayerAttack: 공격력, 공격 거리, 공격 반경, 공격 쿨타임
+
+5) enemy_spawn_rules.json
+- 위치: Assets/Resources/Cinderkeep/data/enemy_spawn_rules.json
+- 로드: GameDataManager.LoadEnemySpawnRuleData()
+- 다음 연결 후보:
+  EnemySpawnPoint: 낮/밤/보스 스폰 주기, 웨이브 수, 최대 생존 수
+  GameFlowEnemySpawnDirector: 현재 페이즈에 맞는 스폰 규칙 선택
+
+6) buildings.json / building_upgrades.json
+- 위치: Assets/Resources/Cinderkeep/data
+- 다음 연결 후보:
+  BuildingManager: 생성할 건축물 ID
+  BuildingHp: 건축물 체력
+  BuildingSpot: 설치 가능 건축물 종류
+  PlayerBuild: 건축 비용과 설치 요청
+
+JSON Edit Checklist
+1) 바꿀 JSON 파일을 하나만 정합니다.
+2) 바꿀 _id를 확인합니다.
+3) 수치를 바꾼 이유를 짧게 적습니다.
+4) 관련 스크립트를 확인합니다.
+5) Unity에서 Play 후 Console 오류를 확인합니다.
+6) 플레이 체감이 바뀌었는지 직접 확인합니다.
+7) fallback 값으로도 안전하게 동작하는지 확인합니다.
+
+Test Template
+1) 수정 JSON:
+2) 수정한 _id:
+3) 수정한 필드:
+4) 예상 변화:
+5) 확인한 씬:
+6) 확인한 스크립트:
+7) 테스트 결과:
+8) 남은 문제:
+
+DM Template
+1) 데이터 변경 위치:
+2) 바꾼 ID:
+3) 바꾼 수치:
+4) 연결되는 스크립트:
+5) 기대한 게임 변화:
+6) 직접 테스트한 내용:
+7) 다음에 이어서 봐야 할 파일:
+
+Current 4.28 Note
+- 4.28 기준으로 ResourceNode가 harvest_nodes.json을 1차로 참조합니다.
+- JSON 연결은 한 번에 전부 붙이지 않고, 실제 게임 루프에 필요한 순서대로 하나씩 붙입니다.
+- 다음 우선순위는 tools.json -> PlayerToolUse 또는 weapons.json -> PlayerAttack입니다.

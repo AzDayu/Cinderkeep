@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,8 +20,8 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // Enemy JSON의 한 줄을 담는 데이터 클래스입니다.
-    // 3일 현재 단계에서는 일반 몬스터의 체력, 이동, 공격 값을 먼저 사용합니다.
+    // enemies.json의 한 줄을 담는 Static Data 클래스입니다.
+    // 일반 몬스터의 체력, 이동, 공격 값을 먼저 관리합니다.
     // JSON 필드명은 _id, _displayName, _health처럼 변수명과 맞춥니다.
     [Serializable]
     public sealed class EnemyData : GameDataBase
@@ -101,7 +101,7 @@ namespace Cinderkeep.Gameplay
     }
 
     // JsonUtility는 배열만 있는 JSON을 바로 읽기 어렵습니다.
-    // 그래서 JSON 루트는 대문자 Items 필드를 가진 감싸는 클래스로 둡니다.
+    // 그래서 JSON 루트는 Items 필드를 가진 감싸기 클래스로 둡니다.
     [Serializable]
     public sealed class EnemyDataCatalog
     {

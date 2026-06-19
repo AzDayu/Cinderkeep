@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // HarvestNode JSON의 한 줄을 담는 데이터 클래스입니다.
-    // 나무, 바위, 광석처럼 채집 대상이 어떤 자원을 주는지 관리합니다.
+    // harvest_nodes.json의 한 줄을 담는 Static Data 클래스입니다.
+    // 나무, 돌, 광석이 어떤 자원을 얼마나 주는지 관리합니다.
     [Serializable]
     public sealed class HarvestNodeData : GameDataBase
     {
@@ -92,7 +92,7 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // HarvestNodeData도 JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
+    // JsonUtility가 읽기 쉬운 Items 감싸기 구조입니다.
     [Serializable]
     public sealed class HarvestNodeDataCatalog
     {
