@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 
@@ -11,10 +11,7 @@ public sealed class EnemyDetector : MonoBehaviour
 
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
-    private const float DetectionInterval = 0.2f;
-
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];
-
     private Coroutine _detectionRoutine;
     private float _detectorDistance = 8f;
 
@@ -28,15 +25,6 @@ public sealed class EnemyDetector : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        StartDetectionRoutine();
-    }
-
-    private void OnDisable()
-    {
-        StopDetectionRoutine();
-    }
 
     public void Initialize(EnemyData enemyData)
     {
@@ -48,6 +36,12 @@ public sealed class EnemyDetector : MonoBehaviour
         _detectorDistance = enemyData.DetectorDistance;
     }
 
+    public void UpdateDetection()
+    {
+        DetectPlayer();
+    }
+
+
     public void EnableAlertMode()
     {
         if (HasDetectedPlayer)
@@ -56,34 +50,6 @@ public sealed class EnemyDetector : MonoBehaviour
         }
 
         DetectPlayerWithoutViewAngle();
-    }
-
-    private void StartDetectionRoutine()
-    {
-        StopDetectionRoutine();
-        _detectionRoutine = StartCoroutine(DetectPlayerRoutine());
-    }
-
-    private void StopDetectionRoutine()
-    {
-        if (_detectionRoutine == null)
-        {
-            return;
-        }
-
-        StopCoroutine(_detectionRoutine);
-        _detectionRoutine = null;
-    }
-
-    private IEnumerator DetectPlayerRoutine()
-    {
-        WaitForSeconds waitInterval = new WaitForSeconds(DetectionInterval);
-
-        while (true)
-        {
-            DetectPlayer();
-            yield return waitInterval;
-        }
     }
 
     private void DetectPlayer()
