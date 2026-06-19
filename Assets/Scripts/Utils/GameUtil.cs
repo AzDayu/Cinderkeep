@@ -7,6 +7,10 @@ namespace Cinderkeep.Gameplay
     public static class GameUtil
     {
         public const string EnemyDataResourcePath = "Cinderkeep/data/enemies";
+        public const string ToolDataResourcePath = "Cinderkeep/data/tools";
+        public const string WeaponDataResourcePath = "Cinderkeep/data/weapons";
+        public const string ArmorDataResourcePath = "Cinderkeep/data/armors";
+        public const string CraftingRecipeDataResourcePath = "Cinderkeep/data/crafting_recipes";
 
         public static void LoadFullData(GameDataManager gameDataManager)
         {
@@ -17,6 +21,10 @@ namespace Cinderkeep.Gameplay
             }
 
             gameDataManager.LoadEnemyData(gameDataManager.GetEnemyDataResourcePath());
+            gameDataManager.LoadToolData(gameDataManager.GetToolDataResourcePath());
+            gameDataManager.LoadWeaponData(gameDataManager.GetWeaponDataResourcePath());
+            gameDataManager.LoadArmorData(gameDataManager.GetArmorDataResourcePath());
+            gameDataManager.LoadCraftingRecipeData(gameDataManager.GetCraftingRecipeDataResourcePath());
         }
 
         public static int GenerateNextInstanceId(int currentInstanceId)

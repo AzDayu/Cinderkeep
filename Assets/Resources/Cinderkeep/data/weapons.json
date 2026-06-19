@@ -1,0 +1,56 @@
+{
+  "Items": [
+    {
+      "_id": "stone_sword",
+      "_displayName": "Stone Sword",
+      "_weaponType": "Sword",
+      "_tier": 1,
+      "_description": "First sword tier for early monster defense.",
+      "_damage": 10,
+      "_attackDistance": 2.2,
+      "_attackRadius": 0.35,
+      "_attackInterval": 0.65,
+      "_prefabKey": "PF_Weapon_Sword_Stone",
+      "_craftingRecipeId": "recipe_stone_sword"
+    },
+    {
+      "_id": "iron_sword",
+      "_displayName": "Iron Sword",
+      "_weaponType": "Sword",
+      "_tier": 2,
+      "_description": "Second sword tier for stable wave defense.",
+      "_damage": 15,
+      "_attackDistance": 2.3,
+      "_attackRadius": 0.38,
+      "_attackInterval": 0.58,
+      "_prefabKey": "PF_Weapon_Sword_Iron",
+      "_craftingRecipeId": "recipe_iron_sword"
+    },
+    {
+      "_id": "gold_sword",
+      "_displayName": "Gold Sword",
+      "_weaponType": "Sword",
+      "_tier": 3,
+      "_description": "Fast sword tier with lighter hit timing.",
+      "_damage": 13,
+      "_attackDistance": 2.35,
+      "_attackRadius": 0.38,
+      "_attackInterval": 0.45,
+      "_prefabKey": "PF_Weapon_Sword_Gold",
+      "_craftingRecipeId": "recipe_gold_sword"
+    },
+    {
+      "_id": "adamantium_sword",
+      "_displayName": "Adamantium Sword",
+      "_weaponType": "Sword",
+      "_tier": 4,
+      "_description": "High tier sword for late wave and boss pressure.",
+      "_damage": 22,
+      "_attackDistance": 2.45,
+      "_attackRadius": 0.42,
+      "_attackInterval": 0.5,
+      "_prefabKey": "PF_Weapon_Sword_Adamantium",
+      "_craftingRecipeId": "recipe_adamantium_sword"
+    }
+  ]
+}

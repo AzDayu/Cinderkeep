@@ -1,0 +1,121 @@
+{
+  "Items": [
+    {
+      "_id": "iron_helmet",
+      "_displayName": "Iron Helmet",
+      "_armorSlot": "Helmet",
+      "_tier": 2,
+      "_description": "Basic head armor for wave survival.",
+      "_defense": 2,
+      "_maxHealthBonus": 5,
+      "_staminaBonus": 0,
+      "_moveSpeedBonus": 0,
+      "_prefabKey": "PF_Armor_Helmet_Iron",
+      "_craftingRecipeId": "recipe_iron_helmet"
+    },
+    {
+      "_id": "iron_chest_armor",
+      "_displayName": "Iron Chest Armor",
+      "_armorSlot": "ChestArmor",
+      "_tier": 2,
+      "_description": "Basic chest armor for reducing monster pressure.",
+      "_defense": 5,
+      "_maxHealthBonus": 15,
+      "_staminaBonus": 0,
+      "_moveSpeedBonus": -0.05,
+      "_prefabKey": "PF_Armor_Chest_Iron",
+      "_craftingRecipeId": "recipe_iron_chest_armor"
+    },
+    {
+      "_id": "iron_boots",
+      "_displayName": "Iron Boots",
+      "_armorSlot": "Boots",
+      "_tier": 2,
+      "_description": "Basic boots for safer close combat.",
+      "_defense": 2,
+      "_maxHealthBonus": 5,
+      "_staminaBonus": 5,
+      "_moveSpeedBonus": 0,
+      "_prefabKey": "PF_Armor_Boots_Iron",
+      "_craftingRecipeId": "recipe_iron_boots"
+    },
+    {
+      "_id": "gold_helmet",
+      "_displayName": "Gold Helmet",
+      "_armorSlot": "Helmet",
+      "_tier": 3,
+      "_description": "Fast progression head armor with stamina support.",
+      "_defense": 2,
+      "_maxHealthBonus": 5,
+      "_staminaBonus": 8,
+      "_moveSpeedBonus": 0.02,
+      "_prefabKey": "PF_Armor_Helmet_Gold",
+      "_craftingRecipeId": "recipe_gold_helmet"
+    },
+    {
+      "_id": "gold_chest_armor",
+      "_displayName": "Gold Chest Armor",
+      "_armorSlot": "ChestArmor",
+      "_tier": 3,
+      "_description": "Gold armor that favors stamina over raw defense.",
+      "_defense": 4,
+      "_maxHealthBonus": 12,
+      "_staminaBonus": 15,
+      "_moveSpeedBonus": 0,
+      "_prefabKey": "PF_Armor_Chest_Gold",
+      "_craftingRecipeId": "recipe_gold_chest_armor"
+    },
+    {
+      "_id": "gold_boots",
+      "_displayName": "Gold Boots",
+      "_armorSlot": "Boots",
+      "_tier": 3,
+      "_description": "Boots for faster repositioning during waves.",
+      "_defense": 2,
+      "_maxHealthBonus": 3,
+      "_staminaBonus": 10,
+      "_moveSpeedBonus": 0.08,
+      "_prefabKey": "PF_Armor_Boots_Gold",
+      "_craftingRecipeId": "recipe_gold_boots"
+    },
+    {
+      "_id": "adamantium_helmet",
+      "_displayName": "Adamantium Helmet",
+      "_armorSlot": "Helmet",
+      "_tier": 4,
+      "_description": "High tier helmet for late loop survival.",
+      "_defense": 4,
+      "_maxHealthBonus": 10,
+      "_staminaBonus": 8,
+      "_moveSpeedBonus": 0.02,
+      "_prefabKey": "PF_Armor_Helmet_Adamantium",
+      "_craftingRecipeId": "recipe_adamantium_helmet"
+    },
+    {
+      "_id": "adamantium_chest_armor",
+      "_displayName": "Adamantium Chest Armor",
+      "_armorSlot": "ChestArmor",
+      "_tier": 4,
+      "_description": "High tier chest armor for boss and heavy waves.",
+      "_defense": 8,
+      "_maxHealthBonus": 25,
+      "_staminaBonus": 10,
+      "_moveSpeedBonus": 0,
+      "_prefabKey": "PF_Armor_Chest_Adamantium",
+      "_craftingRecipeId": "recipe_adamantium_chest_armor"
+    },
+    {
+      "_id": "adamantium_boots",
+      "_displayName": "Adamantium Boots",
+      "_armorSlot": "Boots",
+      "_tier": 4,
+      "_description": "High tier boots for surviving late enemy pressure.",
+      "_defense": 4,
+      "_maxHealthBonus": 8,
+      "_staminaBonus": 15,
+      "_moveSpeedBonus": 0.08,
+      "_prefabKey": "PF_Armor_Boots_Adamantium",
+      "_craftingRecipeId": "recipe_adamantium_boots"
+    }
+  ]
+}

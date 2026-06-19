@@ -1,0 +1,424 @@
+{
+  "Items": [
+    {
+      "_id": "recipe_stone_axe",
+      "_displayName": "Craft Stone Axe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "stone_axe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 3
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_stone_pickaxe",
+      "_displayName": "Craft Stone Pickaxe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "stone_pickaxe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 3
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 3
+        }
+      ]
+    },
+    {
+      "_id": "recipe_stone_sword",
+      "_displayName": "Craft Stone Sword",
+      "_resultDataType": "Weapon",
+      "_resultItemId": "stone_sword",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 1,
+      "_unlockDay": 1,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 2
+        },
+        {
+          "_resourceId": "Stone",
+          "_amount": 4
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_axe",
+      "_displayName": "Craft Iron Axe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "iron_axe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 4
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_pickaxe",
+      "_displayName": "Craft Iron Pickaxe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "iron_pickaxe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 5
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_sword",
+      "_displayName": "Craft Iron Sword",
+      "_resultDataType": "Weapon",
+      "_resultItemId": "iron_sword",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 3
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 5
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_helmet",
+      "_displayName": "Craft Iron Helmet",
+      "_resultDataType": "Armor",
+      "_resultItemId": "iron_helmet",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Iron",
+          "_amount": 3
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_chest_armor",
+      "_displayName": "Craft Iron Chest Armor",
+      "_resultDataType": "Armor",
+      "_resultItemId": "iron_chest_armor",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Iron",
+          "_amount": 7
+        }
+      ]
+    },
+    {
+      "_id": "recipe_iron_boots",
+      "_displayName": "Craft Iron Boots",
+      "_resultDataType": "Armor",
+      "_resultItemId": "iron_boots",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 2,
+      "_unlockDay": 2,
+      "_costs": [
+        {
+          "_resourceId": "Iron",
+          "_amount": 4
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_axe",
+      "_displayName": "Craft Gold Axe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "gold_axe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 1
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_pickaxe",
+      "_displayName": "Craft Gold Pickaxe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "gold_pickaxe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 1
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_sword",
+      "_displayName": "Craft Gold Sword",
+      "_resultDataType": "Weapon",
+      "_resultItemId": "gold_sword",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 3
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Iron",
+          "_amount": 1
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_helmet",
+      "_displayName": "Craft Gold Helmet",
+      "_resultDataType": "Armor",
+      "_resultItemId": "gold_helmet",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Gold",
+          "_amount": 3
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_chest_armor",
+      "_displayName": "Craft Gold Chest Armor",
+      "_resultDataType": "Armor",
+      "_resultItemId": "gold_chest_armor",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Gold",
+          "_amount": 7
+        }
+      ]
+    },
+    {
+      "_id": "recipe_gold_boots",
+      "_displayName": "Craft Gold Boots",
+      "_resultDataType": "Armor",
+      "_resultItemId": "gold_boots",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 3,
+      "_unlockDay": 3,
+      "_costs": [
+        {
+          "_resourceId": "Gold",
+          "_amount": 4
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_axe",
+      "_displayName": "Craft Adamantium Axe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "adamantium_axe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_pickaxe",
+      "_displayName": "Craft Adamantium Pickaxe",
+      "_resultDataType": "Tool",
+      "_resultItemId": "adamantium_pickaxe",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 5
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_sword",
+      "_displayName": "Craft Adamantium Sword",
+      "_resultDataType": "Weapon",
+      "_resultItemId": "adamantium_sword",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Wood",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 6
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_helmet",
+      "_displayName": "Craft Adamantium Helmet",
+      "_resultDataType": "Armor",
+      "_resultItemId": "adamantium_helmet",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 3
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 1
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_chest_armor",
+      "_displayName": "Craft Adamantium Chest Armor",
+      "_resultDataType": "Armor",
+      "_resultItemId": "adamantium_chest_armor",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 8
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 2
+        }
+      ]
+    },
+    {
+      "_id": "recipe_adamantium_boots",
+      "_displayName": "Craft Adamantium Boots",
+      "_resultDataType": "Armor",
+      "_resultItemId": "adamantium_boots",
+      "_resultCount": 1,
+      "_stationType": "Workbench",
+      "_requiredStationTier": 4,
+      "_unlockDay": 4,
+      "_costs": [
+        {
+          "_resourceId": "Adamantium",
+          "_amount": 4
+        },
+        {
+          "_resourceId": "Gold",
+          "_amount": 1
+        }
+      ]
+    }
+  ]
+}
