@@ -1,4 +1,4 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -13,11 +13,20 @@ public sealed class EnemyMovement : MonoBehaviour
     [SerializeField] private float _moveSpeed;
     [Tooltip("목표와 이 거리 안에 들어오면 이동을 멈춥니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _stopDistance;
+    [Tooltip("낮에도 CinderHeart를 향해 바로 이동할지 결정합니다. 밤에는 true로 바뀝니다.")]
+    [SerializeField] private bool _canChaseCinderHeart = true;
+    [Tooltip("낮에 CinderHeart를 향하지 않을 때 스폰 지점 주변을 배회하는 반경입니다.")]
+    [SerializeField] private float _wanderRadius = 6f;
+    [Tooltip("낮 배회 목표를 다시 정하는 간격입니다.")]
+    [SerializeField] private float _wanderInterval = 2.5f;
 
     private const float PathUpdateInterval = 0.2f;
 
     private NavMeshAgent _navMeshAgent;
     private Coroutine _movementRoutine;
+    private Vector3 _spawnPosition;
+    private Vector3 _wanderTargetPosition;
+    private float _nextWanderTime;
     private bool _isInitialized;
 
     private void OnEnable()
@@ -45,6 +54,8 @@ public sealed class EnemyMovement : MonoBehaviour
         ConnectComponents(enemyDetector);
         _moveSpeed = enemyData.MoveSpeed;
         _stopDistance = enemyData.StopDistance;
+        _spawnPosition = transform.position;
+        _wanderTargetPosition = _spawnPosition;
         ApplyNavMeshAgentSettings();
 
         _isInitialized = true;
@@ -54,6 +65,15 @@ public sealed class EnemyMovement : MonoBehaviour
     public void SetCinderHeartTarget(Transform cinderHeartTarget)
     {
         _cinderHeartTarget = cinderHeartTarget;
+    }
+
+    public void SetCinderHeartChaseEnabled(bool isEnabled)
+    {
+        _canChaseCinderHeart = isEnabled;
+        if (isEnabled == false)
+        {
+            StopMoving();
+        }
     }
 
     public void MoveToTarget(Transform targetTransform)
@@ -70,7 +90,7 @@ public sealed class EnemyMovement : MonoBehaviour
             return;
         }
 
-        MoveWithNavMeshOrTransform(targetTransform);
+        MoveWithNavMeshOrTransform(targetTransform.position);
     }
 
     private void ConnectComponents(EnemyDetector enemyDetector)
@@ -135,7 +155,13 @@ public sealed class EnemyMovement : MonoBehaviour
     private void MoveToPriorityTarget()
     {
         Transform targetTransform = GetPriorityTarget();
-        MoveToTarget(targetTransform);
+        if (targetTransform != null)
+        {
+            MoveToTarget(targetTransform);
+            return;
+        }
+
+        WanderAroundSpawnPoint();
     }
 
     private Transform GetPriorityTarget()
@@ -145,7 +171,36 @@ public sealed class EnemyMovement : MonoBehaviour
             return _enemyDetector.DetectedPlayer;
         }
 
-        return _cinderHeartTarget;
+        if (_canChaseCinderHeart)
+        {
+            return _cinderHeartTarget;
+        }
+
+        return null;
+    }
+
+    private void WanderAroundSpawnPoint()
+    {
+        if (Time.time >= _nextWanderTime)
+        {
+            RefreshWanderTargetPosition();
+        }
+
+        if (Vector3.Distance(transform.position, _wanderTargetPosition) <= _stopDistance)
+        {
+            StopMoving();
+            return;
+        }
+
+        MoveWithNavMeshOrTransform(_wanderTargetPosition);
+    }
+
+    private void RefreshWanderTargetPosition()
+    {
+        _nextWanderTime = Time.time + _wanderInterval;
+        Vector2 randomCircle = Random.insideUnitCircle * _wanderRadius;
+        _wanderTargetPosition = _spawnPosition + new Vector3(randomCircle.x, 0f, randomCircle.y);
+        _wanderTargetPosition.y = transform.position.y;
     }
 
     private bool CanStopAtTarget(Transform targetTransform)
@@ -154,19 +209,19 @@ public sealed class EnemyMovement : MonoBehaviour
         return distance <= _stopDistance;
     }
 
-    private void MoveWithNavMeshOrTransform(Transform targetTransform)
+    private void MoveWithNavMeshOrTransform(Vector3 targetPosition)
     {
         if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
         {
             _navMeshAgent.isStopped = false;
-            if (_navMeshAgent.SetDestination(targetTransform.position))
+            if (_navMeshAgent.SetDestination(targetPosition))
             {
-                RotateToTarget(targetTransform.position);
+                RotateToTarget(targetPosition);
                 return;
             }
         }
 
-        MoveDirectlyToTarget(targetTransform.position);
+        MoveDirectlyToTarget(targetPosition);
     }
 
     private void MoveDirectlyToTarget(Vector3 targetPosition)

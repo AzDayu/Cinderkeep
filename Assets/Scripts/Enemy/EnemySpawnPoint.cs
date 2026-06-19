@@ -135,6 +135,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         _currentDay = Mathf.Max(1, day);
         ResetSpawnTime();
 
+        _runtimeTracker.SetCinderHeartChaseEnabledForAliveEnemies(CanChaseCinderHeartInCurrentMode());
+
         EnemySpawnRule spawnRule = GetCurrentSpawnRule();
         if (spawnRule.SpawnOnModeStart == true)
         {
@@ -252,6 +254,28 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         GameObject createdEnemy = _gameObjectManager.CreateGameObject(enemyPrefab, spawnPosition, spawnRotation);
         _runtimeTracker.RegisterEnemy(createdEnemy);
         InitializeCreatedEnemy(createdEnemy, enemyDataId);
+        ApplySpawnModeToEnemy(createdEnemy);
+    }
+
+    private void ApplySpawnModeToEnemy(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        EnemyMovement enemyMovement = createdEnemy.GetComponent<EnemyMovement>();
+        if (enemyMovement == null)
+        {
+            return;
+        }
+
+        enemyMovement.SetCinderHeartChaseEnabled(CanChaseCinderHeartInCurrentMode());
+    }
+
+    private bool CanChaseCinderHeartInCurrentMode()
+    {
+        return _spawnMode != EnemySpawnMode.Day;
     }
 
     private void InitializeCreatedEnemy(GameObject createdEnemy, string enemyDataId)

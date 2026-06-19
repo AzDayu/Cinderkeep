@@ -17,6 +17,26 @@ public sealed class EnemySpawnRuntimeTracker
         _spawnedEnemies.Add(enemyObject);
     }
 
+    public void SetCinderHeartChaseEnabledForAliveEnemies(bool isEnabled)
+    {
+        RemoveMissingEnemies();
+
+        for (int i = 0; i < _spawnedEnemies.Count; i++)
+        {
+            GameObject enemyObject = _spawnedEnemies[i];
+            if (enemyObject == null || enemyObject.activeInHierarchy == false)
+            {
+                continue;
+            }
+
+            EnemyMovement enemyMovement = enemyObject.GetComponent<EnemyMovement>();
+            if (enemyMovement != null)
+            {
+                enemyMovement.SetCinderHeartChaseEnabled(isEnabled);
+            }
+        }
+    }
+
     public int GetAliveEnemyCount()
     {
         RemoveMissingEnemies();

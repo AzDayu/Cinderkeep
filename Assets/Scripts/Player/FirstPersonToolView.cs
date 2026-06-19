@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 // 1인칭 카메라 앞에 현재 장착한 도구를 보여주는 View 전용 컴포넌트입니다.
-// 실제 채집 판정은 PlayerInteraction이 담당하고, 이 클래스는 화면 표시와 짧은 휘두르기만 담당합니다.
+// 실제 공격과 채집 판정은 PlayerAttack, PlayerToolUse가 담당하고, 이 클래스는 화면 표시와 짧은 휘두르기만 담당합니다.
 public sealed class FirstPersonToolView : MonoBehaviour
 {
     [Header("Connected Components")]
@@ -36,7 +36,6 @@ public sealed class FirstPersonToolView : MonoBehaviour
     private void Update()
     {
         RefreshToolView();
-        ReadSwingInput();
         UpdateSwing();
     }
 
@@ -122,13 +121,6 @@ public sealed class FirstPersonToolView : MonoBehaviour
         targetObject.SetActive(isActive);
     }
 
-    private void ReadSwingInput()
-    {
-        if (CinderkeepInput.WasLeftMousePressedThisFrame() || CinderkeepInput.WasKeyPressedThisFrame(KeyCode.E))
-        {
-            PlaySwing();
-        }
-    }
 
     private void UpdateSwing()
     {

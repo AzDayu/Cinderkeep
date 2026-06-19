@@ -101,6 +101,66 @@ public static class CinderkeepGameLoopSceneBuilder
         Debug.Log("Cinderkeep visual setup completed.");
     }
 
+    [MenuItem("Cinderkeep/Main Game/Apply Player Tool Use And Resource Field")]
+    public static void ApplyPlayerToolUseAndResourceFieldOnly()
+    {
+        EnsureProjectFolders();
+        EnsureTags();
+        OpenTargetScene();
+
+        Material cinderHeartMaterial = GetOrCreateMaterial("MAT_4_0_CinderHeart_Red", new Color(1f, 0.08f, 0.02f, 1f));
+        Material iceMaterial = GetOrCreateMaterial("MAT_4_0_Ice_Blue", new Color(0.35f, 0.72f, 1f, 1f));
+        Material woodMaterial = GetOrCreateMaterial("MAT_4_0_Wood", new Color(0.46f, 0.26f, 0.1f, 1f));
+        Material stoneMaterial = GetOrCreateMaterial("MAT_4_0_Stone", new Color(0.42f, 0.46f, 0.5f, 1f));
+        Material ironMaterial = GetOrCreateMaterial("MAT_4_0_IronOre", new Color(0.55f, 0.65f, 0.72f, 1f));
+        Material goldMaterial = GetOrCreateMaterial("MAT_4_0_GoldOre", new Color(1f, 0.72f, 0.18f, 1f));
+        Material enemyMaterial = GetOrCreateMaterial("MAT_4_0_IceZombie", new Color(0.55f, 0.8f, 0.95f, 1f));
+
+        CreateSandboxPrefabs(cinderHeartMaterial, iceMaterial, woodMaterial, stoneMaterial, ironMaterial, goldMaterial, enemyMaterial);
+
+        GameObject player = GetSceneObjectByName("Player");
+        SetupPlayerToolUse(player);
+
+        GameObject runtimeRoot = GetOrCreateRootObject("MainGame_RuntimeObjects");
+        SetupResources(runtimeRoot.transform, woodMaterial, stoneMaterial, ironMaterial, goldMaterial);
+
+        GameObject canvasObject = GetOrCreateRootObject("Canvas_GameHUD");
+        GameManager gameManager = GetSceneComponentByName<GameManager>("GameManager");
+        SetupGameFlowTimerHud(canvasObject.transform, gameManager);
+
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Debug.Log("Cinderkeep player tool use, resource field, and timer HUD setup completed.");
+    }
+
+    private static void SetupGameFlowTimerHud(Transform canvasTransform, GameManager gameManager)
+    {
+        GameObject timerHudObject = GetOrCreateChild(canvasTransform, "Panel_GameFlowTimerHUD").gameObject;
+        RectTransform timerHudRect = EnsureComponent<RectTransform>(timerHudObject);
+        SetRect(timerHudRect, new Vector2(1f, 1f), new Vector2(260f, 76f), new Vector2(-146f, -58f));
+
+        Image background = EnsureComponent<Image>(timerHudObject);
+        background.color = new Color(0.02f, 0.06f, 0.09f, 0.78f);
+
+        GameFlowTimerHUD timerHud = EnsureComponent<GameFlowTimerHUD>(timerHudObject);
+        TMP_Text timerText = CreateOrGetTmpText(timerHudObject.transform, "Text_GameFlowTimer", "00:00 / 03:00", new Vector2(0f, -16f), false);
+        TMP_Text phaseText = CreateOrGetTmpText(timerHudObject.transform, "Text_GameFlowPhase", "낮 (3분)", new Vector2(0f, -44f), false);
+
+        timerText.fontSize = 21f;
+        timerText.alignment = TextAlignmentOptions.Center;
+        SetRect(timerText.rectTransform, new Vector2(0.5f, 1f), new Vector2(230f, 26f), new Vector2(0f, -14f));
+
+        phaseText.fontSize = 18f;
+        phaseText.alignment = TextAlignmentOptions.Center;
+        SetRect(phaseText.rectTransform, new Vector2(0.5f, 1f), new Vector2(230f, 24f), new Vector2(0f, -44f));
+
+        SetObjectReference(timerHud, "_gameManager", gameManager);
+        SetObjectReference(timerHud, "_timerText", timerText);
+        SetObjectReference(timerHud, "_phaseText", phaseText);
+    }
     private static void AdjustSceneLight()
     {
         GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects();
@@ -440,6 +500,7 @@ public static class CinderkeepGameLoopSceneBuilder
         PlayerInteraction playerInteraction = EnsureComponent<PlayerInteraction>(player);
         PlayerBuild playerBuild = EnsureComponent<PlayerBuild>(player);
         PlayerToolController playerToolController = EnsureComponent<PlayerToolController>(player);
+        PlayerToolUse playerToolUse = EnsureComponent<PlayerToolUse>(player);
         PlayerAttack playerAttack = EnsureComponent<PlayerAttack>(player);
         Damageable damageable = EnsureComponent<Damageable>(player);
 
@@ -465,6 +526,9 @@ public static class CinderkeepGameLoopSceneBuilder
         SetInt(playerInteraction, "_interactionLayerMask", -1);
         SetObjectReference(playerAttack, "_attackOrigin", cameraObject.transform);
         SetObjectReference(playerAttack, "_firstPersonToolView", cameraObject.GetComponentInChildren<FirstPersonToolView>());
+        SetObjectReference(playerToolUse, "_toolOrigin", cameraObject.transform);
+        SetObjectReference(playerToolUse, "_playerToolController", playerToolController);
+        SetObjectReference(playerToolUse, "_firstPersonToolView", cameraObject.GetComponentInChildren<FirstPersonToolView>());
 
         EditorUtility.SetDirty(playerMovement);
         EditorUtility.SetDirty(playerStatus);
@@ -507,11 +571,99 @@ public static class CinderkeepGameLoopSceneBuilder
         Transform resourceRoot = GetOrCreateChild(runtimeRoot, "Resources_GameLoop");
         ClearChildren(resourceRoot);
 
-        CreateResourceNode(resourceRoot, "Resource_Tree_Axe_01", SandboxPrefabPath + "/PF_4_0_Resource_Tree.prefab", new Vector3(-30f, 0f, -30f), PlayerModel.ResourceWood, 3, GatherToolType.Axe, new Vector3(1.15f, 1.15f, 1.15f), woodMaterial);
-        CreateResourceNode(resourceRoot, "Resource_Stone_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_StonePickup.prefab", new Vector3(30f, 0.25f, -30f), PlayerModel.ResourceStone, 2, GatherToolType.Pickaxe, new Vector3(1.4f, 1.4f, 1.4f), stoneMaterial);
-        CreateResourceNode(resourceRoot, "Resource_Rock_Pickaxe_02", SandboxPrefabPath + "/PF_4_0_Resource_Rock.prefab", new Vector3(34f, 0.35f, -26f), PlayerModel.ResourceStone, 4, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), stoneMaterial);
-        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(30f, 0.35f, 30f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.15f, 1.15f, 1.15f), ironMaterial);
-        CreateResourceNode(resourceRoot, "Resource_GoldOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_GoldOre.prefab", new Vector3(-30f, 0.35f, 30f), PlayerModel.ResourceGold, 1, GatherToolType.Pickaxe, new Vector3(1.15f, 1.15f, 1.15f), goldMaterial);
+        CreateTreeResourceField(resourceRoot, woodMaterial);
+        CreateRockResourceField(resourceRoot, stoneMaterial);
+        CreateOreResourceField(resourceRoot, ironMaterial, goldMaterial);
+    }
+
+    private static void SetupPlayerToolUse(GameObject player)
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        PlayerToolController playerToolController = EnsureComponent<PlayerToolController>(player);
+        PlayerToolUse playerToolUse = EnsureComponent<PlayerToolUse>(player);
+        Camera camera = player.GetComponentInChildren<Camera>();
+        FirstPersonToolView toolView = player.GetComponentInChildren<FirstPersonToolView>();
+
+        if (camera != null)
+        {
+            SetObjectReference(playerToolUse, "_toolOrigin", camera.transform);
+        }
+
+        SetObjectReference(playerToolUse, "_playerToolController", playerToolController);
+        SetObjectReference(playerToolUse, "_firstPersonToolView", toolView);
+        SetInt(playerToolUse, "_toolUseLayerMask", -1);
+        EditorUtility.SetDirty(playerToolUse);
+    }
+
+    private static void CreateTreeResourceField(Transform resourceRoot, Material woodMaterial)
+    {
+        int treeIndex = 1;
+        for (int x = -54; x <= 54; x += 12)
+        {
+            for (int z = -54; z <= 54; z += 12)
+            {
+                if (treeIndex > 50)
+                {
+                    return;
+                }
+
+                if (IsInsideBaseArea(x, z))
+                {
+                    continue;
+                }
+
+                Vector3 offset = GetResourceOffset(treeIndex);
+                Vector3 position = new Vector3(x, 0f, z) + offset;
+                CreateResourceNode(resourceRoot, "Resource_Tree_Axe_" + treeIndex.ToString("00"), SandboxPrefabPath + "/PF_4_0_Resource_Tree.prefab", position, PlayerModel.ResourceWood, 3, GatherToolType.Axe, new Vector3(1.15f, 1.15f, 1.15f), woodMaterial);
+                treeIndex++;
+            }
+        }
+    }
+
+    private static void CreateRockResourceField(Transform resourceRoot, Material stoneMaterial)
+    {
+        int rockIndex = 1;
+        for (int x = -48; x <= 48; x += 24)
+        {
+            for (int z = -48; z <= 48; z += 24)
+            {
+                if (IsInsideBaseArea(x, z))
+                {
+                    continue;
+                }
+
+                Vector3 position = new Vector3(x + 5f, 0.35f, z - 5f);
+                CreateResourceNode(resourceRoot, "Resource_Rock_Pickaxe_" + rockIndex.ToString("00"), SandboxPrefabPath + "/PF_4_0_Resource_Rock.prefab", position, PlayerModel.ResourceStone, 4, GatherToolType.Pickaxe, new Vector3(2f, 2f, 2f), stoneMaterial);
+                rockIndex++;
+            }
+        }
+    }
+
+    private static void CreateOreResourceField(Transform resourceRoot, Material ironMaterial, Material goldMaterial)
+    {
+        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(30f, 0.35f, 30f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
+        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_02", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(-42f, 0.35f, 18f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
+        CreateResourceNode(resourceRoot, "Resource_IronOre_Pickaxe_03", SandboxPrefabPath + "/PF_4_0_Resource_IronOre.prefab", new Vector3(42f, 0.35f, -18f), PlayerModel.ResourceIron, 2, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), ironMaterial);
+        CreateResourceNode(resourceRoot, "Resource_GoldOre_Pickaxe_01", SandboxPrefabPath + "/PF_4_0_Resource_GoldOre.prefab", new Vector3(-30f, 0.35f, 30f), PlayerModel.ResourceGold, 1, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), goldMaterial);
+        CreateResourceNode(resourceRoot, "Resource_GoldOre_Pickaxe_02", SandboxPrefabPath + "/PF_4_0_Resource_GoldOre.prefab", new Vector3(48f, 0.35f, 42f), PlayerModel.ResourceGold, 1, GatherToolType.Pickaxe, new Vector3(1.25f, 1.25f, 1.25f), goldMaterial);
+    }
+
+    private static bool IsInsideBaseArea(int x, int z)
+    {
+        return Mathf.Abs(x) < 24 && Mathf.Abs(z) < 24;
+    }
+
+    private static Vector3 GetResourceOffset(int index)
+    {
+        int xOffsetIndex = index % 3;
+        int zOffsetIndex = index % 4;
+        float xOffset = (xOffsetIndex - 1) * 1.4f;
+        float zOffset = (zOffsetIndex - 1) * 1.1f;
+        return new Vector3(xOffset, 0f, zOffset);
     }
 
     private static void AddAxeFallbackShape(Transform parent, Material handleMaterial, Material headMaterial)

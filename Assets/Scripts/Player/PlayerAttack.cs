@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 // 플레이어의 기본 근접 공격을 담당하는 컴포넌트입니다.
-// 좌클릭으로 도끼/곡괭이 채집을 먼저 시도하고, 자원이 아니면 적에게 피해를 줍니다.
+// 도끼/곡괭이 채집은 PlayerToolUse가 담당하고, 이 클래스는 적과 피해 대상 공격만 담당합니다.
 public sealed class PlayerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
@@ -13,7 +13,7 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private float _attackRadius = 0.35f;
     [Tooltip("공격 후 다음 공격까지 기다리는 시간입니다.")]
     [SerializeField] private float _attackInterval = 0.5f;
-    [Tooltip("공격과 채집 판정에 사용할 레이어입니다.")]
+    [Tooltip("공격 판정에 사용할 레이어입니다.")]
     [SerializeField] private LayerMask _attackLayerMask = ~0;
 
     [Header("Connected Objects")]
@@ -22,7 +22,6 @@ public sealed class PlayerAttack : MonoBehaviour
     [Tooltip("좌클릭 공격 시 1인칭 도구 휘두르기 연출을 담당합니다.")]
     [SerializeField] private FirstPersonToolView _firstPersonToolView;
 
-    private PlayerToolController _playerToolController;
     private float _lastAttackTime;
 
     private void Start()
@@ -42,15 +41,24 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
+        Collider targetCollider = GetAttackTargetCollider();
+        if (targetCollider == null)
+        {
+            return;
+        }
+
+        if (CanDamageTarget(targetCollider) == false)
+        {
+            return;
+        }
+
         _lastAttackTime = Time.time;
         PlayAttackView();
-        ApplyAttack();
+        ApplyDamageToHitTarget(targetCollider);
     }
 
     private void ConnectComponents()
     {
-        _playerToolController = GetComponent<PlayerToolController>();
-
         if (_attackOrigin == null)
         {
             Camera camera = GetComponentInChildren<Camera>();
@@ -79,6 +87,44 @@ public sealed class PlayerAttack : MonoBehaviour
         return Time.time >= _lastAttackTime + _attackInterval;
     }
 
+    private Collider GetAttackTargetCollider()
+    {
+        if (_attackOrigin == null)
+        {
+            return null;
+        }
+
+        Ray attackRay = new Ray(_attackOrigin.position, _attackOrigin.forward);
+        RaycastHit hitInfo;
+
+        if (Physics.SphereCast(attackRay, _attackRadius, out hitInfo, _attackDistance, _attackLayerMask) == false)
+        {
+            return null;
+        }
+
+        return hitInfo.collider;
+    }
+
+    private bool CanDamageTarget(Collider targetCollider)
+    {
+        if (targetCollider == null)
+        {
+            return false;
+        }
+
+        if (targetCollider.GetComponentInParent<ResourceNode>() != null)
+        {
+            return false;
+        }
+
+        if (targetCollider.GetComponentInParent<EnemyStatus>() != null)
+        {
+            return true;
+        }
+
+        return targetCollider.GetComponentInParent<Damageable>() != null;
+    }
+
     private void PlayAttackView()
     {
         if (_firstPersonToolView == null)
@@ -87,50 +133,6 @@ public sealed class PlayerAttack : MonoBehaviour
         }
 
         _firstPersonToolView.PlaySwing();
-    }
-
-    private void ApplyAttack()
-    {
-        if (_attackOrigin == null)
-        {
-            return;
-        }
-
-        Ray attackRay = new Ray(_attackOrigin.position, _attackOrigin.forward);
-        RaycastHit hitInfo;
-
-        if (Physics.SphereCast(attackRay, _attackRadius, out hitInfo, _attackDistance, _attackLayerMask) == false)
-        {
-            return;
-        }
-
-        if (TryGatherResource(hitInfo.collider))
-        {
-            return;
-        }
-
-        ApplyDamageToHitTarget(hitInfo.collider);
-    }
-
-    private bool TryGatherResource(Collider targetCollider)
-    {
-        if (targetCollider == null)
-        {
-            return false;
-        }
-
-        if (_playerToolController == null)
-        {
-            return false;
-        }
-
-        ResourceNode resourceNode = targetCollider.GetComponentInParent<ResourceNode>();
-        if (resourceNode == null)
-        {
-            return false;
-        }
-
-        return resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType);
     }
 
     private void ApplyDamageToHitTarget(Collider targetCollider)

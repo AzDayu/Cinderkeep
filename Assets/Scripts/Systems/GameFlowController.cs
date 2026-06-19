@@ -163,14 +163,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
-        _gameRunModel.SetRemainingTime(_gameFlowSettings.DayDuration);
+        _gameRunModel.SetPhaseTime(_gameFlowSettings.DayDuration);
         StartEnemySpawn(EnemySpawnMode.Day);
     }
 
     private void StartNight()
     {
         _gameRunModel.SetPhase(GameRunPhase.Night);
-        _gameRunModel.SetRemainingTime(_gameFlowSettings.NightDuration);
+        _gameRunModel.SetPhaseTime(_gameFlowSettings.NightDuration);
         StartEnemySpawn(EnemySpawnMode.Night);
     }
 
@@ -190,7 +190,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartMorningReward()
     {
         _gameRunModel.SetPhase(GameRunPhase.MorningReward);
-        _gameRunModel.SetRemainingTime(_gameFlowSettings.MorningRewardDuration);
+        _gameRunModel.SetPhaseTime(_gameFlowSettings.MorningRewardDuration);
     }
 
     private void StartNextDay()
@@ -202,14 +202,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartBossApproach()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
-        _gameRunModel.SetRemainingTime(_gameFlowSettings.BossApproachDuration);
+        _gameRunModel.SetPhaseTime(_gameFlowSettings.BossApproachDuration);
         StartEnemySpawn(EnemySpawnMode.Boss);
     }
 
     private void StartBossFight()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
-        _gameRunModel.SetRemainingTime(0f);
+        _gameRunModel.SetPhaseTime(0f);
         StartEnemySpawn(EnemySpawnMode.Boss);
     }
 

@@ -13,6 +13,7 @@ namespace Cinderkeep.Gameplay
         private int _day;
         private GameRunPhase _phase;
         private float _remainingTime;
+        private float _phaseDuration;
         private bool _isPlaying;
         private bool _isGameOver;
         private bool _isClear;
@@ -38,6 +39,14 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _remainingTime;
+            }
+        }
+
+        public float PhaseDuration
+        {
+            get
+            {
+                return _phaseDuration;
             }
         }
 
@@ -70,6 +79,7 @@ namespace Cinderkeep.Gameplay
             _day = FirstDay;
             _phase = GameRunPhase.None;
             _remainingTime = 0f;
+            _phaseDuration = 0f;
             _isPlaying = false;
             _isGameOver = false;
             _isClear = false;
@@ -80,6 +90,7 @@ namespace Cinderkeep.Gameplay
             _day = FirstDay;
             _phase = GameRunPhase.Day;
             _remainingTime = 0f;
+            _phaseDuration = 0f;
             _isPlaying = true;
             _isGameOver = false;
             _isClear = false;
@@ -92,6 +103,7 @@ namespace Cinderkeep.Gameplay
             _isClear = false;
             _phase = GameRunPhase.GameOver;
             _remainingTime = 0f;
+            _phaseDuration = 0f;
         }
 
         public void ClearRun()
@@ -101,6 +113,7 @@ namespace Cinderkeep.Gameplay
             _isClear = true;
             _phase = GameRunPhase.Clear;
             _remainingTime = 0f;
+            _phaseDuration = 0f;
         }
 
         public void SetDay(int day)
@@ -134,6 +147,23 @@ namespace Cinderkeep.Gameplay
             }
 
             _remainingTime = remainingTime;
+        }
+
+        public void SetPhaseDuration(float phaseDuration)
+        {
+            if (phaseDuration < 0f)
+            {
+                _phaseDuration = 0f;
+                return;
+            }
+
+            _phaseDuration = phaseDuration;
+        }
+
+        public void SetPhaseTime(float phaseDuration)
+        {
+            SetPhaseDuration(phaseDuration);
+            SetRemainingTime(phaseDuration);
         }
 
         public void AdvanceDay()
