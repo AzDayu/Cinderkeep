@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -178,8 +178,12 @@ public sealed class EnemyLoopConnector : MonoBehaviour
 
         if (enemyMovement != null)
         {
-            enemyMovement.SetCinderHeartTarget(_cinderHeartTarget);
-            enemyMovement.Initialize(enemyData, enemyDetector);
+            enemyMovement.Initialize(enemyData);
+        }
+
+        if (enemyBrain != null)
+        {
+            enemyBrain.SetCinderHeartTarget(GetCinderHeartDamageable());
         }
 
         if (enemyBrain != null)
