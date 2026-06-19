@@ -16,7 +16,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [Header("Managers")]
     [Tooltip("적 프리팹을 생성하고 InstanceId를 부여하는 관리자입니다.")]
     [SerializeField] private GameObjectManager _gameObjectManager;
-    [Tooltip("생성된 적에게 EnemyStatus, EnemyAttack, EnemyMovement 같은 런타임 컴포넌트를 연결합니다.")]
+    [Tooltip("생성된 적 프리팹의 EnemyStatus, EnemyAttack, EnemyMovement 같은 정식 컴포넌트를 초기화합니다.")]
     [SerializeField] private EnemyLoopConnector _enemyLoopConnector;
 
     [Header("Spawn Point")]

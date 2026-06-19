@@ -5236,7 +5236,7 @@ MonoBehaviour:
   _cinderHeartTarget: {fileID: 1417106094}
   _gameCamera: {fileID: 432202586}
   _enemyRuntimeSets: []
-  _allowFallbackComponentAdd: 1
+  _allowFallbackComponentAdd: 0
 --- !u!4 &1173612492
 Transform:
   m_ObjectHideFlags: 0

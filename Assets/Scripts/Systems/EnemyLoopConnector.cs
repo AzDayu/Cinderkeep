@@ -3,9 +3,9 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
-// 적 관련 런타임 연결만 담당하는 컴포넌트입니다.
-// 정식 적 프리팹은 EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가지고 있어야 합니다.
-// 런타임 AddComponent는 아직 정리되지 않은 후보 프리팹을 살리기 위한 대체 연결로만 사용합니다.
+// 적 관련 런타임 초기화와 검증만 담당하는 컴포넌트입니다.
+// 정식 적 프리팹은 Damageable, EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain을 미리 가지고 있어야 합니다.
+// 런타임 AddComponent는 후보 프리팹을 임시로 살릴 때만 켜는 예외 옵션입니다.
 public sealed class EnemyLoopConnector : MonoBehaviour
 {
     [Header("Managers")]
@@ -19,8 +19,8 @@ public sealed class EnemyLoopConnector : MonoBehaviour
     [SerializeField] private EnemyRuntimeSet[] _enemyRuntimeSets;
 
     [Header("Fallback")]
-    [Tooltip("적 프리팹에 필요한 컴포넌트가 없을 때 런타임으로 붙일지 결정합니다. 정식 프리팹은 이 옵션 없이도 동작해야 합니다.")]
-    [SerializeField] private bool _allowFallbackComponentAdd = true;
+    [Tooltip("정식 적 프리팹에 컴포넌트가 빠졌을 때 임시로 런타임 추가를 허용할지 결정합니다. 기본값은 false입니다.")]
+    [SerializeField] private bool _allowFallbackComponentAdd = false;
 
     public void Initialize(
         GameDataManager gameDataManager,

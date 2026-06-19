@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f574aa547d328af4cbf708966b938649, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  _enemyDetector: {fileID: 0}
+  _enemyDetector: {fileID: 7986726697046970933}
   _cinderHeartTarget: {fileID: 0}
   _moveSpeed: 0
   _stopDistance: 0
@@ -197,8 +197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6e26d4a4e433f4c8eb46dc97bae73f, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
-  _enemyDetector: {fileID: 0}
-  _enemyAttack: {fileID: 0}
+  _enemyDetector: {fileID: 7986726697046970933}
+  _enemyAttack: {fileID: 1138563701357651642}
   _cinderHeartDamageable: {fileID: 0}
   _attackDistance: 2.3
   _cinderHeartAttackDistance: 3
