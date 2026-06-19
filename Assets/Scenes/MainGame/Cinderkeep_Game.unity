@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -330,6 +330,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4445026273256251651, guid: 431f9085ad599234abb25c1031cf7eaf, type: 3}
   m_PrefabInstance: {fileID: 19994211}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &19994213 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7215540608418058710, guid: 431f9085ad599234abb25c1031cf7eaf, type: 3}
+  m_PrefabInstance: {fileID: 19994211}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &19994214 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7115019784979109547, guid: 431f9085ad599234abb25c1031cf7eaf, type: 3}
+  m_PrefabInstance: {fileID: 19994211}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &24696837
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,7 +400,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a61a94a3801576245bfe7fc7d7a9cec7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceUI
   _woodText: {fileID: 1709384583}
   _stoneText: {fileID: 2365153}
@@ -439,7 +449,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.02, g: 0.03, b: 0.04, a: 0.72}
@@ -602,7 +612,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f57ea9d036c485c49a39d6d67c30d9d7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonToolView
   _playerToolController: {fileID: 356893302}
   _axeView: {fileID: 1948628595}
@@ -659,7 +669,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.12, g: 0.12, b: 0.14, a: 1}
@@ -697,7 +707,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -782,6 +792,7 @@ GameObject:
   m_Component:
   - component: {fileID: 152420695}
   - component: {fileID: 152420696}
+  - component: {fileID: 152420697}
   m_Layer: 0
   m_Name: Light_CinderHeart_Beacon
   m_TagString: Untagged
@@ -869,6 +880,35 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!114 &152420697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 152420694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &192405921
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,13 +1008,25 @@ PrefabInstance:
       value: Candidate_Visual
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 3371391573122190330, guid: 05363519572514e40bba37e899de15e0, type: 3}
+    - {fileID: 2981884651427414891, guid: 05363519572514e40bba37e899de15e0, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05363519572514e40bba37e899de15e0, type: 3}
 --- !u!4 &263681575 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3287480989653926459, guid: 05363519572514e40bba37e899de15e0, type: 3}
+  m_PrefabInstance: {fileID: 263681574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &263681576 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2686904642670684246, guid: 05363519572514e40bba37e899de15e0, type: 3}
+  m_PrefabInstance: {fileID: 263681574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &263681577 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6823829390273685101, guid: 05363519572514e40bba37e899de15e0, type: 3}
   m_PrefabInstance: {fileID: 263681574}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &297728553
@@ -1024,7 +1076,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1071,7 +1123,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &303908456
 Transform:
   m_ObjectHideFlags: 0
@@ -1168,7 +1220,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a44743ca02faccc429ee3c48d4526bf3, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.UIManager
   _hudRoot: {fileID: 140572683}
   _inventoryRoot: {fileID: 1231747372}
@@ -1310,7 +1362,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1445,7 +1497,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   _resourceId: Gold
   _amount: 1
@@ -1462,7 +1514,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
   _resourceId: Gold
   _amount: 1
@@ -1567,7 +1619,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fab770991bd08ba4987971e2561eb8af, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
   _mouseSensitivity: 260
   _playerBody: {fileID: 356893296}
@@ -1582,7 +1634,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bff361dfa0174b4aaa557541f00813f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _moveSpeed: 5
   _runSpeed: 10
@@ -1598,7 +1650,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 002d7520baa149542a8c2e94861c45e0, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerJump
   _jumpForce: 5
   _playerMovement: {fileID: 356893298}
@@ -1612,7 +1664,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5977229879c95ab4ab19ee480f442720, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBuild
   _buildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
   _spawnDistance: 3
@@ -1627,7 +1679,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5deb0791d3974f44b268b4147af130b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStatus
   _health: 100
   _maxHealth: 100
@@ -1646,7 +1698,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43c5d8d30d06fb9418d712114c0b3e4b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerToolController
   _axeKey: 49
   _pickaxeKey: 50
@@ -1662,7 +1714,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
 --- !u!114 &356893304
@@ -1675,7 +1727,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e33c3ac4881ec894caa96e4ec583d12e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   _attackDamage: 10
   _attackDistance: 2.5
@@ -1696,7 +1748,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe9f8afc84777274aae75869d0ef64bb, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
   _interactionDistance: 3
   _interactionLayerMask:
@@ -1714,7 +1766,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 697ec766abb35484a9953d12955313d2, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DeathCinderHeartView
   _targetCamera: {fileID: 432202586}
   _cinderHeartTarget: {fileID: 1417106094}
@@ -1829,7 +1881,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2046,7 +2098,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a6e26d4a4e433f4c8eb46dc97bae73f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
   _enemyDetector: {fileID: 381350381}
   _enemyAttack: {fileID: 381350382}
@@ -2063,7 +2115,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
 --- !u!114 &381350380
@@ -2076,7 +2128,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f574aa547d328af4cbf708966b938649, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   _enemyDetector: {fileID: 381350381}
   _cinderHeartTarget: {fileID: 0}
@@ -2092,7 +2144,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c029023d3dc05854187a29fdaca82637, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetector
   _viewAngle: 90
 --- !u!114 &381350382
@@ -2105,7 +2157,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 477a66aa383fe1548ba567ea206adc70, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
   _attackDamage: 0
   _cinderHeartAttackDamage: 10
@@ -2120,7 +2172,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6af9ceaefb898cb418b598da99efd19c, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatus
   _maxHealth: 1
   _deactivateOnDeath: 1
@@ -2172,7 +2224,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2204,7 +2256,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -2290,7 +2342,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2426,7 +2478,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 656583776fd8397458f0bc102bdc88f9, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameFlowEnemySpawnDirector
   _enemySpawnPoints:
   - {fileID: 542429160}
@@ -2457,6 +2509,7 @@ GameObject:
   - component: {fileID: 432202584}
   - component: {fileID: 432202586}
   - component: {fileID: 432202585}
+  - component: {fileID: 432202587}
   m_Layer: 0
   m_Name: Camera_FirstPerson
   m_TagString: MainCamera
@@ -2539,6 +2592,50 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &432202587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432202583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &439919297
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,7 +2713,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   _resourceId: Iron
   _amount: 2
@@ -2633,7 +2730,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
   _resourceId: Iron
   _amount: 2
@@ -2686,7 +2783,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfb53beeca09fc4baa950400f631c25, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHud
   _hudRoot: {fileID: 476487252}
   _hpFillImage: {fileID: 1757821198}
@@ -2745,18 +2842,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 1438366196}
     m_Modifications:
     - target: {fileID: 3281589527602661040, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3281589527602661040, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3281589527602661040, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.15
-      objectReference: {fileID: 0}
-    - target: {fileID: 3281589527602661040, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -2810,6 +2895,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3281589527602661040, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
   m_PrefabInstance: {fileID: 523337325}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &523337327 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8360969001593508962, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
+  m_PrefabInstance: {fileID: 523337325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &523337328 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8397740051148947604, guid: b32d318280e18fc45bcd92b644e53b9f, type: 3}
+  m_PrefabInstance: {fileID: 523337325}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &542429159
 GameObject:
   m_ObjectHideFlags: 0
@@ -2837,7 +2932,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8df5f670924ae8646b81fc806ce8b170, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
   _gameObjectManager: {fileID: 2064572603}
   _enemyLoopConnector: {fileID: 1173612491}
@@ -2958,7 +3053,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3099,7 +3194,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0341371bcc905094090c0759056aebe3, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CinderHeartHUD
   _targetCinderHeart: {fileID: 1417106097}
   _canvasGroup: {fileID: 562275024}
@@ -3116,7 +3211,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.03, g: 0.04, b: 0.05, a: 0.78}
@@ -3211,7 +3306,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3335,7 +3430,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75e6e5526ab645c5ac97857ccbaed81d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameFlowLoopConnector
   _gameManager: {fileID: 1095121553}
   _gameObjectManager: {fileID: 2064572603}
@@ -3542,7 +3637,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3769,7 +3864,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.8, g: 0.08, b: 0.08, a: 1}
@@ -3842,7 +3937,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   _resourceId: Stone
   _amount: 4
@@ -3859,7 +3954,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
   _resourceId: Stone
   _amount: 4
@@ -3973,7 +4068,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.02, g: 0.03, b: 0.04, a: 0.75}
@@ -4011,7 +4106,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0af75869a36802429377eb312a248aa, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
   _targetPlayerStatus: {fileID: 356893301}
   _healthSlider: {fileID: 1455183289}
@@ -4092,6 +4187,16 @@ PrefabInstance:
 --- !u!4 &903542178 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6029267403786140509, guid: d2e8593a956d61c499f2b41814e87b67, type: 3}
+  m_PrefabInstance: {fileID: 903542177}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &903542179 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5411802413182507801, guid: d2e8593a956d61c499f2b41814e87b67, type: 3}
+  m_PrefabInstance: {fileID: 903542177}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &903542180 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5694133413643721475, guid: d2e8593a956d61c499f2b41814e87b67, type: 3}
   m_PrefabInstance: {fileID: 903542177}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &903783280
@@ -4175,7 +4280,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   _resourceId: Stone
   _amount: 2
@@ -4192,7 +4297,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
   _resourceId: Stone
   _amount: 2
@@ -4259,9 +4364,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd9bdcf5b1a67e34fad7b0ba0d3d14bc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.ResourceManager
-  _resourceRootPath: 
+  _resourceRootPath:
 --- !u!1 &982475662
 GameObject:
   m_ObjectHideFlags: 0
@@ -4304,7 +4409,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 165a9e54c89cf6d419c663cb6da36618, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.GameDataManager
   _enemyDataResourcePath: Cinderkeep/data/enemies
 --- !u!1 &988931588
@@ -4355,7 +4460,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.05, g: 0.05, b: 0.06, a: 0.9}
@@ -4554,7 +4659,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8df5f670924ae8646b81fc806ce8b170, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnPoint
   _gameObjectManager: {fileID: 2064572603}
   _enemyLoopConnector: {fileID: 1173612491}
@@ -4687,6 +4792,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8469993406016663824, guid: 526a5625d1c1e44449488f045c9a8a7f, type: 3}
   m_PrefabInstance: {fileID: 1061200622}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1061200624 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2513451235205554388, guid: 526a5625d1c1e44449488f045c9a8a7f, type: 3}
+  m_PrefabInstance: {fileID: 1061200622}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1084041096
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4696,44 +4806,32 @@ PrefabInstance:
     m_TransformParent: {fileID: 1948628596}
     m_Modifications:
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.18
-      objectReference: {fileID: 0}
-    - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.001
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.09
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.199
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7082625
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.0000000037252899
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7059493
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 0.0000000037252899
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4741,7 +4839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 89.813
       objectReference: {fileID: 0}
     - target: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -4749,7 +4847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2652445335616649192, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: cb0f5cd2068c7c046babf5615efb0748, type: 2}
     - target: {fileID: 5104290722826313715, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: m_Name
@@ -4757,7 +4855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8104022706872976182, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: cb0f5cd2068c7c046babf5615efb0748, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4767,6 +4865,16 @@ PrefabInstance:
 --- !u!4 &1084041097 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 229892806997285047, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
+  m_PrefabInstance: {fileID: 1084041096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1084041098 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8540121545516230730, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
+  m_PrefabInstance: {fileID: 1084041096}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1084041099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5104290722826313715, guid: ad7fe6f242db73540a7b72446b1d618b, type: 3}
   m_PrefabInstance: {fileID: 1084041096}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1095121551
@@ -4811,7 +4919,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a5b5911e6395db141b2d96c570bbaefa, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.GameManager
   _gameDataManager: {fileID: 982475664}
   _resourceManager: {fileID: 956675220}
@@ -4868,7 +4976,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5005,7 +5113,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5122,12 +5230,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fbdf92f3c33146e9b929448a2eb2abf8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLoopConnector
   _gameDataManager: {fileID: 982475664}
   _cinderHeartTarget: {fileID: 1417106094}
   _gameCamera: {fileID: 432202586}
   _enemyRuntimeSets: []
+  _allowFallbackComponentAdd: 1
 --- !u!4 &1173612492
 Transform:
   m_ObjectHideFlags: 0
@@ -5226,7 +5335,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.35}
@@ -5281,12 +5390,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b87d676f3d5f4a246b7bbce2702c6c83, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GameFlowController
-  _dayDuration: 180
-  _nightDuration: 120
-  _morningRewardDuration: 15
-  _bossApproachDuration: 180
+  _gameFlowSettings:
+    _dayDuration: 180
+    _nightDuration: 120
+    _morningRewardDuration: 15
+    _bossApproachDuration: 180
   _enemySpawnDirector: {fileID: 431597108}
 --- !u!4 &1268678279
 Transform:
@@ -5435,7 +5545,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96faf81de27645b2a2a8110060c3783f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLoopConnector
   _playerStatus: {fileID: 356893301}
   _playerHud: {fileID: 887005351}
@@ -5588,7 +5698,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ed5ae9b8d4599848b348d041a6e2a39, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGroundCheck
 --- !u!135 &1310550263
 SphereCollider:
@@ -5673,7 +5783,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5806,7 +5916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11711a69854640c68ab982f2e7cdf134, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceLoopConnector
   _gameManager: {fileID: 1095121553}
   _resourceUi: {fileID: 32302953}
@@ -6015,6 +6125,7 @@ GameObject:
   - component: {fileID: 1417106097}
   - component: {fileID: 1417106096}
   - component: {fileID: 1417106095}
+  - component: {fileID: 1417106098}
   m_Layer: 0
   m_Name: CinderHeart
   m_TagString: CinderHeart
@@ -6114,7 +6225,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
 --- !u!114 &1417106097
@@ -6127,10 +6238,39 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d16fb843ba813634690a00b2c120a47d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CinderHeart
   _maxHealth: 500
   _testDamage: 10
+--- !u!114 &1417106098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417106093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &1422654432
 GameObject:
   m_ObjectHideFlags: 0
@@ -6159,7 +6299,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Text
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -6257,7 +6397,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -6375,7 +6515,7 @@ Transform:
   m_GameObject: {fileID: 1438366195}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -30, y: 0, z: -30}
+  m_LocalPosition: {x: -30, y: -2.97, z: -30}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6392,7 +6532,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f800eb417a8f6574886338a3ba5f1e90, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceNode
   _resourceId: Wood
   _amount: 3
@@ -6409,7 +6549,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e67ed8b3e92650b4f98ffb67a8a3dbee, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBase
   _resourceId: Wood
   _amount: 3
@@ -6483,7 +6623,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.12, g: 0.12, b: 0.14, a: 1}
@@ -6521,7 +6661,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -6656,7 +6796,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -6673,7 +6813,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -6781,7 +6921,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.08, g: 0.02, b: 0.02, a: 0.75}
@@ -6873,6 +7013,11 @@ PrefabInstance:
 --- !u!4 &1530784841 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6641743195562211155, guid: 346ed45387a4d1a4eb6452e2b15a47fb, type: 3}
+  m_PrefabInstance: {fileID: 1530784840}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1530784842 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7808387519880309145, guid: 346ed45387a4d1a4eb6452e2b15a47fb, type: 3}
   m_PrefabInstance: {fileID: 1530784840}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1543955692
@@ -7079,7 +7224,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -7353,7 +7498,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -7479,7 +7624,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f73a5ca18b1226644880b1a9d0b3e6eb, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.SoundManager
   _bgmAudioSource: {fileID: 1696894092}
   _effectAudioSource: {fileID: 1012578978}
@@ -7539,7 +7684,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.82, g: 0.08, b: 0.08, a: 1}
@@ -7617,7 +7762,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0f643d3bb1221a48af623074030d003, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CinderkeepGameLoopConnector
   _playerLoopConnector: {fileID: 1291325454}
   _resourceLoopConnector: {fileID: 1335002081}
@@ -7689,7 +7834,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.15, g: 0.55, b: 1, a: 1}
@@ -7766,7 +7911,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -7817,7 +7962,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.12, g: 0.12, b: 0.12, a: 1}
@@ -7892,7 +8037,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8153,7 +8298,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -8204,7 +8349,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.1, g: 0.1, b: 0.1, a: 1}
@@ -8287,7 +8432,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8443,6 +8588,16 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2323524682353709815, guid: 3b8a68399a4897d4180b1f7ad383ce5f, type: 3}
   m_PrefabInstance: {fileID: 1827639074}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1827639076 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 615439287987729198, guid: 3b8a68399a4897d4180b1f7ad383ce5f, type: 3}
+  m_PrefabInstance: {fileID: 1827639074}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1827639077 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2060958208970356587, guid: 3b8a68399a4897d4180b1f7ad383ce5f, type: 3}
+  m_PrefabInstance: {fileID: 1827639074}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1843713323
 GameObject:
   m_ObjectHideFlags: 0
@@ -8490,7 +8645,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.86, g: 0.12, b: 0.08, a: 1}
@@ -8596,7 +8751,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8733,7 +8888,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -8870,7 +9025,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.86, g: 0.34, b: 0.08, a: 1}
@@ -8960,7 +9115,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 89fc97252a7412a49abe3832e1d892f0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 5e524d60bba7acd48bdac7dc004c633a, type: 2}
     - target: {fileID: 919132149155446097, guid: 89fc97252a7412a49abe3832e1d892f0, type: 3}
       propertyPath: m_Name
@@ -8974,6 +9129,11 @@ PrefabInstance:
 --- !u!4 &1906522108 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 89fc97252a7412a49abe3832e1d892f0, type: 3}
+  m_PrefabInstance: {fileID: 1906522107}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1906522109 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 89fc97252a7412a49abe3832e1d892f0, type: 3}
   m_PrefabInstance: {fileID: 1906522107}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1946040983
@@ -9027,7 +9187,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0147036edfe21c14ab876979bb0918cd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyTargetHUD
   _canvasGroup: {fileID: 1946040988}
   _healthSlider: {fileID: 1810243139}
@@ -9043,7 +9203,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0.03, g: 0.04, b: 0.05, a: 0.72}
@@ -9126,39 +9286,31 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 996227653494734535, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: b121da183ccb2e6489c69a5c449d2774, type: 2}
     - target: {fileID: 3029624612264200666, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: b121da183ccb2e6489c69a5c449d2774, type: 2}
     - target: {fileID: 4597511103836121844, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: m_Name
       value: Pickaxe_Model
       objectReference: {fileID: 0}
-    - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.62
-      objectReference: {fileID: 0}
-    - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.62
+    - target: {fileID: 5151050163128471813, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.083
       objectReference: {fileID: 0}
     - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.196
       objectReference: {fileID: 0}
     - target: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -9196,6 +9348,16 @@ PrefabInstance:
 --- !u!4 &1949268334 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6890395491220953739, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
+  m_PrefabInstance: {fileID: 1949268333}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1949268335 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5492109476323249087, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
+  m_PrefabInstance: {fileID: 1949268333}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1949268336 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4597511103836121844, guid: 65e8453869f4a284a81f989b0a3d675f, type: 3}
   m_PrefabInstance: {fileID: 1949268333}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2006638747
@@ -9253,7 +9415,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9594,7 +9756,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9626,7 +9788,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -9726,7 +9888,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a69f9118ef21dd3409d86422aa1e9469, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.GameObjectManager
   _objectRoot: {fileID: 1296498978}
 --- !u!1 &2085044065
@@ -9776,7 +9938,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -9908,7 +10070,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea08368b833476a4ebb840e8d90b723f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.MapManager
   _generateOnInitialize: 1
   _chunkSize: 120
@@ -9976,3 +10138,4 @@ SceneRoots:
   - {fileID: 678734629}
   - {fileID: 1482158122}
   - {fileID: 2134415030}
+  - {fileID: 2029042998}
