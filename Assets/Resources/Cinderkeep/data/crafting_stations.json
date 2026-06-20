@@ -1,0 +1,70 @@
+{
+  "Items": [
+    {
+      "_id": "workbench_tier_1",
+      "_displayName": "Workbench",
+      "_stationType": "Workbench",
+      "_tier": 1,
+      "_description": "Basic crafting station for stone tools, early weapons, and wood defenses.",
+      "_prefabKey": "PF_Building_Workbench",
+      "_uiKey": "CraftingUI_Workbench",
+      "_canCraftItems": true,
+      "_canSmeltResources": false
+    },
+    {
+      "_id": "workbench_tier_2",
+      "_displayName": "Reinforced Workbench",
+      "_stationType": "Workbench",
+      "_tier": 2,
+      "_description": "Improved crafting station for stronger building parts and later expansion.",
+      "_prefabKey": "PF_Building_Workbench_Tier2",
+      "_uiKey": "CraftingUI_Workbench",
+      "_canCraftItems": true,
+      "_canSmeltResources": false
+    },
+    {
+      "_id": "furnace_tier_1",
+      "_displayName": "Furnace",
+      "_stationType": "Furnace",
+      "_tier": 1,
+      "_description": "Smelting station that turns gathered ore into usable metal resources.",
+      "_prefabKey": "PF_Building_Furnace",
+      "_uiKey": "CraftingUI_Furnace",
+      "_canCraftItems": false,
+      "_canSmeltResources": true
+    },
+    {
+      "_id": "furnace_tier_2",
+      "_displayName": "High Heat Furnace",
+      "_stationType": "Furnace",
+      "_tier": 2,
+      "_description": "Improved smelting station for gold and adamantium progression.",
+      "_prefabKey": "PF_Building_Furnace_Tier2",
+      "_uiKey": "CraftingUI_Furnace",
+      "_canCraftItems": false,
+      "_canSmeltResources": true
+    },
+    {
+      "_id": "anvil_tier_1",
+      "_displayName": "Anvil",
+      "_stationType": "Anvil",
+      "_tier": 1,
+      "_description": "Equipment station for iron tools, weapons, and armor.",
+      "_prefabKey": "PF_Building_Anvil",
+      "_uiKey": "CraftingUI_Anvil",
+      "_canCraftItems": true,
+      "_canSmeltResources": false
+    },
+    {
+      "_id": "anvil_tier_2",
+      "_displayName": "Master Anvil",
+      "_stationType": "Anvil",
+      "_tier": 2,
+      "_description": "Late equipment station for gold and adamantium equipment tiers.",
+      "_prefabKey": "PF_Building_Anvil_Tier2",
+      "_uiKey": "CraftingUI_Anvil",
+      "_canCraftItems": true,
+      "_canSmeltResources": false
+    }
+  ]
+}

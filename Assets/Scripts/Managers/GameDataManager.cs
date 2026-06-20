@@ -15,6 +15,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private string _armorDataResourcePath = GameUtil.ArmorDataResourcePath;
         [SerializeField] private string _buildingDataResourcePath = GameUtil.BuildingDataResourcePath;
         [SerializeField] private string _craftingRecipeDataResourcePath = GameUtil.CraftingRecipeDataResourcePath;
+        [SerializeField] private string _craftingStationDataResourcePath = GameUtil.CraftingStationDataResourcePath;
         [SerializeField] private string _enemySpawnRuleDataResourcePath = GameUtil.EnemySpawnRuleDataResourcePath;
         [SerializeField] private string _gameFlowPhaseDataResourcePath = GameUtil.GameFlowPhaseDataResourcePath;
         [SerializeField] private string _lootDropDataResourcePath = GameUtil.LootDropDataResourcePath;
@@ -32,6 +33,7 @@ namespace Cinderkeep.Gameplay
         private readonly Dictionary<string, ArmorData> _armorDataList = new Dictionary<string, ArmorData>();
         private readonly Dictionary<string, BuildingData> _buildingDataList = new Dictionary<string, BuildingData>();
         private readonly Dictionary<string, CraftingRecipeData> _craftingRecipeDataList = new Dictionary<string, CraftingRecipeData>();
+        private readonly Dictionary<string, CraftingStationData> _craftingStationDataList = new Dictionary<string, CraftingStationData>();
         private readonly Dictionary<string, EnemySpawnRuleData> _enemySpawnRuleDataList = new Dictionary<string, EnemySpawnRuleData>();
         private readonly Dictionary<string, GameFlowPhaseData> _gameFlowPhaseDataList = new Dictionary<string, GameFlowPhaseData>();
         private readonly Dictionary<string, LootDropData> _lootDropDataList = new Dictionary<string, LootDropData>();
@@ -111,6 +113,14 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _craftingRecipeDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, CraftingStationData> CraftingStationDataList
+        {
+            get
+            {
+                return _craftingStationDataList;
             }
         }
 
@@ -501,6 +511,45 @@ namespace Cinderkeep.Gameplay
             return _craftingRecipeDataList[id];
         }
 
+        public void LoadCraftingStationData(string resourcePath)
+        {
+            _craftingStationDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: crafting station JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            CraftingStationDataCatalog catalog = JsonUtility.FromJson<CraftingStationDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: crafting station JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_craftingStationDataList, catalog.Items[i]);
+            }
+        }
+
+        public CraftingStationData GetCraftingStation(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_craftingStationDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _craftingStationDataList[id];
+        }
+
         public void LoadEnemySpawnRuleData(string resourcePath)
         {
             _enemySpawnRuleDataList.Clear();
@@ -851,6 +900,11 @@ namespace Cinderkeep.Gameplay
         public string GetCraftingRecipeDataResourcePath()
         {
             return _craftingRecipeDataResourcePath;
+        }
+
+        public string GetCraftingStationDataResourcePath()
+        {
+            return _craftingStationDataResourcePath;
         }
 
         public string GetEnemySpawnRuleDataResourcePath()

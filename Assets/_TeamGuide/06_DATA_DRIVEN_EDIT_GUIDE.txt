@@ -13,7 +13,7 @@ Basic Rule
 - 기능 테스트 전에는 한 번에 여러 JSON을 크게 바꾸지 않습니다.
 - 수치를 바꿨다면 반드시 어떤 플레이 체감이 바뀌는지 적습니다.
 
-Current Active Link - 4.35 기준
+Current Active Link - 4.36 기준
 1) harvest_nodes.json
 - 위치: Assets/Resources/Cinderkeep/data/harvest_nodes.json
 - 로드: GameDataManager.LoadHarvestNodeData()
@@ -145,15 +145,20 @@ Prepared Schema - 아직 실제 루프 연결이 약한 데이터
   PlayerBuild는 BuildingManager를 통해 건축을 요청합니다.
   다만 건축 비용, 건축물 ID, 업그레이드는 아직 데이터 기반 체감이 약합니다.
 
-8) crafting_recipes.json
+8) crafting_recipes.json / crafting_stations.json
 - 위치: Assets/Resources/Cinderkeep/data/crafting_recipes.json
-- 로드: GameDataManager.LoadCraftingRecipeData()
+- 위치: Assets/Resources/Cinderkeep/data/crafting_stations.json
+- 로드:
+  GameDataManager.LoadCraftingRecipeData()
+  GameDataManager.LoadCraftingStationData()
 - 다음 연결 후보:
   제작대, 용광로, 장비 제작 UI
   PlayerModel 자원 소비
   ToolData, WeaponData, ArmorData 해금
 - 현재 기준:
-  스키마는 준비되어 있지만 제작대/용광로 루프 연결은 다음 작업입니다.
+  crafting_recipes.json은 무엇을 만들지 관리합니다.
+  crafting_stations.json은 어떤 시설에서 제작/제련이 열리는지 관리합니다.
+  제작대/용광로 상호작용과 제작 UI는 4.37~4.39 작업에서 단계적으로 연결합니다.
 
 9) armors.json / loot_drops.json / cinderheart_upgrades.json / status_effects.json / bosses.json / boss_patterns.json
 - 위치: Assets/Resources/Cinderkeep/data
@@ -190,9 +195,9 @@ DM Template
 6) 직접 테스트한 내용:
 7) 다음에 이어서 봐야 할 파일:
 
-Current 4.35 Note
+Current 4.36 Note
 - ResourceNode, PlayerToolController, PlayerToolUse, PlayerAttack, EnemySpawnPoint, GameFlowController는 실제 플레이 수치에 JSON을 사용합니다.
-- buildings.json, building_upgrades.json, crafting_recipes.json은 다음 제작대/용광로/건축 비용 작업을 위한 준비 스키마입니다.
+- buildings.json, building_upgrades.json, crafting_recipes.json, crafting_stations.json은 다음 제작대/용광로/건축 비용 작업을 위한 준비 스키마입니다.
 - JSON 값이 없을 때는 각 컴포넌트의 Inspector fallback 값으로 안전하게 동작해야 합니다.
 - 밸런스 수정은 한 번에 한 JSON, 한 ID, 한 목적만 바꾸는 방식이 안전합니다.
 - 팀원이 브랜치를 올릴 때는 "어떤 JSON의 어떤 ID를 바꿨는지"와 "어떤 스크립트에서 체감되는지"를 같이 적어주세요.
