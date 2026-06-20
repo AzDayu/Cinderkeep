@@ -18,6 +18,11 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _attackRadius;
         [SerializeField] private float _attackInterval;
         [SerializeField] private int _gatherPower;
+        [SerializeField] private float _woodGatherMultiplier;
+        [SerializeField] private float _stoneGatherMultiplier;
+        [SerializeField] private float _ironGatherMultiplier;
+        [SerializeField] private float _goldGatherMultiplier;
+        [SerializeField] private float _adamantiumGatherMultiplier;
         [SerializeField] private string _targetResourceType;
         [SerializeField] private string _prefabKey;
         [SerializeField] private string _craftingRecipeId;
@@ -91,6 +96,46 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _gatherPower;
+            }
+        }
+
+        public float WoodGatherMultiplier
+        {
+            get
+            {
+                return _woodGatherMultiplier;
+            }
+        }
+
+        public float StoneGatherMultiplier
+        {
+            get
+            {
+                return _stoneGatherMultiplier;
+            }
+        }
+
+        public float IronGatherMultiplier
+        {
+            get
+            {
+                return _ironGatherMultiplier;
+            }
+        }
+
+        public float GoldGatherMultiplier
+        {
+            get
+            {
+                return _goldGatherMultiplier;
+            }
+        }
+
+        public float AdamantiumGatherMultiplier
+        {
+            get
+            {
+                return _adamantiumGatherMultiplier;
             }
         }
 

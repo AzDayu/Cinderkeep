@@ -1,15 +1,17 @@
-﻿using UnityEngine;
+﻿using Cinderkeep.Gameplay;
+using UnityEngine;
 
 // 플레이어가 현재 들고 있는 도구로 자원을 채집하는 컴포넌트입니다.
 // PlayerAttack은 적 공격만 담당하고, 도끼/곡괭이 좌클릭 채집은 이 클래스가 담당합니다.
+// 도구 거리, 범위, 쿨타임은 tools.json 값이 있으면 그 값을 우선 사용합니다.
 public sealed class PlayerToolUse : MonoBehaviour
 {
     [Header("Tool Use Settings")]
-    [Tooltip("도구 채집이 닿는 최대 거리입니다.")]
+    [Tooltip("도구 채집이 닿는 최대 거리입니다. tools.json 데이터가 없을 때 fallback으로 사용합니다.")]
     [SerializeField] private float _toolUseDistance = 2.5f;
-    [Tooltip("도구 채집 판정의 두께입니다. 값이 클수록 조금 빗나가도 자원을 맞춥니다.")]
+    [Tooltip("도구 채집 판정의 두께입니다. tools.json 데이터가 없을 때 fallback으로 사용합니다.")]
     [SerializeField] private float _toolUseRadius = 0.35f;
-    [Tooltip("도구를 한 번 사용한 뒤 다시 사용할 수 있을 때까지 기다리는 시간입니다.")]
+    [Tooltip("도구를 한 번 사용한 뒤 다시 사용할 수 있을 때까지 기다리는 시간입니다. tools.json 데이터가 없을 때 fallback으로 사용합니다.")]
     [SerializeField] private float _toolUseInterval = 0.5f;
     [Tooltip("도구 채집 판정에 사용할 레이어입니다.")]
     [SerializeField] private LayerMask _toolUseLayerMask = ~0;
@@ -36,18 +38,24 @@ public sealed class PlayerToolUse : MonoBehaviour
 
     public void TryUseTool()
     {
-        if (CanUseTool() == false)
+        if (CanUseToolBase() == false)
         {
             return;
         }
 
-        ResourceNode resourceNode = GetResourceNodeFromCast();
+        ToolData toolData = _playerToolController.GetCurrentToolData();
+        ResourceNode resourceNode = GetResourceNodeFromCast(toolData);
         if (resourceNode == null)
         {
             return;
         }
 
-        if (resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType) == false)
+        if (CanUseToolByInterval(resourceNode, toolData) == false)
+        {
+            return;
+        }
+
+        if (resourceNode.TryGatherWithTool(gameObject, _playerToolController.CurrentToolType, toolData) == false)
         {
             return;
         }
@@ -86,7 +94,7 @@ public sealed class PlayerToolUse : MonoBehaviour
         }
     }
 
-    private bool CanUseTool()
+    private bool CanUseToolBase()
     {
         if (_playerToolController == null)
         {
@@ -98,10 +106,16 @@ public sealed class PlayerToolUse : MonoBehaviour
             return false;
         }
 
-        return Time.time >= _lastToolUseTime + _toolUseInterval;
+        return true;
     }
 
-    private ResourceNode GetResourceNodeFromCast()
+    private bool CanUseToolByInterval(ResourceNode resourceNode, ToolData toolData)
+    {
+        float interval = GetToolUseInterval(resourceNode, toolData);
+        return Time.time >= _lastToolUseTime + interval;
+    }
+
+    private ResourceNode GetResourceNodeFromCast(ToolData toolData)
     {
         if (_toolOrigin == null)
         {
@@ -110,13 +124,57 @@ public sealed class PlayerToolUse : MonoBehaviour
 
         Ray toolRay = new Ray(_toolOrigin.position, _toolOrigin.forward);
         RaycastHit hitInfo;
+        float useDistance = GetToolUseDistance(toolData);
+        float useRadius = GetToolUseRadius(toolData);
 
-        if (Physics.SphereCast(toolRay, _toolUseRadius, out hitInfo, _toolUseDistance, _toolUseLayerMask) == false)
+        if (Physics.SphereCast(toolRay, useRadius, out hitInfo, useDistance, _toolUseLayerMask) == false)
         {
             return null;
         }
 
         return hitInfo.collider.GetComponentInParent<ResourceNode>();
+    }
+
+    private float GetToolUseDistance(ToolData toolData)
+    {
+        if (toolData != null && toolData.AttackDistance > 0f)
+        {
+            return toolData.AttackDistance;
+        }
+
+        return _toolUseDistance;
+    }
+
+    private float GetToolUseRadius(ToolData toolData)
+    {
+        if (toolData != null && toolData.AttackRadius > 0f)
+        {
+            return toolData.AttackRadius;
+        }
+
+        return _toolUseRadius;
+    }
+
+    private float GetToolUseInterval(ResourceNode resourceNode, ToolData toolData)
+    {
+        float interval = _toolUseInterval;
+        if (toolData != null && toolData.AttackInterval > 0f)
+        {
+            interval = toolData.AttackInterval;
+        }
+
+        if (resourceNode == null || toolData == null)
+        {
+            return interval;
+        }
+
+        float multiplier = resourceNode.GetToolGatherMultiplier(toolData);
+        if (multiplier > 0f)
+        {
+            return interval / multiplier;
+        }
+
+        return interval;
     }
 
     private void PlayToolUseView()

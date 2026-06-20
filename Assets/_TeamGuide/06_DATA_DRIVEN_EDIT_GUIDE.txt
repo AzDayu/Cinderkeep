@@ -31,8 +31,49 @@ Current Active Link
   _requiredToolTier는 아직 실제 도구 티어 판정에 강하게 연결하지 않았습니다.
   데이터가 없으면 ResourceNode Inspector 값을 fallback으로 사용합니다.
 
+2) tools.json
+- 위치: Assets/Resources/Cinderkeep/data/tools.json
+- 로드: GameDataManager.LoadToolData()
+- 조회: GameDataManager.GetTool()
+- 사용:
+  PlayerToolController: 현재 장착 도구 ID 확인
+  PlayerToolUse: 도구 사용 거리, 범위, 쿨타임 참조
+  ResourceNode: 자원별 채집 배수 참조
+- 조절 가능:
+  _toolType: Axe, Pickaxe, None
+  _tier: 도구 티어
+  _attackDistance: 채집 판정 거리
+  _attackRadius: 채집 판정 반경
+  _attackInterval: 기본 채집 쿨타임
+  _woodGatherMultiplier: 나무 채집 배수
+  _stoneGatherMultiplier: 돌 채집 배수
+  _ironGatherMultiplier: 철 채집 배수
+  _goldGatherMultiplier: 금 채집 배수
+  _adamantiumGatherMultiplier: 아다만티움 채집 배수
+- 현재 주의:
+  채집 배수는 채집량과 채집 속도에 같이 영향을 줍니다.
+  예: 0.5는 절반 효율, 0.25는 매우 낮은 효율, 2는 높은 효율입니다.
+  도구 타입이 맞지 않으면 배수가 높아도 채집하지 않습니다.
+  도구 데이터가 없으면 PlayerToolUse Inspector 값을 fallback으로 사용합니다.
+
+3) weapons.json
+- 위치: Assets/Resources/Cinderkeep/data/weapons.json
+- 로드: GameDataManager.LoadWeaponData()
+- 조회: GameDataManager.GetWeapon()
+- 사용:
+  PlayerAttack: 공격력, 공격 거리, 공격 반경, 공격 쿨타임
+- 조절 가능:
+  _damage: 공격력
+  _attackDistance: 공격 거리
+  _attackRadius: 공격 판정 반경
+  _attackInterval: 공격 쿨타임
+- 현재 주의:
+  PlayerAttack의 기본 무기 ID는 stone_sword입니다.
+  장비 시스템이 붙으면 PlayerAttack.SetWeaponDataId()로 현재 무기 ID를 넘기면 됩니다.
+  무기 데이터가 없으면 PlayerAttack Inspector 값을 fallback으로 사용합니다.
+
 Existing Data Links
-2) enemies.json
+4) enemies.json
 - 위치: Assets/Resources/Cinderkeep/data/enemies.json
 - 로드: GameDataManager.LoadEnemyData()
 - 사용 기준:
@@ -50,20 +91,6 @@ Existing Data Links
   _detectorDistance
 
 Next Data Driven Candidates
-3) tools.json
-- 위치: Assets/Resources/Cinderkeep/data/tools.json
-- 로드: GameDataManager.LoadToolData()
-- 다음 연결 후보:
-  PlayerToolUse: 도구 사용 거리, 범위, 쿨타임, 채집력
-  PlayerToolController: 현재 장착 도구의 tier 확인
-  ResourceNode: _requiredToolTier 판정
-
-4) weapons.json
-- 위치: Assets/Resources/Cinderkeep/data/weapons.json
-- 로드: GameDataManager.LoadWeaponData()
-- 다음 연결 후보:
-  PlayerAttack: 공격력, 공격 거리, 공격 반경, 공격 쿨타임
-
 5) enemy_spawn_rules.json
 - 위치: Assets/Resources/Cinderkeep/data/enemy_spawn_rules.json
 - 로드: GameDataManager.LoadEnemySpawnRuleData()
@@ -110,4 +137,9 @@ DM Template
 Current 4.28 Note
 - 4.28 기준으로 ResourceNode가 harvest_nodes.json을 1차로 참조합니다.
 - JSON 연결은 한 번에 전부 붙이지 않고, 실제 게임 루프에 필요한 순서대로 하나씩 붙입니다.
-- 다음 우선순위는 tools.json -> PlayerToolUse 또는 weapons.json -> PlayerAttack입니다.
+
+Current 4.29 Note
+- 4.29 기준으로 tools.json이 PlayerToolController, PlayerToolUse, ResourceNode에 1차 연결되었습니다.
+- 4.29 기준으로 weapons.json이 PlayerAttack에 1차 연결되었습니다.
+- 도구 티어 강제 제한은 아직 켜지지 않았고, 자원별 효율 배수로 먼저 체감을 만듭니다.
+- 다음 우선순위는 enemy_spawn_rules.json -> EnemySpawnPoint 또는 game_flow_phases.json -> GameFlowController입니다.

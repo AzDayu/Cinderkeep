@@ -96,11 +96,16 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return;
         }
 
-        GiveResourceToPlayer();
+        GiveResourceToPlayer(_amount);
         ProcessGathered();
     }
 
     public bool TryGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType)
+    {
+        return TryGatherWithTool(gameObjectInteractor, toolType, null);
+    }
+
+    public bool TryGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType, ToolData toolData)
     {
         ApplyHarvestNodeDataIfPossible();
 
@@ -109,7 +114,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
-        GiveResourceToPlayer();
+        GiveResourceToPlayer(GetGatherAmount(toolData));
         ProcessGathered();
         return true;
     }
@@ -136,7 +141,62 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         return _requiredToolType == toolType;
     }
 
-    private void GiveResourceToPlayer()
+    public float GetToolGatherMultiplier(ToolData toolData)
+    {
+        if (toolData == null)
+        {
+            return 1f;
+        }
+
+        ApplyHarvestNodeDataIfPossible();
+
+        if (_resourceId == PlayerModel.ResourceWood)
+        {
+            return GetSafeMultiplier(toolData.WoodGatherMultiplier);
+        }
+
+        if (_resourceId == PlayerModel.ResourceStone)
+        {
+            return GetSafeMultiplier(toolData.StoneGatherMultiplier);
+        }
+
+        if (_resourceId == PlayerModel.ResourceIron)
+        {
+            return GetSafeMultiplier(toolData.IronGatherMultiplier);
+        }
+
+        if (_resourceId == PlayerModel.ResourceGold)
+        {
+            return GetSafeMultiplier(toolData.GoldGatherMultiplier);
+        }
+
+        if (_resourceId == PlayerModel.ResourceAdamantium)
+        {
+            return GetSafeMultiplier(toolData.AdamantiumGatherMultiplier);
+        }
+
+        return 1f;
+    }
+
+    private int GetGatherAmount(ToolData toolData)
+    {
+        float multiplier = GetToolGatherMultiplier(toolData);
+        float adjustedAmount = _amount * multiplier;
+        int roundedAmount = Mathf.RoundToInt(adjustedAmount);
+        return Mathf.Max(1, roundedAmount);
+    }
+
+    private float GetSafeMultiplier(float multiplier)
+    {
+        if (multiplier <= 0f)
+        {
+            return 1f;
+        }
+
+        return multiplier;
+    }
+
+    private void GiveResourceToPlayer(int amount)
     {
         ApplyHarvestNodeDataIfPossible();
 
@@ -146,8 +206,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return;
         }
 
-        GameManager.Inst.PlayerModel.AddResource(_resourceId, _amount);
-        Debug.Log("ResourceNode: " + _resourceId + " +" + _amount);
+        GameManager.Inst.PlayerModel.AddResource(_resourceId, amount);
+        Debug.Log("ResourceNode: " + _resourceId + " +" + amount);
     }
 
     private void ProcessGathered()
