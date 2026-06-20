@@ -13,7 +13,7 @@ Basic Rule
 - 기능 테스트 전에는 한 번에 여러 JSON을 크게 바꾸지 않습니다.
 - 수치를 바꿨다면 반드시 어떤 플레이 체감이 바뀌는지 적습니다.
 
-Current Active Link
+Current Active Link - 4.35 기준
 1) harvest_nodes.json
 - 위치: Assets/Resources/Cinderkeep/data/harvest_nodes.json
 - 로드: GameDataManager.LoadHarvestNodeData()
@@ -23,12 +23,12 @@ Current Active Link
   _resourceId: 지급할 자원 종류
   _requiredToolType: 필요한 도구 타입
   _requiredToolTier: 필요한 도구 티어 후보
-  _gatherAmount: 한 번 채집할 때 지급량
+  _gatherAmount: 기본 채집량
   _maxGatherCount: 추후 여러 번 채집용 후보
   _respawnSeconds: 추후 리스폰 시간 후보
-- 현재 주의:
-  ResourceNode는 _gatherAmount, _resourceId, _requiredToolType을 우선 사용합니다.
-  _requiredToolTier는 아직 실제 도구 티어 판정에 강하게 연결하지 않았습니다.
+- 현재 기준:
+  ResourceNode는 _resourceId, _requiredToolType, _gatherAmount를 우선 사용합니다.
+  tools.json의 자원별 배수와 함께 최종 채집량이 결정됩니다.
   데이터가 없으면 ResourceNode Inspector 값을 fallback으로 사용합니다.
 
 2) tools.json
@@ -36,7 +36,7 @@ Current Active Link
 - 로드: GameDataManager.LoadToolData()
 - 조회: GameDataManager.GetTool()
 - 사용:
-  PlayerToolController: 현재 장착 도구 ID 확인
+  PlayerToolController: 현재 장착 도구 ID와 도구 타입 확인
   PlayerToolUse: 도구 사용 거리, 범위, 쿨타임 참조
   ResourceNode: 자원별 채집 배수 참조
 - 조절 가능:
@@ -50,7 +50,7 @@ Current Active Link
   _ironGatherMultiplier: 철 채집 배수
   _goldGatherMultiplier: 금 채집 배수
   _adamantiumGatherMultiplier: 아다만티움 채집 배수
-- 현재 주의:
+- 현재 기준:
   채집 배수는 채집량과 채집 속도에 같이 영향을 줍니다.
   예: 0.5는 절반 효율, 0.25는 매우 낮은 효율, 2는 높은 효율입니다.
   도구 타입이 맞지 않으면 배수가 높아도 채집하지 않습니다.
@@ -67,20 +67,22 @@ Current Active Link
   _attackDistance: 공격 거리
   _attackRadius: 공격 판정 반경
   _attackInterval: 공격 쿨타임
-- 현재 주의:
+- 현재 기준:
   PlayerAttack의 기본 무기 ID는 stone_sword입니다.
-  장비 시스템이 붙으면 PlayerAttack.SetWeaponDataId()로 현재 무기 ID를 넘기면 됩니다.
+  장비 시스템이 붙으면 PlayerAttack.SetWeaponDataId()로 현재 무기 ID를 넘깁니다.
   무기 데이터가 없으면 PlayerAttack Inspector 값을 fallback으로 사용합니다.
 
-Existing Data Links
 4) enemies.json
 - 위치: Assets/Resources/Cinderkeep/data/enemies.json
 - 로드: GameDataManager.LoadEnemyData()
-- 사용 기준:
+- 조회: GameDataManager.GetEnemy()
+- 사용:
+  EnemyLoopConnector: 생성된 적에게 EnemyData 연결
   EnemyStatus: 체력
   EnemyMovement: 이동 속도, 정지 거리
   EnemyAttack: 공격력, 공격 간격
   EnemyDetector: 감지 거리
+  EnemyBrain: CinderHeart와 플레이어 타깃 판단 보조
 - 조절 가능:
   _health
   _moveSpeed
@@ -89,22 +91,76 @@ Existing Data Links
   _attackInterval
   _visualScale
   _detectorDistance
+- 현재 기준:
+  적 체력 기준은 EnemyStatus입니다.
+  Damageable은 피해를 EnemyStatus, PlayerStatus, BuildingHp, CinderHeart로 전달하는 통로입니다.
 
-Next Data Driven Candidates
 5) enemy_spawn_rules.json
 - 위치: Assets/Resources/Cinderkeep/data/enemy_spawn_rules.json
 - 로드: GameDataManager.LoadEnemySpawnRuleData()
-- 다음 연결 후보:
-  EnemySpawnPoint: 낮/밤/보스 스폰 주기, 웨이브 수, 최대 생존 수
-  GameFlowEnemySpawnDirector: 현재 페이즈에 맞는 스폰 규칙 선택
+- 조회: GameDataManager.EnemySpawnRuleDataList
+- 사용:
+  EnemySpawnPoint: 낮/밤/보스 스폰 주기, 웨이브 수, 최대 생존 수, 적 ID
+  GameFlowEnemySpawnDirector: 현재 페이즈와 일차에 맞는 EnemySpawnPoint 활성화
+- 조절 가능:
+  _day
+  _phase: Day, Night, Boss
+  _enemyId
+  _spawnInterval
+  _minSpawnCount
+  _maxSpawnCount
+  _maxAliveCount
+  _spawnWeight
+- 현재 기준:
+  EnemySpawnPoint는 현재 일차와 페이즈가 맞는 규칙 중 weight를 사용해 후보를 고릅니다.
+  데이터가 없으면 EnemySpawnPoint Inspector의 fallback 규칙을 사용합니다.
 
-6) buildings.json / building_upgrades.json
+6) game_flow_phases.json
+- 위치: Assets/Resources/Cinderkeep/data/game_flow_phases.json
+- 로드: GameDataManager.LoadGameFlowPhaseData()
+- 조회: GameDataManager.GameFlowPhaseDataList
+- 사용:
+  GameFlowController: 낮, 밤, 아침 보상, 보스 접근 시간
+  GameFlowTimerHUD: GameRunModel을 통해 현재 페이즈와 시간을 표시
+- 조절 가능:
+  _day
+  _phase: Day, Night, MorningReward, BossApproach, BossFight
+  _durationSeconds
+- 현재 기준:
+  GameFlowController는 _day와 _phase가 맞는 데이터를 찾아 시간표로 사용합니다.
+  데이터가 없거나 시간이 0 이하이면 GameFlowSettings Inspector fallback 값을 사용합니다.
+
+Prepared Schema - 아직 실제 루프 연결이 약한 데이터
+7) buildings.json / building_upgrades.json
 - 위치: Assets/Resources/Cinderkeep/data
+- 로드:
+  GameDataManager.LoadBuildingData()
+  GameDataManager.LoadBuildingUpgradeData()
 - 다음 연결 후보:
-  BuildingManager: 생성할 건축물 ID
+  BuildingManager: 생성할 건축물 ID와 프리팹 선택
   BuildingHp: 건축물 체력
   BuildingSpot: 설치 가능 건축물 종류
   PlayerBuild: 건축 비용과 설치 요청
+- 현재 기준:
+  PlayerBuild는 BuildingManager를 통해 건축을 요청합니다.
+  다만 건축 비용, 건축물 ID, 업그레이드는 아직 데이터 기반 체감이 약합니다.
+
+8) crafting_recipes.json
+- 위치: Assets/Resources/Cinderkeep/data/crafting_recipes.json
+- 로드: GameDataManager.LoadCraftingRecipeData()
+- 다음 연결 후보:
+  제작대, 용광로, 장비 제작 UI
+  PlayerModel 자원 소비
+  ToolData, WeaponData, ArmorData 해금
+- 현재 기준:
+  스키마는 준비되어 있지만 제작대/용광로 루프 연결은 다음 작업입니다.
+
+9) armors.json / loot_drops.json / cinderheart_upgrades.json / status_effects.json / bosses.json / boss_patterns.json
+- 위치: Assets/Resources/Cinderkeep/data
+- 현재 기준:
+  GameDataManager가 로드할 수 있는 준비 데이터입니다.
+  아직 실제 플레이 체감과 강하게 연결된 상태는 아닙니다.
+  아침 보상, 보스전, CinderHeart 성장, 장비 성장 작업에서 단계적으로 연결합니다.
 
 JSON Edit Checklist
 1) 바꿀 JSON 파일을 하나만 정합니다.
@@ -134,12 +190,9 @@ DM Template
 6) 직접 테스트한 내용:
 7) 다음에 이어서 봐야 할 파일:
 
-Current 4.28 Note
-- 4.28 기준으로 ResourceNode가 harvest_nodes.json을 1차로 참조합니다.
-- JSON 연결은 한 번에 전부 붙이지 않고, 실제 게임 루프에 필요한 순서대로 하나씩 붙입니다.
-
-Current 4.29 Note
-- 4.29 기준으로 tools.json이 PlayerToolController, PlayerToolUse, ResourceNode에 1차 연결되었습니다.
-- 4.29 기준으로 weapons.json이 PlayerAttack에 1차 연결되었습니다.
-- 도구 티어 강제 제한은 아직 켜지지 않았고, 자원별 효율 배수로 먼저 체감을 만듭니다.
-- 다음 우선순위는 enemy_spawn_rules.json -> EnemySpawnPoint 또는 game_flow_phases.json -> GameFlowController입니다.
+Current 4.35 Note
+- ResourceNode, PlayerToolController, PlayerToolUse, PlayerAttack, EnemySpawnPoint, GameFlowController는 실제 플레이 수치에 JSON을 사용합니다.
+- buildings.json, building_upgrades.json, crafting_recipes.json은 다음 제작대/용광로/건축 비용 작업을 위한 준비 스키마입니다.
+- JSON 값이 없을 때는 각 컴포넌트의 Inspector fallback 값으로 안전하게 동작해야 합니다.
+- 밸런스 수정은 한 번에 한 JSON, 한 ID, 한 목적만 바꾸는 방식이 안전합니다.
+- 팀원이 브랜치를 올릴 때는 "어떤 JSON의 어떤 ID를 바꿨는지"와 "어떤 스크립트에서 체감되는지"를 같이 적어주세요.

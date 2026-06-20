@@ -2,18 +2,18 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 최근 피격된 적의 체력을 화면 상단에 표시하는 HUD입니다.
-// EnemyStatus가 피격 사실을 알려주면 이 컴포넌트가 짧은 시간 동안 체력바를 보여줍니다.
+// 최근 공격한 적의 체력을 화면 상단에 표시하는 HUD 컴포넌트입니다.
+// EnemyStatus가 피격 사실을 알려주면 일정 시간 동안 체력바를 보여줍니다.
 public sealed class EnemyTargetHUD : MonoBehaviour
 {
     [Header("Root")]
-    [Tooltip("최근 피격된 적 HP HUD의 표시와 숨김을 제어합니다.")]
+    [Tooltip("최근 공격한 적 HP HUD의 표시와 숨김을 제어합니다.")]
     [SerializeField] private CanvasGroup _canvasGroup;
 
     [Header("Health UI")]
-    [Tooltip("최근 피격된 적 체력 비율을 표시하는 Slider입니다.")]
+    [Tooltip("최근 공격한 적의 체력 비율을 표시하는 Slider입니다.")]
     [SerializeField] private Slider _healthSlider;
-    [Tooltip("최근 피격된 적 체력을 숫자로 표시하는 TMP 텍스트입니다.")]
+    [Tooltip("최근 공격한 적의 체력을 숫자로 표시하는 TMP 텍스트입니다.")]
     [SerializeField] private TMP_Text _healthText;
 
     [Header("Visibility")]
