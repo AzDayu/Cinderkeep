@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// GameFlowController가 사용하는 시간표 설정입니다.
-// 지금은 Inspector에서 직접 조절하고, 나중에 JSON 또는 ScriptableObject로 옮기기 쉽게 분리했습니다.
+// GameFlowController가 사용하는 시간 fallback 설정입니다.
+// game_flow_phases.json 데이터가 없거나 잘못되면 이 Inspector 값을 사용합니다.
 [System.Serializable]
 public sealed class GameFlowSettings
 {

@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // GameFlowPhase JSON의 한 줄을 담는 데이터 클래스입니다.
-    // 낮, 밤, 아침 보상, 보스 접근 같은 페이즈 시간표를 데이터로 관리합니다.
+    // GameFlowPhase JSON 한 줄을 읽는 데이터 클래스입니다.
+    // 낮, 밤, 아침 보상, 보스 접근 같은 페이즈 시간을 데이터로 관리합니다.
     [Serializable]
     public sealed class GameFlowPhaseData : GameDataBase
     {
@@ -74,7 +74,7 @@ namespace Cinderkeep.Gameplay
         }
     }
 
-    // GameFlowPhaseData도 JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
+    // JsonUtility가 읽기 쉬운 Items 감싸기 구조를 사용합니다.
     [Serializable]
     public sealed class GameFlowPhaseDataCatalog
     {

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
@@ -7,8 +9,12 @@ using UnityEngine;
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     [Header("Flow Settings")]
-    [Tooltip("낮, 밤, 아침 보상, 보스 접근 시간표입니다.")]
+    [Tooltip("낮, 밤, 아침 보상, 보스 접근 시간의 fallback 설정입니다.")]
     [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
+
+    [Header("Flow Data")]
+    [Tooltip("true이면 game_flow_phases.json의 페이즈 시간을 우선 사용합니다.")]
+    [SerializeField] private bool _useGameFlowPhaseData = true;
 
     [Header("Enemy Spawn Director")]
     [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
@@ -163,14 +169,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
-        _gameRunModel.SetPhaseTime(_gameFlowSettings.DayDuration);
+        _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Day, day, _gameFlowSettings.DayDuration));
         StartEnemySpawn(EnemySpawnMode.Day);
     }
 
     private void StartNight()
     {
         _gameRunModel.SetPhase(GameRunPhase.Night);
-        _gameRunModel.SetPhaseTime(_gameFlowSettings.NightDuration);
+        _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Night, _gameRunModel.Day, _gameFlowSettings.NightDuration));
         StartEnemySpawn(EnemySpawnMode.Night);
     }
 
@@ -190,7 +196,10 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartMorningReward()
     {
         _gameRunModel.SetPhase(GameRunPhase.MorningReward);
-        _gameRunModel.SetPhaseTime(_gameFlowSettings.MorningRewardDuration);
+        _gameRunModel.SetPhaseTime(GetPhaseDuration(
+            GameRunPhase.MorningReward,
+            _gameRunModel.Day,
+            _gameFlowSettings.MorningRewardDuration));
     }
 
     private void StartNextDay()
@@ -202,7 +211,10 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartBossApproach()
     {
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
-        _gameRunModel.SetPhaseTime(_gameFlowSettings.BossApproachDuration);
+        _gameRunModel.SetPhaseTime(GetPhaseDuration(
+            GameRunPhase.BossApproach,
+            _gameRunModel.Day,
+            _gameFlowSettings.BossApproachDuration));
         StartEnemySpawn(EnemySpawnMode.Boss);
     }
 
@@ -211,6 +223,79 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetPhaseTime(0f);
         StartEnemySpawn(EnemySpawnMode.Boss);
+    }
+
+    private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)
+    {
+        GameFlowPhaseData phaseData = GetPhaseData(phase, day);
+        if (phaseData != null && phaseData.DurationSeconds > 0f)
+        {
+            return phaseData.DurationSeconds;
+        }
+
+        return fallbackDuration;
+    }
+
+    private GameFlowPhaseData GetPhaseData(GameRunPhase phase, int day)
+    {
+        if (CanUseGameFlowPhaseData() == false)
+        {
+            return null;
+        }
+
+        GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
+        IReadOnlyDictionary<string, GameFlowPhaseData> phaseDataList = gameDataManager.GameFlowPhaseDataList;
+        if (phaseDataList == null)
+        {
+            return null;
+        }
+
+        string phaseName = phase.ToString();
+        foreach (KeyValuePair<string, GameFlowPhaseData> pair in phaseDataList)
+        {
+            GameFlowPhaseData phaseData = pair.Value;
+            if (IsPhaseDataMatched(phaseData, day, phaseName) == true)
+            {
+                return phaseData;
+            }
+        }
+
+        return null;
+    }
+
+    private bool CanUseGameFlowPhaseData()
+    {
+        if (_useGameFlowPhaseData == false)
+        {
+            return false;
+        }
+
+        if (GameManager.Inst == null)
+        {
+            return false;
+        }
+
+        if (GameManager.Inst.GetGameDataManager() == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsPhaseDataMatched(GameFlowPhaseData phaseData, int day, string phaseName)
+    {
+        if (phaseData == null)
+        {
+            return false;
+        }
+
+        if (phaseData.Day != day)
+        {
+            return false;
+        }
+
+        return string.Equals(phaseData.Phase, phaseName, StringComparison.OrdinalIgnoreCase);
     }
 
     private void StartEnemySpawn(EnemySpawnMode spawnMode)
