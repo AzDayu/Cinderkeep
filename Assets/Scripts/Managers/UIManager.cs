@@ -12,6 +12,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObject _hudRoot;
         [SerializeField] private GameObject _inventoryRoot;
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private InventoryUI _inventoryUI;
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
 
@@ -40,6 +41,14 @@ namespace Cinderkeep.Gameplay
             _isInitialized = true;
         }
 
+        private void Update()
+        {
+            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
+            {
+                ToggleInventory();
+            }
+        }
+
         public void OpenHud()
         {
             SetActive(_hudRoot, true);
@@ -52,12 +61,40 @@ namespace Cinderkeep.Gameplay
 
         public void OpenInventory()
         {
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.Open();
+                return;
+            }
+
             SetActive(_inventoryRoot, true);
         }
 
         public void CloseInventory()
         {
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.Close();
+                return;
+            }
+
             SetActive(_inventoryRoot, false);
+        }
+
+        public void ToggleInventory()
+        {
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.Toggle();
+                return;
+            }
+
+            if (_inventoryRoot == null)
+            {
+                return;
+            }
+
+            SetActive(_inventoryRoot, _inventoryRoot.activeSelf == false);
         }
 
         public void OpenGameOverPanel()

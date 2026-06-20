@@ -118,6 +118,21 @@ public static class CinderkeepInput
             case KeyCode.Alpha3:
                 key = Key.Digit3;
                 return true;
+            case KeyCode.Alpha4:
+                key = Key.Digit4;
+                return true;
+            case KeyCode.Alpha5:
+                key = Key.Digit5;
+                return true;
+            case KeyCode.Alpha6:
+                key = Key.Digit6;
+                return true;
+            case KeyCode.Alpha7:
+                key = Key.Digit7;
+                return true;
+            case KeyCode.Tab:
+                key = Key.Tab;
+                return true;
             case KeyCode.B:
                 key = Key.B;
                 return true;

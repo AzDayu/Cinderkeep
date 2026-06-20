@@ -22,6 +22,8 @@ namespace Cinderkeep.Gameplay
 
         private PlayerModel _playerModel = new PlayerModel();
         private GameRunModel _gameRunModel = new GameRunModel();
+        private PlayerInventoryModel _playerInventoryModel = new PlayerInventoryModel();
+        private PlayerEquipmentModel _playerEquipmentModel = new PlayerEquipmentModel();
         private bool _isInitialized;
 
         public static GameManager Inst { get; private set; }
@@ -39,6 +41,22 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _gameRunModel;
+            }
+        }
+
+        public PlayerInventoryModel PlayerInventoryModel
+        {
+            get
+            {
+                return _playerInventoryModel;
+            }
+        }
+
+        public PlayerEquipmentModel PlayerEquipmentModel
+        {
+            get
+            {
+                return _playerEquipmentModel;
             }
         }
 
@@ -95,6 +113,8 @@ namespace Cinderkeep.Gameplay
 
             _playerModel.InitializeDefault();
             _gameRunModel.InitializeDefault();
+            _playerInventoryModel.InitializeDefault();
+            _playerEquipmentModel.InitializeDefault();
             ConnectGameFlowController();
             InitializeGameFlowControllerIfExists();
             _isInitialized = true;
