@@ -1,10 +1,11 @@
 using UnityEngine;
 
-// 건축물이 놓일 수 있는 자리 정보를 가진 컴포넌트입니다.
+// 건축물이 올라갈 수 있는 자리 정보를 가진 컴포넌트입니다.
 // 실제 생성은 BuildingManager가 담당하고, 이 클래스는 자리 상태만 관리합니다.
 public sealed class BuildingSpot : MonoBehaviour
 {
     [Header("Build Position")]
+    [Tooltip("건축물이 실제로 배치될 위치입니다. 비어 있으면 이 오브젝트의 Transform을 사용합니다.")]
     [SerializeField] private Transform _spawnAnchor;
 
     private GameObject _currentBuildingObject;
@@ -12,12 +13,18 @@ public sealed class BuildingSpot : MonoBehaviour
 
     public bool IsEmpty
     {
-        get { return _isEmpty; }
+        get
+        {
+            return _isEmpty;
+        }
     }
 
     public GameObject CurrentBuildingObject
     {
-        get { return _currentBuildingObject; }
+        get
+        {
+            return _currentBuildingObject;
+        }
     }
 
     private void Awake()

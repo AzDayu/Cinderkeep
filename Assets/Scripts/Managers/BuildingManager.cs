@@ -58,6 +58,29 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        public bool TryBuildAtPosition(GameObject buildingPrefab, Vector3 buildPosition, Quaternion buildRotation)
+        {
+            Initialize();
+
+            if (CanBuildAtPosition(buildingPrefab) == false)
+            {
+                return false;
+            }
+
+            GameObject createdBuilding = _gameObjectManager.CreateGameObject(
+                buildingPrefab,
+                buildPosition,
+                buildRotation);
+
+            if (createdBuilding == null)
+            {
+                return false;
+            }
+
+            RegisterBuildingComponent(createdBuilding);
+            return true;
+        }
+
         public void RegisterBuildingSpot(BuildingSpot buildingSpot)
         {
             if (buildingSpot == null)
@@ -148,6 +171,23 @@ namespace Cinderkeep.Gameplay
             if (buildingSpot.CanBuild() == false)
             {
                 Debug.LogWarning("BuildingManager: 이미 건축물이 있는 지점입니다.");
+                return false;
+            }
+
+            if (buildingPrefab == null)
+            {
+                Debug.LogWarning("BuildingManager: 건축 프리팹이 비어 있습니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CanBuildAtPosition(GameObject buildingPrefab)
+        {
+            if (_gameObjectManager == null)
+            {
+                Debug.LogWarning("BuildingManager: GameObjectManager 연결이 필요합니다.");
                 return false;
             }
 

@@ -16,17 +16,26 @@ public sealed class BuildingHp : MonoBehaviour
 
     public float CurrentHp
     {
-        get { return _currentHp; }
+        get
+        {
+            return _currentHp;
+        }
     }
 
     public float MaxHp
     {
-        get { return _maxHp; }
+        get
+        {
+            return _maxHp;
+        }
     }
 
     public bool IsDestroyed
     {
-        get { return _isDestroyed; }
+        get
+        {
+            return _isDestroyed;
+        }
     }
 
     private void Awake()
