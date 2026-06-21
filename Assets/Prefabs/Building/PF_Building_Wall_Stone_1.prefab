@@ -50,14 +50,76 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
       propertyPath: m_Name
-      value: PF_Building_Wall_3
+      value: PF_Building_Wall_Stone_1
       objectReference: {fileID: 0}
     - target: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
       propertyPath: m_TagString
       value: Build
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1191265363412684828, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7221998427770752326}
+    - targetCorrespondingSourceObject: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7252496657886252943}
+    - targetCorrespondingSourceObject: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1616237649511446901}
   m_SourcePrefab: {fileID: 100100000, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+--- !u!1 &7501198941034451003 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2062256941687557852, guid: d32e4f9d336a75846968bddeaec20c8c, type: 3}
+  m_PrefabInstance: {fileID: 8396688218631429863}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &7221998427770752326
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7501198941034451003}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.8408003, y: 3.0073233, z: 0.8408013}
+  m_Center: {x: 0, y: 1.5036616, z: 0}
+--- !u!114 &7252496657886252943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7501198941034451003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0e4c7484074b34890bb238fdb82f1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingHp
+  _maxHp: 100
+--- !u!114 &1616237649511446901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7501198941034451003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Damageable
+  _maxHealth: 100
