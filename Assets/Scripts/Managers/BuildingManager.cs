@@ -62,26 +62,6 @@ namespace Cinderkeep.Gameplay
         {
             Debug.LogWarning("BuildingManager: BuildingSpot이 있는 위치에서만 건축할 수 있습니다.");
             return false;
-
-            Initialize();
-
-            if (CanBuildAtPosition(buildingPrefab) == false)
-            {
-                return false;
-            }
-
-            GameObject createdBuilding = _gameObjectManager.CreateGameObject(
-                buildingPrefab,
-                buildPosition,
-                buildRotation);
-
-            if (createdBuilding == null)
-            {
-                return false;
-            }
-
-            RegisterBuildingComponent(createdBuilding);
-            return true;
         }
 
         public void RegisterBuildingSpot(BuildingSpot buildingSpot)

@@ -8232,10 +8232,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBuild
   _buildKey: 98
+  _buildDetectDistance: 5
+  _buildLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  _cameraTransform: {fileID: 0}
   _buildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
   _targetBuildingSpot: {fileID: 0}
-  _spawnDistance: 3
-  _usePositionFallback: 1
   _buildingManager: {fileID: 579672731}
 --- !u!114 &356893301
 MonoBehaviour:
