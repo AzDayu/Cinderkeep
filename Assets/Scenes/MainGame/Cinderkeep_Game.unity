@@ -27230,7 +27230,7 @@ MonoBehaviour:
   _gameDataManager: {fileID: 982475664}
   _resourceManager: {fileID: 956675220}
   _gameObjectManager: {fileID: 2064572603}
-  _buildingManager: {fileID: 0}
+  _buildingManager: {fileID: 579672731}
   _uiManager: {fileID: 317245440}
   _soundManager: {fileID: 1733528638}
   _mapManager: {fileID: 2130000003}

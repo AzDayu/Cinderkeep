@@ -19,13 +19,11 @@ public sealed class PlayerBuild : MonoBehaviour
     [Tooltip("상호작용 Ray가 시작되는 카메라 Transform입니다. 비어있으면 자식 카메라를 찾습니다.")]
     [SerializeField] private Transform _cameraTransform;
 
-    [Header("Build Target")]
+    [Header("Build Prefab")]
     [FormerlySerializedAs("Prefab_Fence")]
     [FormerlySerializedAs("GameObject_BuildingPrefab")]
     [Tooltip("생성할 건축물 프리팹입니다.")]
     [SerializeField] private GameObject _buildingPrefab;
-    [Tooltip("고정 건축 지점입니다. 비어 있으면 플레이어 앞 위치 fallback을 사용합니다.")]
-    [SerializeField] private BuildingSpot _targetBuildingSpot;
 
     [Header("Connected Manager")]
     [Tooltip("실제 건축물 생성을 맡는 매니저입니다. 비어 있으면 GameManager를 통해 연결합니다.")]
@@ -52,11 +50,6 @@ public sealed class PlayerBuild : MonoBehaviour
         _buildingManager = buildingManager;
     }
 
-    public void SetTargetBuildingSpot(BuildingSpot buildingSpot)
-    {
-        _targetBuildingSpot = buildingSpot;
-    }
-
     private void ReadBuildInput()
     {
         if (CinderkeepInput.WasKeyPressedThisFrame(_buildKey))
@@ -72,7 +65,7 @@ public sealed class PlayerBuild : MonoBehaviour
             return;
         }
 
-        BuildingSpot buildingSpot = FindTargetBuildingSpot();
+        BuildingSpot buildingSpot = GetBuildingSpotFromRay();
         if (buildingSpot == null)
         {
             Debug.LogWarning("PlayerBuild: 바라보는 방향에 건축 가능한 BuildingSpot이 없습니다.");
@@ -103,17 +96,6 @@ public sealed class PlayerBuild : MonoBehaviour
         }
 
         return true;
-    }
-
-    private BuildingSpot FindTargetBuildingSpot()
-    {
-        // 테스트용 - 인스펙터에 수동 지정된 Spot 우선
-        if(_targetBuildingSpot != null && _targetBuildingSpot.CanBuild())
-        {
-            return _targetBuildingSpot;
-        }
-
-        return GetBuildingSpotFromRay();
     }
 
     private BuildingSpot GetBuildingSpotFromRay()
