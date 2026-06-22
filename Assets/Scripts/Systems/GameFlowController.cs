@@ -20,10 +20,23 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     [Tooltip("현재 낮, 밤, 보스 페이즈에 맞춰 적 스폰 지점들을 켜고 끄는 컴포넌트입니다.")]
     [SerializeField] private GameFlowEnemySpawnDirector _enemySpawnDirector;
 
+    [Header("CinderHeart Reward")]
+    [Tooltip("아침 보상 페이즈에 CinderHeart 스킬 선택창을 엽니다.")]
+    [SerializeField] private bool _openCinderHeartSkillOnMorningReward = true;
+    [Tooltip("현재 4.57 기준으로 고정 노출할 CinderHeart 스킬 ID입니다. 랜덤 선택은 후속 작업에서 분리합니다.")]
+    [SerializeField] private string[] _morningRewardSkillIds =
+    {
+        "cinderheart_attack_damage_5",
+        "cinderheart_max_health_100",
+        "cinderheart_player_heal_30"
+    };
+
     private GameManager _gameManager;
     private GameRunModel _gameRunModel;
     private bool _isInitialized;
     private bool _isFlowRunning;
+    private bool _isWaitingForCinderHeartSkillSelection;
+    private float _previousTimeScale = 1f;
 
     public bool IsInitialized
     {
@@ -88,6 +101,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     public void StopFlowAsGameOver()
     {
         _isFlowRunning = false;
+        RestoreTimeScaleIfRewardSelectionIsOpen();
         StopEnemySpawn();
     }
 
@@ -99,6 +113,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _isFlowRunning = false;
+        RestoreTimeScaleIfRewardSelectionIsOpen();
         StopEnemySpawn();
         _gameRunModel.ClearRun();
     }
@@ -139,6 +154,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         if (_gameRunModel.Phase == GameRunPhase.BossFight)
+        {
+            return false;
+        }
+
+        if (_isWaitingForCinderHeartSkillSelection == true)
         {
             return false;
         }
@@ -200,6 +220,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             GameRunPhase.MorningReward,
             _gameRunModel.Day,
             _gameFlowSettings.MorningRewardDuration));
+        TryOpenCinderHeartSkillSelection();
     }
 
     private void StartNextDay()
@@ -316,6 +337,108 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _enemySpawnDirector.StopSpawn();
+    }
+
+    private void TryOpenCinderHeartSkillSelection()
+    {
+        if (_openCinderHeartSkillOnMorningReward == false)
+        {
+            return;
+        }
+
+        if (_gameManager == null)
+        {
+            return;
+        }
+
+        UIManager uiManager = _gameManager.GetUIManager();
+        if (uiManager == null)
+        {
+            return;
+        }
+
+        List<CinderHeartSkillData> skillOptions = GetMorningRewardSkillOptions();
+        if (skillOptions.Count <= 0)
+        {
+            return;
+        }
+
+        PauseGameForCinderHeartSkillSelection();
+        uiManager.OpenCinderHeartSkillSelectionUI(skillOptions, HandleCinderHeartSkillSelectionClosed);
+    }
+
+    private List<CinderHeartSkillData> GetMorningRewardSkillOptions()
+    {
+        List<CinderHeartSkillData> skillOptions = new List<CinderHeartSkillData>();
+        if (_gameManager == null)
+        {
+            return skillOptions;
+        }
+
+        GameDataManager gameDataManager = _gameManager.GetGameDataManager();
+        if (gameDataManager == null)
+        {
+            return skillOptions;
+        }
+
+        if (_morningRewardSkillIds == null)
+        {
+            return skillOptions;
+        }
+
+        for (int i = 0; i < _morningRewardSkillIds.Length; i++)
+        {
+            CinderHeartSkillData skillData = gameDataManager.GetCinderHeartSkill(_morningRewardSkillIds[i]);
+            if (skillData == null)
+            {
+                continue;
+            }
+
+            skillOptions.Add(skillData);
+        }
+
+        return skillOptions;
+    }
+
+    private void PauseGameForCinderHeartSkillSelection()
+    {
+        if (_isWaitingForCinderHeartSkillSelection == true)
+        {
+            return;
+        }
+
+        _isWaitingForCinderHeartSkillSelection = true;
+        _previousTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+    }
+
+    private void HandleCinderHeartSkillSelectionClosed()
+    {
+        if (_isWaitingForCinderHeartSkillSelection == false)
+        {
+            return;
+        }
+
+        RestoreTimeScaleIfRewardSelectionIsOpen();
+    }
+
+    private void RestoreTimeScaleIfRewardSelectionIsOpen()
+    {
+        if (_isWaitingForCinderHeartSkillSelection == false)
+        {
+            return;
+        }
+
+        if (_previousTimeScale <= 0f)
+        {
+            Time.timeScale = 1f;
+        }
+        else
+        {
+            Time.timeScale = _previousTimeScale;
+        }
+
+        _isWaitingForCinderHeartSkillSelection = false;
     }
 
     private void OnValidate()

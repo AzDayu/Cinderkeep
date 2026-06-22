@@ -15,6 +15,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private InventoryUI _inventoryUI;
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
+        [SerializeField] private CinderHeartSkillSelectionUI _cinderHeartSkillSelectionUI;
 
         private bool _isInitialized;
 
@@ -38,6 +39,7 @@ namespace Cinderkeep.Gameplay
             CloseGameOverPanel();
             CloseCraftingUI();
             CloseFurnaceUI();
+            CloseCinderHeartSkillSelectionUI();
             _isInitialized = true;
         }
 
@@ -147,6 +149,36 @@ namespace Cinderkeep.Gameplay
             }
 
             _furnaceUI.Close();
+        }
+
+        public void OpenCinderHeartSkillSelectionUI(
+            System.Collections.Generic.IReadOnlyList<CinderHeartSkillData> skillOptions,
+            System.Action onClosed)
+        {
+            if (_cinderHeartSkillSelectionUI == null)
+            {
+                if (onClosed != null)
+                {
+                    onClosed.Invoke();
+                }
+
+                return;
+            }
+
+            CloseInventory();
+            CloseCraftingUI();
+            CloseFurnaceUI();
+            _cinderHeartSkillSelectionUI.Open(skillOptions, onClosed);
+        }
+
+        public void CloseCinderHeartSkillSelectionUI()
+        {
+            if (_cinderHeartSkillSelectionUI == null)
+            {
+                return;
+            }
+
+            _cinderHeartSkillSelectionUI.Close();
         }
 
         private void SetActive(GameObject targetObject, bool isActive)

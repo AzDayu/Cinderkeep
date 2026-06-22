@@ -20,6 +20,7 @@ namespace Cinderkeep.Gameplay
         public const string GameFlowPhaseDataResourcePath = "Cinderkeep/data/game_flow_phases";
         public const string LootDropDataResourcePath = "Cinderkeep/data/loot_drops";
         public const string CinderHeartUpgradeDataResourcePath = "Cinderkeep/data/cinderheart_upgrades";
+        public const string CinderHeartSkillDataResourcePath = "Cinderkeep/data/cinderheart_skills";
         public const string StatusEffectDataResourcePath = "Cinderkeep/data/status_effects";
         public const string BossDataResourcePath = "Cinderkeep/data/bosses";
         public const string BossPatternDataResourcePath = "Cinderkeep/data/boss_patterns";
@@ -47,6 +48,7 @@ namespace Cinderkeep.Gameplay
             gameDataManager.LoadGameFlowPhaseData(gameDataManager.GetGameFlowPhaseDataResourcePath());
             gameDataManager.LoadLootDropData(gameDataManager.GetLootDropDataResourcePath());
             gameDataManager.LoadCinderHeartUpgradeData(gameDataManager.GetCinderHeartUpgradeDataResourcePath());
+            gameDataManager.LoadCinderHeartSkillData(gameDataManager.GetCinderHeartSkillDataResourcePath());
             gameDataManager.LoadStatusEffectData(gameDataManager.GetStatusEffectDataResourcePath());
             gameDataManager.LoadBossData(gameDataManager.GetBossDataResourcePath());
             gameDataManager.LoadBossPatternData(gameDataManager.GetBossPatternDataResourcePath());

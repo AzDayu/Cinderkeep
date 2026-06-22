@@ -9,6 +9,10 @@ public sealed class CinderHeart : MonoBehaviour
     [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임 오버가 됩니다.")]
     [SerializeField] private float _maxHealth = 500f;
 
+    [Header("Skill Stats")]
+    [Tooltip("CinderHeart 보상 스킬로 증가하는 공격력입니다. 이후 CinderHeart 공격 로직에서 사용합니다.")]
+    [SerializeField] private float _attackDamage;
+
     [Header("Damage Test")]
     [Tooltip("디버그용 테스트 피해량입니다. 실제 적 공격 피해는 EnemyAttack에서 조절합니다.")]
     [SerializeField] private float _testDamage = 1f;
@@ -37,6 +41,14 @@ public sealed class CinderHeart : MonoBehaviour
         get
         {
             return _isDestroyed;
+        }
+    }
+
+    public float AttackDamage
+    {
+        get
+        {
+            return _attackDamage;
         }
     }
 
@@ -88,6 +100,57 @@ public sealed class CinderHeart : MonoBehaviour
         TakeDamage(_testDamage);
     }
 
+    public void AddAttackDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _attackDamage += amount;
+        Debug.Log("[CinderHeart] 공격력 증가: +" + amount + ", 현재 공격력: " + _attackDamage);
+    }
+
+    public void AddMaxHealth(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _maxHealth += amount;
+        _currentHealth += amount;
+        ClampInspectorValues();
+        _currentHealth = Mathf.Clamp(_currentHealth, 0f, _maxHealth);
+        Debug.Log("[CinderHeart] 최대 체력 증가: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+    }
+
+    public void Heal(float amount)
+    {
+        if (_isDestroyed == true)
+        {
+            return;
+        }
+
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _currentHealth = Mathf.Min(_currentHealth + amount, _maxHealth);
+        Debug.Log("[CinderHeart] 체력 회복: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+    }
+
+    public void HealByRate(float rate)
+    {
+        if (rate <= 0f)
+        {
+            return;
+        }
+
+        Heal(_maxHealth * rate);
+    }
+
     public float GetCurrentHealth()
     {
         return _currentHealth;
@@ -121,6 +184,11 @@ public sealed class CinderHeart : MonoBehaviour
         if (_testDamage < 0f)
         {
             _testDamage = 0f;
+        }
+
+        if (_attackDamage < 0f)
+        {
+            _attackDamage = 0f;
         }
     }
 }

@@ -21,6 +21,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private string _gameFlowPhaseDataResourcePath = GameUtil.GameFlowPhaseDataResourcePath;
         [SerializeField] private string _lootDropDataResourcePath = GameUtil.LootDropDataResourcePath;
         [SerializeField] private string _cinderHeartUpgradeDataResourcePath = GameUtil.CinderHeartUpgradeDataResourcePath;
+        [SerializeField] private string _cinderHeartSkillDataResourcePath = GameUtil.CinderHeartSkillDataResourcePath;
         [SerializeField] private string _statusEffectDataResourcePath = GameUtil.StatusEffectDataResourcePath;
         [SerializeField] private string _bossDataResourcePath = GameUtil.BossDataResourcePath;
         [SerializeField] private string _bossPatternDataResourcePath = GameUtil.BossPatternDataResourcePath;
@@ -40,6 +41,7 @@ namespace Cinderkeep.Gameplay
         private readonly Dictionary<string, GameFlowPhaseData> _gameFlowPhaseDataList = new Dictionary<string, GameFlowPhaseData>();
         private readonly Dictionary<string, LootDropData> _lootDropDataList = new Dictionary<string, LootDropData>();
         private readonly Dictionary<string, CinderHeartUpgradeData> _cinderHeartUpgradeDataList = new Dictionary<string, CinderHeartUpgradeData>();
+        private readonly Dictionary<string, CinderHeartSkillData> _cinderHeartSkillDataList = new Dictionary<string, CinderHeartSkillData>();
         private readonly Dictionary<string, StatusEffectData> _statusEffectDataList = new Dictionary<string, StatusEffectData>();
         private readonly Dictionary<string, BossData> _bossDataList = new Dictionary<string, BossData>();
         private readonly Dictionary<string, BossPatternData> _bossPatternDataList = new Dictionary<string, BossPatternData>();
@@ -163,6 +165,14 @@ namespace Cinderkeep.Gameplay
             get
             {
                 return _cinderHeartUpgradeDataList;
+            }
+        }
+
+        public IReadOnlyDictionary<string, CinderHeartSkillData> CinderHeartSkillDataList
+        {
+            get
+            {
+                return _cinderHeartSkillDataList;
             }
         }
 
@@ -755,6 +765,45 @@ namespace Cinderkeep.Gameplay
             return _cinderHeartUpgradeDataList[id];
         }
 
+        public void LoadCinderHeartSkillData(string resourcePath)
+        {
+            _cinderHeartSkillDataList.Clear();
+
+            TextAsset jsonAsset = Resources.Load<TextAsset>(resourcePath);
+            if (jsonAsset == null)
+            {
+                Debug.LogWarning("GameDataManager: CinderHeart skill JSON was not found at Resources/" + resourcePath + ".json");
+                return;
+            }
+
+            CinderHeartSkillDataCatalog catalog = JsonUtility.FromJson<CinderHeartSkillDataCatalog>(jsonAsset.text);
+            if (catalog == null || catalog.Items == null)
+            {
+                Debug.LogWarning("GameDataManager: CinderHeart skill JSON format is invalid.");
+                return;
+            }
+
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                AddData(_cinderHeartSkillDataList, catalog.Items[i]);
+            }
+        }
+
+        public CinderHeartSkillData GetCinderHeartSkill(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (!_cinderHeartSkillDataList.ContainsKey(id))
+            {
+                return null;
+            }
+
+            return _cinderHeartSkillDataList[id];
+        }
+
         public void LoadStatusEffectData(string resourcePath)
         {
             _statusEffectDataList.Clear();
@@ -979,6 +1028,11 @@ namespace Cinderkeep.Gameplay
         public string GetCinderHeartUpgradeDataResourcePath()
         {
             return _cinderHeartUpgradeDataResourcePath;
+        }
+
+        public string GetCinderHeartSkillDataResourcePath()
+        {
+            return _cinderHeartSkillDataResourcePath;
         }
 
         public string GetStatusEffectDataResourcePath()

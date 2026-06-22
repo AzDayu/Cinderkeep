@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Cinderkeep.Gameplay
+{
+    // CinderHeart 아침 보상 선택지 한 줄을 담는 Static Data입니다.
+    // 실제 적용은 CinderHeartSkillApplier가 담당하고, 이 클래스는 기획 데이터만 보관합니다.
+    [Serializable]
+    public sealed class CinderHeartSkillData : GameDataBase
+    {
+        [SerializeField] private string _displayName;
+        [SerializeField] private string _description;
+        [SerializeField] private string _effectType;
+        [SerializeField] private float _value;
+        [SerializeField] private int _requiredDay;
+        [SerializeField] private int _weight;
+        [SerializeField] private bool _canRepeat;
+
+        public string DisplayName
+        {
+            get
+            {
+                return _displayName;
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return _description;
+            }
+        }
+
+        public string EffectType
+        {
+            get
+            {
+                return _effectType;
+            }
+        }
+
+        public float Value
+        {
+            get
+            {
+                return _value;
+            }
+        }
+
+        public int RequiredDay
+        {
+            get
+            {
+                return _requiredDay;
+            }
+        }
+
+        public int Weight
+        {
+            get
+            {
+                return _weight;
+            }
+        }
+
+        public bool CanRepeat
+        {
+            get
+            {
+                return _canRepeat;
+            }
+        }
+    }
+
+    // JsonUtility가 읽기 쉬운 Items 감싸기 구조입니다.
+    [Serializable]
+    public sealed class CinderHeartSkillDataCatalog
+    {
+        public List<CinderHeartSkillData> Items = new List<CinderHeartSkillData>();
+    }
+}
