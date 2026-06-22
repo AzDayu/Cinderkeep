@@ -4903,4 +4903,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 457d3cbf530b46928f6ee2f3d2d46105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildingSpot
+  _buildingDataId: wood_wall
+  _buildingPrefab: {fileID: 2905516811528519344, guid: b48cebdab6514d94cb9979803194aad8, type: 3}
   _spawnAnchor: {fileID: 0}

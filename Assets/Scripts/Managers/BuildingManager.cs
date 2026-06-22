@@ -34,14 +34,54 @@ namespace Cinderkeep.Gameplay
             _gameObjectManager = gameObjectManager;
         }
 
-        public bool TryBuildAtSpot(BuildingSpot buildingSpot, GameObject buildingPrefab)
+        public bool TryBuildAtSpot(BuildingSpot buildingSpot,
+            PlayerModel playerModel,
+            GameDataManager gameDataManager)
         {
             // 정식 건축은 반드시 BuildingSpot을 통해 요청합니다.
             // 건축 비용과 티어 값은 buildings.json, crafting_recipes.json 연결 작업에서 확장합니다.
             Initialize();
 
+            if (buildingSpot == null)
+            {
+                Debug.LogWarning("BuildingManager: 건축 지점이 비어 있습니다.");
+                return false;
+            }
+
+            if (gameDataManager == null)
+            {
+                Debug.LogWarning("BuildingManager: GameDataManager 연결이 필요합니다.");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(buildingSpot.BuildingDataId))
+            {
+                Debug.LogWarning("BuildingManager: BuildingSpot에 buildingDataId가 없습니다.");
+                return false;
+            }
+
+            BuildingData buildingData = gameDataManager.GetBuilding(buildingSpot.BuildingDataId);
+            if (buildingData == null)
+            {
+                Debug.LogWarning("BuildingManager: 건축 데이터를 찾을 수 없습니다. id=" + buildingSpot.BuildingDataId);
+                return false;
+            }
+
+            GameObject buildingPrefab = buildingSpot.BuildingPrefab;
             if (CanBuildAtSpot(buildingSpot, buildingPrefab) == false)
             {
+                return false;
+            }
+
+            if (BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            {
+                Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
+                return false;
+            }
+
+            if (BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            {
+                Debug.LogWarning("BuildingManager: 건축 비용 차감에 실패했습니다.");
                 return false;
             }
 
@@ -56,8 +96,22 @@ namespace Cinderkeep.Gameplay
             }
 
             buildingSpot.PlaceBuilding(createdBuilding);
+            buildingSpot.HideBuildingSpot();
             RegisterBuildingComponent(createdBuilding);
             return true;
+        }
+
+        // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.
+        public bool TryBuildAtSpot(BuildingSpot buildingSpot, GameObject buildingPrefab)
+        {
+            if (GameManager.Inst == null)
+            {
+                return false;
+            }
+            return TryBuildAtSpot(
+                buildingSpot,
+                GameManager.Inst.PlayerModel,
+                GameManager.Inst.GetGameDataManager());
         }
 
         public bool TryBuildAtPosition(GameObject buildingPrefab, Vector3 buildPosition, Quaternion buildRotation)
