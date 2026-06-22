@@ -38,16 +38,16 @@ public sealed class BuildingSpot : MonoBehaviour
         RegisterToBuildingManager();
     }
 
-    // 씬이 시작될 때 각각의 BuildingSpot들이 스스로 등록하는 로직
+    // 씬에 배치된 건축 지점이 BuildingManager에 자기 자신을 등록합니다.
     private void RegisterToBuildingManager()
     {
-        if(GameManager.Inst == null)
+        if (GameManager.Inst == null)
         {
             return;
         }
 
         BuildingManager buildingManager = GameManager.Inst.GetBuildingManager();
-        if(buildingManager == null)
+        if (buildingManager == null)
         {
             return;
         }

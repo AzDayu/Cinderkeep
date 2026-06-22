@@ -13,9 +13,12 @@ public sealed class PlayerBuild : MonoBehaviour
     [Header("Build Detection")]
     [Tooltip("건축 지점을 감지하는 최대 거리입니다.")]
     [SerializeField] private float _buildDetectDistance = 5f;
-    [Tooltip("건축 Raycast가 맞출 레이어입니다. BuildingSpot Cube 레이어를 포함하세요.")]
+
     private const string BuildSpotLayerName = "BuildSpot";
+
+    [Tooltip("건축 Raycast가 맞출 레이어입니다. 비어 있으면 BuildSpot 레이어를 자동으로 사용합니다.")]
     [SerializeField] private LayerMask _buildLayerMask;
+
     [Tooltip("상호작용 Ray가 시작되는 카메라 Transform입니다. 비어있으면 자식 카메라를 찾습니다.")]
     [SerializeField] private Transform _cameraTransform;
 
@@ -31,11 +34,7 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private void Start()
     {
-        if(_buildLayerMask == 0)
-        {
-            _buildLayerMask = LayerMask.GetMask(BuildSpotLayerName);
-        }
-
+        InitializeBuildLayerMask();
         ConnectBuildingManager();
         ConnectCamera();
     }
@@ -101,7 +100,7 @@ public sealed class PlayerBuild : MonoBehaviour
     private BuildingSpot GetBuildingSpotFromRay()
     {
         ConnectCamera();
-        if(_cameraTransform == null)
+        if (_cameraTransform == null)
         {
             Debug.LogWarning("PlayerBuild: 카메라 Transform이 필요합니다.");
             return null;
@@ -121,7 +120,7 @@ public sealed class PlayerBuild : MonoBehaviour
             return null;
         }
 
-        if(buildingSpot.CanBuild() == false)
+        if (buildingSpot.CanBuild() == false)
         {
             Debug.LogWarning("PlayerBuild: 이 BuildingSpot에는 이미 건축물이 있습니다.");
             return null;
@@ -132,17 +131,28 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private void ConnectCamera()
     {
-        if(_cameraTransform != null)
+        if (_cameraTransform != null)
         {
             return;
         }
 
         Camera camera = GetComponentInChildren<Camera>(true);
-        if(camera != null)
+        if (camera != null)
         {
             _cameraTransform = camera.transform;
         }
     }
+
+    private void InitializeBuildLayerMask()
+    {
+        if (_buildLayerMask != 0)
+        {
+            return;
+        }
+
+        _buildLayerMask = LayerMask.GetMask(BuildSpotLayerName);
+    }
+
     private void ConnectBuildingManager()
     {
         if (_buildingManager != null)

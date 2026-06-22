@@ -99,8 +99,8 @@ public sealed class BuildingHp : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // 건축물 파괴 테스트용 (나중에 제거해도 됨)
 #if UNITY_EDITOR
+    // 에디터에서 건축물 피해 처리를 빠르게 확인하는 테스트 메뉴입니다.
     [ContextMenu("Test Take Damage 50")]
     private void TestTakeDamage()
     {
