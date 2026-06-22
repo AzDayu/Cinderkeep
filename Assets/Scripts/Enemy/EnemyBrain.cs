@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 
 // 몬스터가 어떤 대상을 공격할지 판단하는 컴포넌트입니다.
@@ -23,6 +23,7 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
+    private BuildingHp _currentBuildingAttackTarget;
 
     private void Awake()
     {
@@ -44,10 +45,11 @@ public sealed class EnemyBrain : MonoBehaviour
         _cinderHeartDamageable = cinderHeartDamageable;
     }
 
-    // 벽이나 구조물 공격이 필요할 때 외부에서 공격 대상을 지정하는 진입점입니다.
+    // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 지정합니다.
     public void SetAttackTarget(Damageable targetDamageable)
     {
         _currentAttackTarget = targetDamageable;
+        _currentBuildingAttackTarget = null;
     }
 
     public void ClearAttackTarget(Damageable targetDamageable)
@@ -58,6 +60,37 @@ public sealed class EnemyBrain : MonoBehaviour
         }
 
         _currentAttackTarget = null;
+    }
+
+    // 건축물이 이동 경로를 막고 있을 때 건축물 공격 대상으로 지정합니다.
+    public void SetBuildingAttackTarget(BuildingHp buildingHp)
+    {
+        if (buildingHp == null)
+        {
+            return;
+        }
+
+        if (buildingHp.IsDestroyed)
+        {
+            return;
+        }
+
+        _currentBuildingAttackTarget = buildingHp;
+
+        if (_currentAttackTarget == _cinderHeartDamageable)
+        {
+            _currentAttackTarget = null;
+        }
+    }
+
+    public void ClearBuildingAttackTarget(BuildingHp buildingHp)
+    {
+        if (_currentBuildingAttackTarget != buildingHp)
+        {
+            return;
+        }
+
+        _currentBuildingAttackTarget = null;
     }
 
     private void ConnectComponents()
@@ -123,11 +156,18 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
+        _currentBuildingAttackTarget = null;
         _currentAttackTarget = detectedPlayerDamageable;
     }
 
     private void TryAttackCurrentTarget()
     {
+        if (_currentBuildingAttackTarget != null)
+        {
+            TryAttackCurrentBuildingTarget();
+            return;
+        }
+
         if (_currentAttackTarget == null)
         {
             return;
@@ -146,9 +186,40 @@ public sealed class EnemyBrain : MonoBehaviour
         _enemyAttack.TryAttack(_currentAttackTarget);
     }
 
+    private void TryAttackCurrentBuildingTarget()
+    {
+        if (_currentBuildingAttackTarget == null)
+        {
+            return;
+        }
+
+        if (_currentBuildingAttackTarget.IsDestroyed)
+        {
+            _currentBuildingAttackTarget = null;
+            return;
+        }
+
+        if (CanAttackTarget(_currentBuildingAttackTarget.gameObject) == false)
+        {
+            return;
+        }
+
+        if (_enemyAttack == null)
+        {
+            return;
+        }
+
+        _enemyAttack.TryAttack(_currentBuildingAttackTarget);
+    }
+
     private void UpdateCinderHeartTargetIfNeeded()
     {
         if (_enemyDetector != null && _enemyDetector.HasDetectedPlayer)
+        {
+            return;
+        }
+
+        if (_currentBuildingAttackTarget != null)
         {
             return;
         }

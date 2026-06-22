@@ -63,6 +63,29 @@ public sealed class EnemyAttack : MonoBehaviour
         return true;
     }
 
+    // 건축물은 BuildingHp가 체력을 담당하므로 해당 역할 컴포넌트에 피해를 전달합니다.
+    public bool TryAttack(BuildingHp buildingHp)
+    {
+        if (buildingHp == null)
+        {
+            return false;
+        }
+
+        if (buildingHp.IsDestroyed)
+        {
+            return false;
+        }
+
+        if (CanAttack() == false)
+        {
+            return false;
+        }
+
+        buildingHp.TakeDamage(_attackDamage);
+        RecordAttackTime();
+        return true;
+    }
+
     private float GetAttackDamage(Damageable targetDamageable)
     {
         if (targetDamageable.CompareTag(CinderHeartTag))
