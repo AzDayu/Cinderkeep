@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System.Collections;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ using UnityEngine;
 public sealed class EnemyDetector : MonoBehaviour
 {
     [Tooltip("몬스터가 플레이어를 감지할 수 있는 시야각입니다. 피격 반응 감지는 이 각도 제한을 무시합니다.")]
-    [SerializeField] private float _viewAngle = 90f;
+    [SerializeField] private float _viewAngle = 120f;
 
     private const string PlayerTag = "Player";
     private const int MaxOverlapCount = 20;
@@ -164,5 +164,22 @@ public sealed class EnemyDetector : MonoBehaviour
         Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToTarget);
         return angle <= _viewAngle * 0.5f;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, _detectorDistance);
+
+        Gizmos.color = Color.yellow;
+
+        Vector3 forwardDirection = transform.forward;
+        Vector3 leftBoundary = Quaternion.Euler(0, -_viewAngle * 0.5f,0)*forwardDirection;
+        Vector3 rightBoundary = Quaternion.Euler(0, _viewAngle * 0.5f, 0) * forwardDirection;
+
+        Gizmos.DrawLine(transform.position, transform.position + leftBoundary * _detectorDistance);
+        Gizmos.DrawLine(transform.position, transform.position + rightBoundary * _detectorDistance);
+
+        Gizmos.DrawLine(transform.position + leftBoundary * _detectorDistance, transform.position + rightBoundary * _detectorDistance);
     }
 }
