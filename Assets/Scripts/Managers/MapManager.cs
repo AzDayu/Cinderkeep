@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine.Serialization;
-
 namespace Cinderkeep.Gameplay
 {
     // GameManager 초기화 순서에 맞춰 모듈형 맵 청크를 준비하는 매니저입니다.
@@ -165,28 +163,11 @@ namespace Cinderkeep.Gameplay
         private void SpawnChunk(Vector2Int gridPosition, GameObject prefab)
         {
             Vector3 worldPosition = new Vector3(gridPosition.x * _chunkSize, 0f, gridPosition.y * _chunkSize);
-            Quaternion rotation = GetChunkRotation(gridPosition);
 
-            GameObject chunk = Instantiate(prefab, worldPosition, rotation, transform);
+            GameObject chunk = Instantiate(prefab, worldPosition, Quaternion.identity, transform);
             chunk.name = "MapChunk_" + gridPosition.x + "_" + gridPosition.y;
 
             _spawnedChunks.Add(gridPosition, chunk);
-        }
-
-        private Quaternion GetChunkRotation(Vector2Int gridPosition)
-        {
-            if (CheckIsCenterPosition(gridPosition) == true)
-            {
-                return Quaternion.identity;
-            }
-
-            return Quaternion.Euler(0f, GetRandomRightAngle(), 0f);
-        }
-
-        private float GetRandomRightAngle()
-        {
-            int randomStep = Random.Range(0, 4);
-            return randomStep * 90f;
         }
     }
 }
