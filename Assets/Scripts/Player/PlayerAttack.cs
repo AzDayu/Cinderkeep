@@ -29,6 +29,8 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private Transform _attackOrigin;
     [Tooltip("좌클릭 공격 시 1인칭 도구 휘두르기 연출을 담당합니다.")]
     [SerializeField] private FirstPersonToolView _firstPersonToolView;
+    [Tooltip("선택 사항입니다. 연결하면 Damageable 대상에게 피해를 전달할 때 DamageDealer를 경유합니다.")]
+    [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;
 
@@ -98,6 +100,11 @@ public sealed class PlayerAttack : MonoBehaviour
         if (_firstPersonToolView == null)
         {
             _firstPersonToolView = GetComponentInChildren<FirstPersonToolView>();
+        }
+
+        if (_damageDealer == null)
+        {
+            _damageDealer = GetComponent<DamageDealer>();
         }
     }
 
@@ -242,7 +249,19 @@ public sealed class PlayerAttack : MonoBehaviour
         Damageable damageable = targetCollider.GetComponentInParent<Damageable>();
         if (damageable != null)
         {
-            damageable.TakeDamage(damage);
+            ApplyDamageToDamageable(damageable, damage);
         }
+    }
+
+    private void ApplyDamageToDamageable(Damageable damageable, float damage)
+    {
+        if (_damageDealer != null)
+        {
+            _damageDealer.SetDamageValue(damage);
+            _damageDealer.ApplyDamage(damageable);
+            return;
+        }
+
+        damageable.TakeDamage(damage);
     }
 }
