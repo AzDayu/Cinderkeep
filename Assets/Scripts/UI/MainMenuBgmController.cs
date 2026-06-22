@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -30,7 +29,6 @@ namespace Cinderkeep.UI
 
         private void Update()
         {
-            UpdateCursorState();
             UpdateBgmLoop();
         }
 
@@ -216,20 +214,6 @@ namespace Cinderkeep.UI
 
             PlayNextBgm();
         }
-
-        private void UpdateCursorState()
-        {
-            if (SceneManager.GetActiveScene().name == "Main_Lobby")
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-                return;
-            }
-
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
         private void UpdateBgmView()
         {
             UpdateMuteToggle();

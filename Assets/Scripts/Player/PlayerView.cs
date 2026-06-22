@@ -29,7 +29,10 @@ public sealed class PlayerView : MonoBehaviour
 
     private void Update()
     {
-        RotateView();
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            RotateView();
+        }
     }
 
     private void ResolveReferences()
