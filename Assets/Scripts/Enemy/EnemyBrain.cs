@@ -28,7 +28,7 @@ public sealed class EnemyBrain : MonoBehaviour
     [Tooltip("CinderHeart 경로가 막혔을 때 앞쪽 건축물을 찾는 감지 반경입니다.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
 
-    private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
+    private NavMeshPath _cinderHeartPath;
 
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
@@ -37,6 +37,9 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void Awake()
     {
+        // NavMeshPath는 변수 선언부에서 생성하면 Unity 에러가 나므로 Awake에서 생성합니다.
+        _cinderHeartPath = new NavMeshPath();
+
         ConnectComponents();
     }
 
