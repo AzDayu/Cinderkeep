@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-using UnityEngine.Serialization;
-
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 UI 매니저입니다.
@@ -40,6 +38,7 @@ namespace Cinderkeep.Gameplay
             CloseCraftingUI();
             CloseFurnaceUI();
             CloseCinderHeartSkillSelectionUI();
+            RefreshCursorState();
             _isInitialized = true;
         }
 
@@ -66,10 +65,12 @@ namespace Cinderkeep.Gameplay
             if (_inventoryUI != null)
             {
                 _inventoryUI.Open();
+                RefreshCursorState();
                 return;
             }
 
             SetActive(_inventoryRoot, true);
+            RefreshCursorState();
         }
 
         public void CloseInventory()
@@ -77,10 +78,13 @@ namespace Cinderkeep.Gameplay
             if (_inventoryUI != null)
             {
                 _inventoryUI.Close();
+                RefreshCursorState();
+
                 return;
             }
 
             SetActive(_inventoryRoot, false);
+            RefreshCursorState();
         }
 
         public void ToggleInventory()
@@ -88,6 +92,8 @@ namespace Cinderkeep.Gameplay
             if (_inventoryUI != null)
             {
                 _inventoryUI.Toggle();
+                RefreshCursorState();
+
                 return;
             }
 
@@ -97,6 +103,7 @@ namespace Cinderkeep.Gameplay
             }
 
             SetActive(_inventoryRoot, _inventoryRoot.activeSelf == false);
+            RefreshCursorState();
         }
 
         public void OpenGameOverPanel()
@@ -118,6 +125,7 @@ namespace Cinderkeep.Gameplay
 
             CloseFurnaceUI();
             _craftingUI.OpenStation(craftingStation, interactor);
+            RefreshCursorState();
         }
 
         public void CloseCraftingUI()
@@ -128,6 +136,19 @@ namespace Cinderkeep.Gameplay
             }
 
             _craftingUI.Close();
+            RefreshCursorState();
+        }
+
+        public void ToggleCraftingUI(CraftingStation craftingStation, GameObject interactor)
+        {
+            if (_craftingUI == null)
+            {
+                return;
+            }
+
+            CloseFurnaceUI();
+            _craftingUI.Toggle(craftingStation, interactor);
+            RefreshCursorState();
         }
 
         public void OpenFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
@@ -139,6 +160,7 @@ namespace Cinderkeep.Gameplay
 
             CloseCraftingUI();
             _furnaceUI.OpenFurnace(furnaceStation);
+            RefreshCursorState();
         }
 
         public void CloseFurnaceUI()
@@ -149,8 +171,8 @@ namespace Cinderkeep.Gameplay
             }
 
             _furnaceUI.Close();
+            RefreshCursorState();
         }
-
         public void OpenCinderHeartSkillSelectionUI(
             System.Collections.Generic.IReadOnlyList<CinderHeartSkillData> skillOptions,
             System.Action onClosed)
@@ -189,6 +211,46 @@ namespace Cinderkeep.Gameplay
             }
 
             targetObject.SetActive(isActive);
+        }
+
+        private void RefreshCursorState()
+        {
+            bool anyUIOpen = IsAnyBlockingUIOpen();
+
+            if (anyUIOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                return;
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private bool IsAnyBlockingUIOpen()
+        {
+            if (_inventoryUI != null && _inventoryUI.IsOpen)
+            {
+                return true;
+            }
+
+            if (_inventoryUI == null && _inventoryRoot != null && _inventoryRoot.activeSelf)
+            {
+                return true;
+            }
+
+            if (_craftingUI != null && _craftingUI.IsOpen)
+            {
+                return true;
+            }
+
+            if (_furnaceUI != null && _furnaceUI.IsOpen)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

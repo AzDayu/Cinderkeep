@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -25,6 +25,16 @@ namespace Cinderkeep.Gameplay
         private CraftingStation _currentStation;
         private GameDataManager _gameDataManager;
         private PlayerModel _playerModel;
+
+        private bool _isOpen;
+
+        public bool IsOpen
+        {
+            get
+            {
+                return _isOpen;
+            }
+        }
 
         private void Start()
         {
@@ -135,6 +145,11 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
 
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
                 CraftingRecipeData recipeData = _availableRecipes[i];
                 bool canCraft = CanCraftRecipe(recipeData);
                 _recipeSlots[i].SetRecipe(recipeData, canCraft, this);
@@ -217,6 +232,8 @@ namespace Cinderkeep.Gameplay
 
         private void SetVisible(bool isVisible)
         {
+            _isOpen = isVisible;
+
             if (_rootObject == null)
             {
                 gameObject.SetActive(isVisible);
@@ -224,6 +241,18 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        // 제작대 상호작용 키를 다시 눌렀을 때 같은 제작 UI를 닫기 위해 사용합니다.
+        public void Toggle(CraftingStation craftingStation, GameObject interactor)
+        {
+            if (_isOpen)
+            {
+                Close();
+                return;
+            }
+
+            OpenStation(craftingStation, interactor);
         }
     }
 }

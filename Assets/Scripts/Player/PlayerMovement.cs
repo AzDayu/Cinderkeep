@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 // 플레이어의 WASD 이동과 Shift 달리기를 담당하는 컴포넌트입니다.
