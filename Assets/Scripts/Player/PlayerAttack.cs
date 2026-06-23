@@ -70,6 +70,10 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
+        // 좌클릭 피드백은 적중 여부와 분리해서, 빗나가도 1인칭 휘두르기가 보이게 합니다.
+        _lastAttackTime = Time.time;
+        PlayAttackView();
+
         Collider targetCollider = GetAttackTargetCollider(weaponData);
         if (targetCollider == null)
         {
@@ -81,8 +85,6 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
-        _lastAttackTime = Time.time;
-        PlayAttackView();
         ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData));
     }
 
