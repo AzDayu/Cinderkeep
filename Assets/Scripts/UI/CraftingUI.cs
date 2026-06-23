@@ -150,6 +150,11 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
 
+                if (_recipeSlots[i] == null) 
+                {
+                    continue;
+                }
+
                 CraftingRecipeData recipeData = _availableRecipes[i];
                 bool canCraft = CanCraftRecipe(recipeData);
                 _recipeSlots[i].SetRecipe(recipeData, canCraft, this);
