@@ -33,6 +33,7 @@ public sealed class PlayerAttack : MonoBehaviour
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;
+    private PlayerController _playerController;
 
     public string WeaponDataId
     {
@@ -49,7 +50,10 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        ReadAttackInput();
+        if (ShouldReadAttackInputDirectly())
+        {
+            ReadAttackInput();
+        }
     }
 
     public void SetWeaponDataId(string weaponDataId)
@@ -85,7 +89,12 @@ public sealed class PlayerAttack : MonoBehaviour
             return;
         }
 
-        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData));
+        ApplyDamageToHitTarget(targetCollider, GetAttackDamage(weaponData), weaponData);
+    }
+
+    public void ExecuteAttack()
+    {
+        TryAttack();
     }
 
     private void ConnectComponents()
@@ -108,6 +117,8 @@ public sealed class PlayerAttack : MonoBehaviour
         {
             _damageDealer = GetComponent<DamageDealer>();
         }
+
+        _playerController = GetComponent<PlayerController>();
     }
 
     private void ReadAttackInput()
@@ -118,7 +129,7 @@ public sealed class PlayerAttack : MonoBehaviour
         }
     }
 
-    private bool CanAttack(WeaponData weaponData)
+    public bool CanAttack(WeaponData weaponData)
     {
         return Time.time >= _lastAttackTime + GetAttackInterval(weaponData);
     }
@@ -163,7 +174,7 @@ public sealed class PlayerAttack : MonoBehaviour
         return targetCollider.GetComponentInParent<Damageable>() != null;
     }
 
-    private WeaponData GetCurrentWeaponData()
+    public WeaponData GetCurrentWeaponData()
     {
         if (_useWeaponData == false)
         {
@@ -234,7 +245,7 @@ public sealed class PlayerAttack : MonoBehaviour
         _firstPersonToolView.PlaySwing();
     }
 
-    private void ApplyDamageToHitTarget(Collider targetCollider, float damage)
+    private void ApplyDamageToHitTarget(Collider targetCollider, float damage, WeaponData weaponData)
     {
         if (targetCollider == null)
         {
@@ -251,19 +262,32 @@ public sealed class PlayerAttack : MonoBehaviour
         Damageable damageable = targetCollider.GetComponentInParent<Damageable>();
         if (damageable != null)
         {
-            ApplyDamageToDamageable(damageable, damage);
+            ApplyDamageToDamageable(damageable, damage, weaponData);
         }
     }
 
-    private void ApplyDamageToDamageable(Damageable damageable, float damage)
+    private void ApplyDamageToDamageable(Damageable damageable, float damage, WeaponData weaponData)
     {
         if (_damageDealer != null)
         {
-            _damageDealer.SetDamageValue(damage);
+            if (weaponData != null)
+            {
+                _damageDealer.SetDamageValue(weaponData);
+            }
+            else
+            {
+                _damageDealer.SetDamageValue(damage);
+            }
+
             _damageDealer.ApplyDamage(damageable);
             return;
         }
 
         damageable.TakeDamage(damage);
+    }
+
+    private bool ShouldReadAttackInputDirectly()
+    {
+        return _playerController == null || _playerController.enabled == false;
     }
 }

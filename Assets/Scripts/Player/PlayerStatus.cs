@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 플레이어의 체력과 스태미나를 관리하는 컴포넌트입니다.
+// 플레이어의 체력, 스태미나, 포만도를 관리하는 컴포넌트입니다.
 // 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산과 사망 처리만 담당합니다.
 public sealed class PlayerStatus : MonoBehaviour
 {
@@ -11,6 +11,14 @@ public sealed class PlayerStatus : MonoBehaviour
     [SerializeField] private float _health = 100f;
     [Tooltip("플레이어 최대 체력입니다.")]
     [SerializeField] private float _maxHealth = 100f;
+
+    [Header("Satiety")]
+    [Tooltip("플레이어 현재 포만도입니다.")]
+    [SerializeField] private float _satiety = 100f;
+    [Tooltip("플레이어 최대 포만도입니다.")]
+    [SerializeField] private float _maxSatiety = 100f;
+    [Tooltip("초당 소모되는 포만도입니다. 0이 되면 자동 스태미나 회복이 멈춥니다.")]
+    [SerializeField] private float _satietyConsumeRate = 1f;
 
     [Header("Stamina")]
     [Tooltip("현재 플레이어 스태미나입니다. 달리면 감소하고 멈추면 회복됩니다.")]
@@ -25,6 +33,7 @@ public sealed class PlayerStatus : MonoBehaviour
     [SerializeField] private float _exhaustedRecoveryPoint = 30f;
 
     private bool _isExhausted;
+    private bool _isStarving;
     private bool _isGameOverRequested;
     private PlayerMovement _playerMovement;
     private DeathCinderHeartView _deathCinderHeartView;
@@ -54,12 +63,35 @@ public sealed class PlayerStatus : MonoBehaviour
             return _stamina;
         }
     }
-
     public float MaxStamina
     {
         get
         {
             return _maxStamina;
+        }
+    }
+
+    public float CurrentSatiety
+    {
+        get
+        {
+            return _satiety;
+        }
+    }
+
+    public float MaxSatiety
+    {
+        get
+        {
+            return _maxSatiety;
+        }
+    }
+
+    public bool IsStarving
+    {
+        get
+        {
+            return _isStarving;
         }
     }
 
@@ -72,6 +104,8 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void Update()
     {
+        ConsumeSatietyByTime();
+        RefreshStarvingState();
         RecoverStaminaByTime();
     }
 
@@ -93,6 +127,16 @@ public sealed class PlayerStatus : MonoBehaviour
     public float GetMaxStamina()
     {
         return _maxStamina;
+    }
+
+    public float GetCurrentSatiety()
+    {
+        return _satiety;
+    }
+
+    public float GetMaxSatiety()
+    {
+        return _maxSatiety;
     }
 
     public bool CanRun()
@@ -155,6 +199,18 @@ public sealed class PlayerStatus : MonoBehaviour
         _health = Mathf.Min(_health, _maxHealth);
     }
 
+    public void EatFood(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _satiety += amount;
+        _satiety = Mathf.Min(_satiety, _maxSatiety);
+        RefreshStarvingState();
+    }
+
     public bool UseStamina(float amount)
     {
         if (IsDead() == true)
@@ -178,7 +234,6 @@ public sealed class PlayerStatus : MonoBehaviour
 
         return true;
     }
-
     public void RecoverStamina(float amount)
     {
         if (IsDead() == true)
@@ -198,12 +253,33 @@ public sealed class PlayerStatus : MonoBehaviour
 
     private void RecoverStaminaByTime()
     {
+        if (_isStarving == true)
+        {
+            return;
+        }
+
         bool isRunningNow = CheckIsRunningNow();
 
         if (IsDead() == false && _stamina < _maxStamina && isRunningNow == false)
         {
             RecoverStamina(_staminaRecoveryRate * Time.deltaTime);
         }
+    }
+
+    private void ConsumeSatietyByTime()
+    {
+        if (IsDead() == true)
+        {
+            return;
+        }
+
+        _satiety -= _satietyConsumeRate * Time.deltaTime;
+        _satiety = Mathf.Max(_satiety, 0f);
+    }
+
+    private void RefreshStarvingState()
+    {
+        _isStarving = _satiety <= 0f;
     }
 
     private bool CheckIsRunningNow()
@@ -220,8 +296,11 @@ public sealed class PlayerStatus : MonoBehaviour
     {
         _maxHealth = Mathf.Max(_maxHealth, 1f);
         _maxStamina = Mathf.Max(_maxStamina, 1f);
+        _maxSatiety = Mathf.Max(_maxSatiety, 1f);
         _health = Mathf.Clamp(_health, 0f, _maxHealth);
         _stamina = Mathf.Clamp(_stamina, 0f, _maxStamina);
+        _satiety = Mathf.Clamp(_satiety, 0f, _maxSatiety);
+        RefreshStarvingState();
     }
 
     private bool IsDead()
