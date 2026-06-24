@@ -108,6 +108,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     public void StopFlowAsGameOver()
     {
+        StopFlow();
+    }
+
+    public void StopFlow()
+    {
         _isFlowRunning = false;
         RestoreTimeScaleIfRewardSelectionIsOpen();
         StopEnemySpawn();
