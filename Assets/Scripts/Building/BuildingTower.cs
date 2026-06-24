@@ -2,10 +2,8 @@ using System.Collections;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
-// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
-// 타워의 자동 공격 흐름을 조율하는 컴포넌트입니다.
-// 적 탐지는 TowerTargeting, 피해 적용은 TowerAttack이 담당합니다.
+// 방어 타워의 자동 공격 루프를 조율합니다.
+// 타깃 탐색은 TowerTargeting, 피해 적용은 TowerAttack으로 분리해 건축 데이터와 전투 기록을 안정적으로 연결합니다.
 public sealed class BuildingTower : MonoBehaviour
 {
     private const float AttackLoopDelay = 0.2f;

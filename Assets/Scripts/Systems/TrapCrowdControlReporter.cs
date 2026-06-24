@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-// 함정이 적을 느리게 하거나 멈춘 기여도를 Run Result에 보고하는 연결 컴포넌트입니다.
-// 실제 감속/기절 동작은 함정별 스크립트가 처리하고, 이 클래스는 점수 보고만 담당합니다.
+// 함정이 적 이동을 늦추거나 멈춘 기여도를 Run Result로 보내는 기록 컴포넌트입니다.
+// 실제 감속과 기절 효과는 함정별 스크립트가 처리하고, 이 클래스는 점수 보고만 담당합니다.
 public sealed class TrapCrowdControlReporter : MonoBehaviour
 {
     public static event Action<float> TrapCrowdControlScoredGlobal;

@@ -1,8 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
-// 타워 공격 범위 안에서 가장 가까운 살아 있는 적을 반복 탐색합니다.
-// 매 스캔마다 최근접 타깃을 갱신해 밤 웨이브와 보스 접근을 즉시 반영합니다.
+// 타워 공격 범위 안에서 가장 가까운 살아있는 적을 주기적으로 찾습니다.
+// 웨이브와 보스가 동시에 접근해도 BuildingTower는 CurrentTarget만 읽어서 공격합니다.
 public sealed class TowerTargeting : MonoBehaviour
 {
     private const int MaxOverlapCount = 20;
@@ -11,7 +11,7 @@ public sealed class TowerTargeting : MonoBehaviour
     [Header("Targeting Settings")]
     [Tooltip("적을 찾을 최대 거리입니다. BuildingTower 초기화 시 buildings.json의 AttackRange로 덮어씁니다.")]
     [SerializeField] private float _attackRange = 8f;
-    [Tooltip("감지 기준 위치입니다. 비어 있으면 이 오브젝트의 위치를 사용합니다.")]
+    [Tooltip("감지 기준 위치입니다. 비어 있으면 이 오브젝트 위치를 사용합니다.")]
     [SerializeField] private Transform _scanPoint;
 
     private readonly Collider[] _overlapColliders = new Collider[MaxOverlapCount];

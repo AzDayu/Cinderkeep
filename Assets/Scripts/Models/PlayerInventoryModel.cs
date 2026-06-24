@@ -407,6 +407,12 @@ namespace Cinderkeep.Gameplay
                 || HasItemInSlots(_quickSlots, itemId, itemType);
         }
 
+        public int GetItemAmountInInventoryOrQuickSlot(string itemId, InventoryItemType itemType)
+        {
+            return CountItemInSlots(_inventorySlots, itemId, itemType)
+                + CountItemInSlots(_quickSlots, itemId, itemType);
+        }
+
         public bool TryReplaceItemIdEverywhere(string fromItemId, string toItemId, InventoryItemType itemType)
         {
             if (string.IsNullOrEmpty(fromItemId) || string.IsNullOrEmpty(toItemId))
@@ -518,6 +524,31 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private int CountItemInSlots(InventoryItemModel[] slots, string itemId, InventoryItemType itemType)
+        {
+            if (slots == null || string.IsNullOrEmpty(itemId))
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                InventoryItemModel slot = slots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId && slot.ItemType == itemType)
+                {
+                    totalAmount += Math.Max(0, slot.Amount);
+                }
+            }
+
+            return totalAmount;
         }
 
         private bool ReplaceItemIdInSlots(InventoryItemModel[] slots, string fromItemId, string toItemId, InventoryItemType itemType)

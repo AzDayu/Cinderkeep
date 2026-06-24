@@ -11,6 +11,8 @@ namespace Cinderkeep.Gameplay
     public sealed class BuildingManager : MonoBehaviour, IGameInitializable
     {
         public static event Action<BuildingData> BuildingPlacedGlobal;
+        public static event Action<BuildingData, BuildingData> BuildingUpgradedGlobal;
+        public static event Action<BuildingHp> BuildingDestroyedGlobal;
 
         [SerializeField] private List<BuildingSpot> _buildingSpots = new List<BuildingSpot>();
         [SerializeField] private GameObjectManager _gameObjectManager;
@@ -181,6 +183,7 @@ namespace Cinderkeep.Gameplay
             buildingSpot.ReplaceBuilding(createdBuilding, toBuildingData.Id);
             RegisterBuildingComponent(createdBuilding, toBuildingData);
             NotifyBuildingPlaced(toBuildingData);
+            NotifyBuildingUpgraded(fromBuildingData, toBuildingData);
             Debug.Log("BuildingManager: 건축 업그레이드 완료. from=" + fromBuildingId + ", to=" + toBuildingData.Id);
             return true;
         }
@@ -300,6 +303,7 @@ namespace Cinderkeep.Gameplay
             building.OnBuildingDestroyed -= HandleBuildingDestroyed;
             RemoveBuilding(building);
             ClearSpotByBuilding(building.gameObject);
+            NotifyBuildingDestroyed(building);
             Debug.Log(building.gameObject.name + " 건축물 파괴 처리를 완료했습니다.");
         }
 
@@ -521,6 +525,14 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            Color materialKeyColor;
+            if (buildingData != null
+                && GameDataMaterialColorResolver.TryResolveColor(buildingData.MaterialKey, out materialKeyColor))
+            {
+                targetRenderer.material.color = materialKeyColor;
+                return;
+            }
+
             targetRenderer.material.color = ResolveTierColor(buildingData);
         }
 
@@ -719,6 +731,26 @@ namespace Cinderkeep.Gameplay
             }
 
             BuildingPlacedGlobal(buildingData);
+        }
+
+        private void NotifyBuildingUpgraded(BuildingData fromBuildingData, BuildingData toBuildingData)
+        {
+            if (BuildingUpgradedGlobal == null)
+            {
+                return;
+            }
+
+            BuildingUpgradedGlobal(fromBuildingData, toBuildingData);
+        }
+
+        private void NotifyBuildingDestroyed(BuildingHp building)
+        {
+            if (BuildingDestroyedGlobal == null)
+            {
+                return;
+            }
+
+            BuildingDestroyedGlobal(building);
         }
     }
 }

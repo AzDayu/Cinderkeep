@@ -228,17 +228,7 @@ namespace Cinderkeep.Gameplay
 
         public EnemyData GetEnemy(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_enemyDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _enemyDataList[id];
+            return GameDataCatalogLookup.GetById(_enemyDataList, id);
         }
 
         public void LoadResourceData(string resourcePath)
@@ -248,17 +238,7 @@ namespace Cinderkeep.Gameplay
 
         public ResourceData GetResource(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_resourceDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _resourceDataList[id];
+            return GameDataCatalogLookup.GetById(_resourceDataList, id);
         }
 
         public void LoadHarvestNodeData(string resourcePath)
@@ -268,17 +248,7 @@ namespace Cinderkeep.Gameplay
 
         public HarvestNodeData GetHarvestNode(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_harvestNodeDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _harvestNodeDataList[id];
+            return GameDataCatalogLookup.GetById(_harvestNodeDataList, id);
         }
 
         public void LoadToolData(string resourcePath)
@@ -288,17 +258,7 @@ namespace Cinderkeep.Gameplay
 
         public ToolData GetTool(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_toolDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _toolDataList[id];
+            return GameDataCatalogLookup.GetById(_toolDataList, id);
         }
 
         public void LoadWeaponData(string resourcePath)
@@ -308,17 +268,7 @@ namespace Cinderkeep.Gameplay
 
         public WeaponData GetWeapon(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_weaponDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _weaponDataList[id];
+            return GameDataCatalogLookup.GetById(_weaponDataList, id);
         }
 
         public void LoadArmorData(string resourcePath)
@@ -328,17 +278,7 @@ namespace Cinderkeep.Gameplay
 
         public ArmorData GetArmor(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_armorDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _armorDataList[id];
+            return GameDataCatalogLookup.GetById(_armorDataList, id);
         }
 
         public void LoadBuildingData(string resourcePath)
@@ -348,17 +288,7 @@ namespace Cinderkeep.Gameplay
 
         public BuildingData GetBuilding(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_buildingDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _buildingDataList[id];
+            return GameDataCatalogLookup.GetById(_buildingDataList, id);
         }
 
         public void LoadCraftingRecipeData(string resourcePath)
@@ -368,17 +298,7 @@ namespace Cinderkeep.Gameplay
 
         public CraftingRecipeData GetCraftingRecipe(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_craftingRecipeDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _craftingRecipeDataList[id];
+            return GameDataCatalogLookup.GetById(_craftingRecipeDataList, id);
         }
 
         public void LoadCraftingStationData(string resourcePath)
@@ -388,17 +308,7 @@ namespace Cinderkeep.Gameplay
 
         public CraftingStationData GetCraftingStation(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_craftingStationDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _craftingStationDataList[id];
+            return GameDataCatalogLookup.GetById(_craftingStationDataList, id);
         }
 
         public void LoadSmeltingRecipeData(string resourcePath)
@@ -408,17 +318,7 @@ namespace Cinderkeep.Gameplay
 
         public SmeltingRecipeData GetSmeltingRecipe(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_smeltingRecipeDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _smeltingRecipeDataList[id];
+            return GameDataCatalogLookup.GetById(_smeltingRecipeDataList, id);
         }
 
         public void LoadEnemySpawnRuleData(string resourcePath)
@@ -428,17 +328,7 @@ namespace Cinderkeep.Gameplay
 
         public EnemySpawnRuleData GetEnemySpawnRule(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_enemySpawnRuleDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _enemySpawnRuleDataList[id];
+            return GameDataCatalogLookup.GetById(_enemySpawnRuleDataList, id);
         }
 
         public void LoadGameFlowPhaseData(string resourcePath)
@@ -448,17 +338,7 @@ namespace Cinderkeep.Gameplay
 
         public GameFlowPhaseData GetGameFlowPhase(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_gameFlowPhaseDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _gameFlowPhaseDataList[id];
+            return GameDataCatalogLookup.GetById(_gameFlowPhaseDataList, id);
         }
 
         public void LoadLootDropData(string resourcePath)
@@ -468,17 +348,7 @@ namespace Cinderkeep.Gameplay
 
         public LootDropData GetLootDrop(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_lootDropDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _lootDropDataList[id];
+            return GameDataCatalogLookup.GetById(_lootDropDataList, id);
         }
 
         public void LoadCinderHeartUpgradeData(string resourcePath)
@@ -488,17 +358,7 @@ namespace Cinderkeep.Gameplay
 
         public CinderHeartUpgradeData GetCinderHeartUpgrade(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_cinderHeartUpgradeDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _cinderHeartUpgradeDataList[id];
+            return GameDataCatalogLookup.GetById(_cinderHeartUpgradeDataList, id);
         }
 
         public void LoadCinderHeartSkillData(string resourcePath)
@@ -510,17 +370,7 @@ namespace Cinderkeep.Gameplay
 
         public CinderHeartSkillData GetCinderHeartSkill(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_cinderHeartSkillDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _cinderHeartSkillDataList[id];
+            return GameDataCatalogLookup.GetById(_cinderHeartSkillDataList, id);
         }
 
         public void LoadStatusEffectData(string resourcePath)
@@ -530,17 +380,7 @@ namespace Cinderkeep.Gameplay
 
         public StatusEffectData GetStatusEffect(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_statusEffectDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _statusEffectDataList[id];
+            return GameDataCatalogLookup.GetById(_statusEffectDataList, id);
         }
 
         public void LoadBossData(string resourcePath)
@@ -550,17 +390,7 @@ namespace Cinderkeep.Gameplay
 
         public BossData GetBoss(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_bossDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _bossDataList[id];
+            return GameDataCatalogLookup.GetById(_bossDataList, id);
         }
 
         public void LoadBossPatternData(string resourcePath)
@@ -570,17 +400,7 @@ namespace Cinderkeep.Gameplay
 
         public BossPatternData GetBossPattern(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_bossPatternDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _bossPatternDataList[id];
+            return GameDataCatalogLookup.GetById(_bossPatternDataList, id);
         }
 
         public void LoadBuildingUpgradeData(string resourcePath)
@@ -590,17 +410,7 @@ namespace Cinderkeep.Gameplay
 
         public BuildingUpgradeData GetBuildingUpgrade(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return null;
-            }
-
-            if (!_buildingUpgradeDataList.ContainsKey(id))
-            {
-                return null;
-            }
-
-            return _buildingUpgradeDataList[id];
+            return GameDataCatalogLookup.GetById(_buildingUpgradeDataList, id);
         }
 
         public string GetEnemyDataResourcePath()

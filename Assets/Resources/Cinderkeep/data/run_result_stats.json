@@ -20,7 +20,13 @@
     { "_id": "adamantium_gained", "_group": "Resources", "_label": "Adamantium", "_statKey": "adamantium_gained", "_sortOrder": 350 },
     { "_id": "crafted_item_count", "_group": "Crafting / Building", "_label": "Crafted Items", "_statKey": "crafted_item_count", "_sortOrder": 400 },
     { "_id": "placed_building_count", "_group": "Crafting / Building", "_label": "Placed Buildings", "_statKey": "placed_building_count", "_sortOrder": 410 },
-    { "_id": "trap_crowd_control_score", "_group": "Crafting / Building", "_label": "Trap CC Score", "_statKey": "trap_crowd_control_score", "_sortOrder": 420 },
-    { "_id": "selected_cinderheart_skills", "_group": "CinderHeart", "_label": "Selected Upgrades", "_statKey": "selected_cinderheart_skills", "_sortOrder": 500 }
+    { "_id": "destroyed_building_count", "_group": "Crafting / Building", "_label": "Destroyed Buildings", "_statKey": "destroyed_building_count", "_sortOrder": 420 },
+    { "_id": "upgraded_building_count", "_group": "Crafting / Building", "_label": "Upgraded Buildings", "_statKey": "upgraded_building_count", "_sortOrder": 430 },
+    { "_id": "trap_crowd_control_score", "_group": "Crafting / Building", "_label": "Trap CC Score", "_statKey": "trap_crowd_control_score", "_sortOrder": 440 },
+    { "_id": "raw_meat_picked_up", "_group": "Food", "_label": "Raw Meat Picked Up", "_statKey": "raw_meat_picked_up", "_sortOrder": 500 },
+    { "_id": "cooked_meat_created", "_group": "Food", "_label": "Cooked Meat Created", "_statKey": "cooked_meat_created", "_sortOrder": 510 },
+    { "_id": "food_eaten_count", "_group": "Food", "_label": "Food Eaten", "_statKey": "food_eaten_count", "_sortOrder": 520 },
+    { "_id": "satiety_restored", "_group": "Food", "_label": "Satiety Restored", "_statKey": "satiety_restored", "_sortOrder": 530 },
+    { "_id": "selected_cinderheart_skills", "_group": "CinderHeart", "_label": "Selected Upgrades", "_statKey": "selected_cinderheart_skills", "_sortOrder": 600 }
   ]
 }

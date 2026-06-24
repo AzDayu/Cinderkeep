@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 한 판 동안 발생한 전투, 채집, 제작, 건축, 보상 선택 기록을 모아 Run Result에 전달합니다.
+// 한 판 동안 발생한 전투, 채집, 제작, 건축, 음식, 보상 기록을 Run Result로 모읍니다.
 // 각 시스템의 이벤트를 구독해 집계만 담당하고, 실제 게임 규칙은 변경하지 않습니다.
 namespace Cinderkeep.Gameplay
 {
@@ -18,12 +18,18 @@ namespace Cinderkeep.Gameplay
         private int _playerDownCount;
         private int _craftedItemCount;
         private int _placedBuildingCount;
+        private int _destroyedBuildingCount;
+        private int _upgradedBuildingCount;
+        private int _rawMeatPickedUpCount;
+        private int _cookedMeatCreatedCount;
+        private int _foodEatenCount;
         private int _woodGained;
         private int _stoneGained;
         private int _ironGained;
         private int _goldGained;
         private int _mithrilGained;
         private int _adamantiumGained;
+        private float _satietyRestored;
         private float _cinderHeartDamageTaken;
         private float _playerDamageTaken;
         private float _enemyDamageDealt;
@@ -80,7 +86,12 @@ namespace Cinderkeep.Gameplay
             CinderHeart.CinderHeartDamagedGlobal += HandleCinderHeartDamaged;
             CraftingRecipeExecutor.RecipeCraftedGlobal += HandleRecipeCrafted;
             BuildingManager.BuildingPlacedGlobal += HandleBuildingPlaced;
+            BuildingManager.BuildingDestroyedGlobal += HandleBuildingDestroyed;
+            BuildingManager.BuildingUpgradedGlobal += HandleBuildingUpgraded;
             CinderHeartSkillSelectionUI.SkillSelectedGlobal += HandleCinderHeartSkillSelected;
+            global::FoodPickup.FoodPickedUpGlobal += HandleFoodPickedUp;
+            global::CinderHeartFoodCooker.FoodCookedGlobal += HandleFoodCooked;
+            global::PlayerToolController.FoodEatenGlobal += HandleFoodEaten;
             global::DamageDealer.DamageAppliedGlobal += HandleDamageApplied;
             global::TrapCrowdControlReporter.TrapCrowdControlScoredGlobal += HandleTrapCrowdControlScored;
         }
@@ -94,7 +105,12 @@ namespace Cinderkeep.Gameplay
             CinderHeart.CinderHeartDamagedGlobal -= HandleCinderHeartDamaged;
             CraftingRecipeExecutor.RecipeCraftedGlobal -= HandleRecipeCrafted;
             BuildingManager.BuildingPlacedGlobal -= HandleBuildingPlaced;
+            BuildingManager.BuildingDestroyedGlobal -= HandleBuildingDestroyed;
+            BuildingManager.BuildingUpgradedGlobal -= HandleBuildingUpgraded;
             CinderHeartSkillSelectionUI.SkillSelectedGlobal -= HandleCinderHeartSkillSelected;
+            global::FoodPickup.FoodPickedUpGlobal -= HandleFoodPickedUp;
+            global::CinderHeartFoodCooker.FoodCookedGlobal -= HandleFoodCooked;
+            global::PlayerToolController.FoodEatenGlobal -= HandleFoodEaten;
             global::DamageDealer.DamageAppliedGlobal -= HandleDamageApplied;
             global::TrapCrowdControlReporter.TrapCrowdControlScoredGlobal -= HandleTrapCrowdControlScored;
         }
@@ -115,12 +131,18 @@ namespace Cinderkeep.Gameplay
             _playerDownCount = 0;
             _craftedItemCount = 0;
             _placedBuildingCount = 0;
+            _destroyedBuildingCount = 0;
+            _upgradedBuildingCount = 0;
+            _rawMeatPickedUpCount = 0;
+            _cookedMeatCreatedCount = 0;
+            _foodEatenCount = 0;
             _woodGained = 0;
             _stoneGained = 0;
             _ironGained = 0;
             _goldGained = 0;
             _mithrilGained = 0;
             _adamantiumGained = 0;
+            _satietyRestored = 0f;
             _cinderHeartDamageTaken = 0f;
             _playerDamageTaken = 0f;
             _enemyDamageDealt = 0f;
@@ -181,6 +203,12 @@ namespace Cinderkeep.Gameplay
             snapshot.AdamantiumGained = _adamantiumGained;
             snapshot.CraftedItemCount = _craftedItemCount;
             snapshot.PlacedBuildingCount = _placedBuildingCount;
+            snapshot.DestroyedBuildingCount = _destroyedBuildingCount;
+            snapshot.UpgradedBuildingCount = _upgradedBuildingCount;
+            snapshot.RawMeatPickedUpCount = _rawMeatPickedUpCount;
+            snapshot.CookedMeatCreatedCount = _cookedMeatCreatedCount;
+            snapshot.FoodEatenCount = _foodEatenCount;
+            snapshot.SatietyRestored = _satietyRestored;
             snapshot.CinderHeartDamageTaken = _cinderHeartDamageTaken;
             snapshot.PlayerDamageTaken = _playerDamageTaken;
             snapshot.EnemyDamageDealt = _enemyDamageDealt;
@@ -330,6 +358,66 @@ namespace Cinderkeep.Gameplay
             _placedBuildingCount++;
         }
 
+        private void HandleBuildingDestroyed(BuildingHp building)
+        {
+            if (_isTracking == false || building == null)
+            {
+                return;
+            }
+
+            _destroyedBuildingCount++;
+        }
+
+        private void HandleBuildingUpgraded(BuildingData fromBuildingData, BuildingData toBuildingData)
+        {
+            if (_isTracking == false || toBuildingData == null)
+            {
+                return;
+            }
+
+            _upgradedBuildingCount++;
+        }
+
+        private void HandleFoodPickedUp(string foodItemId, int amount)
+        {
+            if (_isTracking == false || amount <= 0)
+            {
+                return;
+            }
+
+            if (string.Equals(foodItemId, FoodItemIds.RawMeat, StringComparison.OrdinalIgnoreCase))
+            {
+                _rawMeatPickedUpCount += amount;
+                return;
+            }
+
+            if (string.Equals(foodItemId, FoodItemIds.CookedMeat, StringComparison.OrdinalIgnoreCase))
+            {
+                _cookedMeatCreatedCount += amount;
+            }
+        }
+
+        private void HandleFoodCooked(int amount)
+        {
+            if (_isTracking == false || amount <= 0)
+            {
+                return;
+            }
+
+            _cookedMeatCreatedCount += amount;
+        }
+
+        private void HandleFoodEaten(string foodItemId, float restoreAmount)
+        {
+            if (_isTracking == false || restoreAmount <= 0f)
+            {
+                return;
+            }
+
+            _foodEatenCount++;
+            _satietyRestored += restoreAmount;
+        }
+
         private void HandleCinderHeartSkillSelected(CinderHeartSkillData skillData)
         {
             if (_isTracking == false || skillData == null)
@@ -388,6 +476,12 @@ namespace Cinderkeep.Gameplay
         public int AdamantiumGained;
         public int CraftedItemCount;
         public int PlacedBuildingCount;
+        public int DestroyedBuildingCount;
+        public int UpgradedBuildingCount;
+        public int RawMeatPickedUpCount;
+        public int CookedMeatCreatedCount;
+        public int FoodEatenCount;
+        public float SatietyRestored;
         public float CinderHeartDamageTaken;
         public float PlayerDamageTaken;
         public float EnemyDamageDealt;

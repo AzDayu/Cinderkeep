@@ -105,8 +105,14 @@ namespace Cinderkeep.Gameplay
             AddFallbackStat("adamantium_gained", "Resources", "Adamantium", 350);
             AddFallbackStat("crafted_item_count", "Crafting / Building", "Crafted Items", 400);
             AddFallbackStat("placed_building_count", "Crafting / Building", "Placed Buildings", 410);
-            AddFallbackStat("trap_crowd_control_score", "Crafting / Building", "Trap CC Score", 420);
-            AddFallbackStat("selected_cinderheart_skills", "CinderHeart", "Selected Upgrades", 500);
+            AddFallbackStat("destroyed_building_count", "Crafting / Building", "Destroyed Buildings", 420);
+            AddFallbackStat("upgraded_building_count", "Crafting / Building", "Upgraded Buildings", 430);
+            AddFallbackStat("trap_crowd_control_score", "Crafting / Building", "Trap CC Score", 440);
+            AddFallbackStat("raw_meat_picked_up", "Food", "Raw Meat Picked Up", 500);
+            AddFallbackStat("cooked_meat_created", "Food", "Cooked Meat Created", 510);
+            AddFallbackStat("food_eaten_count", "Food", "Food Eaten", 520);
+            AddFallbackStat("satiety_restored", "Food", "Satiety Restored", 530);
+            AddFallbackStat("selected_cinderheart_skills", "CinderHeart", "Selected Upgrades", 600);
         }
 
         private void AddFallbackStat(string statKey, string group, string label, int sortOrder)
@@ -224,6 +230,10 @@ namespace Cinderkeep.Gameplay
                     return snapshot.CraftedItemCount.ToString();
                 case "placed_building_count":
                     return snapshot.PlacedBuildingCount.ToString();
+                case "destroyed_building_count":
+                    return snapshot.DestroyedBuildingCount.ToString();
+                case "upgraded_building_count":
+                    return snapshot.UpgradedBuildingCount.ToString();
                 case "cinderheart_damage_taken":
                     return FormatNumber(snapshot.CinderHeartDamageTaken);
                 case "player_damage_taken":
@@ -238,6 +248,14 @@ namespace Cinderkeep.Gameplay
                     return snapshot.PlayerDownCount.ToString();
                 case "trap_crowd_control_score":
                     return FormatNumber(snapshot.TrapCrowdControlScore);
+                case "raw_meat_picked_up":
+                    return snapshot.RawMeatPickedUpCount.ToString();
+                case "cooked_meat_created":
+                    return snapshot.CookedMeatCreatedCount.ToString();
+                case "food_eaten_count":
+                    return snapshot.FoodEatenCount.ToString();
+                case "satiety_restored":
+                    return FormatNumber(snapshot.SatietyRestored);
                 case "selected_cinderheart_skills":
                     return FormatSelectedSkills(snapshot);
             }

@@ -1,9 +1,12 @@
+using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 바닥 음식 픽업입니다. 5.11에서는 생고기만 사용하고, 이후 순록 드롭으로 대체합니다.
+// 바닥에 놓인 음식 픽업입니다. 현재는 생고기 수급과 Run Result 기록에 사용합니다.
 public sealed class FoodPickup : MonoBehaviour, IInteractable
 {
+    public static event Action<string, int> FoodPickedUpGlobal;
+
     [SerializeField] private string _foodItemId = FoodItemIds.RawMeat;
     [SerializeField] private int _amount = 1;
     [SerializeField] private bool _disableAfterPickup = true;
@@ -27,6 +30,7 @@ public sealed class FoodPickup : MonoBehaviour, IInteractable
         }
 
         PlayPickupSfx();
+        NotifyFoodPickedUp();
         ProcessPickedUp();
     }
 
@@ -50,6 +54,16 @@ public sealed class FoodPickup : MonoBehaviour, IInteractable
         }
 
         return inventoryModel.TryAddItem(_foodItemId, InventoryItemType.Food, _amount);
+    }
+
+    private void NotifyFoodPickedUp()
+    {
+        if (FoodPickedUpGlobal == null)
+        {
+            return;
+        }
+
+        FoodPickedUpGlobal(_foodItemId, _amount);
     }
 
     private void PlayPickupSfx()

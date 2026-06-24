@@ -1,5 +1,6 @@
 ﻿using Cinderkeep.Gameplay;
 using UnityEngine;
+using System;
 
 // 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
 // 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
@@ -9,6 +10,7 @@ using UnityEngine;
 public sealed class PlayerToolController : MonoBehaviour
 {
     public const string HandStoneToolDataId = "hand_stone";
+    public static event Action<string, float> FoodEatenGlobal;
 
     private static readonly KeyCode[] QuickSlotKeys =
     {
@@ -254,7 +256,18 @@ public sealed class PlayerToolController : MonoBehaviour
 
         playerStatus.EatFood(restoreAmount);
         inventoryModel.TryConsumeQuickSlotItem(slotIndex, 1);
+        NotifyFoodEaten(itemModel.ItemId, restoreAmount);
         return true;
+    }
+
+    private void NotifyFoodEaten(string itemId, float restoreAmount)
+    {
+        if (FoodEatenGlobal == null || restoreAmount <= 0f)
+        {
+            return;
+        }
+
+        FoodEatenGlobal(itemId, restoreAmount);
     }
 
     private PlayerInventoryModel GetInventoryModel()

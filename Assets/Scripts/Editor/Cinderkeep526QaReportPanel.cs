@@ -88,6 +88,7 @@ public static class Cinderkeep526QaReportPanel
         isOk &= RunBuildingUpgradeReport(reportBuilder);
         isOk &= RunJsonShapeReport(reportBuilder);
         isOk &= RunPrefabKeyReport(reportBuilder);
+        isOk &= RunMaterialKeyReport(reportBuilder);
         isOk &= RunBossClearFlowReport(scene, reportBuilder);
         isOk &= RunRunResultReport(scene, reportBuilder);
 
@@ -538,6 +539,49 @@ public static class Cinderkeep526QaReportPanel
         }
     }
 
+    private static bool RunMaterialKeyReport(StringBuilder reportBuilder)
+    {
+        reportBuilder.AppendLine("[Missing Material Key Report]");
+        GameObject tempObject = new GameObject("Temp_5_26_MaterialKey_Check");
+        GameDataManager gameDataManager = tempObject.AddComponent<GameDataManager>();
+        try
+        {
+            gameDataManager.Initialize();
+            bool isOk = true;
+
+            foreach (KeyValuePair<string, BuildingData> pair in gameDataManager.BuildingDataList)
+            {
+                BuildingData buildingData = pair.Value;
+                if (buildingData == null || string.IsNullOrEmpty(buildingData.MaterialKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "building material: " + pair.Key, false, "MaterialKey empty");
+                    continue;
+                }
+
+                isOk &= AppendMaterialKeyCheck(reportBuilder, "building material: " + buildingData.Id, buildingData.MaterialKey);
+            }
+
+            foreach (KeyValuePair<string, HarvestNodeData> pair in gameDataManager.HarvestNodeDataList)
+            {
+                HarvestNodeData nodeData = pair.Value;
+                if (nodeData == null || string.IsNullOrEmpty(nodeData.MaterialKey))
+                {
+                    isOk &= AppendCheck(reportBuilder, "harvest node material: " + pair.Key, false, "MaterialKey empty");
+                    continue;
+                }
+
+                isOk &= AppendMaterialKeyCheck(reportBuilder, "harvest node material: " + nodeData.Id, nodeData.MaterialKey);
+            }
+
+            reportBuilder.AppendLine();
+            return isOk;
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(tempObject);
+        }
+    }
+
     private static bool RunBossClearFlowReport(Scene scene, StringBuilder reportBuilder)
     {
         reportBuilder.AppendLine("[Boss / ClearFlow Check]");
@@ -637,6 +681,35 @@ public static class Cinderkeep526QaReportPanel
 
         bool isOk = string.IsNullOrEmpty(exactPath) == false;
         string detail = isOk ? exactPath : string.IsNullOrEmpty(firstSimilarPath) ? prefabKey : "similar only: " + firstSimilarPath;
+        return AppendCheck(reportBuilder, label, isOk, detail);
+    }
+
+    private static bool AppendMaterialKeyCheck(StringBuilder reportBuilder, string label, string materialKey)
+    {
+        string[] guids = AssetDatabase.FindAssets(materialKey + " t:Material", new[] { "Assets" });
+        string exactPath = "";
+        string firstSimilarPath = "";
+
+        if (guids != null)
+        {
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                if (string.IsNullOrEmpty(firstSimilarPath))
+                {
+                    firstSimilarPath = assetPath;
+                }
+
+                if (string.Equals(Path.GetFileNameWithoutExtension(assetPath), materialKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    exactPath = assetPath;
+                    break;
+                }
+            }
+        }
+
+        bool isOk = string.IsNullOrEmpty(exactPath) == false;
+        string detail = isOk ? exactPath : string.IsNullOrEmpty(firstSimilarPath) ? materialKey : "similar only: " + firstSimilarPath;
         return AppendCheck(reportBuilder, label, isOk, detail);
     }
 

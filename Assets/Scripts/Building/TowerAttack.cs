@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// 타워가 EnemyStatus 대상에게 피해를 전달하는 전투 컴포넌트입니다.
-// 타깃 탐색은 TowerTargeting, 전체 반복 실행은 BuildingTower가 담당합니다.
+// 타워가 선택된 적에게 피해를 적용하는 전투 컴포넌트입니다.
+// 타깃 탐색은 TowerTargeting, 반복 실행은 BuildingTower가 담당합니다.
 public sealed class TowerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
@@ -11,7 +11,7 @@ public sealed class TowerAttack : MonoBehaviour
     [SerializeField] private float _attackInterval = 1.4f;
 
     [Header("Connected Components")]
-    [Tooltip("Run Result에 타워 피해량을 남기기 위한 공통 피해 전달자입니다.")]
+    [Tooltip("Run Result에 타워 피해량을 기록하기 위한 공통 피해 전달자입니다.")]
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;

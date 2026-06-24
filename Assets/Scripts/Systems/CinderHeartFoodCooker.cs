@@ -1,10 +1,13 @@
+using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// CinderHeart 근처에서 인벤토리/퀵슬롯의 생고기를 익힌 고기로 바꿉니다.
-// 5.11 MVP는 고기만 처리하고, 음식 종류가 늘어나면 Food 데이터 카탈로그로 확장합니다.
+// CinderHeart 근처에서 인벤토리/퀵슬롯의 생고기를 익힌 고기로 바꾸는 조리 컴포넌트입니다.
+// 음식 종류가 늘어나면 Food 데이터 카탈로그로 확장하되, 현재는 고기 루프를 안정적으로 닫습니다.
 public sealed class CinderHeartFoodCooker : MonoBehaviour
 {
+    public static event Action<int> FoodCookedGlobal;
+
     [SerializeField] private float _cookRadius = 7f;
     [SerializeField] private float _cookSeconds = 5f;
 
@@ -27,7 +30,7 @@ public sealed class CinderHeartFoodCooker : MonoBehaviour
 
     public static void EnsureSceneCooker()
     {
-        CinderHeart cinderHeart = Object.FindFirstObjectByType<CinderHeart>();
+        CinderHeart cinderHeart = UnityEngine.Object.FindFirstObjectByType<CinderHeart>();
         if (cinderHeart == null)
         {
             return;
@@ -62,7 +65,7 @@ public sealed class CinderHeartFoodCooker : MonoBehaviour
 
         if (_playerStatus == null)
         {
-            _playerStatus = Object.FindFirstObjectByType<PlayerStatus>();
+            _playerStatus = UnityEngine.Object.FindFirstObjectByType<PlayerStatus>();
         }
     }
 
@@ -100,9 +103,11 @@ public sealed class CinderHeartFoodCooker : MonoBehaviour
             return;
         }
 
+        int cookedAmount = inventoryModel.GetItemAmountInInventoryOrQuickSlot(FoodItemIds.RawMeat, InventoryItemType.Food);
         if (inventoryModel.TryReplaceItemIdEverywhere(FoodItemIds.RawMeat, FoodItemIds.CookedMeat, InventoryItemType.Food))
         {
-            Debug.Log("[CinderHeartFoodCooker] 생고기를 익힌 고기로 조리했습니다.");
+            NotifyFoodCooked(cookedAmount);
+            Debug.Log("[CinderHeartFoodCooker] 생고기를 익힌 고기로 조리했습니다. amount=" + cookedAmount);
         }
 
         ResetProgress();
@@ -116,6 +121,16 @@ public sealed class CinderHeartFoodCooker : MonoBehaviour
         }
 
         return GameManager.Inst.PlayerInventoryModel;
+    }
+
+    private void NotifyFoodCooked(int amount)
+    {
+        if (FoodCookedGlobal == null || amount <= 0)
+        {
+            return;
+        }
+
+        FoodCookedGlobal(amount);
     }
 
     private void ResetProgress()

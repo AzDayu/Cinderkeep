@@ -458,8 +458,29 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         _respawnSeconds = Mathf.Max(0f, harvestNodeData.RespawnSeconds);
+        ApplyMaterialKeyColorToRenderers(harvestNodeData.MaterialKey);
         _hasAppliedHarvestNodeData = true;
         _hasInitializedGatherState = false;
+    }
+
+    private void ApplyMaterialKeyColorToRenderers(string materialKey)
+    {
+        Color materialKeyColor;
+        if (GameDataMaterialColorResolver.TryResolveColor(materialKey, out materialKeyColor) == false)
+        {
+            return;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] == null)
+            {
+                continue;
+            }
+
+            renderers[i].material.color = materialKeyColor;
+        }
     }
 
     private GatherToolType ConvertToolType(string toolTypeText, GatherToolType fallbackToolType)
