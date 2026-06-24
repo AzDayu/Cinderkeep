@@ -232,6 +232,11 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            if (_gameObjectManager != null)
+            {
+                _gameObjectManager.UnregisterGameObject(buildingObject);
+            }
+
             if (Application.isPlaying)
             {
                 Destroy(buildingObject);
@@ -446,7 +451,7 @@ namespace Cinderkeep.Gameplay
         {
             if (buildingPrefab != null)
             {
-                return _gameObjectManager.CreateGameObject(buildingPrefab, buildPosition, buildRotation);
+                return CreatePrefabBuildingObject(buildingPrefab, buildPosition, buildRotation);
             }
 
             GameObject fallbackBuilding = CreateRuntimeFallbackBuilding(buildingData, buildPosition, buildRotation);
@@ -455,8 +460,30 @@ namespace Cinderkeep.Gameplay
                 return null;
             }
 
-            _gameObjectManager.RegisterGameObject(fallbackBuilding);
+            RegisterRuntimeBuildingObject(fallbackBuilding);
             return fallbackBuilding;
+        }
+
+        private GameObject CreatePrefabBuildingObject(GameObject buildingPrefab, Vector3 buildPosition, Quaternion buildRotation)
+        {
+            if (_gameObjectManager != null)
+            {
+                return _gameObjectManager.CreateGameObject(buildingPrefab, buildPosition, buildRotation);
+            }
+
+            GameObject createdBuilding = Instantiate(buildingPrefab, buildPosition, buildRotation);
+            RegisterRuntimeBuildingObject(createdBuilding);
+            return createdBuilding;
+        }
+
+        private void RegisterRuntimeBuildingObject(GameObject buildingObject)
+        {
+            if (buildingObject == null || _gameObjectManager == null)
+            {
+                return;
+            }
+
+            _gameObjectManager.RegisterGameObject(buildingObject);
         }
 
         private GameObject CreateRuntimeFallbackBuilding(

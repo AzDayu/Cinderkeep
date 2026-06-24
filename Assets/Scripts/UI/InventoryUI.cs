@@ -245,7 +245,12 @@ namespace Cinderkeep.Gameplay
                 int weaponAmount = itemModel.Amount;
                 bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Weapon);
                 int quickSlotIndex;
-                TryAssignQuickSlotShortcut(weaponItemId, weaponItemType, weaponAmount, 0, out quickSlotIndex);
+                TryAssignQuickSlotShortcut(
+                    weaponItemId,
+                    weaponItemType,
+                    weaponAmount,
+                    QuickSlotAssignmentPolicy.WeaponPreferredSlotIndex,
+                    out quickSlotIndex);
                 RefreshMessage("무기를 장착하고 1번 퀵슬롯에 연결했습니다.");
                 return isEquipped;
             }
@@ -273,7 +278,7 @@ namespace Cinderkeep.Gameplay
 
             if (itemModel.ItemType == InventoryItemType.Tool)
             {
-                int preferredSlotIndex = ResolveToolPreferredQuickSlot(itemModel.ItemId);
+                int preferredSlotIndex = QuickSlotAssignmentPolicy.GetPreferredSlotIndex(itemModel);
                 int quickSlotIndex;
                 if (TryAssignQuickSlotShortcut(itemModel, preferredSlotIndex, out quickSlotIndex) == false)
                 {
@@ -289,7 +294,10 @@ namespace Cinderkeep.Gameplay
             {
                 int movedAmount = itemModel.Amount;
                 int quickSlotIndex;
-                if (TryAddStackableQuickSlotItem(itemModel, 3, out quickSlotIndex) == false)
+                if (TryAddStackableQuickSlotItem(
+                    itemModel,
+                    QuickSlotAssignmentPolicy.FoodPreferredSlotIndex,
+                    out quickSlotIndex) == false)
                 {
                     return false;
                 }
@@ -328,7 +336,7 @@ namespace Cinderkeep.Gameplay
                 itemModel.ItemType,
                 itemModel.Amount,
                 preferredSlotIndex,
-                PlayerInventoryModel.QuickSlotCount - 1,
+                QuickSlotAssignmentPolicy.ReplacementSlotIndex,
                 out quickSlotIndex);
         }
 
@@ -350,7 +358,7 @@ namespace Cinderkeep.Gameplay
                 itemType,
                 amount,
                 preferredSlotIndex,
-                PlayerInventoryModel.QuickSlotCount - 1,
+                QuickSlotAssignmentPolicy.ReplacementSlotIndex,
                 out quickSlotIndex);
         }
 
@@ -367,7 +375,7 @@ namespace Cinderkeep.Gameplay
                 itemModel.ItemType,
                 itemModel.Amount,
                 preferredSlotIndex,
-                PlayerInventoryModel.QuickSlotCount - 1,
+                QuickSlotAssignmentPolicy.ReplacementSlotIndex,
                 out quickSlotIndex);
         }
 
@@ -393,31 +401,6 @@ namespace Cinderkeep.Gameplay
             }
 
             return _playerInventoryModel.TryConsumeItem(itemModel.ItemId, movedAmount);
-        }
-
-        private int ResolveToolPreferredQuickSlot(string itemId)
-        {
-            if (string.IsNullOrEmpty(itemId))
-            {
-                return 1;
-            }
-
-            if (itemId == global::PlayerToolController.HandStoneToolDataId)
-            {
-                return 0;
-            }
-
-            if (itemId.IndexOf("pickaxe", System.StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return 2;
-            }
-
-            if (itemId.IndexOf("axe", System.StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return 1;
-            }
-
-            return 4;
         }
 
         private void EquipToolNow(string toolDataId)

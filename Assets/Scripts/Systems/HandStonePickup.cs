@@ -6,8 +6,6 @@ using UnityEngine;
 public sealed class HandStonePickup : MonoBehaviour, IInteractable
 {
     [SerializeField] private string _toolDataId = PlayerToolController.HandStoneToolDataId;
-    [SerializeField] private int _preferredQuickSlotIndex = 0;
-    [SerializeField] private int _replacementQuickSlotIndex = PlayerInventoryModel.QuickSlotCount - 1;
     [SerializeField] private int _stoneAmountOnPickup = 1;
     [SerializeField] private bool _equipOnPickup = true;
     [SerializeField] private bool _disableAfterPickup = true;
@@ -63,8 +61,8 @@ public sealed class HandStonePickup : MonoBehaviour, IInteractable
             _toolDataId,
             InventoryItemType.Tool,
             1,
-            _preferredQuickSlotIndex,
-            _replacementQuickSlotIndex,
+            QuickSlotAssignmentPolicy.GetPreferredSlotIndex(_toolDataId, InventoryItemType.Tool),
+            QuickSlotAssignmentPolicy.ReplacementSlotIndex,
             out _);
 
         if (isSet == false)

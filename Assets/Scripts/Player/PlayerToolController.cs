@@ -2,11 +2,8 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 using System;
 
-// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
-// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
-// 플레이어가 현재 들고 있는 도구를 관리하는 컴포넌트입니다.
-// 현재 단계에서는 1번 도끼, 2번 곡괭이, 3번 맨손으로 연결합니다.
-// 도구의 세부 수치는 tools.json에서 가져오고, 데이터가 없으면 기존 타입만 사용합니다.
+// 1인칭 플레이어의 1~7 퀵슬롯 입력과 현재 장착 도구/음식 사용을 처리합니다.
+// 도구 수치는 tools.json에서 읽고, 비도구 아이템은 장비/음식 흐름으로 넘깁니다.
 public sealed class PlayerToolController : MonoBehaviour
 {
     public const string HandStoneToolDataId = "hand_stone";

@@ -334,10 +334,15 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         if (_enemySpawnDirector == null)
         {
+            Debug.LogWarning("GameFlowController: 보스 스폰 디렉터가 없어 3일차 보스를 시작할 수 없습니다.");
             return;
         }
 
-        _enemySpawnDirector.StartSpawn(EnemySpawnMode.Boss, _gameRunModel.Day, HandleBossDefeated);
+        bool isBossSpawnStarted = _enemySpawnDirector.StartSpawn(EnemySpawnMode.Boss, _gameRunModel.Day, HandleBossDefeated);
+        if (isBossSpawnStarted == false)
+        {
+            Debug.LogWarning("GameFlowController: 활성화 가능한 보스 스폰 지점이 없습니다.");
+        }
     }
 
     private void StopEnemySpawn()

@@ -179,19 +179,10 @@ namespace Cinderkeep.Gameplay
             GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
             RunResultTracker tracker = RunResultTracker.Instance;
             RunResultSnapshot snapshot = tracker == null
-                ? CreateFallbackRunResultSnapshot(isClear, gameRunModel)
+                ? RunResultTextFormatter.CreateFallbackSnapshot(isClear, gameRunModel)
                 : tracker.CreateSnapshot(isClear, gameRunModel);
 
             _resultText.text = BuildRunResultText(snapshot);
-        }
-
-        private RunResultSnapshot CreateFallbackRunResultSnapshot(bool isClear, GameRunModel gameRunModel)
-        {
-            RunResultSnapshot snapshot = new RunResultSnapshot();
-            snapshot.IsClear = isClear;
-            snapshot.ReachedDay = gameRunModel == null ? 0 : gameRunModel.Day;
-            snapshot.FailureReason = isClear ? "Clear" : "CinderHeart destroyed";
-            return snapshot;
         }
 
         private string BuildRunResultText(RunResultSnapshot snapshot)

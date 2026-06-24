@@ -21,21 +21,22 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
         InitializeEnemySpawnPoints();
     }
 
-    public void StartSpawn(EnemySpawnMode spawnMode, int day)
+    public bool StartSpawn(EnemySpawnMode spawnMode, int day)
     {
-        StartSpawn(spawnMode, day, null);
+        return StartSpawn(spawnMode, day, null);
     }
 
-    public void StartSpawn(EnemySpawnMode spawnMode, int day, Action<EnemyStatus> bossDefeatedHandler)
+    public bool StartSpawn(EnemySpawnMode spawnMode, int day, Action<EnemyStatus> bossDefeatedHandler)
     {
         if (_enemySpawnPoints == null)
         {
-            return;
+            return false;
         }
 
         _bossDefeatedHandler = bossDefeatedHandler;
         EnemySpawnStep spawnStep = GetSpawnStep(spawnMode, day);
         bool bossSpawnPointAssigned = false;
+        bool anySpawnPointActivated = false;
         for (int i = 0; i < _enemySpawnPoints.Length; i++)
         {
             EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
@@ -63,7 +64,14 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
             spawnPoint.SetSpawnStep(spawnStep);
             spawnPoint.SetSpawnPointActive(shouldActivate);
             spawnPoint.SetSpawnMode(spawnMode, day);
+
+            if (shouldActivate)
+            {
+                anySpawnPointActivated = true;
+            }
         }
+
+        return anySpawnPointActivated;
     }
 
     public void StopSpawn()
