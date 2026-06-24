@@ -20,6 +20,7 @@ namespace Cinderkeep.Gameplay
 
         private bool _isInitialized;
         private bool _isRunResultPanelOpen;
+        private global::PlayerController _playerController;
 
         public bool IsInitialized
         {
@@ -278,6 +279,7 @@ namespace Cinderkeep.Gameplay
         private void RefreshCursorState()
         {
             bool anyUIOpen = IsAnyBlockingUIOpen();
+            RefreshPlayerControlState(anyUIOpen);
 
             if (anyUIOpen)
             {
@@ -318,6 +320,35 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void RefreshPlayerControlState(bool isBlockingUiOpen)
+        {
+            if (_playerController == null)
+            {
+                _playerController = Object.FindFirstObjectByType<global::PlayerController>();
+            }
+
+            if (_playerController == null)
+            {
+                return;
+            }
+
+            if (_playerController.CurrentState == global::PlayerControlState.Dead)
+            {
+                return;
+            }
+
+            if (isBlockingUiOpen)
+            {
+                _playerController.SetState(global::PlayerControlState.OpenUI);
+                return;
+            }
+
+            if (_playerController.CurrentState == global::PlayerControlState.OpenUI)
+            {
+                _playerController.SetState(global::PlayerControlState.Normal);
+            }
         }
 
         private void UpdateRunResultInput()

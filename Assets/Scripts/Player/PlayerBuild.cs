@@ -47,6 +47,13 @@ public sealed class PlayerBuild : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            ResetHoldBuild();
+            _isBuildCompletedWhileHolding = false;
+            return;
+        }
+
         ReadDebugBuildInput();
         UpdateHoldBuildInput();
     }

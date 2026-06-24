@@ -147,6 +147,11 @@ public sealed class PlayerAttack : MonoBehaviour
 
     private void ReadAttackInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
             TryAttack();

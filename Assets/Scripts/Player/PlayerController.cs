@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 public enum PlayerControlState
 {
     Normal,
@@ -11,16 +9,16 @@ public enum PlayerControlState
     Dead
 }
 
-// PlayerInput의 의도를 읽고 현재 상태에 따라 하위 행동 컴포넌트에 명령을 전달합니다.
-// UI, 기절, 귀환처럼 플레이어 조작을 막아야 하는 상태가 늘어나면 이 컴포넌트에서 흐름을 통제합니다.
+// 플레이어 입력을 읽고 현재 제어 상태에 따라 이동/공격 컴포넌트에 명령을 전달합니다.
+// 건축 홀드 입력은 PlayerBuild가 직접 처리하므로, 이 클래스는 이동과 전투 입력 흐름만 제어합니다.
 public sealed class PlayerController : MonoBehaviour
 {
     [Header("Control State")]
-    [Tooltip("현재 플레이어 조작 상태입니다. UI 열림, 귀환, 사망 같은 상태에서 입력 처리를 막는 기준입니다.")]
+    [Tooltip("현재 플레이어 조작 상태입니다. UI 열림, 순간이동, 사망 상태에서는 입력 처리를 막습니다.")]
     [SerializeField] private PlayerControlState _currentState = PlayerControlState.Normal;
 
     [Header("Connected Components")]
-    [Tooltip("키보드/마우스 입력을 읽어 의도만 저장하는 컴포넌트입니다.")]
+    [Tooltip("키보드와 마우스 입력을 읽어 의도만 저장하는 컴포넌트입니다.")]
     [SerializeField] private PlayerInput _playerInput;
     [Tooltip("실제 이동 처리를 담당하는 컴포넌트입니다.")]
     [SerializeField] private PlayerMovement _playerMovement;
@@ -29,15 +27,18 @@ public sealed class PlayerController : MonoBehaviour
 
     public PlayerControlState CurrentState
     {
-        get
-        {
-            return _currentState;
-        }
+        get { return _currentState; }
     }
 
     private void Awake()
     {
         ConnectComponents();
+        CinderkeepInput.RegisterPlayerController(this);
+    }
+
+    private void OnDestroy()
+    {
+        CinderkeepInput.UnregisterPlayerController(this);
     }
 
     private void Update()
@@ -121,11 +122,6 @@ public sealed class PlayerController : MonoBehaviour
         if (_playerInput.AttackTriggered)
         {
             _playerAttack.ExecuteAttack();
-        }
-
-        if (_playerInput.BuildTriggered)
-        {
-            SetState(PlayerControlState.Building);
         }
     }
 }

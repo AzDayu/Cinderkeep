@@ -2,13 +2,52 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
-// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
-// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
+// Unity New Input System을 기존 플레이어 스크립트가 안정적으로 사용할 수 있게 감싸는 공통 입력 도우미입니다.
+// UI, 사망, 텔레포트처럼 게임플레이 입력이 막혀야 하는 상태는 IsGameplayInputBlocked로 한 번에 확인합니다.
 // Unity의 New Input System을 프로젝트에서 쓰기 쉽게 감싼 입력 보조 클래스입니다.
 // 플레이어 스크립트가 구 Input Manager API를 직접 쓰지 않도록 이 클래스만 거치게 합니다.
 public static class CinderkeepInput
 {
     private const float MouseDeltaScale = 0.02f;
+
+    private static PlayerController _cachedPlayerController;
+
+    public static void RegisterPlayerController(PlayerController playerController)
+    {
+        if (playerController == null)
+        {
+            return;
+        }
+
+        _cachedPlayerController = playerController;
+    }
+
+    public static void UnregisterPlayerController(PlayerController playerController)
+    {
+        if (_cachedPlayerController != playerController)
+        {
+            return;
+        }
+
+        _cachedPlayerController = null;
+    }
+
+    public static bool IsGameplayInputBlocked()
+    {
+        PlayerController playerController = GetPlayerController();
+        return playerController != null && playerController.IsInputBlocked();
+    }
+
+    private static PlayerController GetPlayerController()
+    {
+        if (_cachedPlayerController != null)
+        {
+            return _cachedPlayerController;
+        }
+
+        _cachedPlayerController = Object.FindFirstObjectByType<PlayerController>();
+        return _cachedPlayerController;
+    }
 
     public static Vector2 GetMoveAxisRaw()
     {

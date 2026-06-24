@@ -31,6 +31,11 @@ public sealed class PlayerView : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (Cursor.lockState == CursorLockMode.Locked)
         {
             RotateView();

@@ -49,6 +49,11 @@ public sealed class PlayerInteraction : MonoBehaviour
 
     private void ReadInteractionInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasKeyPressedThisFrame(_interactionKey))
         {
             TryInteract();

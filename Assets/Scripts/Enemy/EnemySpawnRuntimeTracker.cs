@@ -64,11 +64,21 @@ public sealed class EnemySpawnRuntimeTracker
 
     public void DestroyTrackedEnemies()
     {
+        DestroyTrackedEnemies(null);
+    }
+
+    public void DestroyTrackedEnemies(Cinderkeep.Gameplay.GameObjectManager gameObjectManager)
+    {
         for (int i = _spawnedEnemies.Count - 1; i >= 0; i--)
         {
             GameObject enemyObject = _spawnedEnemies[i];
             if (enemyObject != null)
             {
+                if (gameObjectManager != null)
+                {
+                    gameObjectManager.UnregisterGameObject(enemyObject);
+                }
+
                 DestroyEnemyObject(enemyObject);
             }
         }

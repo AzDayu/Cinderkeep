@@ -105,6 +105,22 @@ namespace Cinderkeep.Gameplay
             Destroy(targetObject);
         }
 
+        public void UnregisterGameObject(GameObject targetObject)
+        {
+            if (targetObject == null)
+            {
+                return;
+            }
+
+            GameObjectIdentity identity = targetObject.GetComponent<GameObjectIdentity>();
+            if (identity == null || identity.IsInitialized == false)
+            {
+                return;
+            }
+
+            _createdObjectById.Remove(identity.InstanceId);
+        }
+
         public void DestroyAllRegisteredGameObjects()
         {
             Initialize();

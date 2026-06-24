@@ -23,6 +23,11 @@ public sealed class PlayerJump : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Space))
         {
             Jump();

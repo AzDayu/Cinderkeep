@@ -1,9 +1,7 @@
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
-// 플레이어 입력을 읽어 이동, 달리기, 공격 같은 의도만 보관하는 컴포넌트입니다.
-// 실제 이동/공격 실행은 PlayerController가 PlayerMovement, PlayerAttack에 명령합니다.
+// 키보드와 마우스 입력을 읽어 이동, 달리기, 공격 같은 플레이어 의도만 저장합니다.
+// 실제 이동/공격 실행은 PlayerController가 PlayerMovement와 PlayerAttack에 전달합니다.
 public sealed class PlayerInput : MonoBehaviour
 {
     public Vector2 MoveInput { get; private set; }
@@ -19,6 +17,12 @@ public sealed class PlayerInput : MonoBehaviour
 
     public void ReadInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            ClearInput();
+            return;
+        }
+
         MoveInput = CinderkeepInput.GetMoveAxisRaw();
         RunIntent = CinderkeepInput.IsKeyPressed(KeyCode.LeftShift);
         AttackTriggered = CinderkeepInput.WasLeftMousePressedThisFrame();
@@ -34,5 +38,4 @@ public sealed class PlayerInput : MonoBehaviour
         BuildTriggered = false;
         JumpTriggered = false;
     }
-
 }

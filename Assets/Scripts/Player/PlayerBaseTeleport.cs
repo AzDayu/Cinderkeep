@@ -61,6 +61,12 @@ public sealed class PlayerBaseTeleport : MonoBehaviour
 
     private void Update()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            CancelTeleport();
+            return;
+        }
+
         if (_isTeleporting == true)
         {
             UpdateTeleportCast();

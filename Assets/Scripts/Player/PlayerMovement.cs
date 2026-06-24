@@ -83,6 +83,12 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private void ReadMoveInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            ProcessMove(Vector2.zero, false);
+            return;
+        }
+
         Vector2 moveInput = CinderkeepInput.GetMoveAxisRaw();
         ProcessMove(moveInput, CinderkeepInput.IsKeyPressed(KeyCode.LeftShift));
     }

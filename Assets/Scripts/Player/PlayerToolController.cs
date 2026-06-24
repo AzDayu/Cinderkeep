@@ -137,6 +137,11 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void ReadToolInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (TryReadQuickSlotInput())
         {
             return;

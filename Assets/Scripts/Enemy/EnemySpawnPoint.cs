@@ -195,7 +195,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public void ClearSpawnedEnemies()
     {
-        _runtimeTracker.DestroyTrackedEnemies();
+        _runtimeTracker.DestroyTrackedEnemies(_gameObjectManager);
         ResetBossEncounter();
     }
 

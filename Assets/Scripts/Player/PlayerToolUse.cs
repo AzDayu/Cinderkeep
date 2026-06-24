@@ -89,6 +89,11 @@ public sealed class PlayerToolUse : MonoBehaviour
 
     private void ReadToolUseInput()
     {
+        if (CinderkeepInput.IsGameplayInputBlocked())
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasLeftMousePressedThisFrame())
         {
             TryUseTool();
