@@ -18,7 +18,7 @@ namespace Cinderkeep.UI.Editor
         private const string MainBackgroundPath = "Assets/Arts/MainMenu/MainMenu_Background.png";
         private const string SettingBackgroundPath = "Assets/Arts/MainMenu/Setting_Background.png";
         private const string KoreanFontPath = "Assets/Fonts/ChosunCentennial.ttf";
-        private const string BgmFolderPath = "Assets/Audio/BGM";
+        private const string BgmFolderPath = "Assets/Resources/Cinderkeep/audio/bgm";
         private const float BgmVolume = 0.7f;
 
         [MenuItem("Cinderkeep/Main Menu/Rebuild Main Menu")]

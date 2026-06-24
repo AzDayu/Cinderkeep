@@ -22,17 +22,17 @@ public static class CinderkeepGameLoopSceneBuilder
     private const string EnemyTag = "Enemy";
     private const string BuildTag = "Build";
 
-    private const string HeartModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01.fbx";
-    private const string FlameModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
-    private const string CrystalModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_01.fbx";
-    private const string RockModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_01.fbx";
-    private const string OreRockModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_04.fbx";
+    private const string HeartModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/FX_Heart_01.fbx";
+    private const string FlameModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Flame_FX.fbx";
+    private const string CrystalModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/FX_Crystal_01.fbx";
+    private const string RockModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_01.fbx";
+    private const string OreRockModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/PolygonIce/SM_Rock_04.fbx";
     private const string TreeModelPath = "Assets/Arts/3DModels/Harvestables/SM_Resource_Tree.fbx";
     private const string StoneModelPath = "Assets/Arts/3DModels/Harvestables/SM_Resource_Stone.fbx";
     private const string AxePrefabPath = "Assets/Prefabs/Equipment/PF_Equipment_Axe.prefab";
-    private const string MageBlackPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageBlack.prefab";
-    private const string TowerModelPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A.fbx";
-    private const string FireBowlPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
+    private const string MageBlackPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageBlack.prefab";
+    private const string TowerModelPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FrozenRuins/KB3D_DKF_Tower_A.fbx";
+    private const string FireBowlPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/FireBowl/KB3D_AOE_PropFireBowlON_A.fbx";
     private const string FontPath = "Assets/Fonts/NotoSansKR-Medium SDF3.asset";
 
     // 자원 테스트 필드에서 쓰는 재질 묶음입니다.

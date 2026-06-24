@@ -11,9 +11,9 @@ public static class CinderkeepEnemySpawnSceneBuilder
     private const string EnemyPrefabFolderPath = "Assets/Prefabs/Enemy";
     private const string MaterialFolderPath = "Assets/Materials/Generated";
 
-    private const string MageRedPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MageRed.prefab";
-    private const string MagePurplePath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/Mages/MagePurple.prefab";
-    private const string PlantPath = "Assets/ThirdParty/AssetStore/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous Plant-Green.prefab";
+    private const string MageRedPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MageRed.prefab";
+    private const string MagePurplePath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/Mages/MagePurple.prefab";
+    private const string PlantPath = "Assets/ThirdParty/Free/CinderkeepExternalAssets/CarnivorousPlant/Prefabs/Carnivorous Plant-Green.prefab";
 
     [MenuItem("Cinderkeep/Setup Enemy Spawn Scene")]
     public static void SetupEnemySpawnScene()

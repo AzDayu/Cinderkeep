@@ -12,7 +12,7 @@ public sealed class GameFlowSettings
     [SerializeField] private float _nightDuration = 120f;
 
     [Tooltip("밤이 끝난 뒤 다음 날로 넘어가기 전에 보여줄 보상 시간입니다.")]
-    [SerializeField] private float _morningRewardDuration = 15f;
+    [SerializeField] private float _morningRewardDuration = 30f;
 
     [Tooltip("마지막 밤 이후 보스가 접근하는 페이즈의 지속 시간입니다.")]
     [SerializeField] private float _bossApproachDuration = 180f;

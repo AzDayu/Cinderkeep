@@ -46,6 +46,14 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
     }
 
+    public bool IsWaitingForCinderHeartSkillSelection
+    {
+        get
+        {
+            return _isWaitingForCinderHeartSkillSelection;
+        }
+    }
+
     public void SetGameManager(GameManager gameManager)
     {
         _gameManager = gameManager;
@@ -191,6 +199,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Day, day, _gameFlowSettings.DayDuration));
         StartEnemySpawn(EnemySpawnMode.Day);
+        PlayPhaseBgm(GameRunPhase.Day);
     }
 
     private void StartNight()
@@ -198,6 +207,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.Night);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Night, _gameRunModel.Day, _gameFlowSettings.NightDuration));
         StartEnemySpawn(EnemySpawnMode.Night);
+        PlayPhaseBgm(GameRunPhase.Night);
     }
 
     private void FinishNight()
@@ -220,6 +230,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             GameRunPhase.MorningReward,
             _gameRunModel.Day,
             _gameFlowSettings.MorningRewardDuration));
+        PlayPhaseBgm(GameRunPhase.MorningReward);
         TryOpenCinderHeartSkillSelection();
     }
 
@@ -237,6 +248,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
         StartEnemySpawn(EnemySpawnMode.Boss);
+        PlayPhaseBgm(GameRunPhase.BossApproach);
     }
 
     private void StartBossFight()
@@ -244,6 +256,25 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetPhaseTime(0f);
         StartEnemySpawn(EnemySpawnMode.Boss);
+        PlayPhaseBgm(GameRunPhase.BossFight);
+    }
+
+    private void PlayPhaseBgm(GameRunPhase phase)
+    {
+        if (_gameManager == null)
+        {
+            return;
+        }
+
+        SoundManager soundManager = _gameManager.GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        GameFlowPhaseData phaseData = GetPhaseData(phase, _gameRunModel.Day);
+        string bgmKey = phaseData == null ? null : phaseData.BgmKey;
+        soundManager.PlayBgmForPhase(phase, bgmKey);
     }
 
     private float GetPhaseDuration(GameRunPhase phase, int day, float fallbackDuration)

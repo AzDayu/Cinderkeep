@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+using System.Collections.Generic;
 using UnityEngine.Serialization;
 
 namespace Cinderkeep.Gameplay
@@ -9,6 +10,7 @@ namespace Cinderkeep.Gameplay
     // BGM과 효과음 AudioSource는 Inspector에서 연결하고, 다른 스크립트는 이 매니저 함수만 호출합니다.
     public sealed class SoundManager : MonoBehaviour, IGameInitializable
     {
+        private const string BgmRootPath = "Cinderkeep/audio/bgm";
         private const string SfxRootPath = "Cinderkeep/audio/sfx/";
 
         private const string UiClickClipPath = SfxRootPath + "sfx_ui_click";
@@ -34,6 +36,12 @@ namespace Cinderkeep.Gameplay
         private AudioClip _healClip;
         private AudioClip _resourcePickupClip;
         private AudioClip _resourceOreHitClip;
+        private AudioClip[] _allBgmClips = new AudioClip[0];
+        private AudioClip[] _dayBgmClips = new AudioClip[0];
+        private AudioClip[] _nightBgmClips = new AudioClip[0];
+        private AudioClip[] _rewardBgmClips = new AudioClip[0];
+        private AudioClip[] _bossBgmClips = new AudioClip[0];
+        private AudioClip _currentBgmClip;
 
         private bool _isInitialized;
 
@@ -53,6 +61,8 @@ namespace Cinderkeep.Gameplay
             }
 
             SetVolume(_defaultVolume);
+            InitializeAudioSources();
+            LoadDefaultBgmClips();
             LoadDefaultSfxClips();
             _isInitialized = true;
         }
@@ -66,7 +76,40 @@ namespace Cinderkeep.Gameplay
 
             _bgmAudioSource.clip = bgmClip;
             _bgmAudioSource.loop = true;
+            _bgmAudioSource.volume = Mathf.Clamp01(_defaultVolume);
+            _bgmAudioSource.spatialBlend = 0f;
+            _currentBgmClip = bgmClip;
             _bgmAudioSource.Play();
+        }
+
+        public void PlayBgmForPhase(GameRunPhase phase)
+        {
+            AudioClip[] phaseClips = GetBgmClipsForPhase(phase);
+            AudioClip selectedClip = SelectRandomBgmClip(phaseClips);
+            if (selectedClip == null)
+            {
+                return;
+            }
+
+            PlayBgm(selectedClip);
+        }
+
+        public void PlayBgmForPhase(GameRunPhase phase, string bgmKey)
+        {
+            AudioClip[] namedClips = GetBgmClipsForKey(bgmKey);
+            if (namedClips == null || namedClips.Length == 0)
+            {
+                PlayBgmForPhase(phase);
+                return;
+            }
+
+            AudioClip selectedClip = SelectRandomBgmClip(namedClips);
+            if (selectedClip == null)
+            {
+                return;
+            }
+
+            PlayBgm(selectedClip);
         }
 
         public void StopBgm()
@@ -176,6 +219,190 @@ namespace Cinderkeep.Gameplay
             _healClip = LoadSfxClip(HealClipPath);
             _resourcePickupClip = LoadSfxClip(ResourcePickupClipPath);
             _resourceOreHitClip = LoadSfxClip(ResourceOreHitClipPath);
+        }
+
+        private void InitializeAudioSources()
+        {
+            if (_bgmAudioSource != null)
+            {
+                _bgmAudioSource.playOnAwake = false;
+                _bgmAudioSource.loop = true;
+                _bgmAudioSource.spatialBlend = 0f;
+                _bgmAudioSource.mute = false;
+            }
+
+            if (_effectAudioSource != null)
+            {
+                _effectAudioSource.playOnAwake = false;
+                _effectAudioSource.loop = false;
+                _effectAudioSource.spatialBlend = 0f;
+                _effectAudioSource.mute = false;
+            }
+        }
+
+        private void LoadDefaultBgmClips()
+        {
+            _allBgmClips = Resources.LoadAll<AudioClip>(BgmRootPath);
+            if (_allBgmClips == null || _allBgmClips.Length == 0)
+            {
+                _allBgmClips = new AudioClip[0];
+                Debug.LogWarning("SoundManager: BGM clips were not found at Resources/" + BgmRootPath + ".");
+                return;
+            }
+
+            List<AudioClip> dayClips = new List<AudioClip>();
+            List<AudioClip> nightClips = new List<AudioClip>();
+            List<AudioClip> rewardClips = new List<AudioClip>();
+            List<AudioClip> bossClips = new List<AudioClip>();
+
+            for (int i = 0; i < _allBgmClips.Length; i++)
+            {
+                AudioClip clip = _allBgmClips[i];
+                if (clip == null)
+                {
+                    continue;
+                }
+
+                string clipName = clip.name.ToLowerInvariant();
+                if (IsDayBgmName(clipName))
+                {
+                    dayClips.Add(clip);
+                }
+
+                if (IsNightBgmName(clipName))
+                {
+                    nightClips.Add(clip);
+                }
+
+                if (IsRewardBgmName(clipName))
+                {
+                    rewardClips.Add(clip);
+                }
+
+                if (IsBossBgmName(clipName))
+                {
+                    bossClips.Add(clip);
+                }
+            }
+
+            _dayBgmClips = GetSafeBgmBucket(dayClips);
+            _nightBgmClips = GetSafeBgmBucket(nightClips);
+            _rewardBgmClips = GetSafeBgmBucket(rewardClips);
+            _bossBgmClips = GetSafeBgmBucket(bossClips);
+        }
+
+        private AudioClip[] GetSafeBgmBucket(List<AudioClip> clips)
+        {
+            if (clips == null || clips.Count == 0)
+            {
+                return _allBgmClips;
+            }
+
+            return clips.ToArray();
+        }
+
+        private AudioClip[] GetBgmClipsForPhase(GameRunPhase phase)
+        {
+            switch (phase)
+            {
+                case GameRunPhase.Day:
+                    return _dayBgmClips;
+                case GameRunPhase.Night:
+                    return _nightBgmClips;
+                case GameRunPhase.MorningReward:
+                    return _rewardBgmClips;
+                case GameRunPhase.BossApproach:
+                case GameRunPhase.BossFight:
+                    return _bossBgmClips;
+                default:
+                    return _allBgmClips;
+            }
+        }
+
+        private AudioClip[] GetBgmClipsForKey(string bgmKey)
+        {
+            if (string.IsNullOrEmpty(bgmKey))
+            {
+                return null;
+            }
+
+            string lowerKey = bgmKey.ToLowerInvariant();
+            if (lowerKey.Contains("day") || lowerKey.Contains("dawn"))
+            {
+                return _dayBgmClips;
+            }
+
+            if (lowerKey.Contains("night"))
+            {
+                return _nightBgmClips;
+            }
+
+            if (lowerKey.Contains("reward") || lowerKey.Contains("morning"))
+            {
+                return _rewardBgmClips;
+            }
+
+            if (lowerKey.Contains("boss"))
+            {
+                return _bossBgmClips;
+            }
+
+            return null;
+        }
+
+        private AudioClip SelectRandomBgmClip(AudioClip[] clips)
+        {
+            if (clips == null || clips.Length == 0)
+            {
+                return null;
+            }
+
+            if (clips.Length == 1)
+            {
+                return clips[0];
+            }
+
+            AudioClip selectedClip = clips[Random.Range(0, clips.Length)];
+            if (selectedClip != _currentBgmClip)
+            {
+                return selectedClip;
+            }
+
+            int currentIndex = System.Array.IndexOf(clips, selectedClip);
+            int nextIndex = (currentIndex + 1) % clips.Length;
+            return clips[nextIndex];
+        }
+
+        private bool IsDayBgmName(string clipName)
+        {
+            return clipName.Contains("day")
+                || clipName.Contains("dawn")
+                || clipName.Contains("hearth")
+                || clipName.Contains("vetranatto")
+                || clipName.Contains("cinderkeep_bgm");
+        }
+
+        private bool IsNightBgmName(string clipName)
+        {
+            return clipName.Contains("night")
+                || clipName.Contains("siege")
+                || clipName.Contains("ashes")
+                || clipName.Contains("frostvegr")
+                || clipName.Contains("last ember");
+        }
+
+        private bool IsRewardBgmName(string clipName)
+        {
+            return clipName.Contains("dawn")
+                || clipName.Contains("hearth")
+                || clipName.Contains("last ember");
+        }
+
+        private bool IsBossBgmName(string clipName)
+        {
+            return clipName.Contains("siege")
+                || clipName.Contains("frostvegr")
+                || clipName.Contains("ashes");
         }
 
         private AudioClip LoadSfxClip(string resourcePath)
