@@ -72,6 +72,28 @@ public sealed class EnemyDetector : MonoBehaviour
         }
     }
 
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        _dayDetectorDistance = bossData.DetectorDistance;
+        _nightDetectorDistance = Mathf.Max(_nightDetectorDistance, bossData.DetectorDistance);
+        if (bossData.DetectorInterval > 0f)
+        {
+            _detectionInterval = bossData.DetectorInterval;
+        }
+
+        RefreshDetectorDistance();
+
+        if (isActiveAndEnabled)
+        {
+            StartDetectionRoutine();
+        }
+    }
+
     public void EnableAlertMode()
     {
         if (HasDetectedPlayer)

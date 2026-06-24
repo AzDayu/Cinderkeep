@@ -44,6 +44,27 @@ public sealed class EnemyMovement : MonoBehaviour
         Initialize(enemyData);
     }
 
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        ConnectComponents();
+        _moveSpeed = bossData.MoveSpeed;
+        _stopDistance = bossData.StopDistance;
+        _spawnPosition = transform.position;
+        _wanderTargetPosition = _spawnPosition;
+        ApplyNavMeshAgentSettings();
+        _isInitialized = true;
+    }
+
+    public void Initialize(BossData bossData, EnemyDetector enemyDetector)
+    {
+        Initialize(bossData);
+    }
+
     public void MoveToTarget(Transform targetTransform)
     {
         if (targetTransform == null)

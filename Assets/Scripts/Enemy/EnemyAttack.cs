@@ -35,6 +35,18 @@ public sealed class EnemyAttack : MonoBehaviour
         _attackInterval = enemyData.AttackInterval;
     }
 
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        _attackDamage = bossData.AttackDamage;
+        _cinderHeartAttackDamage = bossData.AttackDamage;
+        _attackInterval = bossData.AttackInterval;
+    }
+
     public bool CanAttack()
     {
         return Time.time >= _lastAttackTime + _attackInterval;

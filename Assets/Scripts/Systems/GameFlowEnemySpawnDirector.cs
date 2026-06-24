@@ -1,4 +1,5 @@
 using Cinderkeep.Gameplay;
+using System;
 using UnityEngine;
 
 // GameFlowController가 알려준 현재 페이즈와 일차를 기준으로 적 스폰 지점들을 지휘합니다.
@@ -11,6 +12,7 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 
     private GameObjectManager _gameObjectManager;
     private EnemyLoopConnector _enemyLoopConnector;
+    private Action<EnemyStatus> _bossDefeatedHandler;
 
     public void Initialize(GameObjectManager gameObjectManager, EnemyLoopConnector enemyLoopConnector)
     {
@@ -21,12 +23,19 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
 
     public void StartSpawn(EnemySpawnMode spawnMode, int day)
     {
+        StartSpawn(spawnMode, day, null);
+    }
+
+    public void StartSpawn(EnemySpawnMode spawnMode, int day, Action<EnemyStatus> bossDefeatedHandler)
+    {
         if (_enemySpawnPoints == null)
         {
             return;
         }
 
+        _bossDefeatedHandler = bossDefeatedHandler;
         EnemySpawnStep spawnStep = GetSpawnStep(spawnMode, day);
+        bool bossSpawnPointAssigned = false;
         for (int i = 0; i < _enemySpawnPoints.Length; i++)
         {
             EnemySpawnPoint spawnPoint = _enemySpawnPoints[i];
@@ -35,8 +44,24 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
                 continue;
             }
 
+            bool shouldActivate = true;
+            if (spawnMode == EnemySpawnMode.Boss)
+            {
+                shouldActivate = bossSpawnPointAssigned == false && spawnPoint.HasBossSpawnCandidate();
+                if (shouldActivate)
+                {
+                    bossSpawnPointAssigned = true;
+                }
+
+                spawnPoint.SetBossDefeatedHandler(_bossDefeatedHandler);
+            }
+            else
+            {
+                spawnPoint.SetBossDefeatedHandler(null);
+            }
+
             spawnPoint.SetSpawnStep(spawnStep);
-            spawnPoint.SetSpawnPointActive(true);
+            spawnPoint.SetSpawnPointActive(shouldActivate);
             spawnPoint.SetSpawnMode(spawnMode, day);
         }
     }
@@ -57,6 +82,8 @@ public sealed class GameFlowEnemySpawnDirector : MonoBehaviour
             }
 
             spawnPoint.SetSpawnPointActive(false);
+            spawnPoint.SetBossDefeatedHandler(null);
+            spawnPoint.ResetBossEncounter();
         }
     }
 

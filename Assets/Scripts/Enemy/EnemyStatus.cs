@@ -11,6 +11,8 @@ public sealed class EnemyStatus : MonoBehaviour
 {
     public static event Action<EnemyStatus> EnemyDamaged;
 
+    public event Action<EnemyStatus> Died;
+
     [Header("Health")]
     [Tooltip("몬스터 최대 체력입니다. EnemyData로 초기화되며, 데이터가 없을 때 fallback 값으로 사용됩니다.")]
     [SerializeField] private float _maxHealth = 1f;
@@ -62,6 +64,16 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         InitializeHealth(enemyData.Health);
+    }
+
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        InitializeHealth(bossData.Health);
     }
 
     public void ResetHealth(float maxHealth)
@@ -159,6 +171,7 @@ public sealed class EnemyStatus : MonoBehaviour
     private void ProcessDeath()
     {
         Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        NotifyDied();
 
         if (_deactivateOnDeath == false)
         {
@@ -166,5 +179,15 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    private void NotifyDied()
+    {
+        if (Died == null)
+        {
+            return;
+        }
+
+        Died(this);
     }
 }

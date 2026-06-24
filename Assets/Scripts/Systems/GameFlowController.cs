@@ -34,6 +34,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private bool _isInitialized;
     private bool _isFlowRunning;
     private bool _isWaitingForCinderHeartSkillSelection;
+    private bool _isBossClearHandled;
     private float _previousTimeScale = 1f;
 
     public bool IsInitialized
@@ -89,6 +90,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
         _gameRunModel.StartRun();
         _isFlowRunning = true;
+        _isBossClearHandled = false;
         StartDay(GameRunModel.FirstDay);
     }
 
@@ -223,12 +225,13 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void StartBossApproach()
     {
+        _isBossClearHandled = false;
         _gameRunModel.SetPhase(GameRunPhase.BossApproach);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(
             GameRunPhase.BossApproach,
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
-        StartEnemySpawn(EnemySpawnMode.Boss);
+        StartBossSpawn();
         PlayPhaseBgm(GameRunPhase.BossApproach);
     }
 
@@ -236,7 +239,6 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     {
         _gameRunModel.SetPhase(GameRunPhase.BossFight);
         _gameRunModel.SetPhaseTime(0f);
-        StartEnemySpawn(EnemySpawnMode.Boss);
         PlayPhaseBgm(GameRunPhase.BossFight);
     }
 
@@ -323,6 +325,16 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         _enemySpawnDirector.StartSpawn(spawnMode, _gameRunModel.Day);
     }
 
+    private void StartBossSpawn()
+    {
+        if (_enemySpawnDirector == null)
+        {
+            return;
+        }
+
+        _enemySpawnDirector.StartSpawn(EnemySpawnMode.Boss, _gameRunModel.Day, HandleBossDefeated);
+    }
+
     private void StopEnemySpawn()
     {
         if (_enemySpawnDirector == null)
@@ -331,6 +343,27 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _enemySpawnDirector.StopSpawn();
+    }
+
+    private void HandleBossDefeated(EnemyStatus enemyStatus)
+    {
+        if (_isBossClearHandled)
+        {
+            return;
+        }
+
+        if (_gameRunModel == null)
+        {
+            return;
+        }
+
+        if (_gameRunModel.Phase != GameRunPhase.BossApproach && _gameRunModel.Phase != GameRunPhase.BossFight)
+        {
+            return;
+        }
+
+        _isBossClearHandled = true;
+        ClearFlow();
     }
 
     private void TryOpenCinderHeartSkillSelection()
