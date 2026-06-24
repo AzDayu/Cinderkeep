@@ -31,6 +31,8 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
     [Tooltip("Tower를 공격 대상으로 찾는 거리입니다.")]
     [SerializeField] private float _towerDetectDistance = 5f;
+    [Tooltip("밤 전용 타겟 우선순위 로직을 사용할지 결정합니다.")]
+    [SerializeField] private bool _isNightTime;
 
     private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
@@ -76,6 +78,10 @@ public sealed class EnemyBrain : MonoBehaviour
         {
             _enemyMovement.StopMoving();
         }
+    }
+    public void SetNightTime(bool isNightTime)
+    {
+        _isNightTime = isNightTime;
     }
 
     // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 외부에서 지정할 때 사용합니다.
@@ -158,6 +164,17 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void RefreshTargets()
     {
+        if (_isNightTime)
+        {
+            RefreshNightTargets();
+            return;
+        }
+
+        RefreshDayTargets();
+    }
+
+    private void RefreshNightTargets()
+    {
         if (TrySetCinderHeartTarget())
         {
             return;
@@ -178,7 +195,21 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
+        ClearAllTargets();
+    }
 
+    private void RefreshDayTargets()
+    {
+        if (TrySetPlayerTargetFromDetector())
+        {
+            return;
+        }
+
+        ClearAllTargets();
+    }
+
+    private void ClearAllTargets()
+    {
         ClearCinderHeartAttackTarget();
         ClearPlayerAttackTarget();
         ClearCurrentBuildingAttackTarget();
@@ -408,6 +439,11 @@ public sealed class EnemyBrain : MonoBehaviour
     private bool CanAttackTarget(GameObject targetObject)
     {
         if (targetObject == null)
+        {
+            return false;
+        }
+
+        if(_isNightTime == false && targetObject.CompareTag(PlayerTag) == false)
         {
             return false;
         }
