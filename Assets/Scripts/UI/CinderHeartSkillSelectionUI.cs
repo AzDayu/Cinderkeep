@@ -5,8 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// CinderHeart 아침 보상 3택을 표시하고 선택 이벤트만 전달하는 UI입니다.
-// 실제 효과 적용은 CinderHeartSkillApplier가 담당하므로, 이 클래스는 표시/버튼 흐름만 관리합니다.
+// CinderHeart 아침 보상 3택을 보여주고 선택 이벤트만 전달하는 UI입니다.
+// 실제 효과 적용은 CinderHeartSkillApplier가 담당하므로 이 클래스는 표시와 버튼 흐름만 관리합니다.
 public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 {
     public static event Action<CinderHeartSkillData> SkillSelectedGlobal;

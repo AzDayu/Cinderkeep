@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-// EnemyBrain에서 쓰는 타깃 선택 전용 유틸입니다.
-// 최근 공격자, 가까운 Damageable처럼 순수 선택 규칙만 계산하고 이동/공격 실행은 담당하지 않습니다.
+// EnemyBrain에서 쓰는 타깃 선택 전용 helper입니다.
+// 최근 공격자나 가까운 Damageable처럼 순수 선택 규칙만 계산하고 이동/공격 실행은 담당하지 않습니다.
 public static class EnemyTargetSelector
 {
     public static Damageable SelectNearestRecentAttacker(

@@ -20,6 +20,7 @@ public static class Cinderkeep526QaReportPanel
     private const int RequiredRewardOptionCount = 3;
     private const int TargetCinderHeartSkillCount = 50;
     private const int MinimumImplementedRewardEffectTypeCount = 10;
+    private const int MinimumReviveRewardCount = 1;
     private const int MinimumRunResultStatCount = 28;
     private static readonly string[] RequiredRunResultStatKeys =
     {
@@ -242,6 +243,8 @@ public static class Cinderkeep526QaReportPanel
                 "recipe type: " + recipeData.Id,
                 GameDataValidationRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
                 recipeData.ResultDataType);
+            isOk &= AppendRecipeResultReferenceCheck(gameDataManager, recipeData, reportBuilder);
+            isOk &= AppendRecipeCostReferenceCheck(gameDataManager, recipeData, reportBuilder);
         }
 
         isOk &= AppendCountCheck(reportBuilder, "live crafting recipe count", liveCount, 1);
@@ -249,10 +252,84 @@ public static class Cinderkeep526QaReportPanel
         return isOk;
     }
 
+    private static bool AppendRecipeResultReferenceCheck(
+        GameDataManager gameDataManager,
+        CraftingRecipeData recipeData,
+        StringBuilder reportBuilder)
+    {
+        if (recipeData == null)
+        {
+            return false;
+        }
+
+        bool hasResultReference = false;
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeResource, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetResource(recipeData.ResultItemId) != null;
+        }
+        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeTool, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetTool(recipeData.ResultItemId) != null;
+        }
+        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeWeapon, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetWeapon(recipeData.ResultItemId) != null;
+        }
+        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeArmor, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetArmor(recipeData.ResultItemId) != null;
+        }
+        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeBuilding, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetBuilding(recipeData.ResultItemId) != null;
+        }
+        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeCinderHeartUpgrade, StringComparison.OrdinalIgnoreCase))
+        {
+            hasResultReference = gameDataManager.GetCinderHeartUpgrade(recipeData.ResultItemId) != null;
+        }
+
+        return AppendCheck(
+            reportBuilder,
+            "recipe result reference: " + recipeData.Id,
+            hasResultReference,
+            recipeData.ResultDataType + "/" + recipeData.ResultItemId);
+    }
+
+    private static bool AppendRecipeCostReferenceCheck(
+        GameDataManager gameDataManager,
+        CraftingRecipeData recipeData,
+        StringBuilder reportBuilder)
+    {
+        if (recipeData == null || recipeData.Costs == null)
+        {
+            return false;
+        }
+
+        bool isOk = true;
+        for (int i = 0; i < recipeData.Costs.Count; i++)
+        {
+            CraftingCostData costData = recipeData.Costs[i];
+            bool hasCostReference = costData != null
+                && costData.Amount > 0
+                && gameDataManager.GetResource(costData.ResourceId) != null;
+
+            isOk &= AppendCheck(
+                reportBuilder,
+                "recipe cost reference: " + recipeData.Id + "[" + i + "]",
+                hasCostReference,
+                costData == null ? "null" : costData.ResourceId + " x" + costData.Amount);
+        }
+
+        return isOk;
+    }
+
     private static bool AppendCinderHeartSkillEffectReport(GameDataManager gameDataManager, StringBuilder reportBuilder)
     {
         int implementedCount = 0;
         int roadmapCount = 0;
+        int reviveRewardCount = 0;
+        int dayOneNormalRewardCount = 0;
+        int dayThreeNormalRewardCount = 0;
         HashSet<string> implementedEffectTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         bool isOk = true;
 
@@ -269,15 +346,51 @@ public static class Cinderkeep526QaReportPanel
             {
                 implementedCount++;
                 implementedEffectTypes.Add(skillData.EffectType);
+
+                bool isReviveReward = string.Equals(
+                    skillData.EffectType,
+                    GameDataValidationRules.RewardEffectPlayerReviveRate,
+                    StringComparison.OrdinalIgnoreCase);
+
+                if (isReviveReward)
+                {
+                    reviveRewardCount++;
+                }
+                else
+                {
+                    if (skillData.RequiredDay <= GameRunModel.FirstDay)
+                    {
+                        dayOneNormalRewardCount++;
+                    }
+
+                    if (skillData.RequiredDay <= 3)
+                    {
+                        dayThreeNormalRewardCount++;
+                    }
+                }
             }
             else
             {
                 roadmapCount++;
             }
+
+            isOk &= AppendCheck(
+                reportBuilder,
+                "cinderheart skill weight: " + skillData.Id,
+                skillData.Weight > 0,
+                skillData.Weight.ToString());
+            isOk &= AppendCheck(
+                reportBuilder,
+                "cinderheart skill required day: " + skillData.Id,
+                skillData.RequiredDay >= GameRunModel.FirstDay,
+                skillData.RequiredDay.ToString());
         }
 
         isOk &= AppendCountCheck(reportBuilder, "implemented CinderHeart reward effect count", implementedCount, TargetCinderHeartSkillCount);
         isOk &= AppendCountCheck(reportBuilder, "implemented CinderHeart effect type variety", implementedEffectTypes.Count, MinimumImplementedRewardEffectTypeCount);
+        isOk &= AppendCountCheck(reportBuilder, "revive-only reward count", reviveRewardCount, MinimumReviveRewardCount);
+        isOk &= AppendCountCheck(reportBuilder, "day 1 normal reward candidate count", dayOneNormalRewardCount, RequiredRewardOptionCount);
+        isOk &= AppendCountCheck(reportBuilder, "day 3 normal reward candidate count", dayThreeNormalRewardCount, RequiredRewardOptionCount);
         isOk &= AppendCheck(reportBuilder, "roadmap CinderHeart reward effect count", roadmapCount == 0, roadmapCount.ToString());
         AppendInfo(reportBuilder, "roadmap CinderHeart reward effect count", roadmapCount.ToString());
         return isOk;

@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
-// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
-    // 변하지 않는 기획 데이터를 JSON에서 읽어 보관하는 매니저입니다.
-    // 적, 도구, 무기, 방어구, 제작법처럼 엑셀에서 JSON으로 옮길 데이터를 이곳에서 관리합니다.
+    // 변하지 않는 JSON 게임 데이터를 로드하고 외부 조회 창구를 제공하는 허브입니다.
+    // 실제 Dictionary 소유권은 기능별 카탈로그가 갖고, 이 클래스는 기존 API 호환과 초기화 순서만 담당합니다.
     public sealed class GameDataManager : MonoBehaviour, IGameInitializable
     {
         [SerializeField] private string _enemyDataResourcePath = GameUtil.EnemyDataResourcePath;
@@ -29,185 +27,111 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private string _bossPatternDataResourcePath = GameUtil.BossPatternDataResourcePath;
         [SerializeField] private string _buildingUpgradeDataResourcePath = GameUtil.BuildingUpgradeDataResourcePath;
 
-        private readonly Dictionary<string, EnemyData> _enemyDataList = new Dictionary<string, EnemyData>();
-        private readonly Dictionary<string, ResourceData> _resourceDataList = new Dictionary<string, ResourceData>();
-        private readonly Dictionary<string, HarvestNodeData> _harvestNodeDataList = new Dictionary<string, HarvestNodeData>();
-        private readonly Dictionary<string, ToolData> _toolDataList = new Dictionary<string, ToolData>();
-        private readonly Dictionary<string, WeaponData> _weaponDataList = new Dictionary<string, WeaponData>();
-        private readonly Dictionary<string, ArmorData> _armorDataList = new Dictionary<string, ArmorData>();
-        private readonly Dictionary<string, BuildingData> _buildingDataList = new Dictionary<string, BuildingData>();
-        private readonly Dictionary<string, CraftingRecipeData> _craftingRecipeDataList = new Dictionary<string, CraftingRecipeData>();
-        private readonly Dictionary<string, CraftingStationData> _craftingStationDataList = new Dictionary<string, CraftingStationData>();
-        private readonly Dictionary<string, SmeltingRecipeData> _smeltingRecipeDataList = new Dictionary<string, SmeltingRecipeData>();
-        private readonly Dictionary<string, EnemySpawnRuleData> _enemySpawnRuleDataList = new Dictionary<string, EnemySpawnRuleData>();
-        private readonly Dictionary<string, GameFlowPhaseData> _gameFlowPhaseDataList = new Dictionary<string, GameFlowPhaseData>();
-        private readonly Dictionary<string, LootDropData> _lootDropDataList = new Dictionary<string, LootDropData>();
-        private readonly Dictionary<string, CinderHeartUpgradeData> _cinderHeartUpgradeDataList = new Dictionary<string, CinderHeartUpgradeData>();
-        private readonly Dictionary<string, CinderHeartSkillData> _cinderHeartSkillDataList = new Dictionary<string, CinderHeartSkillData>();
-        private readonly Dictionary<string, StatusEffectData> _statusEffectDataList = new Dictionary<string, StatusEffectData>();
-        private readonly Dictionary<string, BossData> _bossDataList = new Dictionary<string, BossData>();
-        private readonly Dictionary<string, BossPatternData> _bossPatternDataList = new Dictionary<string, BossPatternData>();
-        private readonly Dictionary<string, BuildingUpgradeData> _buildingUpgradeDataList = new Dictionary<string, BuildingUpgradeData>();
+        private readonly GameResourceDataCatalog _resourceCatalog = new GameResourceDataCatalog();
+        private readonly GameCombatDataCatalog _combatCatalog = new GameCombatDataCatalog();
+        private readonly GameCraftingDataCatalog _craftingCatalog = new GameCraftingDataCatalog();
+        private readonly GameFlowDataCatalog _flowCatalog = new GameFlowDataCatalog();
+        private readonly GameCinderHeartDataCatalog _cinderHeartCatalog = new GameCinderHeartDataCatalog();
         private bool _isInitialized;
-
-        public IReadOnlyDictionary<string, EnemyData> EnemyDataList
-        {
-            get
-            {
-                return _enemyDataList;
-            }
-        }
 
         public bool IsInitialized
         {
-            get
-            {
-                return _isInitialized;
-            }
+            get { return _isInitialized; }
+        }
+
+        public IReadOnlyDictionary<string, EnemyData> EnemyDataList
+        {
+            get { return _combatCatalog.EnemyDataList; }
         }
 
         public IReadOnlyDictionary<string, ResourceData> ResourceDataList
         {
-            get
-            {
-                return _resourceDataList;
-            }
+            get { return _resourceCatalog.ResourceDataList; }
         }
 
         public IReadOnlyDictionary<string, HarvestNodeData> HarvestNodeDataList
         {
-            get
-            {
-                return _harvestNodeDataList;
-            }
+            get { return _resourceCatalog.HarvestNodeDataList; }
         }
 
         public IReadOnlyDictionary<string, ToolData> ToolDataList
         {
-            get
-            {
-                return _toolDataList;
-            }
+            get { return _resourceCatalog.ToolDataList; }
         }
 
         public IReadOnlyDictionary<string, WeaponData> WeaponDataList
         {
-            get
-            {
-                return _weaponDataList;
-            }
+            get { return _combatCatalog.WeaponDataList; }
         }
 
         public IReadOnlyDictionary<string, ArmorData> ArmorDataList
         {
-            get
-            {
-                return _armorDataList;
-            }
+            get { return _combatCatalog.ArmorDataList; }
         }
 
         public IReadOnlyDictionary<string, BuildingData> BuildingDataList
         {
-            get
-            {
-                return _buildingDataList;
-            }
+            get { return _craftingCatalog.BuildingDataList; }
         }
 
         public IReadOnlyDictionary<string, CraftingRecipeData> CraftingRecipeDataList
         {
-            get
-            {
-                return _craftingRecipeDataList;
-            }
+            get { return _craftingCatalog.CraftingRecipeDataList; }
         }
 
         public IReadOnlyDictionary<string, CraftingStationData> CraftingStationDataList
         {
-            get
-            {
-                return _craftingStationDataList;
-            }
+            get { return _craftingCatalog.CraftingStationDataList; }
         }
 
         public IReadOnlyDictionary<string, SmeltingRecipeData> SmeltingRecipeDataList
         {
-            get
-            {
-                return _smeltingRecipeDataList;
-            }
+            get { return _craftingCatalog.SmeltingRecipeDataList; }
         }
 
         public IReadOnlyDictionary<string, EnemySpawnRuleData> EnemySpawnRuleDataList
         {
-            get
-            {
-                return _enemySpawnRuleDataList;
-            }
+            get { return _flowCatalog.EnemySpawnRuleDataList; }
         }
 
         public IReadOnlyDictionary<string, GameFlowPhaseData> GameFlowPhaseDataList
         {
-            get
-            {
-                return _gameFlowPhaseDataList;
-            }
+            get { return _flowCatalog.GameFlowPhaseDataList; }
         }
 
         public IReadOnlyDictionary<string, LootDropData> LootDropDataList
         {
-            get
-            {
-                return _lootDropDataList;
-            }
+            get { return _combatCatalog.LootDropDataList; }
         }
 
         public IReadOnlyDictionary<string, CinderHeartUpgradeData> CinderHeartUpgradeDataList
         {
-            get
-            {
-                return _cinderHeartUpgradeDataList;
-            }
+            get { return _cinderHeartCatalog.CinderHeartUpgradeDataList; }
         }
 
         public IReadOnlyDictionary<string, CinderHeartSkillData> CinderHeartSkillDataList
         {
-            get
-            {
-                return _cinderHeartSkillDataList;
-            }
+            get { return _cinderHeartCatalog.CinderHeartSkillDataList; }
         }
 
         public IReadOnlyDictionary<string, StatusEffectData> StatusEffectDataList
         {
-            get
-            {
-                return _statusEffectDataList;
-            }
+            get { return _combatCatalog.StatusEffectDataList; }
         }
 
         public IReadOnlyDictionary<string, BossData> BossDataList
         {
-            get
-            {
-                return _bossDataList;
-            }
+            get { return _combatCatalog.BossDataList; }
         }
 
         public IReadOnlyDictionary<string, BossPatternData> BossPatternDataList
         {
-            get
-            {
-                return _bossPatternDataList;
-            }
+            get { return _combatCatalog.BossPatternDataList; }
         }
 
         public IReadOnlyDictionary<string, BuildingUpgradeData> BuildingUpgradeDataList
         {
-            get
-            {
-                return _buildingUpgradeDataList;
-            }
+            get { return _craftingCatalog.BuildingUpgradeDataList; }
         }
 
         public void Initialize()
@@ -223,194 +147,192 @@ namespace Cinderkeep.Gameplay
 
         public void LoadEnemyData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<EnemyData, EnemyDataCatalog>(_enemyDataList, resourcePath, "enemy", catalog => catalog.Items);
+            _combatCatalog.LoadEnemyData(resourcePath);
         }
 
         public EnemyData GetEnemy(string id)
         {
-            return GameDataCatalogLookup.GetById(_enemyDataList, id);
+            return _combatCatalog.GetEnemy(id);
         }
 
         public void LoadResourceData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<ResourceData, ResourceDataCatalog>(_resourceDataList, resourcePath, "resource", catalog => catalog.Items);
+            _resourceCatalog.LoadResourceData(resourcePath);
         }
 
         public ResourceData GetResource(string id)
         {
-            return GameDataCatalogLookup.GetById(_resourceDataList, id);
+            return _resourceCatalog.GetResource(id);
         }
 
         public void LoadHarvestNodeData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<HarvestNodeData, HarvestNodeDataCatalog>(_harvestNodeDataList, resourcePath, "harvest node", catalog => catalog.Items);
+            _resourceCatalog.LoadHarvestNodeData(resourcePath);
         }
 
         public HarvestNodeData GetHarvestNode(string id)
         {
-            return GameDataCatalogLookup.GetById(_harvestNodeDataList, id);
+            return _resourceCatalog.GetHarvestNode(id);
         }
 
         public void LoadToolData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<ToolData, ToolDataCatalog>(_toolDataList, resourcePath, "tool", catalog => catalog.Items);
+            _resourceCatalog.LoadToolData(resourcePath);
         }
 
         public ToolData GetTool(string id)
         {
-            return GameDataCatalogLookup.GetById(_toolDataList, id);
+            return _resourceCatalog.GetTool(id);
         }
 
         public void LoadWeaponData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<WeaponData, WeaponDataCatalog>(_weaponDataList, resourcePath, "weapon", catalog => catalog.Items);
+            _combatCatalog.LoadWeaponData(resourcePath);
         }
 
         public WeaponData GetWeapon(string id)
         {
-            return GameDataCatalogLookup.GetById(_weaponDataList, id);
+            return _combatCatalog.GetWeapon(id);
         }
 
         public void LoadArmorData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<ArmorData, ArmorDataCatalog>(_armorDataList, resourcePath, "armor", catalog => catalog.Items);
+            _combatCatalog.LoadArmorData(resourcePath);
         }
 
         public ArmorData GetArmor(string id)
         {
-            return GameDataCatalogLookup.GetById(_armorDataList, id);
+            return _combatCatalog.GetArmor(id);
         }
 
         public void LoadBuildingData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<BuildingData, BuildingDataCatalog>(_buildingDataList, resourcePath, "building", catalog => catalog.Items);
+            _craftingCatalog.LoadBuildingData(resourcePath);
         }
 
         public BuildingData GetBuilding(string id)
         {
-            return GameDataCatalogLookup.GetById(_buildingDataList, id);
+            return _craftingCatalog.GetBuilding(id);
         }
 
         public void LoadCraftingRecipeData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<CraftingRecipeData, CraftingRecipeDataCatalog>(_craftingRecipeDataList, resourcePath, "crafting recipe", catalog => catalog.Items);
+            _craftingCatalog.LoadCraftingRecipeData(resourcePath);
         }
 
         public CraftingRecipeData GetCraftingRecipe(string id)
         {
-            return GameDataCatalogLookup.GetById(_craftingRecipeDataList, id);
+            return _craftingCatalog.GetCraftingRecipe(id);
         }
 
         public void LoadCraftingStationData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<CraftingStationData, CraftingStationDataCatalog>(_craftingStationDataList, resourcePath, "crafting station", catalog => catalog.Items);
+            _craftingCatalog.LoadCraftingStationData(resourcePath);
         }
 
         public CraftingStationData GetCraftingStation(string id)
         {
-            return GameDataCatalogLookup.GetById(_craftingStationDataList, id);
+            return _craftingCatalog.GetCraftingStation(id);
         }
 
         public void LoadSmeltingRecipeData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<SmeltingRecipeData, SmeltingRecipeDataCatalog>(_smeltingRecipeDataList, resourcePath, "smelting recipe", catalog => catalog.Items);
+            _craftingCatalog.LoadSmeltingRecipeData(resourcePath);
         }
 
         public SmeltingRecipeData GetSmeltingRecipe(string id)
         {
-            return GameDataCatalogLookup.GetById(_smeltingRecipeDataList, id);
+            return _craftingCatalog.GetSmeltingRecipe(id);
         }
 
         public void LoadEnemySpawnRuleData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<EnemySpawnRuleData, EnemySpawnRuleDataCatalog>(_enemySpawnRuleDataList, resourcePath, "enemy spawn rule", catalog => catalog.Items);
+            _flowCatalog.LoadEnemySpawnRuleData(resourcePath);
         }
 
         public EnemySpawnRuleData GetEnemySpawnRule(string id)
         {
-            return GameDataCatalogLookup.GetById(_enemySpawnRuleDataList, id);
+            return _flowCatalog.GetEnemySpawnRule(id);
         }
 
         public void LoadGameFlowPhaseData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<GameFlowPhaseData, GameFlowPhaseDataCatalog>(_gameFlowPhaseDataList, resourcePath, "game flow phase", catalog => catalog.Items);
+            _flowCatalog.LoadGameFlowPhaseData(resourcePath);
         }
 
         public GameFlowPhaseData GetGameFlowPhase(string id)
         {
-            return GameDataCatalogLookup.GetById(_gameFlowPhaseDataList, id);
+            return _flowCatalog.GetGameFlowPhase(id);
         }
 
         public void LoadLootDropData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<LootDropData, LootDropDataCatalog>(_lootDropDataList, resourcePath, "loot drop", catalog => catalog.Items);
+            _combatCatalog.LoadLootDropData(resourcePath);
         }
 
         public LootDropData GetLootDrop(string id)
         {
-            return GameDataCatalogLookup.GetById(_lootDropDataList, id);
+            return _combatCatalog.GetLootDrop(id);
         }
 
         public void LoadCinderHeartUpgradeData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<CinderHeartUpgradeData, CinderHeartUpgradeDataCatalog>(_cinderHeartUpgradeDataList, resourcePath, "CinderHeart upgrade", catalog => catalog.Items);
+            _cinderHeartCatalog.LoadCinderHeartUpgradeData(resourcePath);
         }
 
         public CinderHeartUpgradeData GetCinderHeartUpgrade(string id)
         {
-            return GameDataCatalogLookup.GetById(_cinderHeartUpgradeDataList, id);
+            return _cinderHeartCatalog.GetCinderHeartUpgrade(id);
         }
 
         public void LoadCinderHeartSkillData(string resourcePath)
         {
-            // 아침 보상 스킬 목록은 cinderheart_skills.json에서 로드합니다.
-            // 새 보상은 Data 클래스보다 JSON의 _id, effectType, value를 먼저 맞추는 방식으로 추가합니다.
-            GameDataCatalogLoader.LoadCatalog<CinderHeartSkillData, CinderHeartSkillDataCatalog>(_cinderHeartSkillDataList, resourcePath, "CinderHeart skill", catalog => catalog.Items);
+            _cinderHeartCatalog.LoadCinderHeartSkillData(resourcePath);
         }
 
         public CinderHeartSkillData GetCinderHeartSkill(string id)
         {
-            return GameDataCatalogLookup.GetById(_cinderHeartSkillDataList, id);
+            return _cinderHeartCatalog.GetCinderHeartSkill(id);
         }
 
         public void LoadStatusEffectData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<StatusEffectData, StatusEffectDataCatalog>(_statusEffectDataList, resourcePath, "status effect", catalog => catalog.Items);
+            _combatCatalog.LoadStatusEffectData(resourcePath);
         }
 
         public StatusEffectData GetStatusEffect(string id)
         {
-            return GameDataCatalogLookup.GetById(_statusEffectDataList, id);
+            return _combatCatalog.GetStatusEffect(id);
         }
 
         public void LoadBossData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<BossData, BossDataCatalog>(_bossDataList, resourcePath, "boss", catalog => catalog.Items);
+            _combatCatalog.LoadBossData(resourcePath);
         }
 
         public BossData GetBoss(string id)
         {
-            return GameDataCatalogLookup.GetById(_bossDataList, id);
+            return _combatCatalog.GetBoss(id);
         }
 
         public void LoadBossPatternData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<BossPatternData, BossPatternDataCatalog>(_bossPatternDataList, resourcePath, "boss pattern", catalog => catalog.Items);
+            _combatCatalog.LoadBossPatternData(resourcePath);
         }
 
         public BossPatternData GetBossPattern(string id)
         {
-            return GameDataCatalogLookup.GetById(_bossPatternDataList, id);
+            return _combatCatalog.GetBossPattern(id);
         }
 
         public void LoadBuildingUpgradeData(string resourcePath)
         {
-            GameDataCatalogLoader.LoadCatalog<BuildingUpgradeData, BuildingUpgradeDataCatalog>(_buildingUpgradeDataList, resourcePath, "building upgrade", catalog => catalog.Items);
+            _craftingCatalog.LoadBuildingUpgradeData(resourcePath);
         }
 
         public BuildingUpgradeData GetBuildingUpgrade(string id)
         {
-            return GameDataCatalogLookup.GetById(_buildingUpgradeDataList, id);
+            return _craftingCatalog.GetBuildingUpgrade(id);
         }
 
         public string GetEnemyDataResourcePath()
@@ -507,6 +429,5 @@ namespace Cinderkeep.Gameplay
         {
             return _buildingUpgradeDataResourcePath;
         }
-
     }
 }

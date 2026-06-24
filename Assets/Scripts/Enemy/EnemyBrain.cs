@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // 적의 현재 타깃을 정하고 이동/공격 컴포넌트에 실행을 요청하는 AI 흐름 관리자입니다.
-// 감지, 이동, 공격 자체는 EnemyDetector, EnemyMovement, EnemyAttack이 담당합니다.
+// 감지, 이동, 공격, 경로 계산은 전용 컴포넌트/helper가 담당하고 Brain은 우선순위 판단만 유지합니다.
 public sealed class EnemyBrain : MonoBehaviour
 {
     private const string PlayerTag = "Player";
@@ -264,7 +264,7 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
-        if (CanReachTarget(attackerDamageable.transform))
+        if (EnemyPathQuery.CanReachTarget(transform, attackerDamageable.transform, _attackerPath))
         {
             _currentBuildingAttackTarget = null;
             _currentAttackTarget = attackerDamageable;
@@ -320,7 +320,7 @@ public sealed class EnemyBrain : MonoBehaviour
             return false;
         }
 
-        if (IsCinderHeartPathBlocked() == false)
+        if (EnemyPathQuery.IsPathBlocked(transform, _cinderHeartDamageable.transform, _cinderHeartPath) == false)
         {
             ClearCurrentBuildingAttackTarget();
             return false;
@@ -532,134 +532,14 @@ public sealed class EnemyBrain : MonoBehaviour
         return distance <= attackDistance;
     }
 
-    private bool CanReachTarget(Transform targetTransform)
-    {
-        if (targetTransform == null || _attackerPath == null)
-        {
-            return false;
-        }
-
-        NavMeshHit enemyPositionOnNavMesh;
-        if (NavMesh.SamplePosition(transform.position, out enemyPositionOnNavMesh, 2f, NavMesh.AllAreas) == false)
-        {
-            return false;
-        }
-
-        NavMeshHit targetPositionOnNavMesh;
-        if (NavMesh.SamplePosition(targetTransform.position, out targetPositionOnNavMesh, 4f, NavMesh.AllAreas) == false)
-        {
-            return false;
-        }
-
-        bool hasPath = NavMesh.CalculatePath(
-            enemyPositionOnNavMesh.position,
-            targetPositionOnNavMesh.position,
-            NavMesh.AllAreas,
-            _attackerPath);
-
-        if (hasPath == false)
-        {
-            return false;
-        }
-
-        return _attackerPath.status == NavMeshPathStatus.PathComplete;
-    }
-
-    private bool IsCinderHeartPathBlocked()
-    {
-        if (_cinderHeartDamageable == null)
-        {
-            return false;
-        }
-
-        NavMeshHit enemyPositionOnNavMesh;
-        if (NavMesh.SamplePosition(transform.position, out enemyPositionOnNavMesh, 2f, NavMesh.AllAreas) == false)
-        {
-            return false;
-        }
-
-        NavMeshHit cinderHeartPositionOnNavMesh;
-        if (NavMesh.SamplePosition(_cinderHeartDamageable.transform.position, out cinderHeartPositionOnNavMesh, 4f, NavMesh.AllAreas) == false)
-        {
-            return false;
-        }
-
-        bool hasPath = NavMesh.CalculatePath(
-            enemyPositionOnNavMesh.position,
-            cinderHeartPositionOnNavMesh.position,
-            NavMesh.AllAreas,
-            _cinderHeartPath);
-
-        if (hasPath == false)
-        {
-            return true;
-        }
-
-        return _cinderHeartPath.status == NavMeshPathStatus.PathPartial ||
-               _cinderHeartPath.status == NavMeshPathStatus.PathInvalid;
-    }
-
     private BuildingHp FindBlockingBuilding(Vector3 targetPosition)
     {
-        Vector3 direction = targetPosition - transform.position;
-        direction.y = 0f;
-
-        if (direction.sqrMagnitude <= 0.001f)
-        {
-            return null;
-        }
-
-        Vector3 origin = transform.position + Vector3.up * 0.8f;
-
-        RaycastHit[] hits = Physics.SphereCastAll(
-            origin,
+        return EnemyPathQuery.FindBlockingBuilding(
+            transform.position,
+            targetPosition,
             _blockingBuildingDetectRadius,
-            direction.normalized,
             _blockingBuildingDetectDistance,
-            Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore);
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            BuildingHp buildingHp = GetBuildingHpFromCollider(hits[i].collider);
-            if (buildingHp != null)
-            {
-                return buildingHp;
-            }
-        }
-
-        return null;
-    }
-
-    private BuildingHp GetBuildingHpFromCollider(Collider hitCollider)
-    {
-        if (hitCollider == null)
-        {
-            return null;
-        }
-
-        BuildingHp buildingHp = hitCollider.GetComponentInParent<BuildingHp>();
-        if (buildingHp == null)
-        {
-            return null;
-        }
-
-        if (buildingHp.IsDestroyed)
-        {
-            return null;
-        }
-
-        if (hitCollider.CompareTag(BuildTag))
-        {
-            return buildingHp;
-        }
-
-        if (buildingHp.CompareTag(BuildTag))
-        {
-            return buildingHp;
-        }
-
-        return null;
+            BuildTag);
     }
 
     private void ClearPlayerAttackTarget()

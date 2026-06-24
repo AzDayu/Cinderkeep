@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Cinderkeep.Gameplay
 {
-    // 제작 UI 노출, 보상 후보 필터, QA 검증이 함께 사용하는 데이터 구현 기준표입니다.
-    // JSON에 후보가 먼저 들어와도 여기서 구현 가능 여부를 걸러 런타임 환각 상태를 줄입니다.
+    // 제작 UI 노출, 보상 후보 필터, QA 검증이 함께 사용하는 데이터 구현 기준입니다.
+    // JSON 후보가 실제 구현보다 앞서갈 때 플레이어에게 미완성 기능이 노출되지 않게 막습니다.
     public static class GameDataValidationRules
     {
         public const string RecipeResultTypeResource = "Resource";

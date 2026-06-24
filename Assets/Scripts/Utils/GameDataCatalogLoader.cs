@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
-    // GameDataManager의 반복 JSON 로드 과정을 담당하는 공용 로더입니다.
-    // 각 Catalog는 GameDataManager가 소유하고, Resources/JsonUtility/ID 등록 규칙은 여기서 통일합니다.
+    // JSON Resources 로드와 ID 등록 규칙을 모든 데이터 카탈로그에서 공유하는 로더입니다.
+    // 빈 ID와 중복 ID를 경고로 남겨 데이터가 조용히 깨지는 상황을 줄입니다.
     public static class GameDataCatalogLoader
     {
         public static void LoadCatalog<TData, TCatalog>(
