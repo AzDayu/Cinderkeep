@@ -75,6 +75,12 @@ public sealed class FirstPersonToolView : MonoBehaviour
             return;
         }
 
+        if (_playerToolController.CurrentToolDataId == PlayerToolController.HandStoneToolDataId)
+        {
+            SetToolActive(_handView);
+            return;
+        }
+
         GatherToolType currentToolType = _playerToolController.CurrentToolType;
 
         if (currentToolType == GatherToolType.Axe)

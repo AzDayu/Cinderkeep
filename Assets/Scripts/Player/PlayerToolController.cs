@@ -6,6 +6,19 @@ using UnityEngine;
 // 도구의 세부 수치는 tools.json에서 가져오고, 데이터가 없으면 기존 타입만 사용합니다.
 public sealed class PlayerToolController : MonoBehaviour
 {
+    public const string HandStoneToolDataId = "hand_stone";
+
+    private static readonly KeyCode[] QuickSlotKeys =
+    {
+        KeyCode.Alpha1,
+        KeyCode.Alpha2,
+        KeyCode.Alpha3,
+        KeyCode.Alpha4,
+        KeyCode.Alpha5,
+        KeyCode.Alpha6,
+        KeyCode.Alpha7
+    };
+
     [Header("Tool Keys")]
     [Tooltip("도끼를 장착하는 입력 키입니다.")]
     [SerializeField] private KeyCode _axeKey = KeyCode.Alpha1;
@@ -62,7 +75,7 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void Start()
     {
-        SetCurrentToolDataIdByType(_currentToolType);
+        EquipQuickSlot(0);
     }
 
     private void Update()
@@ -74,6 +87,19 @@ public sealed class PlayerToolController : MonoBehaviour
     {
         _currentToolType = toolType;
         SetCurrentToolDataIdByType(toolType);
+    }
+
+    public void EquipToolData(string toolDataId)
+    {
+        if (string.IsNullOrEmpty(toolDataId))
+        {
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
+        _currentToolDataId = toolDataId;
+        ToolData toolData = GetCurrentToolData();
+        _currentToolType = ResolveToolType(toolData, toolDataId);
     }
 
     public bool HasRequiredTool(GatherToolType requiredToolType)
@@ -109,6 +135,66 @@ public sealed class PlayerToolController : MonoBehaviour
 
     private void ReadToolInput()
     {
+        if (TryReadQuickSlotInput())
+        {
+            return;
+        }
+
+        ReadLegacyToolInputIfInventoryIsMissing();
+    }
+
+    private bool TryReadQuickSlotInput()
+    {
+        for (int i = 0; i < QuickSlotKeys.Length; i++)
+        {
+            if (CinderkeepInput.WasKeyPressedThisFrame(QuickSlotKeys[i]) == false)
+            {
+                continue;
+            }
+
+            EquipQuickSlot(i);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void EquipQuickSlot(int slotIndex)
+    {
+        PlayerInventoryModel inventoryModel = GetInventoryModel();
+        if (inventoryModel == null)
+        {
+            EquipLegacySlotFallback(slotIndex);
+            return;
+        }
+
+        InventoryItemModel itemModel = inventoryModel.GetQuickSlotItem(slotIndex);
+        if (itemModel == null || itemModel.IsEmpty || itemModel.ItemType != InventoryItemType.Tool)
+        {
+            EquipTool(GatherToolType.None);
+            return;
+        }
+
+        EquipToolData(itemModel.ItemId);
+    }
+
+    private PlayerInventoryModel GetInventoryModel()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        return GameManager.Inst.PlayerInventoryModel;
+    }
+
+    private void ReadLegacyToolInputIfInventoryIsMissing()
+    {
+        if (GetInventoryModel() != null)
+        {
+            return;
+        }
+
         if (CinderkeepInput.WasKeyPressedThisFrame(_axeKey))
         {
             EquipTool(GatherToolType.Axe);
@@ -125,6 +211,23 @@ public sealed class PlayerToolController : MonoBehaviour
         {
             EquipTool(GatherToolType.None);
         }
+    }
+
+    private void EquipLegacySlotFallback(int slotIndex)
+    {
+        if (slotIndex == 0)
+        {
+            EquipTool(GatherToolType.Axe);
+            return;
+        }
+
+        if (slotIndex == 1)
+        {
+            EquipTool(GatherToolType.Pickaxe);
+            return;
+        }
+
+        EquipTool(GatherToolType.None);
     }
 
     private void SetCurrentToolDataIdByType(GatherToolType toolType)
@@ -152,5 +255,34 @@ public sealed class PlayerToolController : MonoBehaviour
         }
 
         return 1;
+    }
+
+    private GatherToolType ResolveToolType(ToolData toolData, string toolDataId)
+    {
+        if (toolData != null)
+        {
+            GatherToolType parsedToolType;
+            if (System.Enum.TryParse(toolData.ToolType, true, out parsedToolType))
+            {
+                return parsedToolType;
+            }
+        }
+
+        if (toolDataId == HandStoneToolDataId)
+        {
+            return GatherToolType.Axe;
+        }
+
+        if (toolDataId.Contains("pickaxe"))
+        {
+            return GatherToolType.Pickaxe;
+        }
+
+        if (toolDataId.Contains("axe"))
+        {
+            return GatherToolType.Axe;
+        }
+
+        return GatherToolType.None;
     }
 }

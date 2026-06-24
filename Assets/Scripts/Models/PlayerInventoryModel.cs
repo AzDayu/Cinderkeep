@@ -96,6 +96,44 @@ namespace Cinderkeep.Gameplay
             return true;
         }
 
+        public bool TrySetQuickSlotItem(int quickSlotIndex, string itemId, InventoryItemType itemType, int amount)
+        {
+            if (IsQuickSlotIndexValid(quickSlotIndex) == false)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            if (_quickSlots[quickSlotIndex] == null)
+            {
+                _quickSlots[quickSlotIndex] = new InventoryItemModel();
+            }
+
+            _quickSlots[quickSlotIndex].SetItem(itemId, itemType, amount);
+            NotifyInventoryChanged();
+            return true;
+        }
+
+        public void ClearQuickSlot(int quickSlotIndex)
+        {
+            if (IsQuickSlotIndexValid(quickSlotIndex) == false)
+            {
+                return;
+            }
+
+            if (_quickSlots[quickSlotIndex] == null)
+            {
+                _quickSlots[quickSlotIndex] = new InventoryItemModel();
+            }
+
+            _quickSlots[quickSlotIndex].Clear();
+            NotifyInventoryChanged();
+        }
+
         public bool TryMoveInventoryToEquipmentSlot(int inventorySlotIndex, EquipmentSlotType slotType, PlayerEquipmentModel equipmentModel)
         {
             if (equipmentModel == null)

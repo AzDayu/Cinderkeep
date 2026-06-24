@@ -242,6 +242,8 @@ namespace Cinderkeep.Gameplay
             {
                 _uiManager.OpenHud();
             }
+
+            global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
         }
 
         private void ResetRunState()
@@ -255,6 +257,7 @@ namespace Cinderkeep.Gameplay
 
             InitializeRuntimeModels();
             ResetCinderHeartState();
+            global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
 
             if (_uiManager != null)
             {
