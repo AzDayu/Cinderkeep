@@ -70,6 +70,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5296987934533457078}
+    - targetCorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 732001001010001111}
+    - targetCorrespondingSourceObject: {fileID: 109708, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 732001001010001112}
   m_SourcePrefab: {fileID: 100100000, guid: 49e86d56904ce434e84ead31c131cfbc, type: 3}
 --- !u!1 &2905516811528519344 stripped
 GameObject:
@@ -91,7 +97,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -123,3 +129,32 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
+--- !u!114 &732001001010001111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905516811528519344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 347c56830707491186d4af53ddc2043e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TrapCrowdControlReporter
+  _scoreMultiplier: 1
+--- !u!114 &732001001010001112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2905516811528519344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5912035c58f04849957b5d46b53672e9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TrapSlowZone
+  _speedMultiplier: 0.5
+  _slowDurationSeconds: 2.5
+  _reapplyCooldownSeconds: 1.2
+  _crowdControlReporter: {fileID: 732001001010001111}

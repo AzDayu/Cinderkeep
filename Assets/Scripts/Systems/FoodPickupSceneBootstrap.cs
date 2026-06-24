@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // 순록 드롭이 붙기 전까지 생고기 테스트 픽업을 배치합니다.
-// 매일 아침 다시 활성화해 음식/가열/섭취 루프를 검증할 수 있게 합니다.
+// 매일 아침 다시 활성화해 음식/가열/섭취 루프를 Check할 수 있게 합니다.
 public static class FoodPickupSceneBootstrap
 {
     private const string RootName = "FoodPickups_5_11";

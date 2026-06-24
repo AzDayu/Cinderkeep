@@ -3,7 +3,7 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // CinderHeart 보상 선택 결과를 실제 플레이어/CinderHeart 수치에 적용합니다.
-// 적용 가능한 EffectType 기준은 GameDataValidationRules와 공유해 데이터 검증과 런타임 처리가 갈라지지 않게 합니다.
+// 적용 가능한 EffectType 기준은 GameDataCheckRules와 공유해 데이터 Check과 런타임 처리가 갈라지지 않게 합니다.
 public sealed class CinderHeartSkillApplier : MonoBehaviour
 {
     [SerializeField] private CinderHeart _cinderHeart;
@@ -25,67 +25,67 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
 
         ConnectTargetsIfNeeded();
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectCinderHeartAttackDamageAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartAttackDamageAdd))
         {
             ApplyCinderHeartAttackDamageAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectCinderHeartMaxHealthAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartMaxHealthAdd))
         {
             ApplyCinderHeartMaxHealthAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectCinderHeartHealFlat))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartHealFlat))
         {
             ApplyCinderHeartHealFlat(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectCinderHeartHealRate))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectCinderHeartHealRate))
         {
             ApplyCinderHeartHealRate(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerHealRate))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerHealRate))
         {
             ApplyPlayerHealRate(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerReviveRate))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerReviveRate))
         {
             ApplyPlayerReviveRate(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerMaxHealthAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxHealthAdd))
         {
             ApplyPlayerMaxHealthAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerMaxStaminaAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxStaminaAdd))
         {
             ApplyPlayerMaxStaminaAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerStaminaRecoveryAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerStaminaRecoveryAdd))
         {
             ApplyPlayerStaminaRecoveryAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerMaxSatietyAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerMaxSatietyAdd))
         {
             ApplyPlayerMaxSatietyAdd(skillData.Value);
             return;
         }
 
-        if (IsEffectType(skillData, GameDataValidationRules.RewardEffectPlayerAttackDamageAdd))
+        if (IsEffectType(skillData, GameDataCheckRules.RewardEffectPlayerAttackDamageAdd))
         {
             ApplyPlayerAttackDamageAdd(skillData.Value);
             return;

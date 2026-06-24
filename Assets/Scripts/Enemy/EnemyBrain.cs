@@ -12,27 +12,27 @@ public sealed class EnemyBrain : MonoBehaviour
     private const float DecisionInterval = 0.2f;
     private const int MaxTowerOverlapCount = 20;
 
-    [Tooltip("Player detection component.")]
+    [Tooltip("플레이어 감지와 야간 감지 모드를 담당하는 컴포넌트입니다.")]
     [SerializeField] private EnemyDetector _enemyDetector;
-    [Tooltip("Enemy attack executor.")]
+    [Tooltip("현재 선택된 타깃에게 피해를 적용하는 공격 컴포넌트입니다.")]
     [SerializeField] private EnemyAttack _enemyAttack;
-    [Tooltip("Enemy movement executor.")]
+    [Tooltip("현재 타깃 위치로 이동하거나 멈추는 이동 컴포넌트입니다.")]
     [SerializeField] private EnemyMovement _enemyMovement;
-    [Tooltip("Fallback CinderHeart attack target.")]
+    [Tooltip("밤과 보스 페이즈에서 최종 목표로 삼는 CinderHeart Damageable입니다.")]
     [SerializeField] private Damageable _cinderHeartDamageable;
-    [Tooltip("Attack distance for players and buildings.")]
+    [Tooltip("플레이어와 건축물을 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _attackDistance = 2.3f;
-    [Tooltip("Attack distance for CinderHeart.")]
+    [Tooltip("CinderHeart를 공격할 수 있는 거리입니다.")]
     [SerializeField] private float _cinderHeartAttackDistance = 3f;
-    [Tooltip("Distance used to find a building blocking the current path.")]
+    [Tooltip("CinderHeart 경로를 막는 건축물을 찾을 거리입니다.")]
     [SerializeField] private float _blockingBuildingDetectDistance = 5f;
-    [Tooltip("Radius used to find a building blocking the current path.")]
+    [Tooltip("막고 있는 건축물을 찾을 때 사용하는 감지 반경입니다.")]
     [SerializeField] private float _blockingBuildingDetectRadius = 1f;
-    [Tooltip("Night-only distance for finding nearby towers.")]
+    [Tooltip("밤에 주변 타워를 보복 타깃으로 찾을 거리입니다.")]
     [SerializeField] private float _towerDetectDistance = 5f;
-    [Tooltip("Seconds to remember the most recent attacker.")]
+    [Tooltip("최근에 자신을 공격한 플레이어/타워를 기억하는 시간입니다.")]
     [SerializeField] private float _attackerMemoryDuration = 7f;
-    [Tooltip("Whether the enemy should use night detection and target priority.")]
+    [Tooltip("true이면 밤 우선순위: 공격자 -> 플레이어 -> 길막 건축물 -> CinderHeart 순서를 사용합니다.")]
     [SerializeField] private bool _isNightTime;
 
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];

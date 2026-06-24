@@ -2,10 +2,8 @@ using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
-// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 플레이어의 체력, 스태미나, 포만도를 관리하는 컴포넌트입니다.
-// 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산과 사망 처리만 담당합니다.
+// 이동 입력, 퀵슬롯, 전투, HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산과 사망/부활 처리만 담당합니다.
 public sealed class PlayerStatus : MonoBehaviour
 {
     [Header("Health")]
@@ -78,6 +76,7 @@ public sealed class PlayerStatus : MonoBehaviour
             return _stamina;
         }
     }
+
     public float MaxStamina
     {
         get

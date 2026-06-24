@@ -5,15 +5,15 @@ using Cinderkeep.Gameplay;
 using UnityEditor;
 using UnityEngine;
 
-// 에디터에서 씬 세팅, 검증, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
-// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 QA 확인을 줄이는 데 사용합니다.
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 public static class Cinderkeep500ControlPanel
 {
     private const string MenuRoot = "Cinderkeep/5.00 Control Panel/";
-    private const string ReportPath = "Temp/Cinderkeep_5_00_ValidationReport.txt";
+    private const string ReportPath = "Temp/Cinderkeep_5_00_CheckReport.txt";
 
-    [MenuItem(MenuRoot + "Run Full 5.00 Validation")]
-    public static void RunFullValidation()
+    [MenuItem(MenuRoot + "Run Full 5.00 Check")]
+    public static void RunFullCheck()
     {
         StringBuilder reportBuilder = new StringBuilder();
         bool isDataOk = RunDataJsonCheckInternal(reportBuilder);
@@ -23,11 +23,11 @@ public static class Cinderkeep500ControlPanel
 
         if (isOk)
         {
-            Debug.Log("[Cinderkeep 5.00] Full validation passed.\n" + reportBuilder);
+            Debug.Log("[Cinderkeep 5.00] Full check passed.\n" + reportBuilder);
             return;
         }
 
-        Debug.LogWarning("[Cinderkeep 5.00] Full validation found issues.\n" + reportBuilder);
+        Debug.LogWarning("[Cinderkeep 5.00] Full check found issues.\n" + reportBuilder);
     }
 
     [MenuItem(MenuRoot + "Data JSON Check")]
@@ -84,14 +84,14 @@ public static class Cinderkeep500ControlPanel
         Debug.Log("[Cinderkeep 5.00] Debug resources added.");
     }
 
-    [MenuItem(MenuRoot + "Generate Validation Report")]
-    public static void GenerateValidationReport()
+    [MenuItem(MenuRoot + "Generate Check Report")]
+    public static void GenerateCheckReport()
     {
         StringBuilder reportBuilder = new StringBuilder();
         RunDataJsonCheckInternal(reportBuilder);
         RunSceneWiringCheckInternal(reportBuilder);
         WriteReport(reportBuilder);
-        Debug.Log("[Cinderkeep 5.00] Validation report generated: " + ReportPath);
+        Debug.Log("[Cinderkeep 5.00] Check report generated: " + ReportPath);
     }
 
     private static bool RunDataJsonCheckInternal(StringBuilder reportBuilder)

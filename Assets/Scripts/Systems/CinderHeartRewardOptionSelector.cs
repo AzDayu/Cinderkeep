@@ -85,7 +85,7 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType);
+            return GameDataCheckRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType);
         }
 
         private void AddRequiredReviveRewardIfNeeded(
@@ -142,7 +142,7 @@ namespace Cinderkeep.Gameplay
             for (int i = 0; i < _fallbackSkillIds.Length && skillOptions.Count < _optionCount; i++)
             {
                 CinderHeartSkillData skillData = gameDataManager.GetCinderHeartSkill(_fallbackSkillIds[i]);
-                if (skillData != null && GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
+                if (skillData != null && GameDataCheckRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
                 {
                     skillOptions.Add(skillData);
                 }
@@ -154,7 +154,7 @@ namespace Cinderkeep.Gameplay
             return skillData != null
                 && string.Equals(
                     skillData.EffectType,
-                    GameDataValidationRules.RewardEffectPlayerReviveRate,
+                    GameDataCheckRules.RewardEffectPlayerReviveRate,
                     StringComparison.OrdinalIgnoreCase);
         }
     }

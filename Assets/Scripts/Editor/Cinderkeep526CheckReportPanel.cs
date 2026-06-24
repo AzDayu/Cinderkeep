@@ -8,14 +8,14 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// 5.26 QA 메뉴는 3일차 닫힌 루프에 필요한 씬, 데이터, UI, 보스 연결 상태를 한 번에 보고합니다.
+// 5.26 Check 메뉴는 3일차 닫힌 루프에 필요한 씬, 데이터, UI, 보스 연결 상태를 한 번에 보고합니다.
 // 자동 수정은 하지 않고, 팀장이 main 푸쉬 전 위험 지점을 빠르게 확인하는 읽기 전용 도구입니다.
-public static class Cinderkeep526QaReportPanel
+public static class Cinderkeep526CheckReportPanel
 {
-    private const string MenuRoot = "Cinderkeep/5.26 QA Report/";
+    private const string MenuRoot = "Cinderkeep/5.26 Check Report/";
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
     private const string DataFolderPath = "Assets/Resources/Cinderkeep/data";
-    private const string ReportPath = "Temp/Cinderkeep_5_26_AutoQaReport.txt";
+    private const string ReportPath = "Temp/Cinderkeep_5_26_CheckReport.txt";
     private const int RequiredQuickSlotCount = 7;
     private const int RequiredRewardOptionCount = 3;
     private const int TargetCinderHeartSkillCount = 50;
@@ -54,21 +54,21 @@ public static class Cinderkeep526QaReportPanel
         "selected_cinderheart_skills"
     };
 
-    [MenuItem(MenuRoot + "Run Full 5.26 QA Report")]
-    public static void RunFullQaReport()
+    [MenuItem(MenuRoot + "Run Full 5.26 Check Report")]
+    public static void RunFullCheckReport()
     {
         Scene scene = OpenTargetScene();
         StringBuilder reportBuilder = new StringBuilder();
-        bool isOk = RunFullQaReport(scene, reportBuilder);
+        bool isOk = RunFullCheckReport(scene, reportBuilder);
         WriteReport(reportBuilder);
 
         if (isOk)
         {
-            Debug.Log("[Cinderkeep 5.26] QA report passed: " + ReportPath + "\n" + reportBuilder);
+            Debug.Log("[Cinderkeep 5.26] check report passed: " + ReportPath + "\n" + reportBuilder);
             return;
         }
 
-        Debug.LogWarning("[Cinderkeep 5.26] QA report found issues: " + ReportPath + "\n" + reportBuilder);
+        Debug.LogWarning("[Cinderkeep 5.26] check report found issues: " + ReportPath + "\n" + reportBuilder);
     }
 
     [MenuItem(MenuRoot + "Generate Report Only")]
@@ -76,31 +76,32 @@ public static class Cinderkeep526QaReportPanel
     {
         Scene scene = OpenTargetScene();
         StringBuilder reportBuilder = new StringBuilder();
-        RunFullQaReport(scene, reportBuilder);
+        RunFullCheckReport(scene, reportBuilder);
         WriteReport(reportBuilder);
-        Debug.Log("[Cinderkeep 5.26] QA report generated: " + ReportPath);
+        Debug.Log("[Cinderkeep 5.26] check report generated: " + ReportPath);
     }
 
-    private static bool RunFullQaReport(Scene scene, StringBuilder reportBuilder)
+    private static bool RunFullCheckReport(Scene scene, StringBuilder reportBuilder)
     {
         bool isOk = true;
-        reportBuilder.AppendLine("[Cinderkeep 5.26 Auto QA Report]");
+        reportBuilder.AppendLine("[Cinderkeep 5.26 Check Report]");
         reportBuilder.AppendLine("Scene: " + scene.path);
         reportBuilder.AppendLine("Generated: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         reportBuilder.AppendLine();
 
         isOk &= RunSceneWiringReport(scene, reportBuilder);
         isOk &= RunRequiredUiReport(scene, reportBuilder);
-        isOk &= RunDataValidationReport(reportBuilder);
+        isOk &= RunDataCheckReport(reportBuilder);
         isOk &= RunBuildingUpgradeReport(reportBuilder);
         isOk &= RunJsonShapeReport(reportBuilder);
         isOk &= RunPrefabKeyReport(reportBuilder);
+        isOk &= RunPrefabComponentReport(reportBuilder);
         isOk &= RunMaterialKeyReport(reportBuilder);
         isOk &= RunBossClearFlowReport(scene, reportBuilder);
         isOk &= RunRunResultReport(scene, reportBuilder);
 
         reportBuilder.AppendLine();
-        reportBuilder.AppendLine(isOk ? "[PASS] 5.26 QA 기준 통과" : "[CHECK] 5.26 QA 기준에서 확인 필요");
+        reportBuilder.AppendLine(isOk ? "[PASS] 5.26 Check 기준 통과" : "[CHECK] 5.26 Check 기준에서 확인 필요");
         return isOk;
     }
 
@@ -188,9 +189,9 @@ public static class Cinderkeep526QaReportPanel
         return isOk;
     }
 
-    private static bool RunDataValidationReport(StringBuilder reportBuilder)
+    private static bool RunDataCheckReport(StringBuilder reportBuilder)
     {
-        reportBuilder.AppendLine("[Data Validation]");
+        reportBuilder.AppendLine("[Data Check]");
         GameObject tempObject = new GameObject("Temp_5_26_GameDataManager_Check");
         GameDataManager gameDataManager = tempObject.AddComponent<GameDataManager>();
         try
@@ -236,7 +237,7 @@ public static class Cinderkeep526QaReportPanel
                 continue;
             }
 
-            if (GameDataValidationRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType))
+            if (GameDataCheckRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType))
             {
                 liveCount++;
             }
@@ -248,7 +249,7 @@ public static class Cinderkeep526QaReportPanel
             isOk &= AppendCheck(
                 reportBuilder,
                 "recipe type: " + recipeData.Id,
-                GameDataValidationRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
+                GameDataCheckRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
                 recipeData.ResultDataType);
             isOk &= AppendRecipeResultReferenceCheck(gameDataManager, recipeData, reportBuilder);
             isOk &= AppendRecipeCostReferenceCheck(gameDataManager, recipeData, reportBuilder);
@@ -270,27 +271,27 @@ public static class Cinderkeep526QaReportPanel
         }
 
         bool hasResultReference = false;
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeResource, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeResource, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetResource(recipeData.ResultItemId) != null;
         }
-        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeTool, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeTool, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetTool(recipeData.ResultItemId) != null;
         }
-        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeWeapon, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeWeapon, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetWeapon(recipeData.ResultItemId) != null;
         }
-        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeArmor, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeArmor, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetArmor(recipeData.ResultItemId) != null;
         }
-        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeBuilding, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeBuilding, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetBuilding(recipeData.ResultItemId) != null;
         }
-        else if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeCinderHeartUpgrade, StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeCinderHeartUpgrade, StringComparison.OrdinalIgnoreCase))
         {
             hasResultReference = gameDataManager.GetCinderHeartUpgrade(recipeData.ResultItemId) != null;
         }
@@ -349,14 +350,14 @@ public static class Cinderkeep526QaReportPanel
                 continue;
             }
 
-            if (GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
+            if (GameDataCheckRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
             {
                 implementedCount++;
                 implementedEffectTypes.Add(skillData.EffectType);
 
                 bool isReviveReward = string.Equals(
                     skillData.EffectType,
-                    GameDataValidationRules.RewardEffectPlayerReviveRate,
+                    GameDataCheckRules.RewardEffectPlayerReviveRate,
                     StringComparison.OrdinalIgnoreCase);
 
                 if (isReviveReward)
@@ -750,6 +751,80 @@ public static class Cinderkeep526QaReportPanel
         }
     }
 
+    private static bool RunPrefabComponentReport(StringBuilder reportBuilder)
+    {
+        reportBuilder.AppendLine("[Prefab Component Check]");
+        GameObject tempObject = new GameObject("Temp_5_26_PrefabComponent_Check");
+        GameDataManager gameDataManager = tempObject.AddComponent<GameDataManager>();
+        try
+        {
+            gameDataManager.Initialize();
+            bool isOk = true;
+
+            foreach (KeyValuePair<string, BossData> pair in gameDataManager.BossDataList)
+            {
+                BossData bossData = pair.Value;
+                if (bossData == null)
+                {
+                    isOk &= AppendCheck(reportBuilder, "boss prefab component: " + pair.Key, false, "null");
+                    continue;
+                }
+
+                isOk &= AppendPrefabHasComponentCheck<EnemyStatus>(reportBuilder, "boss EnemyStatus: " + bossData.Id, bossData.PrefabKey);
+                isOk &= AppendPrefabHasComponentCheck<EnemyMovement>(reportBuilder, "boss EnemyMovement: " + bossData.Id, bossData.PrefabKey);
+                isOk &= AppendPrefabHasComponentCheck<EnemyDetector>(reportBuilder, "boss EnemyDetector: " + bossData.Id, bossData.PrefabKey);
+                isOk &= AppendPrefabHasComponentCheck<EnemyAttack>(reportBuilder, "boss EnemyAttack: " + bossData.Id, bossData.PrefabKey);
+                isOk &= AppendPrefabHasComponentCheck<EnemyBrain>(reportBuilder, "boss EnemyBrain: " + bossData.Id, bossData.PrefabKey);
+                isOk &= AppendPrefabHasComponentCheck<Damageable>(reportBuilder, "boss Damageable: " + bossData.Id, bossData.PrefabKey);
+            }
+
+            foreach (KeyValuePair<string, BuildingData> pair in gameDataManager.BuildingDataList)
+            {
+                BuildingData buildingData = pair.Value;
+                if (buildingData == null)
+                {
+                    isOk &= AppendCheck(reportBuilder, "building prefab component: " + pair.Key, false, "null");
+                    continue;
+                }
+
+                isOk &= AppendPrefabHasComponentCheck<BuildingHp>(reportBuilder, "building BuildingHp: " + buildingData.Id, buildingData.PrefabKey);
+
+                if (string.Equals(buildingData.BuildingType, "Tower", StringComparison.OrdinalIgnoreCase))
+                {
+                    isOk &= AppendPrefabHasComponentCheck<BuildingTower>(reportBuilder, "tower BuildingTower: " + buildingData.Id, buildingData.PrefabKey);
+                    isOk &= AppendPrefabHasComponentCheck<TowerTargeting>(reportBuilder, "tower TowerTargeting: " + buildingData.Id, buildingData.PrefabKey);
+                    isOk &= AppendPrefabHasComponentCheck<TowerAttack>(reportBuilder, "tower TowerAttack: " + buildingData.Id, buildingData.PrefabKey);
+                    isOk &= AppendPrefabHasComponentCheck<DamageDealer>(reportBuilder, "tower DamageDealer: " + buildingData.Id, buildingData.PrefabKey);
+                }
+                else if (string.Equals(buildingData.BuildingType, "Trap", StringComparison.OrdinalIgnoreCase))
+                {
+                    isOk &= AppendPrefabHasComponentCheck<TrapCrowdControlReporter>(reportBuilder, "trap reporter: " + buildingData.Id, buildingData.PrefabKey);
+                    isOk &= AppendPrefabHasComponentCheck<TrapSlowZone>(reportBuilder, "trap slow zone: " + buildingData.Id, buildingData.PrefabKey);
+                    isOk &= AppendPrefabHasTriggerColliderCheck(reportBuilder, "trap trigger collider: " + buildingData.Id, buildingData.PrefabKey);
+                }
+            }
+
+            foreach (KeyValuePair<string, HarvestNodeData> pair in gameDataManager.HarvestNodeDataList)
+            {
+                HarvestNodeData nodeData = pair.Value;
+                if (nodeData == null)
+                {
+                    isOk &= AppendCheck(reportBuilder, "harvest prefab component: " + pair.Key, false, "null");
+                    continue;
+                }
+
+                isOk &= AppendPrefabHasComponentCheck<ResourceNode>(reportBuilder, "harvest ResourceNode: " + nodeData.Id, nodeData.PrefabKey);
+            }
+
+            reportBuilder.AppendLine();
+            return isOk;
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(tempObject);
+        }
+    }
+
     private static bool RunBossClearFlowReport(Scene scene, StringBuilder reportBuilder)
     {
         reportBuilder.AppendLine("[Boss / ClearFlow Check]");
@@ -758,18 +833,26 @@ public static class Cinderkeep526QaReportPanel
         GameFlowEnemySpawnDirector enemySpawnDirector = FindComponentByName<GameFlowEnemySpawnDirector>(scene, "GameFlowEnemySpawnDirector");
         List<EnemySpawnPoint> spawnPoints = FindComponentsInScene<EnemySpawnPoint>(scene);
         int bossCandidateCount = 0;
+        int dedicatedBossPrefabReferenceCount = 0;
 
         for (int i = 0; i < spawnPoints.Count; i++)
         {
-            if (spawnPoints[i] != null && spawnPoints[i].HasBossSpawnCandidate())
+            EnemySpawnPoint spawnPoint = spawnPoints[i];
+            if (spawnPoint != null && spawnPoint.HasBossSpawnCandidate())
             {
                 bossCandidateCount++;
+            }
+
+            if (HasSerializedObjectReference(spawnPoint, "_bossEnemyPrefab"))
+            {
+                dedicatedBossPrefabReferenceCount++;
             }
         }
 
         isOk &= AppendComponentCheck(reportBuilder, "GameFlowController", gameFlowController);
         isOk &= AppendComponentCheck(reportBuilder, "GameFlowEnemySpawnDirector", enemySpawnDirector);
         isOk &= AppendCountCheck(reportBuilder, "boss spawn candidate count", bossCandidateCount, 1);
+        isOk &= AppendCountCheck(reportBuilder, "dedicated boss prefab reference count", dedicatedBossPrefabReferenceCount, 1);
         isOk &= AppendCheck(reportBuilder, "Boss death -> ClearFlow", gameFlowController != null && enemySpawnDirector != null, "GameFlowController.HandleBossDefeated 연결 구조 확인");
         reportBuilder.AppendLine();
         return isOk;
@@ -830,31 +913,86 @@ public static class Cinderkeep526QaReportPanel
 
     private static bool AppendPrefabKeyCheck(StringBuilder reportBuilder, string label, string prefabKey)
     {
-        string[] guids = AssetDatabase.FindAssets(prefabKey + " t:Prefab", new[] { "Assets" });
-        string exactPath = "";
-        string firstSimilarPath = "";
+        string firstSimilarPath;
+        string exactPath = FindExactPrefabPath(prefabKey, out firstSimilarPath);
 
-        if (guids != null)
+        bool isOk = string.IsNullOrEmpty(exactPath) == false;
+        string detail = isOk ? exactPath : string.IsNullOrEmpty(firstSimilarPath) ? prefabKey : "similar only: " + firstSimilarPath;
+        return AppendCheck(reportBuilder, label, isOk, detail);
+    }
+
+    private static bool AppendPrefabHasComponentCheck<TComponent>(
+        StringBuilder reportBuilder,
+        string label,
+        string prefabKey)
+        where TComponent : Component
+    {
+        string assetPath = FindExactPrefabPath(prefabKey, out _);
+        GameObject prefabObject = string.IsNullOrEmpty(assetPath)
+            ? null
+            : AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        TComponent component = prefabObject == null ? null : prefabObject.GetComponentInChildren<TComponent>(true);
+        return AppendCheck(reportBuilder, label, component != null, string.IsNullOrEmpty(assetPath) ? prefabKey : assetPath);
+    }
+
+    private static bool AppendPrefabHasTriggerColliderCheck(
+        StringBuilder reportBuilder,
+        string label,
+        string prefabKey)
+    {
+        string assetPath = FindExactPrefabPath(prefabKey, out _);
+        GameObject prefabObject = string.IsNullOrEmpty(assetPath)
+            ? null
+            : AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        Collider[] colliders = prefabObject == null ? null : prefabObject.GetComponentsInChildren<Collider>(true);
+        bool hasTriggerCollider = false;
+
+        if (colliders != null)
         {
-            for (int i = 0; i < guids.Length; i++)
+            for (int i = 0; i < colliders.Length; i++)
             {
-                string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
-                if (string.IsNullOrEmpty(firstSimilarPath))
+                if (colliders[i] != null && colliders[i].isTrigger)
                 {
-                    firstSimilarPath = assetPath;
-                }
-
-                if (string.Equals(Path.GetFileNameWithoutExtension(assetPath), prefabKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    exactPath = assetPath;
+                    hasTriggerCollider = true;
                     break;
                 }
             }
         }
 
-        bool isOk = string.IsNullOrEmpty(exactPath) == false;
-        string detail = isOk ? exactPath : string.IsNullOrEmpty(firstSimilarPath) ? prefabKey : "similar only: " + firstSimilarPath;
-        return AppendCheck(reportBuilder, label, isOk, detail);
+        return AppendCheck(reportBuilder, label, hasTriggerCollider, string.IsNullOrEmpty(assetPath) ? prefabKey : assetPath);
+    }
+
+    private static string FindExactPrefabPath(string prefabKey, out string firstSimilarPath)
+    {
+        firstSimilarPath = "";
+        string exactPath = "";
+        if (string.IsNullOrEmpty(prefabKey))
+        {
+            return exactPath;
+        }
+
+        string[] guids = AssetDatabase.FindAssets(prefabKey + " t:Prefab", new[] { "Assets" });
+        if (guids == null)
+        {
+            return exactPath;
+        }
+
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+            if (string.IsNullOrEmpty(firstSimilarPath))
+            {
+                firstSimilarPath = assetPath;
+            }
+
+            if (string.Equals(Path.GetFileNameWithoutExtension(assetPath), prefabKey, StringComparison.OrdinalIgnoreCase))
+            {
+                exactPath = assetPath;
+                break;
+            }
+        }
+
+        return exactPath;
     }
 
     private static bool AppendMaterialKeyCheck(StringBuilder reportBuilder, string label, string materialKey)
@@ -999,6 +1137,12 @@ public static class Cinderkeep526QaReportPanel
 
         SerializedObject serializedObject = new SerializedObject(targetObject);
         return serializedObject.FindProperty(propertyName);
+    }
+
+    private static bool HasSerializedObjectReference(UnityEngine.Object targetObject, string propertyName)
+    {
+        SerializedProperty property = GetSerializedProperty(targetObject, propertyName);
+        return property != null && property.objectReferenceValue != null;
     }
 
     private static TComponent FindComponentByName<TComponent>(Scene scene, string objectName)

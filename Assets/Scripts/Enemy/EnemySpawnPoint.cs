@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 // 씬의 EnemySpawnPoint 한 곳을 담당합니다.
-// 일반 웨이브는 연결된 적 프리팹을 쓰고, 3일차 보스는 프리팹이 비어도 런타임 fallback으로 닫힌 루프를 유지합니다.
+// 일반 웨이브는 단계별 적 프리팹을 쓰고, 3일차 보스는 전용 보스 프리팹을 우선 사용합니다.
 public enum EnemySpawnStep
 {
     Step1 = 1, // 1단계: 기본 몬스터 후보
@@ -27,7 +27,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private EnemyLoopConnector _enemyLoopConnector;
 
     [Header("Spawn Point")]
-    [Tooltip("스폰 지점을 구분하기 위한 번호입니다. 디버그와 QA 기록용입니다.")]
+    [Tooltip("스폰 지점을 구분하기 위한 번호입니다. 로그와 Check 리포트에서 사용합니다.")]
     [SerializeField] private int _spawnPointId;
     [Tooltip("현재 이 스폰 지점이 적을 생성할 수 있는지 결정합니다.")]
     [SerializeField] private bool _isActive = true;
@@ -43,8 +43,13 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private string _step3EnemyDataId = "ice_zombie";
 
     [Header("Boss")]
+    [Tooltip("bosses.json에서 읽을 보스 데이터 ID입니다.")]
     [SerializeField] private string _bossDataId = DefaultBossDataId;
+    [Tooltip("3일차 보스 모드에서 우선 생성할 전용 보스 프리팹입니다.")]
+    [SerializeField] private GameObject _bossEnemyPrefab;
+    [Tooltip("보스 생성 직후 적용할 체감 크기 배율입니다.")]
     [SerializeField] private float _bossVisualScale = 2.4f;
+    [Tooltip("보스 프리팹 연결이 비어 있을 때 임시 캡슐 보스로 루프를 유지할지 결정합니다.")]
     [SerializeField] private bool _allowRuntimeFallbackBoss = true;
 
     [Header("Enemy Prefabs")]
@@ -201,7 +206,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public bool HasBossSpawnCandidate()
     {
-        return _allowRuntimeFallbackBoss
+        return _bossEnemyPrefab != null
+            || _allowRuntimeFallbackBoss
             || HasAnyPrefab(_step3EnemyPrefabs)
             || HasAnyPrefab(_step2EnemyPrefabs)
             || HasAnyPrefab(_step1EnemyPrefabs);
@@ -449,6 +455,11 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private GameObject[] GetBossEnemyPrefabs()
     {
+        if (_bossEnemyPrefab != null)
+        {
+            return new[] { _bossEnemyPrefab };
+        }
+
         GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
         if (enemyPrefabs != null && enemyPrefabs.Length > 0)
         {
@@ -743,7 +754,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     private void SelectCurrentSpawnRuleData()
     {
         // 페이즈가 바뀔 때마다 enemy_spawn_rules.json 후보 중 weight 기반으로 하나를 선택합니다.
-        // QA는 JSON의 day, phase, weight, spawn count 값을 조절해 난이도를 빠르게 실험할 수 있습니다.
+        // Check는 JSON의 day, phase, weight, spawn count 값을 조절해 난이도를 빠르게 실험할 수 있습니다.
         _currentSpawnRuleData = GetRandomSpawnRuleData(GetCurrentPhaseName());
     }
 

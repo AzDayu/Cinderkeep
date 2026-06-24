@@ -6,8 +6,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-// 에디터에서 씬 세팅, 검증, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
-// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 QA 확인을 줄이는 데 사용합니다.
+// 에디터에서 씬 세팅, Check 리포트, 팀 작업 인수인계를 빠르게 처리하는 개발 도구입니다.
+// 런타임 빌드에는 포함되지 않으며, 반복되는 수동 연결과 Check 작업을 줄이는 데 사용합니다.
 // Cinderkeep_Game 씬의 메인 게임 루프 연결을 갱신하는 에디터 도구입니다.
 // 팀원이 반복해서 수동 배치해야 하는 작업을 줄이기 위한 준비용 코드입니다.
 public static class CinderkeepGameLoopSceneBuilder

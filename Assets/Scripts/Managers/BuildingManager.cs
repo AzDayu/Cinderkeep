@@ -262,7 +262,7 @@ namespace Cinderkeep.Gameplay
         public bool TryBuildAtPosition(GameObject buildingPrefab, Vector3 buildPosition, Quaternion buildRotation)
         {
             // 현재 건축 루프는 정해진 BuildingSpot만 허용합니다.
-            // 자유 배치 건축이 필요해지면 이 메서드의 검증과 비용 처리를 다시 연결합니다.
+            // 자유 배치 건축이 필요해지면 이 메서드의 Check과 비용 처리를 다시 연결합니다.
             Debug.LogWarning("BuildingManager: BuildingSpot이 있는 위치에서만 건축할 수 있습니다.");
             return false;
         }

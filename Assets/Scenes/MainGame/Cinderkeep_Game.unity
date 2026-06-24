@@ -16127,6 +16127,10 @@ MonoBehaviour:
   _step1EnemyDataId: ice_zombie
   _step2EnemyDataId: frost_wolf
   _step3EnemyDataId: ice_zombie
+  _bossDataId: frost_colossus
+  _bossEnemyPrefab: {fileID: 8817031620031285111, guid: 6bf9be1f6b5c47768281c1e6cf9d013f, type: 3}
+  _bossVisualScale: 2.4
+  _allowRuntimeFallbackBoss: 1
   _step1EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   _step2EnemyPrefabs:
@@ -31822,6 +31826,10 @@ MonoBehaviour:
   _step1EnemyDataId: ice_zombie
   _step2EnemyDataId: frost_wolf
   _step3EnemyDataId: ice_zombie
+  _bossDataId: frost_colossus
+  _bossEnemyPrefab: {fileID: 8817031620031285111, guid: 6bf9be1f6b5c47768281c1e6cf9d013f, type: 3}
+  _bossVisualScale: 2.4
+  _allowRuntimeFallbackBoss: 1
   _step1EnemyPrefabs:
   - {fileID: 8817031620031285111, guid: dca7b5ae45bd7e24f885ecffcd970509, type: 3}
   _step2EnemyPrefabs:

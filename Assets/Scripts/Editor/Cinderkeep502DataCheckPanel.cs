@@ -7,40 +7,40 @@ using UnityEngine;
 
 // JSON 데이터가 현재 구현된 게임 규칙과 맞는지 검사하는 에디터 도구입니다.
 // 구현되지 않은 데이터는 로드맵 후보로 보고하되, 실제 플레이 후보와 구분합니다.
-public static class Cinderkeep502DataValidationPanel
+public static class Cinderkeep502DataCheckPanel
 {
-    private const string MenuRoot = "Cinderkeep/5.02 Data Validation/";
-    private const string MenuRoot524 = "Cinderkeep/5.24 Data Validation/";
-    private const string ReportPath = "Temp/Cinderkeep_5_24_DataValidationReport.txt";
+    private const string MenuRoot = "Cinderkeep/5.02 Data Check/";
+    private const string MenuRoot524 = "Cinderkeep/5.24 Data Check/";
+    private const string ReportPath = "Temp/Cinderkeep_5_24_DataCheckReport.txt";
 
-    [MenuItem(MenuRoot524 + "Run Full 5.24 Data Validation")]
-    [MenuItem(MenuRoot + "Run Full 5.02 Data Validation")]
-    public static void RunFullDataValidation()
+    [MenuItem(MenuRoot524 + "Run Full 5.24 Data Check")]
+    [MenuItem(MenuRoot + "Run Full 5.02 Data Check")]
+    public static void RunFullDataCheck()
     {
         StringBuilder reportBuilder = new StringBuilder();
-        bool isOk = RunValidation(reportBuilder);
+        bool isOk = RunCheck(reportBuilder);
         WriteReport(reportBuilder);
 
         if (isOk)
         {
-            Debug.Log("[Cinderkeep 5.24] Data validation passed.\n" + reportBuilder);
+            Debug.Log("[Cinderkeep 5.24] Data check passed.\n" + reportBuilder);
             return;
         }
 
-        Debug.LogWarning("[Cinderkeep 5.24] Data validation found issues.\n" + reportBuilder);
+        Debug.LogWarning("[Cinderkeep 5.24] Data check found issues.\n" + reportBuilder);
     }
 
-    [MenuItem(MenuRoot524 + "Generate Data Validation Report")]
-    [MenuItem(MenuRoot + "Generate Data Validation Report")]
-    public static void GenerateDataValidationReport()
+    [MenuItem(MenuRoot524 + "Generate Data Check Report")]
+    [MenuItem(MenuRoot + "Generate Data Check Report")]
+    public static void GenerateDataCheckReport()
     {
         StringBuilder reportBuilder = new StringBuilder();
-        RunValidation(reportBuilder);
+        RunCheck(reportBuilder);
         WriteReport(reportBuilder);
-        Debug.Log("[Cinderkeep 5.24] Data validation report generated: " + ReportPath);
+        Debug.Log("[Cinderkeep 5.24] Data check report generated: " + ReportPath);
     }
 
-    private static bool RunValidation(StringBuilder reportBuilder)
+    private static bool RunCheck(StringBuilder reportBuilder)
     {
         GameObject tempObject = new GameObject("Temp_5_02_GameDataManager_Check");
         GameDataManager gameDataManager = tempObject.AddComponent<GameDataManager>();
@@ -48,7 +48,7 @@ public static class Cinderkeep502DataValidationPanel
         {
             gameDataManager.Initialize();
             bool isOk = true;
-            reportBuilder.AppendLine("[5.24 Data Validation]");
+            reportBuilder.AppendLine("[5.24 Data Check]");
             isOk &= ValidateCatalogCounts(gameDataManager, reportBuilder);
             isOk &= ValidateCraftingRecipes(gameDataManager, reportBuilder);
             isOk &= ValidateBuildings(gameDataManager, reportBuilder);
@@ -99,7 +99,7 @@ public static class Cinderkeep502DataValidationPanel
             isOk &= AppendCheck(
                 reportBuilder,
                 recipeData.Id + ".ResultDataType",
-                GameDataValidationRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
+                GameDataCheckRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
                 recipeData.ResultDataType);
 
             AppendRecipeExposure(reportBuilder, recipeData);
@@ -117,7 +117,7 @@ public static class Cinderkeep502DataValidationPanel
             return;
         }
 
-        bool isLive = GameDataValidationRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType);
+        bool isLive = GameDataCheckRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType);
         reportBuilder.AppendLine((isLive ? "[Live Recipe] " : "[Hidden Recipe] ")
             + recipeData.Id
             + " - "
@@ -133,32 +133,32 @@ public static class Cinderkeep502DataValidationPanel
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", false, "empty");
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeResource, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeResource, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ResourceDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeTool, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeTool, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ToolDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeWeapon, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeWeapon, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.WeaponDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeArmor, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeArmor, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ArmorDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeBuilding, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeBuilding, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.BuildingDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeCinderHeartUpgrade, System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataCheckRules.RecipeResultTypeCinderHeartUpgrade, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.CinderHeartUpgradeDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
@@ -306,7 +306,7 @@ public static class Cinderkeep502DataValidationPanel
             isOk &= AppendCheck(reportBuilder, skillData.Id + ".EffectType", hasEffectType, skillData.EffectType);
             isOk &= AppendCheck(reportBuilder, skillData.Id + ".Weight", skillData.Weight > 0, skillData.Weight.ToString());
 
-            if (GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
+            if (GameDataCheckRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
             {
                 implementedCount++;
                 reportBuilder.AppendLine("[Live] " + skillData.Id + " - " + skillData.EffectType);

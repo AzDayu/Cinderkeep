@@ -9,15 +9,15 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Cinderkeep_Game 씬의 필수 참조 연결 상태를 검사하고, 안전한 누락 참조만 자동 보정하는 에디터 도구입니다.
-// 데이터/전투 검증은 다른 패널에서 처리하고, 이 패널은 씬과 프리팹 연결 확인에만 집중합니다.
+// 데이터/전투 Check은 다른 패널에서 처리하고, 이 패널은 씬과 프리팹 연결 확인에만 집중합니다.
 public static class Cinderkeep501ControlPanel
 {
     private const string MenuRoot = "Cinderkeep/5.01 Control Panel/";
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";
     private const string ReportPath = "Temp/Cinderkeep_5_01_SceneWiringReport.txt";
 
-    [MenuItem(MenuRoot + "Run Full 5.01 Validation")]
-    public static void RunFullValidation()
+    [MenuItem(MenuRoot + "Run Full 5.01 Check")]
+    public static void RunFullCheck()
     {
         Scene scene = OpenTargetScene();
         StringBuilder reportBuilder = new StringBuilder();
@@ -26,11 +26,11 @@ public static class Cinderkeep501ControlPanel
 
         if (isOk)
         {
-            Debug.Log("[Cinderkeep 5.01] Full validation passed.\n" + reportBuilder);
+            Debug.Log("[Cinderkeep 5.01] Full check passed.\n" + reportBuilder);
             return;
         }
 
-        Debug.LogWarning("[Cinderkeep 5.01] Full validation found issues.\n" + reportBuilder);
+        Debug.LogWarning("[Cinderkeep 5.01] Full check found issues.\n" + reportBuilder);
     }
 
     [MenuItem(MenuRoot + "Scene Wiring Audit")]
