@@ -52,6 +52,27 @@ namespace Cinderkeep.Gameplay
             return _quickSlots[slotIndex];
         }
 
+        public bool TryAddItem(string itemId, InventoryItemType itemType, int amount)
+        {
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    SetInventorySlot(i, itemId, itemType, amount);
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool TryMoveInventoryToQuickSlot(int inventorySlotIndex, int quickSlotIndex)
         {
             if (IsInventorySlotIndexValid(inventorySlotIndex) == false)

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Cinderkeep.Gameplay
 {
@@ -46,6 +46,12 @@ namespace Cinderkeep.Gameplay
         {
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
+                if (_craftingUI != null && _craftingUI.IsOpen)
+                {
+                    CloseCraftingUI();
+                    return;
+                }
+
                 ToggleInventory();
             }
         }
