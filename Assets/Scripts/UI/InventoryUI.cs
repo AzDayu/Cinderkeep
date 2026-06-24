@@ -1,12 +1,10 @@
 using TMPro;
 using UnityEngine;
 
-// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
-// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
+// 인벤토리, 장비 슬롯, 퀵슬롯을 표시하고 플레이어의 장착 요청을 모델로 전달합니다.
+// UI는 게임 규칙을 직접 소유하지 않고 PlayerInventoryModel / PlayerEquipmentModel 상태만 반영합니다.
 namespace Cinderkeep.Gameplay
 {
-    // Tab으로 여는 인벤토리 UI의 표시와 드롭 연결을 담당합니다.
-    // 실제 저장 상태는 PlayerInventoryModel, PlayerEquipmentModel이 담당합니다.
     public sealed class InventoryUI : MonoBehaviour
     {
         [Header("Root")]
@@ -22,7 +20,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private QuickSlotView[] _quickSlotViews;
 
         [Header("Crafting Embed")]
-        [Tooltip("크래프팅 창 안에 띄울 때 숨길 오브젝트들(배경, 타이틀 등)")]
+        [Tooltip("제작 창 안에 붙을 때 숨길 장식/배경 오브젝트입니다.")]
         [SerializeField] private GameObject[] _hideWhenEmbedded;
 
         private PlayerInventoryModel _playerInventoryModel;
@@ -71,7 +69,7 @@ namespace Cinderkeep.Gameplay
         public void BeginDragInventorySlot(InventorySlotView slotView)
         {
             _draggingInventorySlot = slotView;
-            RefreshMessage("드롭할 장비 칸이나 퀵슬롯을 선택하세요.");
+            RefreshMessage("장비 슬롯이나 퀵슬롯을 선택하세요.");
         }
 
         public void EndDragInventorySlot()
@@ -90,7 +88,7 @@ namespace Cinderkeep.Gameplay
             if (_playerInventoryModel == null || _playerEquipmentModel == null)
             {
                 PlayUiFailSfx();
-                RefreshMessage("인벤토리 모델 연결이 준비되지 않았습니다.");
+                RefreshMessage("인벤토리 모델 연결이 필요합니다.");
                 return;
             }
 
@@ -102,13 +100,13 @@ namespace Cinderkeep.Gameplay
             if (isEquipped)
             {
                 PlayUiSuccessSfx();
-                RefreshMessage("장비 칸에 연결했습니다.");
+                RefreshMessage("장비 슬롯에 장착했습니다.");
                 RefreshUI();
                 return;
             }
 
             PlayUiFailSfx();
-            RefreshMessage("이 장비 칸에는 넣을 수 없습니다.");
+            RefreshMessage("이 아이템은 선택한 장비 슬롯에 장착할 수 없습니다.");
         }
 
         public void DropInventoryToQuickSlot(QuickSlotView quickSlotView)
@@ -122,13 +120,12 @@ namespace Cinderkeep.Gameplay
             if (_playerInventoryModel == null)
             {
                 PlayUiFailSfx();
-                RefreshMessage("인벤토리 모델 연결이 준비되지 않았습니다.");
+                RefreshMessage("인벤토리 모델 연결이 필요합니다.");
                 return;
             }
 
-            bool isMoved = _playerInventoryModel.TryMoveInventoryToQuickSlot(
-                _draggingInventorySlot.SlotIndex,
-                quickSlotView.SlotIndex);
+            InventoryItemModel sourceItem = _playerInventoryModel.GetInventoryItem(_draggingInventorySlot.SlotIndex);
+            bool isMoved = TryMoveInventoryItemToQuickSlot(sourceItem, quickSlotView.SlotIndex);
 
             if (isMoved)
             {
@@ -153,7 +150,7 @@ namespace Cinderkeep.Gameplay
             if (_playerInventoryModel == null)
             {
                 PlayUiFailSfx();
-                RefreshMessage("인벤토리 연결이 필요합니다.");
+                RefreshMessage("인벤토리 모델 연결이 필요합니다.");
                 return;
             }
 
@@ -243,9 +240,12 @@ namespace Cinderkeep.Gameplay
         {
             if (itemModel.ItemType == InventoryItemType.Weapon)
             {
+                string weaponItemId = itemModel.ItemId;
+                InventoryItemType weaponItemType = itemModel.ItemType;
+                int weaponAmount = itemModel.Amount;
                 bool isEquipped = TryEquipToEquipmentSlot(inventorySlotIndex, EquipmentSlotType.Weapon);
                 int quickSlotIndex;
-                TryAssignQuickSlotShortcut(itemModel, 0, out quickSlotIndex);
+                TryAssignQuickSlotShortcut(weaponItemId, weaponItemType, weaponAmount, 0, out quickSlotIndex);
                 RefreshMessage("무기를 장착하고 1번 퀵슬롯에 연결했습니다.");
                 return isEquipped;
             }
@@ -289,13 +289,13 @@ namespace Cinderkeep.Gameplay
             {
                 int movedAmount = itemModel.Amount;
                 int quickSlotIndex;
-                if (TryAssignQuickSlotShortcut(itemModel, 3, out quickSlotIndex) == false)
+                if (TryAddStackableQuickSlotItem(itemModel, 3, out quickSlotIndex) == false)
                 {
                     return false;
                 }
 
                 _playerInventoryModel.TryConsumeItem(itemModel.ItemId, movedAmount);
-                RefreshMessage((quickSlotIndex + 1).ToString() + "번 퀵슬롯에 음식을 연결했습니다.");
+                RefreshMessage((quickSlotIndex + 1).ToString() + "번 퀵슬롯에 음식을 옮겼습니다.");
                 return true;
             }
 
@@ -330,6 +330,69 @@ namespace Cinderkeep.Gameplay
                 preferredSlotIndex,
                 PlayerInventoryModel.QuickSlotCount - 1,
                 out quickSlotIndex);
+        }
+
+        private bool TryAssignQuickSlotShortcut(
+            string itemId,
+            InventoryItemType itemType,
+            int amount,
+            int preferredSlotIndex,
+            out int quickSlotIndex)
+        {
+            quickSlotIndex = -1;
+            if (_playerInventoryModel == null || string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            return _playerInventoryModel.TryAssignQuickSlotShortcut(
+                itemId,
+                itemType,
+                amount,
+                preferredSlotIndex,
+                PlayerInventoryModel.QuickSlotCount - 1,
+                out quickSlotIndex);
+        }
+
+        private bool TryAddStackableQuickSlotItem(InventoryItemModel itemModel, int preferredSlotIndex, out int quickSlotIndex)
+        {
+            quickSlotIndex = -1;
+            if (_playerInventoryModel == null || itemModel == null || itemModel.IsEmpty)
+            {
+                return false;
+            }
+
+            return _playerInventoryModel.TryAddQuickSlotItem(
+                itemModel.ItemId,
+                itemModel.ItemType,
+                itemModel.Amount,
+                preferredSlotIndex,
+                PlayerInventoryModel.QuickSlotCount - 1,
+                out quickSlotIndex);
+        }
+
+        private bool TryMoveInventoryItemToQuickSlot(InventoryItemModel itemModel, int quickSlotIndex)
+        {
+            if (_draggingInventorySlot == null || itemModel == null || itemModel.IsEmpty)
+            {
+                return false;
+            }
+
+            if (itemModel.ItemType != InventoryItemType.Food)
+            {
+                return _playerInventoryModel.TryMoveInventoryToQuickSlot(
+                    _draggingInventorySlot.SlotIndex,
+                    quickSlotIndex);
+            }
+
+            int movedAmount = itemModel.Amount;
+            int resolvedQuickSlotIndex;
+            if (TryAddStackableQuickSlotItem(itemModel, quickSlotIndex, out resolvedQuickSlotIndex) == false)
+            {
+                return false;
+            }
+
+            return _playerInventoryModel.TryConsumeItem(itemModel.ItemId, movedAmount);
         }
 
         private int ResolveToolPreferredQuickSlot(string itemId)
@@ -451,14 +514,14 @@ namespace Cinderkeep.Gameplay
             _rootObject.SetActive(isVisible);
         }
 
-        // 크래프팅 창 안에 끼워 넣는 용도로 여는 메서드
+        // 제작 창 안에서 인벤토리 UI를 재사용할 때 불필요한 장식 오브젝트를 숨깁니다.
         public void OpenEmbedded()
         {
             Open();
             SetEmbeddedObjectsVisible(false);
         }
 
-        // 다시 단독으로 열 때 원상 복구
+        // 단독 인벤토리 창으로 열 때 숨겼던 장식 오브젝트를 다시 표시합니다.
         public void OpenStandalone()
         {
             Open();

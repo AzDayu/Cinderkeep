@@ -415,6 +415,11 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
         List<CinderHeartSkillData> candidates = GetImplementedMorningRewardCandidates(gameDataManager);
         AddRequiredReviveRewardIfNeeded(candidates, skillOptions);
+        if (IsPlayerDead() && skillOptions.Count > 0)
+        {
+            return skillOptions;
+        }
+
         PickWeightedSkillOptions(candidates, skillOptions, MorningRewardOptionCount);
 
         if (skillOptions.Count > 0)

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Text;
 
 // HUD, 인벤토리, 제작 UI, 보상 선택 UI, Run Result 패널을 열고 닫는 UI 허브입니다.
-// UI 계산과 게임 규칙은 각 전용 시스템에서 처리하고, 이 클래스는 화면 전환과 커서 상태를 관리합니다.
+// 게임 규칙은 전용 시스템이 담당하고, 이 클래스는 화면 전환과 커서 상태, UI 사운드 호출만 조율합니다.
 namespace Cinderkeep.Gameplay
 {
     public sealed class UIManager : MonoBehaviour, IGameInitializable
@@ -477,28 +477,6 @@ namespace Cinderkeep.Gameplay
         private string FormatBool(bool value)
         {
             return value ? "Yes" : "No";
-        }
-
-        private void RefreshRunResultText(bool isClear)
-        {
-            ConnectRunResultText();
-            if (_runResultText == null)
-            {
-                return;
-            }
-
-            GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
-            int day = gameRunModel == null ? 0 : gameRunModel.Day;
-            string title = isClear ? "CLEAR" : "GAME OVER";
-            string summary = isClear ? "CinderHeart를 지켜냈습니다." : "CinderHeart가 꺼졌습니다.";
-
-            _runResultText.text =
-                title + "\n" +
-                summary + "\n\n" +
-                "도달 날짜: " + day + "일차\n" +
-                "상세 기록: 5.00 Run Result 확장 단계에서 집계 예정\n\n" +
-                "R: 다시 시작\n" +
-                "Esc: Main_Lobby로 돌아가기";
         }
 
         private void ConnectRunResultText()

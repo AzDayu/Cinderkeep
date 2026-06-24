@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
-// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
+// 한 판 동안 유지되는 플레이어 인벤토리, 퀵슬롯, 제작 완료 건축물 수량을 저장합니다.
+// UI와 플레이어 조작은 이 모델을 통해 아이템 상태를 읽고 변경합니다.
 namespace Cinderkeep.Gameplay
 {
     // 플레이어 인벤토리와 퀵슬롯을 저장하는 Instance Data입니다.
@@ -444,11 +444,28 @@ namespace Cinderkeep.Gameplay
             }
 
             InventoryItemModel sourceItem = _inventorySlots[inventorySlotIndex];
+            if (sourceItem == null || sourceItem.IsEmpty)
+            {
+                return false;
+            }
+
+            string sourceItemId = sourceItem.ItemId;
+            InventoryItemType sourceItemType = sourceItem.ItemType;
+            string previousEquippedItemId = equipmentModel.GetEquippedItemId(slotType);
+            InventoryItemType previousItemType = GetInventoryItemTypeByEquipmentSlot(slotType);
+
+            if (string.Equals(previousEquippedItemId, sourceItemId, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             if (equipmentModel.TryEquipItem(sourceItem, slotType) == false)
             {
                 return false;
             }
 
+            ConsumeOneInventorySlotItem(inventorySlotIndex, sourceItemId, sourceItemType);
+            ReturnPreviousEquippedItem(previousEquippedItemId, previousItemType);
             NotifyInventoryChanged();
             return true;
         }
@@ -635,6 +652,69 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void ConsumeOneInventorySlotItem(int inventorySlotIndex, string itemId, InventoryItemType itemType)
+        {
+            if (IsInventorySlotIndexValid(inventorySlotIndex) == false)
+            {
+                return;
+            }
+
+            InventoryItemModel slot = _inventorySlots[inventorySlotIndex];
+            if (slot == null || slot.IsEmpty)
+            {
+                return;
+            }
+
+            if (slot.ItemId != itemId || slot.ItemType != itemType)
+            {
+                return;
+            }
+
+            int nextAmount = slot.Amount - 1;
+            if (nextAmount <= 0)
+            {
+                slot.Clear();
+                return;
+            }
+
+            slot.SetItem(itemId, itemType, nextAmount);
+        }
+
+        private void ReturnPreviousEquippedItem(string itemId, InventoryItemType itemType)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return;
+            }
+
+            TryAddItem(itemId, itemType, 1);
+        }
+
+        private InventoryItemType GetInventoryItemTypeByEquipmentSlot(EquipmentSlotType slotType)
+        {
+            if (slotType == EquipmentSlotType.Helmet)
+            {
+                return InventoryItemType.Helmet;
+            }
+
+            if (slotType == EquipmentSlotType.Armor)
+            {
+                return InventoryItemType.Armor;
+            }
+
+            if (slotType == EquipmentSlotType.Weapon)
+            {
+                return InventoryItemType.Weapon;
+            }
+
+            if (slotType == EquipmentSlotType.Boots)
+            {
+                return InventoryItemType.Boots;
+            }
+
+            return InventoryItemType.Resource;
         }
 
         private int ClampQuickSlotIndex(int slotIndex)
