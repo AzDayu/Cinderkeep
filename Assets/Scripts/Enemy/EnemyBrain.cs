@@ -33,6 +33,8 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private float _towerDetectDistance = 5f;
     [Tooltip("밤 전용 타겟 우선순위 로직을 사용할지 결정합니다.")]
     [SerializeField] private bool _isNightTime;
+    [Tooltip("나를 공격한 대상을 기억하는 시간입니다.")]
+    [SerializeField] private float _attackerMemoryDuration = 7f;
 
     private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
@@ -41,6 +43,10 @@ public sealed class EnemyBrain : MonoBehaviour
     private Damageable _currentAttackTarget;
     private BuildingHp _currentBuildingAttackTarget;
     private bool _canChaseCinderHeart = true;
+    private Damageable _recentPlayerAttacker;
+    private Damageable _recentTowerAttacker;
+    private float _lastPlayerAttackedTime;
+    private float _lastTowerAttackedTime;
 
     private void Awake()
     {
@@ -82,6 +88,27 @@ public sealed class EnemyBrain : MonoBehaviour
     public void SetNightTime(bool isNightTime)
     {
         _isNightTime = isNightTime;
+    }
+
+    public void ReportAttacker(Damageable attackerDamageable)
+    {
+        if (attackerDamageable == null)
+        {
+            return;
+        }
+
+        if (attackerDamageable.CompareTag(PlayerTag))
+        {
+            _recentPlayerAttacker = attackerDamageable;
+            _lastPlayerAttackedTime = Time.time;
+            return;
+        }
+
+        if (attackerDamageable.CompareTag(TowerTag))
+        {
+            _recentTowerAttacker = attackerDamageable;
+            _lastTowerAttackedTime = Time.time;
+        }
     }
 
     // 플레이어, CinderHeart처럼 Damageable을 기준으로 공격할 대상을 외부에서 지정할 때 사용합니다.
@@ -175,6 +202,10 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private void RefreshNightTargets()
     {
+        if (TrySetRecentAttackerTarget()) 
+        {
+            return;
+        }
         if (TrySetCinderHeartTarget())
         {
             return;
@@ -214,6 +245,65 @@ public sealed class EnemyBrain : MonoBehaviour
         ClearPlayerAttackTarget();
         ClearCurrentBuildingAttackTarget();
         ClearTowerAttackTarget();
+    }
+
+    private bool TrySetRecentAttackerTarget()
+    {
+        Damageable attackerDamageable = GetNearestRecentAttacker();
+        if (attackerDamageable == null)
+        {
+            return false;
+        }
+
+        _currentBuildingAttackTarget = null;
+        _currentAttackTarget = attackerDamageable;
+        return true;
+    }
+
+    private Damageable GetNearestRecentAttacker()
+    {
+        Damageable validPlayerAttacker = GetValidRecentAttacker(_recentPlayerAttacker, _lastPlayerAttackedTime);
+        Damageable validTowerAttacker = GetValidRecentAttacker(_recentTowerAttacker, _lastTowerAttackedTime);
+
+        if (validPlayerAttacker == null)
+        {
+            return validTowerAttacker;
+        }
+
+        if (validTowerAttacker == null)
+        {
+            return validPlayerAttacker;
+        }
+
+        float playerDistanceSqr = (validPlayerAttacker.transform.position - transform.position).sqrMagnitude;
+        float towerDistanceSqr = (validTowerAttacker.transform.position - transform.position).sqrMagnitude;
+
+        if (playerDistanceSqr <= towerDistanceSqr)
+        {
+            return validPlayerAttacker;
+        }
+
+        return validTowerAttacker;
+    }
+
+    private Damageable GetValidRecentAttacker(Damageable attackerDamageable, float lastAttackedTime)
+    {
+        if (attackerDamageable == null)
+        {
+            return null;
+        }
+
+        if (Time.time > lastAttackedTime + _attackerMemoryDuration)
+        {
+            return null;
+        }
+
+        if (attackerDamageable.gameObject.activeInHierarchy == false)
+        {
+            return null;
+        }
+
+        return attackerDamageable;
     }
 
     private bool TrySetCinderHeartTarget()
@@ -604,22 +694,20 @@ public sealed class EnemyBrain : MonoBehaviour
         _currentBuildingAttackTarget = null;
     }
 
-private void ClearTowerAttackTarget()
-{
-    if (_currentAttackTarget == null)
+    private void ClearTowerAttackTarget()
     {
-        return;
+        if (_currentAttackTarget == null)
+        {
+            return;
+        }
+
+        if (_currentAttackTarget.CompareTag(TowerTag))
+        {
+            _currentAttackTarget = null;
+        }
     }
 
-    if (_currentAttackTarget.CompareTag(TowerTag))
-    {
-        _currentAttackTarget = null;
-    }
-}
-
-
-
-private Damageable GetDamageableFromTransform(Transform targetTransform)
+    private Damageable GetDamageableFromTransform(Transform targetTransform)
     {
         if (targetTransform == null)
         {
