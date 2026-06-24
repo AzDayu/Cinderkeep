@@ -38,6 +38,7 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private readonly NavMeshPath _cinderHeartPath = new NavMeshPath();
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
+    private readonly NavMeshPath _attackerPath = new NavMeshPath();
 
     private Coroutine _brainDecisionRoutine;
     private Damageable _currentAttackTarget;
@@ -251,6 +252,11 @@ public sealed class EnemyBrain : MonoBehaviour
     {
         Damageable attackerDamageable = GetNearestRecentAttacker();
         if (attackerDamageable == null)
+        {
+            return false;
+        }
+
+        if(CanReachTarget(attackerDamageable.transform) == false)
         {
             return false;
         }
@@ -566,6 +572,39 @@ public sealed class EnemyBrain : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, targetTransform.position);
         return distance <= attackDistance;
+    }
+
+    private bool CanReachTarget(Transform targetTransform)
+    {
+        if (targetTransform == null)
+        {
+            return false;
+        }
+
+        NavMeshHit enemyPositionOnNavMesh;
+        if (NavMesh.SamplePosition(transform.position, out enemyPositionOnNavMesh, 2f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
+
+        NavMeshHit targetPositionOnNavMesh;
+        if (NavMesh.SamplePosition(targetTransform.position, out targetPositionOnNavMesh, 4f, NavMesh.AllAreas) == false)
+        {
+            return false;
+        }
+
+        bool hasPath = NavMesh.CalculatePath(
+            enemyPositionOnNavMesh.position,
+            targetPositionOnNavMesh.position,
+            NavMesh.AllAreas,
+            _attackerPath);
+
+        if (hasPath == false)
+        {
+            return false;
+        }
+
+        return _attackerPath.status == NavMeshPathStatus.PathComplete;
     }
 
     private bool IsCinderHeartPathBlocked()
