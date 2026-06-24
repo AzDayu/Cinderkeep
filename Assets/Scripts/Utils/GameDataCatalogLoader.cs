@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Cinderkeep.Gameplay
 {
     // GameDataManager의 반복 JSON 로드 과정을 담당하는 공용 로더입니다.
-    // 각 데이터 매니저는 허브 역할을 유지하고, Resources/JsonUtility/ID 등록 규칙은 여기서 통일합니다.
+    // 각 Catalog는 GameDataManager가 소유하고, Resources/JsonUtility/ID 등록 규칙은 여기서 통일합니다.
     public static class GameDataCatalogLoader
     {
         public static void LoadCatalog<TData, TCatalog>(
@@ -40,11 +40,11 @@ namespace Cinderkeep.Gameplay
 
             for (int i = 0; i < items.Count; i++)
             {
-                AddData(target, items[i]);
+                AddData(target, items[i], catalogName, i);
             }
         }
 
-        private static void AddData<TData>(Dictionary<string, TData> target, TData data)
+        private static void AddData<TData>(Dictionary<string, TData> target, TData data, string catalogName, int index)
             where TData : GameDataBase
         {
             if (target == null || data == null)
@@ -54,11 +54,13 @@ namespace Cinderkeep.Gameplay
 
             if (string.IsNullOrEmpty(data.Id))
             {
+                Debug.LogWarning("GameDataCatalogLoader: empty id skipped. catalog=" + catalogName + ", index=" + index);
                 return;
             }
 
             if (target.ContainsKey(data.Id))
             {
+                Debug.LogWarning("GameDataCatalogLoader: duplicate id overwritten. catalog=" + catalogName + ", id=" + data.Id);
                 target[data.Id] = data;
                 return;
             }

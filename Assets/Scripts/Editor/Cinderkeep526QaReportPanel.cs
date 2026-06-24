@@ -20,7 +20,7 @@ public static class Cinderkeep526QaReportPanel
     private const int RequiredRewardOptionCount = 3;
     private const int TargetCinderHeartSkillCount = 50;
     private const int MinimumImplementedRewardEffectTypeCount = 10;
-    private const int MinimumRunResultStatCount = 22;
+    private const int MinimumRunResultStatCount = 28;
     private static readonly string[] RequiredRunResultStatKeys =
     {
         "result_status",
@@ -43,7 +43,13 @@ public static class Cinderkeep526QaReportPanel
         "adamantium_gained",
         "crafted_item_count",
         "placed_building_count",
+        "destroyed_building_count",
+        "upgraded_building_count",
         "trap_crowd_control_score",
+        "raw_meat_picked_up",
+        "cooked_meat_created",
+        "food_eaten_count",
+        "satiety_restored",
         "selected_cinderheart_skills"
     };
 
@@ -356,9 +362,18 @@ public static class Cinderkeep526QaReportPanel
             {
                 try
                 {
-                    RawCatalogProbe catalogProbe = JsonUtility.FromJson<RawCatalogProbe>(jsonAsset.text);
-                    hasValidShape = catalogProbe != null && catalogProbe.Items != null && catalogProbe.Items.Count > 0;
-                    detail = hasValidShape ? catalogProbe.Items.Count.ToString() : "Items missing or empty";
+                    if (IsGameModeSettingsJson(assetPath))
+                    {
+                        GameModeSettingsData settingsData = JsonUtility.FromJson<GameModeSettingsData>(jsonAsset.text);
+                        hasValidShape = IsValidGameModeSettings(settingsData);
+                        detail = hasValidShape ? "mode durations ok" : "invalid mode durations";
+                    }
+                    else
+                    {
+                        RawCatalogProbe catalogProbe = JsonUtility.FromJson<RawCatalogProbe>(jsonAsset.text);
+                        hasValidShape = catalogProbe != null && catalogProbe.Items != null && catalogProbe.Items.Count > 0;
+                        detail = hasValidShape ? catalogProbe.Items.Count.ToString() : "Items missing or empty";
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -371,6 +386,23 @@ public static class Cinderkeep526QaReportPanel
 
         reportBuilder.AppendLine();
         return isOk;
+    }
+
+    private static bool IsGameModeSettingsJson(string assetPath)
+    {
+        return string.Equals(
+            Path.GetFileName(assetPath),
+            "game_mode_settings.json",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsValidGameModeSettings(GameModeSettingsData settingsData)
+    {
+        return settingsData != null
+            && settingsData.NormalDayDuration > 0f
+            && settingsData.NormalNightDuration > 0f
+            && settingsData.TestFastDayDuration > 0f
+            && settingsData.TestFastNightDuration > 0f;
     }
 
     private static bool RunBuildingUpgradeReport(StringBuilder reportBuilder)
@@ -633,6 +665,11 @@ public static class Cinderkeep526QaReportPanel
                 if (statData != null && string.IsNullOrEmpty(statData.StatKey) == false)
                 {
                     statKeys.Add(statData.StatKey);
+                    isOk &= AppendCheck(
+                        reportBuilder,
+                        "run result UI supports stat key: " + statData.StatKey,
+                        RunResultUI.IsSupportedStatKey(statData.StatKey),
+                        statData.StatKey);
                 }
             }
         }

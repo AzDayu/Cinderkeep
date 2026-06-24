@@ -22,6 +22,44 @@ namespace Cinderkeep.Gameplay
         private readonly List<RunResultStatData> _statDefinitions = new List<RunResultStatData>();
         private bool _isStatDefinitionLoaded;
 
+        public static bool IsSupportedStatKey(string statKey)
+        {
+            switch (statKey)
+            {
+                case "result_status":
+                case "reached_day":
+                case "survival_time":
+                case "failure_reason":
+                case "monster_kills":
+                case "boss_defeated":
+                case "wood_gained":
+                case "stone_gained":
+                case "iron_gained":
+                case "gold_gained":
+                case "mithril_gained":
+                case "adamantium_gained":
+                case "crafted_item_count":
+                case "placed_building_count":
+                case "destroyed_building_count":
+                case "upgraded_building_count":
+                case "cinderheart_damage_taken":
+                case "player_damage_taken":
+                case "enemy_damage_dealt":
+                case "tower_damage_dealt":
+                case "trap_damage_dealt":
+                case "player_down_count":
+                case "trap_crowd_control_score":
+                case "raw_meat_picked_up":
+                case "cooked_meat_created":
+                case "food_eaten_count":
+                case "satiety_restored":
+                case "selected_cinderheart_skills":
+                    return true;
+            }
+
+            return false;
+        }
+
         public void Open(bool isClear)
         {
             ConnectView();

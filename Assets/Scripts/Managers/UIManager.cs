@@ -472,7 +472,15 @@ namespace Cinderkeep.Gameplay
             builder.AppendLine("Crafting / Building");
             builder.AppendLine("Crafted Items: " + snapshot.CraftedItemCount);
             builder.AppendLine("Placed Buildings: " + snapshot.PlacedBuildingCount);
+            builder.AppendLine("Destroyed Buildings: " + snapshot.DestroyedBuildingCount);
+            builder.AppendLine("Upgraded Buildings: " + snapshot.UpgradedBuildingCount);
             builder.AppendLine("Trap CC Score: " + FormatNumber(snapshot.TrapCrowdControlScore));
+            builder.AppendLine();
+            builder.AppendLine("Food");
+            builder.AppendLine("Raw Meat Picked Up: " + snapshot.RawMeatPickedUpCount);
+            builder.AppendLine("Cooked Meat Created: " + snapshot.CookedMeatCreatedCount);
+            builder.AppendLine("Food Eaten: " + snapshot.FoodEatenCount);
+            builder.AppendLine("Satiety Restored: " + FormatNumber(snapshot.SatietyRestored));
             builder.AppendLine();
             builder.AppendLine("CinderHeart Upgrades");
             builder.AppendLine(FormatSelectedSkills(snapshot));

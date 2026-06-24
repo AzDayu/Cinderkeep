@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 namespace Cinderkeep.Gameplay
 {
-    // 제작 노출, 보상 후보, QA 검증이 함께 사용하는 데이터 구현 기준입니다.
-    // 데이터는 여기서 구현 가능 여부를 판정하고, 실제 효과 적용은 각 시스템에 위임합니다.
+    // 제작 UI 노출, 보상 후보 필터, QA 검증이 함께 사용하는 데이터 구현 기준표입니다.
+    // JSON에 후보가 먼저 들어와도 여기서 구현 가능 여부를 걸러 런타임 환각 상태를 줄입니다.
     public static class GameDataValidationRules
     {
         public const string RecipeResultTypeResource = "Resource";
