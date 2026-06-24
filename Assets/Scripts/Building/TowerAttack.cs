@@ -34,6 +34,7 @@ public sealed class TowerAttack : MonoBehaviour
 
         if (_damageDealer != null)
         {
+            _damageDealer.SetSourceType(DamageSourceType.Tower);
             _damageDealer.SetDamageValue(_attackDamage);
         }
     }
@@ -75,6 +76,7 @@ public sealed class TowerAttack : MonoBehaviour
         Damageable enemyDamageable = targetEnemyStatus.GetComponentInParent<Damageable>();
         if (_damageDealer != null && enemyDamageable != null)
         {
+            _damageDealer.SetSourceType(DamageSourceType.Tower);
             _damageDealer.SetDamageValue(_attackDamage);
             _damageDealer.ApplyDamage(enemyDamageable);
             return;
@@ -96,5 +98,9 @@ public sealed class TowerAttack : MonoBehaviour
         }
 
         _damageDealer = GetComponent<DamageDealer>();
+        if (_damageDealer != null)
+        {
+            _damageDealer.SetSourceType(DamageSourceType.Tower);
+        }
     }
 }

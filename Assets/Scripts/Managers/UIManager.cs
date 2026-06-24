@@ -394,6 +394,8 @@ namespace Cinderkeep.Gameplay
             builder.AppendLine("Monster Kills: " + snapshot.MonsterKillCount);
             builder.AppendLine("Boss Defeated: " + FormatBool(snapshot.BossDefeated));
             builder.AppendLine("Damage Dealt: " + FormatNumber(snapshot.EnemyDamageDealt));
+            builder.AppendLine("Tower Damage Dealt: " + FormatNumber(snapshot.TowerDamageDealt));
+            builder.AppendLine("Trap Damage Dealt: " + FormatNumber(snapshot.TrapDamageDealt));
             builder.AppendLine("Player Damage Taken: " + FormatNumber(snapshot.PlayerDamageTaken));
             builder.AppendLine("Player Downs: " + snapshot.PlayerDownCount);
             builder.AppendLine("CinderHeart Damage Taken: " + FormatNumber(snapshot.CinderHeartDamageTaken));
@@ -406,7 +408,7 @@ namespace Cinderkeep.Gameplay
             builder.AppendLine("Crafting / Building");
             builder.AppendLine("Crafted Items: " + snapshot.CraftedItemCount);
             builder.AppendLine("Placed Buildings: " + snapshot.PlacedBuildingCount);
-            builder.AppendLine("Trap CC Score: " + FormatNumber(snapshot.TrapCrowdControlScore) + " (not tracked yet)");
+            builder.AppendLine("Trap CC Score: " + FormatNumber(snapshot.TrapCrowdControlScore));
             builder.AppendLine();
             builder.AppendLine("CinderHeart Upgrades");
             builder.AppendLine(FormatSelectedSkills(snapshot));

@@ -123,6 +123,11 @@ public sealed class PlayerAttack : MonoBehaviour
             _damageDealer = GetComponent<DamageDealer>();
         }
 
+        if (_damageDealer != null)
+        {
+            _damageDealer.SetSourceType(DamageSourceType.Player);
+        }
+
         _playerController = GetComponent<PlayerController>();
     }
 
@@ -303,6 +308,7 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         if (_damageDealer != null)
         {
+            _damageDealer.SetSourceType(DamageSourceType.Player);
             if (weaponData != null)
             {
                 _damageDealer.SetDamageValue(weaponData);
