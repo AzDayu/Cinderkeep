@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터를 JSON에서 읽어 보관하는 매니저입니다.

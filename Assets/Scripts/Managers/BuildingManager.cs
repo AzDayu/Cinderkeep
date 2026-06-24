@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
+using System;
 using UnityEngine;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 거점 내 건축물의 배치 상태와 파괴 처리를 관리하는 매니저입니다.
     // 건축물 생성은 GameObjectManager를 통하고, 자리 상태는 BuildingSpot이 담당합니다.
     public sealed class BuildingManager : MonoBehaviour, IGameInitializable
     {
+        public static event Action<BuildingData> BuildingPlacedGlobal;
+
         [SerializeField] private List<BuildingSpot> _buildingSpots = new List<BuildingSpot>();
         [SerializeField] private GameObjectManager _gameObjectManager;
 
@@ -73,13 +78,16 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            if (BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            bool isPreparedBuildingConsumed = TryConsumePreparedBuildingItem(buildingData);
+            if (isPreparedBuildingConsumed == false
+                && BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
                 return false;
             }
 
-            if (BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
+            if (isPreparedBuildingConsumed == false
+                && BuildingCostHelper.TryPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning("BuildingManager: 건축 비용 차감에 실패했습니다.");
                 return false;
@@ -98,7 +106,24 @@ namespace Cinderkeep.Gameplay
             buildingSpot.PlaceBuilding(createdBuilding);
             buildingSpot.HideBuildingSpot();
             RegisterBuildingComponent(createdBuilding);
+            NotifyBuildingPlaced(buildingData);
             return true;
+        }
+
+        private bool TryConsumePreparedBuildingItem(BuildingData buildingData)
+        {
+            if (buildingData == null || GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            if (inventoryModel == null)
+            {
+                return false;
+            }
+
+            return inventoryModel.TryConsumeItem(buildingData.Id, 1);
         }
 
         // 기존 시그니처를 쓰는 코드가 남아 있을 때를 위한 호환용입니다.
@@ -294,6 +319,16 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
             }
+        }
+
+        private void NotifyBuildingPlaced(BuildingData buildingData)
+        {
+            if (BuildingPlacedGlobal == null)
+            {
+                return;
+            }
+
+            BuildingPlacedGlobal(buildingData);
         }
     }
 }

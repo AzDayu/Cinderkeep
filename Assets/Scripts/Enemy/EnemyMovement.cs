@@ -2,10 +2,16 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 using UnityEngine.AI;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터의 실제 이동 실행만 담당하는 컴포넌트입니다.
 // 누구를 따라갈지, 무엇을 공격할지는 EnemyBrain이 판단하고 이 클래스는 받은 위치로만 이동합니다.
 public sealed class EnemyMovement : MonoBehaviour
 {
+    private const float MinimumAvoidanceRadius = 0.45f;
+    private const int MinimumAvoidancePriority = 25;
+    private const int MaximumAvoidancePriority = 75;
+
     [Tooltip("몬스터 이동 속도입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _moveSpeed;
     [Tooltip("목표와 이 거리 안에 들어오면 이동을 멈춥니다. EnemyData로 초기화됩니다.")]
@@ -42,6 +48,27 @@ public sealed class EnemyMovement : MonoBehaviour
         // EnemyDetector는 기존 초기화 호출 호환성을 위해 인자로만 받습니다.
         // 이동 대상 판단은 EnemyBrain이 담당하므로 이 클래스에서는 사용하지 않습니다.
         Initialize(enemyData);
+    }
+
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        ConnectComponents();
+        _moveSpeed = bossData.MoveSpeed;
+        _stopDistance = bossData.StopDistance;
+        _spawnPosition = transform.position;
+        _wanderTargetPosition = _spawnPosition;
+        ApplyNavMeshAgentSettings();
+        _isInitialized = true;
+    }
+
+    public void Initialize(BossData bossData, EnemyDetector enemyDetector)
+    {
+        Initialize(bossData);
     }
 
     public void MoveToTarget(Transform targetTransform)
@@ -111,6 +138,9 @@ public sealed class EnemyMovement : MonoBehaviour
 
         _navMeshAgent.speed = _moveSpeed;
         _navMeshAgent.stoppingDistance = _stopDistance;
+        _navMeshAgent.radius = Mathf.Max(_navMeshAgent.radius, MinimumAvoidanceRadius);
+        _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        _navMeshAgent.avoidancePriority = Random.Range(MinimumAvoidancePriority, MaximumAvoidancePriority + 1);
     }
 
     private void RefreshWanderTargetPosition()

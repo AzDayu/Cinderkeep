@@ -1,5 +1,7 @@
 using System;
 
+// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
+// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
 namespace Cinderkeep.Gameplay
 {
     public enum InventoryItemType
@@ -10,7 +12,9 @@ namespace Cinderkeep.Gameplay
         Helmet,
         Armor,
         Boots,
-        Resource
+        Resource,
+        Building,
+        CinderHeartUpgrade
     }
 
     public enum EquipmentSlotType

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터 머리 위 체력 UI를 표시하는 컴포넌트입니다.
 // 체력 계산과 사망 처리는 EnemyStatus가 담당하고, 이 스크립트는 화면 표시만 담당합니다.
 public sealed class EnemyHud : MonoBehaviour

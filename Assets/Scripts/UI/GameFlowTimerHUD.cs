@@ -2,6 +2,8 @@ using Cinderkeep.Gameplay;
 using TMPro;
 using UnityEngine;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 현재 낮/밤 페이즈와 시간을 화면에 표시하는 HUD 컴포넌트입니다.
 // 시간 계산은 GameRunModel을 읽고, 실제 페이즈 전환은 GameFlowController가 담당합니다.
 public sealed class GameFlowTimerHUD : MonoBehaviour

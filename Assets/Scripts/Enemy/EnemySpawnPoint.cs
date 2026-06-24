@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 public enum EnemySpawnStep
 {
     Step1 = 1, // 1단계: 기본 몬스터 후보
@@ -15,6 +17,8 @@ public enum EnemySpawnStep
 // 살아 있는 적 추적은 EnemySpawnRuntimeTracker가 맡고, 위치 계산은 EnemySpawnPositionSelector가 맡습니다.
 public sealed class EnemySpawnPoint : MonoBehaviour
 {
+    private const string DefaultBossDataId = "frost_colossus";
+
     [Header("Managers")]
     [Tooltip("적 프리팹을 생성하고 InstanceId를 부여할 관리자입니다.")]
     [SerializeField] private GameObjectManager _gameObjectManager;
@@ -36,6 +40,10 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [SerializeField] private string _step2EnemyDataId = "ice_zombie";
     [Tooltip("3단계 적에게 적용할 EnemyData ID입니다. enemies.json의 _id와 같아야 합니다.")]
     [SerializeField] private string _step3EnemyDataId = "ice_zombie";
+
+    [Header("Boss")]
+    [SerializeField] private string _bossDataId = DefaultBossDataId;
+    [SerializeField] private float _bossVisualScale = 2.4f;
 
     [Header("Enemy Prefabs")]
     [Tooltip("1단계에서 무작위로 뽑을 적 프리팹 목록입니다.")]
@@ -89,6 +97,8 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     private EnemySpawnMode _spawnMode = EnemySpawnMode.Day;
     private int _currentDay = 1;
     private float _lastSpawnTime;
+    private bool _hasSpawnedBossForCurrentEncounter;
+    private Action<EnemyStatus> _bossDefeatedHandler;
 
     public int SpawnPointId
     {
@@ -139,13 +149,25 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public void SetSpawnMode(EnemySpawnMode spawnMode, int day)
     {
+        bool wasBossMode = _spawnMode == EnemySpawnMode.Boss;
+        int previousDay = _currentDay;
         _spawnMode = spawnMode;
         _currentDay = Mathf.Max(1, day);
+        if (_spawnMode == EnemySpawnMode.Boss && (wasBossMode == false || previousDay != _currentDay))
+        {
+            ResetBossEncounter();
+        }
+
         SelectCurrentSpawnRuleData();
         ResetSpawnTime();
 
         _runtimeTracker.SetCinderHeartChaseEnabledForAliveEnemies(CanChaseCinderHeartInCurrentMode());
         _runtimeTracker.SetNightTimeForAliveEnemies(UsesNightDetectionInCurrentMode());
+
+        if (_isActive == false)
+        {
+            return;
+        }
 
         EnemySpawnRule spawnRule = GetCurrentSpawnRule();
         if (spawnRule.SpawnOnModeStart == true)
@@ -157,6 +179,21 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     public void SetSpawnPointActive(bool isActive)
     {
         _isActive = isActive;
+    }
+
+    public void SetBossDefeatedHandler(Action<EnemyStatus> bossDefeatedHandler)
+    {
+        _bossDefeatedHandler = bossDefeatedHandler;
+    }
+
+    public void ResetBossEncounter()
+    {
+        _hasSpawnedBossForCurrentEncounter = false;
+    }
+
+    public bool HasBossSpawnCandidate()
+    {
+        return HasAnyPrefab(_step3EnemyPrefabs) || HasAnyPrefab(_step2EnemyPrefabs) || HasAnyPrefab(_step1EnemyPrefabs);
     }
 
     public void ResetSpawnTime()
@@ -217,6 +254,12 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     private void SpawnEnemiesByCurrentStep()
     {
+        if (_spawnMode == EnemySpawnMode.Boss)
+        {
+            SpawnBossEnemy();
+            return;
+        }
+
         GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
         if (enemyPrefabs == null || enemyPrefabs.Length == 0)
         {
@@ -261,11 +304,11 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         return enemyPrefabs[randomIndex];
     }
 
-    private void SpawnEnemy(GameObject enemyPrefab, int index, int totalCount, string enemyDataId)
+    private GameObject SpawnEnemy(GameObject enemyPrefab, int index, int totalCount, string enemyDataId)
     {
         if (enemyPrefab == null)
         {
-            return;
+            return null;
         }
 
         Vector3 spawnPosition = _positionSelector.GetSpawnPosition(
@@ -279,6 +322,142 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         _runtimeTracker.RegisterEnemy(createdEnemy);
         InitializeCreatedEnemy(createdEnemy, enemyDataId);
         ApplySpawnModeToEnemy(createdEnemy);
+        return createdEnemy;
+    }
+
+    private void SpawnBossEnemy()
+    {
+        if (_hasSpawnedBossForCurrentEncounter)
+        {
+            return;
+        }
+
+        GameObject[] enemyPrefabs = GetBossEnemyPrefabs();
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
+        {
+            return;
+        }
+
+        GameObject enemyPrefab = GetRandomEnemyPrefab(enemyPrefabs);
+        GameObject createdEnemy = SpawnEnemy(enemyPrefab, 0, 1, GetEnemyDataIdByStep());
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        ApplyBossDataToEnemy(createdEnemy);
+        RegisterBossDefeat(createdEnemy);
+        _hasSpawnedBossForCurrentEncounter = true;
+    }
+
+    private GameObject[] GetBossEnemyPrefabs()
+    {
+        GameObject[] enemyPrefabs = GetEnemyPrefabsByStep();
+        if (enemyPrefabs != null && enemyPrefabs.Length > 0)
+        {
+            return enemyPrefabs;
+        }
+
+        if (_step3EnemyPrefabs != null && _step3EnemyPrefabs.Length > 0)
+        {
+            return _step3EnemyPrefabs;
+        }
+
+        if (_step2EnemyPrefabs != null && _step2EnemyPrefabs.Length > 0)
+        {
+            return _step2EnemyPrefabs;
+        }
+
+        return _step1EnemyPrefabs;
+    }
+
+    private void ApplyBossDataToEnemy(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        BossData bossData = GetBossData();
+        ApplyBossVisualScale(createdEnemy);
+        if (bossData == null)
+        {
+            return;
+        }
+
+        EnemyStatus enemyStatus = createdEnemy.GetComponent<EnemyStatus>();
+        if (enemyStatus != null)
+        {
+            enemyStatus.Initialize(bossData);
+        }
+
+        EnemyAttack enemyAttack = createdEnemy.GetComponent<EnemyAttack>();
+        if (enemyAttack != null)
+        {
+            enemyAttack.Initialize(bossData);
+        }
+
+        EnemyDetector enemyDetector = createdEnemy.GetComponent<EnemyDetector>();
+        if (enemyDetector != null)
+        {
+            enemyDetector.Initialize(bossData);
+        }
+
+        EnemyMovement enemyMovement = createdEnemy.GetComponent<EnemyMovement>();
+        if (enemyMovement != null)
+        {
+            enemyMovement.Initialize(bossData, enemyDetector);
+        }
+    }
+
+    private BossData GetBossData()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
+        if (gameDataManager == null)
+        {
+            return null;
+        }
+
+        string bossDataId = string.IsNullOrEmpty(_bossDataId) ? DefaultBossDataId : _bossDataId;
+        return gameDataManager.GetBoss(bossDataId);
+    }
+
+    private void ApplyBossVisualScale(GameObject createdEnemy)
+    {
+        float bossVisualScale = Mathf.Max(1f, _bossVisualScale);
+        createdEnemy.transform.localScale = createdEnemy.transform.localScale * bossVisualScale;
+    }
+
+    private void RegisterBossDefeat(GameObject createdEnemy)
+    {
+        EnemyStatus enemyStatus = createdEnemy.GetComponent<EnemyStatus>();
+        if (enemyStatus == null)
+        {
+            return;
+        }
+
+        enemyStatus.Died -= HandleBossDied;
+        enemyStatus.Died += HandleBossDied;
+    }
+
+    private void HandleBossDied(EnemyStatus enemyStatus)
+    {
+        if (enemyStatus != null)
+        {
+            enemyStatus.Died -= HandleBossDied;
+        }
+
+        if (_bossDefeatedHandler == null)
+        {
+            return;
+        }
+
+        _bossDefeatedHandler(enemyStatus);
     }
 
     private void ApplySpawnModeToEnemy(GameObject createdEnemy)
@@ -331,6 +510,24 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         return _step1EnemyPrefabs;
+    }
+
+    private bool HasAnyPrefab(GameObject[] enemyPrefabs)
+    {
+        if (enemyPrefabs == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            if (enemyPrefabs[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private string GetEnemyDataIdByStep()

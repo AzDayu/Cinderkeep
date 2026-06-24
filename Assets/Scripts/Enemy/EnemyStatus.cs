@@ -2,6 +2,8 @@
 using System;
 using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터의 체력을 관리하는 컴포넌트입니다.
 // 데미지 계산과 사망 처리를 담당하고, 이동/감지/공격 판단은 다른 컴포넌트가 담당합니다.
 // 기준: 적 체력 원본은 EnemyStatus입니다.
@@ -10,6 +12,10 @@ using UnityEngine;
 public sealed class EnemyStatus : MonoBehaviour
 {
     public static event Action<EnemyStatus> EnemyDamaged;
+    public static event Action<float> EnemyDamagedByAmountGlobal;
+    public static event Action<EnemyStatus> EnemyDiedGlobal;
+
+    public event Action<EnemyStatus> Died;
 
     [Header("Health")]
     [Tooltip("몬스터 최대 체력입니다. EnemyData로 초기화되며, 데이터가 없을 때 fallback 값으로 사용됩니다.")]
@@ -64,6 +70,16 @@ public sealed class EnemyStatus : MonoBehaviour
         InitializeHealth(enemyData.Health);
     }
 
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        InitializeHealth(bossData.Health);
+    }
+
     public void ResetHealth(float maxHealth)
     {
         InitializeHealth(maxHealth);
@@ -89,6 +105,7 @@ public sealed class EnemyStatus : MonoBehaviour
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         RefreshHud();
         NotifyEnemyDamaged();
+        NotifyEnemyDamagedByAmount(damage);
         AlertByDamage();
 
         Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
@@ -156,9 +173,21 @@ public sealed class EnemyStatus : MonoBehaviour
         EnemyDamaged(this);
     }
 
+    private void NotifyEnemyDamagedByAmount(float damage)
+    {
+        if (EnemyDamagedByAmountGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDamagedByAmountGlobal(damage);
+    }
+
     private void ProcessDeath()
     {
         Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        NotifyDied();
+        NotifyEnemyDiedGlobal();
 
         if (_deactivateOnDeath == false)
         {
@@ -166,5 +195,25 @@ public sealed class EnemyStatus : MonoBehaviour
         }
 
         gameObject.SetActive(false);
+    }
+
+    private void NotifyDied()
+    {
+        if (Died == null)
+        {
+            return;
+        }
+
+        Died(this);
+    }
+
+    private void NotifyEnemyDiedGlobal()
+    {
+        if (EnemyDiedGlobal == null)
+        {
+            return;
+        }
+
+        EnemyDiedGlobal(this);
     }
 }

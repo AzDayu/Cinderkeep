@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
+// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
 // 건축물의 체력과 파괴 상태를 관리하는 컴포넌트입니다.
 // 배치, 수리 비용, 제작 규칙은 다른 컴포넌트가 담당하고 이 클래스는 체력만 담당합니다.
 public sealed class BuildingHp : MonoBehaviour

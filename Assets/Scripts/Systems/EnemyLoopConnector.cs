@@ -3,6 +3,8 @@ using System;
 using UnityEngine;
 using UnityEngine.AI;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // 적 관련 런타임 초기화와 기준 검증만 담당하는 컴포넌트입니다.
 // 4.35 기준 적 프리팹의 기준 컴포넌트는 Damageable, EnemyStatus, EnemyAttack, EnemyDetector, EnemyMovement, EnemyBrain입니다.
 // EnemyLoopConnector는 이 컴포넌트들에 EnemyData와 CinderHeart 타깃을 연결합니다.

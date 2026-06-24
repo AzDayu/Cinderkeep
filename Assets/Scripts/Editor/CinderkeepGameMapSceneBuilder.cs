@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 namespace Cinderkeep.MainGame.Editor
 {
     // Cinderkeep_Game 씬에 기본 플레이어, CinderHeart, HUD 뼈대를 배치하는 에디터 도구입니다.

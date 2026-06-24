@@ -1,5 +1,7 @@
 using System;
 
+// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
+// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
 namespace Cinderkeep.Gameplay
 {
     // 플레이어 인벤토리와 퀵슬롯을 저장하는 Instance Data입니다.
@@ -64,6 +66,22 @@ namespace Cinderkeep.Gameplay
                 InventoryItemModel slot = _inventorySlots[i];
                 if (slot == null || slot.IsEmpty)
                 {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId && slot.ItemType == itemType)
+                {
+                    SetInventorySlot(i, itemId, itemType, slot.Amount + amount);
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
+
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
                     SetInventorySlot(i, itemId, itemType, amount);
                     NotifyInventoryChanged();
                     return true;
@@ -71,6 +89,81 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        public bool HasItem(string itemId, int amount)
+        {
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            return GetItemAmount(itemId) >= amount;
+        }
+
+        public int GetItemAmount(string itemId)
+        {
+            if (string.IsNullOrEmpty(itemId))
+            {
+                return 0;
+            }
+
+            int totalAmount = 0;
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId)
+                {
+                    totalAmount += slot.Amount;
+                }
+            }
+
+            return totalAmount;
+        }
+
+        public bool TryConsumeItem(string itemId, int amount)
+        {
+            if (HasItem(itemId, amount) == false)
+            {
+                return false;
+            }
+
+            int remainAmount = amount;
+            for (int i = 0; i < InventorySlotCount; i++)
+            {
+                InventoryItemModel slot = _inventorySlots[i];
+                if (slot == null || slot.IsEmpty || slot.ItemId != itemId)
+                {
+                    continue;
+                }
+
+                int consumeAmount = Math.Min(slot.Amount, remainAmount);
+                int nextAmount = slot.Amount - consumeAmount;
+                remainAmount -= consumeAmount;
+
+                if (nextAmount <= 0)
+                {
+                    slot.Clear();
+                }
+                else
+                {
+                    slot.SetItem(slot.ItemId, slot.ItemType, nextAmount);
+                }
+
+                if (remainAmount <= 0)
+                {
+                    NotifyInventoryChanged();
+                    return true;
+                }
+            }
+
+            NotifyInventoryChanged();
+            return true;
         }
 
         public bool TryMoveInventoryToQuickSlot(int inventorySlotIndex, int quickSlotIndex)
@@ -94,6 +187,44 @@ namespace Cinderkeep.Gameplay
             _quickSlots[quickSlotIndex] = sourceItem.Clone();
             NotifyInventoryChanged();
             return true;
+        }
+
+        public bool TrySetQuickSlotItem(int quickSlotIndex, string itemId, InventoryItemType itemType, int amount)
+        {
+            if (IsQuickSlotIndexValid(quickSlotIndex) == false)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(itemId) || amount <= 0)
+            {
+                return false;
+            }
+
+            if (_quickSlots[quickSlotIndex] == null)
+            {
+                _quickSlots[quickSlotIndex] = new InventoryItemModel();
+            }
+
+            _quickSlots[quickSlotIndex].SetItem(itemId, itemType, amount);
+            NotifyInventoryChanged();
+            return true;
+        }
+
+        public void ClearQuickSlot(int quickSlotIndex)
+        {
+            if (IsQuickSlotIndexValid(quickSlotIndex) == false)
+            {
+                return;
+            }
+
+            if (_quickSlots[quickSlotIndex] == null)
+            {
+                _quickSlots[quickSlotIndex] = new InventoryItemModel();
+            }
+
+            _quickSlots[quickSlotIndex].Clear();
+            NotifyInventoryChanged();
         }
 
         public bool TryMoveInventoryToEquipmentSlot(int inventorySlotIndex, EquipmentSlotType slotType, PlayerEquipmentModel equipmentModel)

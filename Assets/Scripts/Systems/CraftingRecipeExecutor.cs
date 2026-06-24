@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 namespace Cinderkeep.Gameplay
 {
-    // 제작법 실행을 담당하는 컴포넌트입니다.
-    // 비용 확인, 자원 차감, 결과 지급만 담당하고 UI 표시는 다른 컴포넌트가 맡습니다.
+    // Crafting UI and stations ask this component to validate cost, pay cost, and grant the result.
     public sealed class CraftingRecipeExecutor : MonoBehaviour
     {
+        public static event Action<CraftingRecipeData> RecipeCraftedGlobal;
+
         public bool CanCraft(CraftingRecipeData recipeData, PlayerModel playerModel)
         {
             if (recipeData == null || playerModel == null)
@@ -34,7 +37,13 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return TryGrantRecipeResult(recipeData, playerModel);
+            bool isGranted = TryGrantRecipeResult(recipeData, playerModel);
+            if (isGranted)
+            {
+                NotifyRecipeCrafted(recipeData);
+            }
+
+            return isGranted;
         }
 
         private bool CanPayRecipeCost(CraftingRecipeData recipeData, PlayerModel playerModel)
@@ -77,46 +86,41 @@ namespace Cinderkeep.Gameplay
 
         private bool TryGrantRecipeResult(CraftingRecipeData recipeData, PlayerModel playerModel)
         {
-            if (IsResourceResult(recipeData) == true)
+            if (IsResourceResult(recipeData))
             {
                 playerModel.AddResource(recipeData.ResultItemId, recipeData.ResultCount);
                 return true;
             }
 
             InventoryItemType itemType;
-            if (TryConvertToItemType(recipeData.ResultDataType, out itemType) == true)
+            if (TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType) == false)
             {
-                if (GameManager.Inst == null)
-                {
-                    return false;
-                }
-
-                PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
-                if (inventoryModel == null)
-                {
-                    return false;
-                }
-
-                bool isAdded = inventoryModel.TryAddItem(recipeData.ResultItemId, itemType, recipeData.ResultCount);
-                if (isAdded == false)
-                {
-                    return false;
-                }
-
-                return true;
+                return false;
             }
 
-            return false;
+            if (GameManager.Inst == null)
+            {
+                return false;
+            }
+
+            PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+            if (inventoryModel == null)
+            {
+                return false;
+            }
+
+            return inventoryModel.TryAddItem(recipeData.ResultItemId, itemType, recipeData.ResultCount);
         }
 
         private bool CanGrantRecipeResult(CraftingRecipeData recipeData)
         {
-            if (IsResourceResult(recipeData) == true)
+            if (IsResourceResult(recipeData))
             {
                 return true;
             }
 
-            return TryConvertToItemType(recipeData.ResultDataType, out InventoryItemType itemType);
+            InventoryItemType itemType;
+            return TryConvertToItemType(recipeData.ResultDataType, recipeData.ResultItemId, out itemType);
         }
 
         private bool IsResourceResult(CraftingRecipeData recipeData)
@@ -129,7 +133,7 @@ namespace Cinderkeep.Gameplay
             return string.Equals(recipeData.ResultDataType, "Resource", StringComparison.OrdinalIgnoreCase);
         }
 
-        private bool TryConvertToItemType(string resultDataType, out InventoryItemType itemType)
+        private bool TryConvertToItemType(string resultDataType, string resultItemId, out InventoryItemType itemType)
         {
             itemType = InventoryItemType.Tool;
 
@@ -139,8 +143,61 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
-            // Weapon, Armor는 다음 단계에서 여기에 추가
+            if (string.Equals(resultDataType, "Weapon", StringComparison.OrdinalIgnoreCase))
+            {
+                itemType = InventoryItemType.Weapon;
+                return true;
+            }
+
+            if (string.Equals(resultDataType, "Armor", StringComparison.OrdinalIgnoreCase))
+            {
+                itemType = ResolveArmorItemType(resultItemId);
+                return true;
+            }
+
+            if (string.Equals(resultDataType, "Building", StringComparison.OrdinalIgnoreCase))
+            {
+                itemType = InventoryItemType.Building;
+                return true;
+            }
+
+            if (string.Equals(resultDataType, "CinderHeartUpgrade", StringComparison.OrdinalIgnoreCase))
+            {
+                itemType = InventoryItemType.CinderHeartUpgrade;
+                return true;
+            }
+
             return false;
+        }
+
+        private InventoryItemType ResolveArmorItemType(string resultItemId)
+        {
+            if (string.IsNullOrEmpty(resultItemId))
+            {
+                return InventoryItemType.Armor;
+            }
+
+            if (resultItemId.IndexOf("helmet", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return InventoryItemType.Helmet;
+            }
+
+            if (resultItemId.IndexOf("boots", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return InventoryItemType.Boots;
+            }
+
+            return InventoryItemType.Armor;
+        }
+
+        private void NotifyRecipeCrafted(CraftingRecipeData recipeData)
+        {
+            if (RecipeCraftedGlobal == null)
+            {
+                return;
+            }
+
+            RecipeCraftedGlobal(recipeData);
         }
     }
 }

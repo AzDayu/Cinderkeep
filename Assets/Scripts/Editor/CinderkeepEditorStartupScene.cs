@@ -2,6 +2,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 namespace Cinderkeep.EditorTools
 {
     // 에디터를 열었을 때는 실제 게임 작업 씬을 보여주고,

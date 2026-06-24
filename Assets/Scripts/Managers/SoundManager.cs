@@ -3,6 +3,8 @@
 using System.Collections.Generic;
 using UnityEngine.Serialization;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 사운드 매니저입니다.

@@ -5,6 +5,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 namespace Cinderkeep.EditorTools
 {
     // 맵 청크 프리팹들의 NavMeshData를 다시 굽는 Editor 전용 도구입니다.

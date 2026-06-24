@@ -1,6 +1,8 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터의 실제 공격 실행을 담당하는 컴포넌트입니다.
 // 공격 대상 판단은 EnemyBrain이 맡고, 이 클래스는 쿨타임과 피해 적용만 처리합니다.
 public sealed class EnemyAttack : MonoBehaviour
@@ -33,6 +35,18 @@ public sealed class EnemyAttack : MonoBehaviour
 
         _attackDamage = enemyData.AttackDamage;
         _attackInterval = enemyData.AttackInterval;
+    }
+
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        _attackDamage = bossData.AttackDamage;
+        _cinderHeartAttackDamage = bossData.AttackDamage;
+        _attackInterval = bossData.AttackInterval;
     }
 
     public bool CanAttack()

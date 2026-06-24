@@ -1,6 +1,8 @@
 ﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // 플레이어가 E키로 제작 시설을 열 수 있게 하는 상호작용 컴포넌트입니다.
 // 실제 제작법 필터링은 CraftingStation이 담당하고, 이 클래스는 입력 전달만 담당합니다.
 public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable

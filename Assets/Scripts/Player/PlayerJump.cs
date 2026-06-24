@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 플레이어 점프 입력을 담당하는 컴포넌트입니다.
 // 실제 이동 계산은 PlayerMovement가 가진 CharacterController 흐름을 사용합니다.
 public sealed class PlayerJump : MonoBehaviour

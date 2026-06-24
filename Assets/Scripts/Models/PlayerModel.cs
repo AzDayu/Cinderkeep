@@ -1,5 +1,7 @@
 ﻿using System;
 
+// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
+// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
 namespace Cinderkeep.Gameplay
 {
     // 플레이 중 저장되어야 하는 플레이어 Instance Data입니다.
@@ -175,6 +177,7 @@ namespace Cinderkeep.Gameplay
         }
 
         public event Action OnResourceChanged;
+        public static event Action<string, int> ResourceAddedGlobal;
 
         public void InitializeDefault()
         {
@@ -208,6 +211,7 @@ namespace Cinderkeep.Gameplay
             if (TryAddResource(resourceType, amount))
             {
                 NotifyResourceChanged();
+                NotifyResourceAdded(resourceType, amount);
             }
         }
 
@@ -317,6 +321,16 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void NotifyResourceAdded(string resourceType, int amount)
+        {
+            if (ResourceAddedGlobal == null)
+            {
+                return;
+            }
+
+            ResourceAddedGlobal(resourceType, amount);
         }
 
         private bool TryUseResource(string resourceType, int amount)

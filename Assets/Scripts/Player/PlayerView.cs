@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 1인칭 마우스 시점 회전을 담당하는 컴포넌트입니다.
 // 이동은 PlayerMovement, 점프는 PlayerJump가 담당하므로 이 클래스는 회전만 처리합니다.
 public sealed class PlayerView : MonoBehaviour

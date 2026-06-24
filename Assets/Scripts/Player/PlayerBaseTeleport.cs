@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // T 키 귀환 시전과 실제 위치 이동을 담당하는 플레이어 전용 컴포넌트입니다.
 // 베이스 도착 지점과 진행 UI는 씬 또는 프리팹에서 연결하고, 피격 취소는 PlayerStatus 이벤트로 받습니다.
 public sealed class PlayerBaseTeleport : MonoBehaviour

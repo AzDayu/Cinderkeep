@@ -1,5 +1,9 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Text;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 게임 씬 전용 UI 매니저입니다.
@@ -10,12 +14,14 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObject _hudRoot;
         [SerializeField] private GameObject _inventoryRoot;
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private Text _runResultText;
         [SerializeField] private InventoryUI _inventoryUI;
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
         [SerializeField] private CinderHeartSkillSelectionUI _cinderHeartSkillSelectionUI;
 
         private bool _isInitialized;
+        private bool _isRunResultPanelOpen;
 
         public bool IsInitialized
         {
@@ -44,6 +50,12 @@ namespace Cinderkeep.Gameplay
 
         private void Update()
         {
+            if (_isRunResultPanelOpen)
+            {
+                UpdateRunResultInput();
+                return;
+            }
+
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
                 if (_craftingUI != null && _craftingUI.IsOpen)
@@ -118,13 +130,41 @@ namespace Cinderkeep.Gameplay
 
         public void OpenGameOverPanel()
         {
+            OpenRunResultPanel(false);
+        }
+
+        public void OpenClearPanel()
+        {
+            OpenRunResultPanel(true);
+        }
+
+        public void OpenRunResultPanel(bool isClear)
+        {
+            CloseInventory();
+            CloseCraftingUI();
+            CloseFurnaceUI();
+            CloseCinderHeartSkillSelectionUI();
+            CloseHud();
+
+            _isRunResultPanelOpen = true;
+            RefreshRunResultTextFromTracker(isClear);
             SetActive(_gameOverPanel, true);
+            RefreshCursorState();
+
+            if (isClear)
+            {
+                PlayUiNotificationSfx();
+                return;
+            }
+
             PlayUiFailSfx();
         }
 
         public void CloseGameOverPanel()
         {
+            _isRunResultPanelOpen = false;
             SetActive(_gameOverPanel, false);
+            RefreshCursorState();
         }
 
         public void OpenCraftingUI(CraftingStation craftingStation, GameObject interactor)
@@ -266,7 +306,174 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (_isRunResultPanelOpen)
+            {
+                return true;
+            }
+
             return false;
+        }
+
+        private void UpdateRunResultInput()
+        {
+            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.R))
+            {
+                RestartRunFromResult();
+                return;
+            }
+
+            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Escape))
+            {
+                ReturnToMainLobbyFromResult();
+            }
+        }
+
+        private void RestartRunFromResult()
+        {
+            if (GameManager.Inst == null)
+            {
+                return;
+            }
+
+            CloseGameOverPanel();
+            PlayUiClickSfx();
+            GameManager.Inst.RestartRun();
+        }
+
+        private void ReturnToMainLobbyFromResult()
+        {
+            if (GameManager.Inst == null)
+            {
+                return;
+            }
+
+            PlayUiBackSfx();
+            GameManager.Inst.ReturnToMainLobby();
+        }
+
+        private void RefreshRunResultTextFromTracker(bool isClear)
+        {
+            ConnectRunResultText();
+            if (_runResultText == null)
+            {
+                return;
+            }
+
+            GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
+            RunResultTracker tracker = RunResultTracker.Instance;
+            RunResultSnapshot snapshot = tracker == null ? CreateFallbackRunResultSnapshot(isClear, gameRunModel) : tracker.CreateSnapshot(isClear, gameRunModel);
+            _runResultText.text = BuildRunResultText(snapshot);
+        }
+
+        private RunResultSnapshot CreateFallbackRunResultSnapshot(bool isClear, GameRunModel gameRunModel)
+        {
+            RunResultSnapshot snapshot = new RunResultSnapshot();
+            snapshot.IsClear = isClear;
+            snapshot.ReachedDay = gameRunModel == null ? 0 : gameRunModel.Day;
+            snapshot.FailureReason = isClear ? "Clear" : "CinderHeart destroyed";
+            return snapshot;
+        }
+
+        private string BuildRunResultText(RunResultSnapshot snapshot)
+        {
+            if (snapshot == null)
+            {
+                return string.Empty;
+            }
+
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine(snapshot.IsClear ? "CLEAR" : "GAME OVER");
+            builder.AppendLine(snapshot.IsClear ? "CinderHeart defended." : "CinderHeart destroyed.");
+            builder.AppendLine();
+            builder.AppendLine("Result");
+            builder.AppendLine("Reached Day: " + snapshot.ReachedDay);
+            builder.AppendLine("Survival Time: " + FormatTime(snapshot.SurvivalSeconds));
+            builder.AppendLine("Failure Reason: " + snapshot.FailureReason);
+            builder.AppendLine();
+            builder.AppendLine("Combat");
+            builder.AppendLine("Monster Kills: " + snapshot.MonsterKillCount);
+            builder.AppendLine("Boss Defeated: " + FormatBool(snapshot.BossDefeated));
+            builder.AppendLine("Damage Dealt: " + FormatNumber(snapshot.EnemyDamageDealt));
+            builder.AppendLine("Player Damage Taken: " + FormatNumber(snapshot.PlayerDamageTaken));
+            builder.AppendLine("Player Downs: " + snapshot.PlayerDownCount);
+            builder.AppendLine("CinderHeart Damage Taken: " + FormatNumber(snapshot.CinderHeartDamageTaken));
+            builder.AppendLine();
+            builder.AppendLine("Resources");
+            builder.AppendLine("Wood: " + snapshot.WoodGained + " / Stone: " + snapshot.StoneGained);
+            builder.AppendLine("Iron: " + snapshot.IronGained + " / Gold: " + snapshot.GoldGained);
+            builder.AppendLine("Mithril: " + snapshot.MithrilGained + " / Adamantium: " + snapshot.AdamantiumGained);
+            builder.AppendLine();
+            builder.AppendLine("Crafting / Building");
+            builder.AppendLine("Crafted Items: " + snapshot.CraftedItemCount);
+            builder.AppendLine("Placed Buildings: " + snapshot.PlacedBuildingCount);
+            builder.AppendLine("Trap CC Score: " + FormatNumber(snapshot.TrapCrowdControlScore) + " (not tracked yet)");
+            builder.AppendLine();
+            builder.AppendLine("CinderHeart Upgrades");
+            builder.AppendLine(FormatSelectedSkills(snapshot));
+            builder.AppendLine();
+            builder.AppendLine("R: Restart");
+            builder.AppendLine("Esc: Main_Lobby");
+            return builder.ToString();
+        }
+
+        private string FormatSelectedSkills(RunResultSnapshot snapshot)
+        {
+            if (snapshot.SelectedCinderHeartSkillNames == null || snapshot.SelectedCinderHeartSkillNames.Count <= 0)
+            {
+                return "None";
+            }
+
+            return string.Join(", ", snapshot.SelectedCinderHeartSkillNames);
+        }
+
+        private string FormatTime(float seconds)
+        {
+            int totalSeconds = Mathf.Max(0, Mathf.RoundToInt(seconds));
+            int minutes = totalSeconds / 60;
+            int remainSeconds = totalSeconds % 60;
+            return minutes.ToString("00") + ":" + remainSeconds.ToString("00");
+        }
+
+        private string FormatNumber(float value)
+        {
+            return Mathf.RoundToInt(value).ToString();
+        }
+
+        private string FormatBool(bool value)
+        {
+            return value ? "Yes" : "No";
+        }
+
+        private void RefreshRunResultText(bool isClear)
+        {
+            ConnectRunResultText();
+            if (_runResultText == null)
+            {
+                return;
+            }
+
+            GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
+            int day = gameRunModel == null ? 0 : gameRunModel.Day;
+            string title = isClear ? "CLEAR" : "GAME OVER";
+            string summary = isClear ? "CinderHeart를 지켜냈습니다." : "CinderHeart가 꺼졌습니다.";
+
+            _runResultText.text =
+                title + "\n" +
+                summary + "\n\n" +
+                "도달 날짜: " + day + "일차\n" +
+                "상세 기록: 5.00 Run Result 확장 단계에서 집계 예정\n\n" +
+                "R: 다시 시작\n" +
+                "Esc: Main_Lobby로 돌아가기";
+        }
+
+        private void ConnectRunResultText()
+        {
+            if (_runResultText != null || _gameOverPanel == null)
+            {
+                return;
+            }
+
+            _runResultText = _gameOverPanel.GetComponentInChildren<Text>(true);
         }
 
         private void PlayUiToggleSfx(bool wasOpen)

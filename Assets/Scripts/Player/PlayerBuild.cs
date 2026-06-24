@@ -1,6 +1,8 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 플레이어의 건축 입력을 담당하는 컴포넌트입니다.
 // 실제 생성, 등록, 비용 처리는 BuildingManager가 담당합니다.
 public sealed class PlayerBuild : MonoBehaviour

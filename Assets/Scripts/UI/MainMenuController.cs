@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 namespace Cinderkeep.UI
 {
     // 메인 메뉴 화면 흐름을 담당하는 컴포넌트입니다.

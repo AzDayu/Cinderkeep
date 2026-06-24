@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // GameObjectManager가 만든 오브젝트에 붙는 식별 컴포넌트입니다.

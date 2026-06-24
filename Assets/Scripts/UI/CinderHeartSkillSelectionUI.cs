@@ -5,10 +5,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 밤을 넘긴 뒤 CinderHeart 보상 스킬 3개를 보여주는 UI입니다.
 // UI 표시와 버튼 선택만 담당하고, 실제 효과 적용은 CinderHeartSkillApplier에 위임합니다.
 public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
 {
+    public static event Action<CinderHeartSkillData> SkillSelectedGlobal;
+
     [SerializeField] private GameObject _rootObject;
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private CinderHeartSkillOptionView[] _optionViews;
@@ -79,6 +83,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
             _skillApplier.ApplySkill(skillData);
         }
 
+        NotifySkillSelected(skillData);
         PlayRewardSelectSfx();
         CloseAndNotify();
     }
@@ -153,6 +158,16 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         }
 
         soundManager.PlayRewardSelect();
+    }
+
+    private void NotifySkillSelected(CinderHeartSkillData skillData)
+    {
+        if (SkillSelectedGlobal == null)
+        {
+            return;
+        }
+
+        SkillSelectedGlobal(skillData);
     }
 
     private void PlayUiBackSfx()

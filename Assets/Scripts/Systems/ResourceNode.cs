@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // 나무, 돌, 광석처럼 플레이어가 자원을 얻는 오브젝트입니다.
 // E 입력으로 줍는 자원과 좌클릭 도구 채집 자원을 모두 처리합니다.
 public sealed class ResourceNode : MonoBehaviour, IInteractable
 {
+    private const int BasicGatherTier = 1;
+
     [Header("Resource Data")]
     [Tooltip("harvest_nodes.json의 _id입니다. 비워두면 기존 Inspector 값으로 알맞은 데이터를 찾아봅니다.")]
     [SerializeField] private string _harvestNodeDataId = "";
@@ -110,7 +114,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
     {
         ApplyHarvestNodeDataIfPossible();
 
-        if (CanGatherWithTool(gameObjectInteractor, toolType) == false)
+        if (CanGatherWithTool(gameObjectInteractor, toolType, toolData) == false)
         {
             return false;
         }
@@ -121,7 +125,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         return true;
     }
 
-    private bool CanGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType)
+    private bool CanGatherWithTool(GameObject gameObjectInteractor, GatherToolType toolType, ToolData toolData)
     {
         ApplyHarvestNodeDataIfPossible();
 
@@ -140,7 +144,52 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
             return false;
         }
 
-        return _requiredToolType == toolType;
+        if (CanGatherWithHandStone(toolData))
+        {
+            return true;
+        }
+
+        if (_requiredToolType != toolType)
+        {
+            return false;
+        }
+
+        return HasRequiredToolTier(toolData);
+    }
+
+    private bool CanGatherWithHandStone(ToolData toolData)
+    {
+        if (toolData == null || toolData.Id != PlayerToolController.HandStoneToolDataId)
+        {
+            return false;
+        }
+
+        if (_requiredToolTier > BasicGatherTier)
+        {
+            return false;
+        }
+
+        if (_resourceId == PlayerModel.ResourceWood)
+        {
+            return true;
+        }
+
+        return _resourceId == PlayerModel.ResourceStone;
+    }
+
+    private bool HasRequiredToolTier(ToolData toolData)
+    {
+        if (_requiredToolTier <= 0)
+        {
+            return true;
+        }
+
+        if (toolData == null)
+        {
+            return true;
+        }
+
+        return toolData.Tier >= _requiredToolTier;
     }
 
     public float GetToolGatherMultiplier(ToolData toolData)

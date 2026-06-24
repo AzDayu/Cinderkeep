@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 베이스 귀환 시전 시간을 화면에 표시하는 UI 컴포넌트입니다.
 // UI 오브젝트는 씬이나 프리팹에서 미리 만들고, 이 컴포넌트는 표시 값만 갱신합니다.
 public sealed class BaseTeleportProgressUI : MonoBehaviour

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 1인칭 카메라 앞에 현재 장착한 도구를 보여주는 View 전용 컴포넌트입니다.
 // 실제 공격과 채집 판정은 PlayerAttack, PlayerToolUse가 담당하고, 이 클래스는 화면 표시와 짧은 휘두르기만 담당합니다.
 public sealed class FirstPersonToolView : MonoBehaviour
@@ -72,6 +74,12 @@ public sealed class FirstPersonToolView : MonoBehaviour
         if (_playerToolController == null)
         {
             SetToolActive(null);
+            return;
+        }
+
+        if (_playerToolController.CurrentToolDataId == PlayerToolController.HandStoneToolDataId)
+        {
+            SetToolActive(_handView);
             return;
         }
 

@@ -1,6 +1,8 @@
 using TMPro;
 using UnityEngine;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 namespace Cinderkeep.Gameplay
 {
     // Tab으로 여는 인벤토리 UI의 표시와 드롭 연결을 담당합니다.

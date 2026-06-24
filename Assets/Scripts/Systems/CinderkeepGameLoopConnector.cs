@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // 메인 게임 씬에서 전용 LoopConnector들의 실행 순서만 관리하는 컴포넌트입니다.
 // 4.35 기준으로 이 클래스는 "무엇을 먼저 연결할지"만 지휘합니다.
 // Player, Resource, Enemy, GameFlow의 실제 연결 작업은 각 전용 Connector가 담당합니다.

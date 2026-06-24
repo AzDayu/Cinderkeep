@@ -1,10 +1,15 @@
 using Cinderkeep.Gameplay;
+using System;
 using UnityEngine;
 
+// 5.00 direction: Maintains the CinderHeart as the central win/loss objective for the 5.00 loop.
+// 5.01+ note: Keep CinderHeart rules explicit because future rewards, healing, defense, and failure conditions depend on it.
 // CinderHeart는 3일 루프의 핵심 방어 대상입니다.
 // 체력이 0이 되면 GameManager를 통해 게임 오버 흐름으로 넘깁니다.
 public sealed class CinderHeart : MonoBehaviour
 {
+    public static event Action<float> CinderHeartDamagedGlobal;
+
     [Header("Health")]
     [Tooltip("CinderHeart 최대 체력입니다. 0이 되면 게임 오버가 됩니다.")]
     [SerializeField] private float _maxHealth = 500f;
@@ -87,6 +92,7 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
+        NotifyCinderHeartDamaged(damage);
         Debug.Log("[CinderHeart] 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
 
         if (_currentHealth <= 0f)
@@ -176,6 +182,16 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         GameManager.Inst.EndGame();
+    }
+
+    private void NotifyCinderHeartDamaged(float damage)
+    {
+        if (CinderHeartDamagedGlobal == null)
+        {
+            return;
+        }
+
+        CinderHeartDamagedGlobal(damage);
     }
 
     private void ClampInspectorValues()

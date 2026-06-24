@@ -1,6 +1,8 @@
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
+// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
 // 건축물이 올라갈 수 있는 자리 정보를 가진 컴포넌트입니다.
 // 실제 생성은 BuildingManager가 담당하고, 이 클래스는 자리 상태만 관리합니다.
 public sealed class BuildingSpot : MonoBehaviour

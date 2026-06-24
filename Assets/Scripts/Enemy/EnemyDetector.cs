@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터가 플레이어를 감지하는 컴포넌트입니다.
 // 감지 결과만 들고 있고, 이동과 공격은 EnemyMovement와 EnemyBrain이 처리합니다.
 public sealed class EnemyDetector : MonoBehaviour
@@ -62,6 +64,28 @@ public sealed class EnemyDetector : MonoBehaviour
         if (enemyData.DetectorInterval > 0f)
         {
             _detectionInterval = enemyData.DetectorInterval;
+        }
+
+        RefreshDetectorDistance();
+
+        if (isActiveAndEnabled)
+        {
+            StartDetectionRoutine();
+        }
+    }
+
+    public void Initialize(BossData bossData)
+    {
+        if (bossData == null)
+        {
+            return;
+        }
+
+        _dayDetectorDistance = bossData.DetectorDistance;
+        _nightDetectorDistance = Mathf.Max(_nightDetectorDistance, bossData.DetectorDistance);
+        if (bossData.DetectorInterval > 0f)
+        {
+            _detectionInterval = bossData.DetectorInterval;
         }
 
         RefreshDetectorDistance();

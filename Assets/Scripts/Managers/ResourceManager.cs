@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // Resources 폴더 안의 Unity 에셋을 불러오는 매니저입니다.

@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // CinderHeart 스킬 선택창의 선택지 한 칸을 표시합니다.
 // 클릭 처리만 부모 UI로 넘기고, 효과 적용은 직접 하지 않습니다.
 public sealed class CinderHeartSkillOptionView : MonoBehaviour
