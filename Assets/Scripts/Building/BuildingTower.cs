@@ -4,7 +4,7 @@ using UnityEngine;
 
 // 타워의 자동 공격 흐름을 조율하는 컴포넌트입니다
 // 적 탐지는 TowerTargeting, 피해 적용은 TowerAttack이 담당
-public class BuildingTower : MonoBehaviour
+public sealed class BuildingTower : MonoBehaviour
 {
     private const float AttackLoopDelay = 0.2f;
 
@@ -32,7 +32,7 @@ public class BuildingTower : MonoBehaviour
         StopAttackLoopRoutine();
     }
 
-    public void Initalize(BuildingData buildingData)
+    public void Initialize(BuildingData buildingData)
     {
         if(buildingData == null)
         {
