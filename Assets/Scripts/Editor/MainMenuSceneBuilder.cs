@@ -19,7 +19,11 @@ namespace Cinderkeep.UI.Editor
         private const string KoreanFontPath = "Assets/Fonts/ChosunCentennial.ttf";
         private const string BgmFirstPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1.mp3";
         private const string BgmSecondPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1_2.mp3";
-        private const float BgmVolume = 0.3f;
+        private const string BgmThirdPath = "Assets/Audio/BGM/Cinderkeep_BGM_V2.mp3";
+        private const string BgmFourthPath = "Assets/Audio/BGM/Cinderkeep_BGM_V2_2.mp3";
+        private const string BgmFifthPath = "Assets/Audio/BGM/Cinderkeep_Day_BGM.mp3";
+        private const string BgmSixthPath = "Assets/Audio/BGM/Cinderkeep_Day_BGM_2.mp3";
+        private const float BgmVolume = 0.7f;
 
         [MenuItem("Cinderkeep/Main Menu/Rebuild Main Menu")]
         public static void RebuildMainMenuScene()
@@ -110,9 +114,13 @@ namespace Cinderkeep.UI.Editor
 
         private static AudioClip[] LoadBgmClips()
         {
-            AudioClip[] bgmClips = new AudioClip[2];
+            AudioClip[] bgmClips = new AudioClip[6];
             bgmClips[0] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFirstPath);
             bgmClips[1] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmSecondPath);
+            bgmClips[2] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmThirdPath);
+            bgmClips[3] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFourthPath);
+            bgmClips[4] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFifthPath);
+            bgmClips[5] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmSixthPath);
             return bgmClips;
         }
 

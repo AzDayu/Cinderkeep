@@ -69,6 +69,7 @@ namespace Cinderkeep.Gameplay
 
             if (_gameDataManager == null || _playerModel == null || _recipeExecutor == null)
             {
+                PlayCraftFailSfx();
                 RefreshMessage("제작 연결이 아직 준비되지 않았습니다.");
                 return;
             }
@@ -76,17 +77,20 @@ namespace Cinderkeep.Gameplay
             CraftingRecipeData recipeData = _gameDataManager.GetCraftingRecipe(recipeId);
             if (recipeData == null)
             {
+                PlayCraftFailSfx();
                 RefreshMessage("제작법을 찾을 수 없습니다.");
                 return;
             }
 
             if (_recipeExecutor.TryCraft(recipeData, _playerModel))
             {
+                PlayCraftSuccessSfx();
                 RefreshMessage(recipeData.DisplayName + " 제작 완료");
                 RefreshUI();
                 return;
             }
 
+            PlayCraftFailSfx();
             RefreshMessage("자원이 부족하거나 아직 제작할 수 없습니다.");
             RefreshUI();
         }
@@ -241,6 +245,38 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        private void PlayCraftSuccessSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayCraftSuccess();
+        }
+
+        private void PlayCraftFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayCraftFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
         }
 
         // 제작대 상호작용 키를 다시 눌렀을 때 같은 제작 UI를 닫기 위해 사용합니다.

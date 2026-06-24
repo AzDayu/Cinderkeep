@@ -82,6 +82,7 @@ namespace Cinderkeep.Gameplay
             ConnectModels();
             if (_playerInventoryModel == null || _playerEquipmentModel == null)
             {
+                PlayUiFailSfx();
                 RefreshMessage("인벤토리 모델 연결이 준비되지 않았습니다.");
                 return;
             }
@@ -93,11 +94,13 @@ namespace Cinderkeep.Gameplay
 
             if (isEquipped)
             {
+                PlayUiSuccessSfx();
                 RefreshMessage("장비 칸에 연결했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayUiFailSfx();
             RefreshMessage("이 장비 칸에는 넣을 수 없습니다.");
         }
 
@@ -111,6 +114,7 @@ namespace Cinderkeep.Gameplay
             ConnectModels();
             if (_playerInventoryModel == null)
             {
+                PlayUiFailSfx();
                 RefreshMessage("인벤토리 모델 연결이 준비되지 않았습니다.");
                 return;
             }
@@ -121,11 +125,13 @@ namespace Cinderkeep.Gameplay
 
             if (isMoved)
             {
+                PlayUiSuccessSfx();
                 RefreshMessage("퀵슬롯에 등록했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayUiFailSfx();
             RefreshMessage("퀵슬롯에 등록할 수 없습니다.");
         }
 
@@ -275,6 +281,38 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        private void PlayUiSuccessSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiSuccess();
+        }
+
+        private void PlayUiFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
         }
     }
 }

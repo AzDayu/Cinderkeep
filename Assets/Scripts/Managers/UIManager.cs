@@ -91,8 +91,10 @@ namespace Cinderkeep.Gameplay
         {
             if (_inventoryUI != null)
             {
+                bool wasOpen = _inventoryUI.IsOpen;
                 _inventoryUI.Toggle();
                 RefreshCursorState();
+                PlayUiToggleSfx(wasOpen);
 
                 return;
             }
@@ -102,13 +104,16 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
-            SetActive(_inventoryRoot, _inventoryRoot.activeSelf == false);
+            bool wasRootOpen = _inventoryRoot.activeSelf;
+            SetActive(_inventoryRoot, wasRootOpen == false);
             RefreshCursorState();
+            PlayUiToggleSfx(wasRootOpen);
         }
 
         public void OpenGameOverPanel()
         {
             SetActive(_gameOverPanel, true);
+            PlayUiFailSfx();
         }
 
         public void CloseGameOverPanel()
@@ -126,6 +131,7 @@ namespace Cinderkeep.Gameplay
             CloseFurnaceUI();
             _craftingUI.OpenStation(craftingStation, interactor);
             RefreshCursorState();
+            PlayUiClickSfx();
         }
 
         public void CloseCraftingUI()
@@ -147,8 +153,10 @@ namespace Cinderkeep.Gameplay
             }
 
             CloseFurnaceUI();
+            bool wasOpen = _craftingUI.IsOpen;
             _craftingUI.Toggle(craftingStation, interactor);
             RefreshCursorState();
+            PlayUiToggleSfx(wasOpen);
         }
 
         public void OpenFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
@@ -161,6 +169,7 @@ namespace Cinderkeep.Gameplay
             CloseCraftingUI();
             _furnaceUI.OpenFurnace(furnaceStation);
             RefreshCursorState();
+            PlayUiClickSfx();
         }
 
         public void CloseFurnaceUI()
@@ -191,6 +200,7 @@ namespace Cinderkeep.Gameplay
             CloseCraftingUI();
             CloseFurnaceUI();
             _cinderHeartSkillSelectionUI.Open(skillOptions, onClosed);
+            PlayUiNotificationSfx();
         }
 
         public void CloseCinderHeartSkillSelectionUI()
@@ -251,6 +261,71 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void PlayUiToggleSfx(bool wasOpen)
+        {
+            if (wasOpen)
+            {
+                PlayUiBackSfx();
+                return;
+            }
+
+            PlayUiClickSfx();
+        }
+
+        private void PlayUiClickSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiClick();
+        }
+
+        private void PlayUiBackSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiBack();
+        }
+
+        private void PlayUiNotificationSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiNotification();
+        }
+
+        private void PlayUiFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
         }
     }
 }

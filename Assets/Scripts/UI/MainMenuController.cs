@@ -9,6 +9,9 @@ namespace Cinderkeep.UI
     // BGM 조절은 MainMenuBgmController가 맡고, 이 클래스는 버튼 화면 전환만 담당합니다.
     public sealed class MainMenuController : MonoBehaviour
     {
+        private const string UiClickClipPath = "Cinderkeep/audio/sfx/sfx_ui_click";
+        private const string UiBackClipPath = "Cinderkeep/audio/sfx/sfx_ui_back";
+
         [SerializeField] private string _gameSceneName = "Cinderkeep_Game";
         [FormerlySerializedAs("Button_StartGame")]
         [SerializeField] private Button _startGameButton;
@@ -21,10 +24,17 @@ namespace Cinderkeep.UI
         [FormerlySerializedAs("Button_CloseSettings")]
         [SerializeField] private Button _closeSettingsButton;
 
+        private AudioSource _effectAudioSource;
+        private AudioClip _uiClickClip;
+        private AudioClip _uiBackClip;
+        private bool _hasStarted;
+
         private void Start()
         {
+            InitializeSfx();
             InitializeButtons();
             CloseSettings();
+            _hasStarted = true;
         }
 
         private void OnDestroy()
@@ -49,6 +59,7 @@ namespace Cinderkeep.UI
                 return;
             }
 
+            PlayUiClickSfx();
             SceneManager.LoadScene(_gameSceneName);
         }
 
@@ -59,6 +70,7 @@ namespace Cinderkeep.UI
                 return;
             }
 
+            PlayUiClickSfx();
             _settingsPanel.SetActive(true);
         }
 
@@ -69,11 +81,18 @@ namespace Cinderkeep.UI
                 return;
             }
 
+            if (_hasStarted)
+            {
+                PlayUiBackSfx();
+            }
+
             _settingsPanel.SetActive(false);
         }
 
         public void QuitGame()
         {
+            PlayUiClickSfx();
+
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -125,6 +144,43 @@ namespace Cinderkeep.UI
             {
                 _closeSettingsButton.onClick.RemoveListener(CloseSettings);
             }
+        }
+
+        private void InitializeSfx()
+        {
+            _effectAudioSource = GetComponent<AudioSource>();
+            if (_effectAudioSource == null)
+            {
+                _effectAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            _effectAudioSource.playOnAwake = false;
+            _effectAudioSource.loop = false;
+            _effectAudioSource.spatialBlend = 0f;
+            _effectAudioSource.volume = 0.7f;
+
+            _uiClickClip = Resources.Load<AudioClip>(UiClickClipPath);
+            _uiBackClip = Resources.Load<AudioClip>(UiBackClipPath);
+        }
+
+        private void PlayUiClickSfx()
+        {
+            PlaySfx(_uiClickClip);
+        }
+
+        private void PlayUiBackSfx()
+        {
+            PlaySfx(_uiBackClip);
+        }
+
+        private void PlaySfx(AudioClip audioClip)
+        {
+            if (_effectAudioSource == null || audioClip == null)
+            {
+                return;
+            }
+
+            _effectAudioSource.PlayOneShot(audioClip);
         }
     }
 }

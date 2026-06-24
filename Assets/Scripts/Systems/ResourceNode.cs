@@ -97,6 +97,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GiveResourceToPlayer(_amount);
+        PlayResourcePickupSfx();
         ProcessGathered();
     }
 
@@ -115,6 +116,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GiveResourceToPlayer(GetGatherAmount(toolData));
+        PlayResourceGatherSfx();
         ProcessGathered();
         return true;
     }
@@ -224,6 +226,26 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         gameObject.SetActive(false);
+    }
+
+    private void PlayResourcePickupSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayResourcePickup();
+    }
+
+    private void PlayResourceGatherSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayResourceGather(_resourceId);
     }
 
     private void ApplyHarvestNodeDataIfPossible()

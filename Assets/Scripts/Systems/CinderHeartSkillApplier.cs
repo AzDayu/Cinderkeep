@@ -88,6 +88,17 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
 
         float healAmount = _playerStatus.GetMaxHealth() * rate;
         _playerStatus.Heal(healAmount);
+        PlayHealSfx();
         Debug.Log("[CinderHeartSkillApplier] 플레이어 체력 회복: +" + healAmount);
+    }
+
+    private void PlayHealSfx()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.GetSoundManager() == null)
+        {
+            return;
+        }
+
+        GameManager.Inst.GetSoundManager().PlayHeal();
     }
 }

@@ -97,17 +97,20 @@ namespace Cinderkeep.Gameplay
 
             if (_currentFurnaceStation == null || _playerModel == null)
             {
+                PlayFailSfx();
                 RefreshMessage("용광로 연결이 아직 준비되지 않았습니다.");
                 return;
             }
 
             if (_currentFurnaceStation.TryStartSmeltingByInputResource(_selectedInputResourceId, _selectedInputAmount, _playerModel))
             {
+                PlaySuccessSfx();
                 RefreshMessage("제련을 시작했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayFailSfx();
             RefreshMessage("제련할 광석이 부족하거나 사용할 수 없는 재료입니다.");
             RefreshUI();
         }
@@ -118,17 +121,20 @@ namespace Cinderkeep.Gameplay
 
             if (_currentFurnaceStation == null || _playerModel == null)
             {
+                PlayFailSfx();
                 RefreshMessage("용광로 연결이 아직 준비되지 않았습니다.");
                 return;
             }
 
             if (_currentFurnaceStation.TryCollectOutput(_playerModel))
             {
+                PlaySuccessSfx();
                 RefreshMessage("주괴를 회수했습니다.");
                 RefreshUI();
                 return;
             }
 
+            PlayFailSfx();
             RefreshMessage("회수할 결과물이 없습니다.");
             RefreshUI();
         }
@@ -292,6 +298,38 @@ namespace Cinderkeep.Gameplay
             }
 
             _rootObject.SetActive(isVisible);
+        }
+
+        private void PlaySuccessSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiSuccess();
+        }
+
+        private void PlayFailSfx()
+        {
+            SoundManager soundManager = GetSoundManager();
+            if (soundManager == null)
+            {
+                return;
+            }
+
+            soundManager.PlayUiFail();
+        }
+
+        private SoundManager GetSoundManager()
+        {
+            if (GameManager.Inst == null)
+            {
+                return null;
+            }
+
+            return GameManager.Inst.GetSoundManager();
         }
     }
 }

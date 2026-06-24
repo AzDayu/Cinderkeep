@@ -14,7 +14,7 @@ namespace Cinderkeep.UI
         [SerializeField] private Text _volumeMuteText;
         [SerializeField] private Text _volumeValueText;
         [SerializeField] private AudioClip[] _bgmAudioClips;
-        [SerializeField] private float _volume = 0.3f;
+        [SerializeField] private float _volume = 0.7f;
 
         private static MainMenuBgmController _activeController;
 

@@ -79,6 +79,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
             _skillApplier.ApplySkill(skillData);
         }
 
+        PlayRewardSelectSfx();
         CloseAndNotify();
     }
 
@@ -116,6 +117,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
             return;
         }
 
+        PlayUiBackSfx();
         CloseAndNotify();
     }
 
@@ -140,5 +142,37 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         }
 
         gameObject.SetActive(isActive);
+    }
+
+    private void PlayRewardSelectSfx()
+    {
+        SoundManager soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        soundManager.PlayRewardSelect();
+    }
+
+    private void PlayUiBackSfx()
+    {
+        SoundManager soundManager = GetSoundManager();
+        if (soundManager == null)
+        {
+            return;
+        }
+
+        soundManager.PlayUiBack();
+    }
+
+    private SoundManager GetSoundManager()
+    {
+        if (GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        return GameManager.Inst.GetSoundManager();
     }
 }

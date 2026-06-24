@@ -808,7 +808,11 @@ MonoBehaviour:
   _bgmAudioClips:
   - {fileID: 8300000, guid: 9625e1710aa78284b921378e06f45bdd, type: 3}
   - {fileID: 8300000, guid: 3e623c423427a59458e7366b16e3b4da, type: 3}
-  _volume: 0.3
+  - {fileID: 8300000, guid: 05655cae9fba49b2812d393d2049fbb4, type: 3}
+  - {fileID: 8300000, guid: bfea1d50ad7045d3bd4ff7ef4da4fab5, type: 3}
+  - {fileID: 8300000, guid: a55f1a383d75404a91d2571c01c53a68, type: 3}
+  - {fileID: 8300000, guid: 5121556cbdea4081baad86f2fe668493, type: 3}
+  _volume: 0.7
 --- !u!82 &379020560
 AudioSource:
   m_ObjectHideFlags: 0
@@ -822,7 +826,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 0
   Mute: 0
