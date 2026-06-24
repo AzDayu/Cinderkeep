@@ -9,10 +9,12 @@ using UnityEngine;
 public sealed class PlayerStatus : MonoBehaviour
 {
     [Header("Health")]
-    [Tooltip("현재 플레이어 체력입니다. 0이 되면 게임 오버 흐름으로 연결됩니다.")]
+    [Tooltip("현재 플레이어 체력입니다. 0이 되면 CinderHeart 관전/부활 대기 상태로 전환됩니다.")]
     [SerializeField] private float _health = 100f;
     [Tooltip("플레이어 최대 체력입니다.")]
     [SerializeField] private float _maxHealth = 100f;
+    [Tooltip("부활 직후 피해를 무시하는 시간입니다.")]
+    [SerializeField] private float _reviveInvulnerableSeconds = 3f;
 
     [Header("Satiety")]
     [Tooltip("플레이어 현재 포만도입니다.")]
@@ -40,6 +42,11 @@ public sealed class PlayerStatus : MonoBehaviour
     private float _equipmentDefense;
     private float _equipmentMaxHealthBonus;
     private float _equipmentMaxStaminaBonus;
+    private float _baseMaxHealth;
+    private float _baseMaxStamina;
+    private float _baseMaxSatiety;
+    private float _baseStaminaRecoveryRate;
+    private float _invulnerableUntilTime;
     private PlayerMovement _playerMovement;
     private PlayerController _playerController;
     private DeathCinderHeartView _deathCinderHeartView;
@@ -103,11 +110,14 @@ public sealed class PlayerStatus : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        CacheBaseStatusValues();
+    }
+
     private void Start()
     {
-        _playerMovement = GetComponent<PlayerMovement>();
-        _playerController = GetComponent<PlayerController>();
-        _deathCinderHeartView = GetComponent<DeathCinderHeartView>();
+        ResolveRuntimeReferences();
         ClampStatusValues();
     }
 
@@ -171,6 +181,11 @@ public sealed class PlayerStatus : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (IsDead() == true)
+        {
+            return;
+        }
+
+        if (IsInvulnerable())
         {
             return;
         }
@@ -282,6 +297,8 @@ public sealed class PlayerStatus : MonoBehaviour
 
     public void Revive(float healthRate)
     {
+        ResolveRuntimeReferences();
+
         if (IsDead() == false)
         {
             return;
@@ -294,12 +311,44 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _health = Mathf.Max(1f, _maxHealth * safeHealthRate);
+        _stamina = Mathf.Max(_stamina, _maxStamina * 0.5f);
         _isGameOverRequested = false;
+        _invulnerableUntilTime = Time.time + Mathf.Max(0f, _reviveInvulnerableSeconds);
 
         if (_playerController != null)
         {
             _playerController.SetState(PlayerControlState.Normal);
         }
+
+        HideDeathView();
+        ClampStatusValues();
+    }
+
+    public void ResetStatusForNewRun()
+    {
+        ResolveRuntimeReferences();
+
+        _maxHealth = _baseMaxHealth;
+        _maxStamina = _baseMaxStamina;
+        _maxSatiety = _baseMaxSatiety;
+        _staminaRecoveryRate = _baseStaminaRecoveryRate;
+        _equipmentDefense = 0f;
+        _equipmentMaxHealthBonus = 0f;
+        _equipmentMaxStaminaBonus = 0f;
+        _health = _maxHealth;
+        _stamina = _maxStamina;
+        _satiety = _maxSatiety;
+        _isExhausted = false;
+        _isGameOverRequested = false;
+        _invulnerableUntilTime = 0f;
+
+        if (_playerController != null)
+        {
+            _playerController.SetState(PlayerControlState.Normal);
+        }
+
+        HideDeathView();
+        ClampStatusValues();
     }
 
     public void EatFood(float amount)
@@ -416,9 +465,40 @@ public sealed class PlayerStatus : MonoBehaviour
         RefreshStarvingState();
     }
 
+    private void CacheBaseStatusValues()
+    {
+        _baseMaxHealth = Mathf.Max(1f, _maxHealth);
+        _baseMaxStamina = Mathf.Max(1f, _maxStamina);
+        _baseMaxSatiety = Mathf.Max(1f, _maxSatiety);
+        _baseStaminaRecoveryRate = _staminaRecoveryRate;
+    }
+
+    private void ResolveRuntimeReferences()
+    {
+        if (_playerMovement == null)
+        {
+            _playerMovement = GetComponent<PlayerMovement>();
+        }
+
+        if (_playerController == null)
+        {
+            _playerController = GetComponent<PlayerController>();
+        }
+
+        if (_deathCinderHeartView == null)
+        {
+            _deathCinderHeartView = GetComponent<DeathCinderHeartView>();
+        }
+    }
+
     public bool IsDead()
     {
         return _health <= 0f;
+    }
+
+    private bool IsInvulnerable()
+    {
+        return _invulnerableUntilTime > 0f && Time.time < _invulnerableUntilTime;
     }
 
     private void NotifyPlayerDamaged(float damage)
@@ -450,6 +530,7 @@ public sealed class PlayerStatus : MonoBehaviour
             return;
         }
 
+        ResolveRuntimeReferences();
         _isGameOverRequested = true;
         NotifyPlayerDiedGlobal();
         Debug.LogWarning("[PlayerStatus] 플레이어가 사망하여 CinderHeart 관전 상태로 전환합니다.");
@@ -469,6 +550,16 @@ public sealed class PlayerStatus : MonoBehaviour
         }
 
         _deathCinderHeartView.ShowCinderHeartView();
+    }
+
+    private void HideDeathView()
+    {
+        if (_deathCinderHeartView == null)
+        {
+            return;
+        }
+
+        _deathCinderHeartView.HideCinderHeartView();
     }
 
     private void NotifyPlayerDiedGlobal()

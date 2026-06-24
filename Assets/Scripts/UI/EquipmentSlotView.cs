@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Cinderkeep.Gameplay
 {
     // 헬멧, 갑옷, 무기, 신발 장비 칸을 표시하는 UI 컴포넌트입니다.
-    // 인벤토리 슬롯에서 드롭하면 InventoryUI에 장착 요청을 전달합니다.
+    // 인벤토리 슬롯에서 드롭하면 InventoryUI에 장착 요청을 전달하고 결과만 표시합니다.
     public sealed class EquipmentSlotView : MonoBehaviour, IDropHandler
     {
         [Header("Slot")]
@@ -19,6 +19,7 @@ namespace Cinderkeep.Gameplay
 
         [Header("Image UI")]
         [SerializeField] private Image _backgroundImage;
+        [SerializeField] private Image _itemIconImage;
 
         private InventoryUI _ownerInventoryUI;
 
@@ -58,36 +59,18 @@ namespace Cinderkeep.Gameplay
             {
                 _slotText.text = GetSlotLabel() + "\nEmpty";
                 RefreshBackground(false);
+                RefreshItemIcon(false);
                 return;
             }
 
-            _slotText.text = GetSlotLabel() + "\n" + equippedItemId;
+            _slotText.text = GetSlotLabel() + "\n" + UiItemDisplayFormatter.GetItemName(equippedItemId, ResolveItemType());
             RefreshBackground(true);
+            RefreshItemIcon(true);
         }
 
         private string GetSlotLabel()
         {
-            if (_slotType == EquipmentSlotType.Helmet)
-            {
-                return "Helmet";
-            }
-
-            if (_slotType == EquipmentSlotType.Armor)
-            {
-                return "Armor";
-            }
-
-            if (_slotType == EquipmentSlotType.Weapon)
-            {
-                return "Weapon";
-            }
-
-            if (_slotType == EquipmentSlotType.Boots)
-            {
-                return "Boots";
-            }
-
-            return "Slot";
+            return UiItemDisplayFormatter.GetEquipmentSlotLabel(_slotType);
         }
 
         private void RefreshBackground(bool hasItem)
@@ -105,6 +88,44 @@ namespace Cinderkeep.Gameplay
             {
                 _backgroundImage.color = new Color(0.11f, 0.11f, 0.13f, 0.86f);
             }
+        }
+
+        private void RefreshItemIcon(bool hasItem)
+        {
+            if (_itemIconImage == null)
+            {
+                return;
+            }
+
+            _itemIconImage.enabled = hasItem;
+            if (hasItem == false)
+            {
+                return;
+            }
+
+            _itemIconImage.color = _slotType == EquipmentSlotType.Weapon
+                ? new Color(0.95f, 0.35f, 0.32f, 0.95f)
+                : new Color(0.86f, 0.76f, 0.55f, 0.95f);
+        }
+
+        private InventoryItemType ResolveItemType()
+        {
+            if (_slotType == EquipmentSlotType.Weapon)
+            {
+                return InventoryItemType.Weapon;
+            }
+
+            if (_slotType == EquipmentSlotType.Helmet)
+            {
+                return InventoryItemType.Helmet;
+            }
+
+            if (_slotType == EquipmentSlotType.Boots)
+            {
+                return InventoryItemType.Boots;
+            }
+
+            return InventoryItemType.Armor;
         }
     }
 }

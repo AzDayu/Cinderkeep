@@ -140,7 +140,8 @@ namespace Cinderkeep.Gameplay
 
         public bool IsRecipeVisibleInCraftingUI(CraftingRecipeData recipeData)
         {
-            return recipeData != null && IsCinderHeartUpgradeResult(recipeData) == false;
+            return recipeData != null
+                && GameDataValidationRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType);
         }
 
         private bool IsResourceResult(CraftingRecipeData recipeData)
@@ -150,7 +151,10 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return string.Equals(recipeData.ResultDataType, "Resource", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(
+                recipeData.ResultDataType,
+                GameDataValidationRules.RecipeResultTypeResource,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsBuildingResult(CraftingRecipeData recipeData)
@@ -160,7 +164,10 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return string.Equals(recipeData.ResultDataType, "Building", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(
+                recipeData.ResultDataType,
+                GameDataValidationRules.RecipeResultTypeBuilding,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         private bool IsCinderHeartUpgradeResult(CraftingRecipeData recipeData)
@@ -170,7 +177,10 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
 
-            return string.Equals(recipeData.ResultDataType, "CinderHeartUpgrade", StringComparison.OrdinalIgnoreCase);
+            return string.Equals(
+                recipeData.ResultDataType,
+                GameDataValidationRules.RecipeResultTypeCinderHeartUpgrade,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         private bool TryGrantPreparedBuilding(CraftingRecipeData recipeData)
@@ -193,19 +203,19 @@ namespace Cinderkeep.Gameplay
         {
             itemType = InventoryItemType.Tool;
 
-            if (string.Equals(resultDataType, "Tool", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(resultDataType, GameDataValidationRules.RecipeResultTypeTool, StringComparison.OrdinalIgnoreCase))
             {
                 itemType = InventoryItemType.Tool;
                 return true;
             }
 
-            if (string.Equals(resultDataType, "Weapon", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(resultDataType, GameDataValidationRules.RecipeResultTypeWeapon, StringComparison.OrdinalIgnoreCase))
             {
                 itemType = InventoryItemType.Weapon;
                 return true;
             }
 
-            if (string.Equals(resultDataType, "Armor", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(resultDataType, GameDataValidationRules.RecipeResultTypeArmor, StringComparison.OrdinalIgnoreCase))
             {
                 itemType = ResolveArmorItemType(resultItemId);
                 return true;

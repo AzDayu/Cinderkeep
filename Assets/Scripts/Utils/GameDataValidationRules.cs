@@ -36,6 +36,15 @@ namespace Cinderkeep.Gameplay
             RecipeResultTypeCinderHeartUpgrade
         };
 
+        private static readonly HashSet<string> ImplementedCraftingRecipeResultTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            RecipeResultTypeResource,
+            RecipeResultTypeTool,
+            RecipeResultTypeWeapon,
+            RecipeResultTypeArmor,
+            RecipeResultTypeBuilding
+        };
+
         private static readonly HashSet<string> ImplementedCinderHeartRewardEffectTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             RewardEffectCinderHeartAttackDamageAdd,
@@ -55,6 +64,12 @@ namespace Cinderkeep.Gameplay
         {
             return string.IsNullOrEmpty(resultDataType) == false
                 && SupportedCraftingRecipeResultTypes.Contains(resultDataType);
+        }
+
+        public static bool IsImplementedCraftingRecipeResultType(string resultDataType)
+        {
+            return string.IsNullOrEmpty(resultDataType) == false
+                && ImplementedCraftingRecipeResultTypes.Contains(resultDataType);
         }
 
         public static bool IsImplementedCinderHeartRewardEffect(string effectType)

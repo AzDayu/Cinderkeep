@@ -84,8 +84,7 @@ public sealed class GameFlowTimerHUD : MonoBehaviour
             return;
         }
 
-        string modeSuffix = GameLaunchSettings.IsTestFastMode ? " / 테스트초고속 모드" : string.Empty;
-        _phaseText.text = GetPhaseDisplayText(_gameRunModel.Phase) + modeSuffix;
+        _phaseText.text = GetPhaseDisplayText(_gameRunModel.Phase) + " / " + GameLaunchSettings.ModeDisplayName;
     }
 
     private string FormatTime(float time)

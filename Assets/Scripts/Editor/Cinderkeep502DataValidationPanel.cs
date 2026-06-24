@@ -10,8 +10,10 @@ using UnityEngine;
 public static class Cinderkeep502DataValidationPanel
 {
     private const string MenuRoot = "Cinderkeep/5.02 Data Validation/";
-    private const string ReportPath = "Temp/Cinderkeep_5_02_DataValidationReport.txt";
+    private const string MenuRoot524 = "Cinderkeep/5.24 Data Validation/";
+    private const string ReportPath = "Temp/Cinderkeep_5_24_DataValidationReport.txt";
 
+    [MenuItem(MenuRoot524 + "Run Full 5.24 Data Validation")]
     [MenuItem(MenuRoot + "Run Full 5.02 Data Validation")]
     public static void RunFullDataValidation()
     {
@@ -21,20 +23,21 @@ public static class Cinderkeep502DataValidationPanel
 
         if (isOk)
         {
-            Debug.Log("[Cinderkeep 5.02] Data validation passed.\n" + reportBuilder);
+            Debug.Log("[Cinderkeep 5.24] Data validation passed.\n" + reportBuilder);
             return;
         }
 
-        Debug.LogWarning("[Cinderkeep 5.02] Data validation found issues.\n" + reportBuilder);
+        Debug.LogWarning("[Cinderkeep 5.24] Data validation found issues.\n" + reportBuilder);
     }
 
+    [MenuItem(MenuRoot524 + "Generate Data Validation Report")]
     [MenuItem(MenuRoot + "Generate Data Validation Report")]
     public static void GenerateDataValidationReport()
     {
         StringBuilder reportBuilder = new StringBuilder();
         RunValidation(reportBuilder);
         WriteReport(reportBuilder);
-        Debug.Log("[Cinderkeep 5.02] Data validation report generated: " + ReportPath);
+        Debug.Log("[Cinderkeep 5.24] Data validation report generated: " + ReportPath);
     }
 
     private static bool RunValidation(StringBuilder reportBuilder)
@@ -45,9 +48,10 @@ public static class Cinderkeep502DataValidationPanel
         {
             gameDataManager.Initialize();
             bool isOk = true;
-            reportBuilder.AppendLine("[5.02 Data Validation]");
+            reportBuilder.AppendLine("[5.24 Data Validation]");
             isOk &= ValidateCatalogCounts(gameDataManager, reportBuilder);
             isOk &= ValidateCraftingRecipes(gameDataManager, reportBuilder);
+            isOk &= ValidateBuildings(gameDataManager, reportBuilder);
             isOk &= ValidateHarvestNodes(gameDataManager, reportBuilder);
             isOk &= ValidateCinderHeartSkills(gameDataManager, reportBuilder);
             isOk &= ValidateRequiredStarterData(gameDataManager, reportBuilder);
@@ -98,11 +102,28 @@ public static class Cinderkeep502DataValidationPanel
                 GameDataValidationRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
                 recipeData.ResultDataType);
 
+            AppendRecipeExposure(reportBuilder, recipeData);
             isOk &= ValidateRecipeResult(gameDataManager, reportBuilder, recipeData);
             isOk &= ValidateRecipeCosts(gameDataManager, reportBuilder, recipeData);
         }
 
         return isOk;
+    }
+
+    private static void AppendRecipeExposure(StringBuilder reportBuilder, CraftingRecipeData recipeData)
+    {
+        if (recipeData == null)
+        {
+            return;
+        }
+
+        bool isLive = GameDataValidationRules.IsImplementedCraftingRecipeResultType(recipeData.ResultDataType);
+        reportBuilder.AppendLine((isLive ? "[Live Recipe] " : "[Hidden Recipe] ")
+            + recipeData.Id
+            + " - "
+            + recipeData.ResultDataType
+            + " / "
+            + recipeData.ResultItemId);
     }
 
     private static bool ValidateRecipeResult(GameDataManager gameDataManager, StringBuilder reportBuilder, CraftingRecipeData recipeData)
@@ -172,6 +193,72 @@ public static class Cinderkeep502DataValidationPanel
             isOk &= AppendCheck(reportBuilder, recipeData.Id + ".Cost[" + i + "].Amount", costData.Amount > 0, costData.Amount.ToString());
         }
 
+        return isOk;
+    }
+
+    private static bool ValidateBuildings(GameDataManager gameDataManager, StringBuilder reportBuilder)
+    {
+        reportBuilder.AppendLine();
+        reportBuilder.AppendLine("[Buildings]");
+        bool isOk = true;
+        int wallCount = 0;
+        int towerCount = 0;
+        int trapCount = 0;
+        int stationCount = 0;
+
+        foreach (KeyValuePair<string, BuildingData> pair in gameDataManager.BuildingDataList)
+        {
+            BuildingData buildingData = pair.Value;
+            if (buildingData == null)
+            {
+                isOk &= AppendCheck(reportBuilder, pair.Key, false, "building is null");
+                continue;
+            }
+
+            if (string.Equals(buildingData.BuildingType, "Wall", System.StringComparison.OrdinalIgnoreCase))
+            {
+                wallCount++;
+            }
+            else if (string.Equals(buildingData.BuildingType, "Tower", System.StringComparison.OrdinalIgnoreCase))
+            {
+                towerCount++;
+            }
+            else if (string.Equals(buildingData.BuildingType, "Trap", System.StringComparison.OrdinalIgnoreCase))
+            {
+                trapCount++;
+            }
+            else if (string.Equals(buildingData.BuildingType, "Station", System.StringComparison.OrdinalIgnoreCase))
+            {
+                stationCount++;
+            }
+            else
+            {
+                isOk &= AppendCheck(reportBuilder, buildingData.Id + ".BuildingType", false, buildingData.BuildingType);
+            }
+
+            isOk &= AppendCheck(reportBuilder, buildingData.Id + ".DisplayName", string.IsNullOrEmpty(buildingData.DisplayName) == false, buildingData.DisplayName);
+            isOk &= AppendCheck(reportBuilder, buildingData.Id + ".MaxHealth", buildingData.MaxHealth > 0f, buildingData.MaxHealth.ToString());
+
+            bool hasRecipe = string.IsNullOrEmpty(buildingData.CraftingRecipeId) == false
+                && gameDataManager.CraftingRecipeDataList.ContainsKey(buildingData.CraftingRecipeId);
+            isOk &= AppendCheck(reportBuilder, buildingData.Id + ".CraftingRecipeId", hasRecipe, buildingData.CraftingRecipeId);
+
+            if (string.Equals(buildingData.BuildingType, "Tower", System.StringComparison.OrdinalIgnoreCase))
+            {
+                isOk &= AppendCheck(reportBuilder, buildingData.Id + ".AttackDamage", buildingData.AttackDamage > 0f, buildingData.AttackDamage.ToString());
+                isOk &= AppendCheck(reportBuilder, buildingData.Id + ".AttackRange", buildingData.AttackRange > 0f, buildingData.AttackRange.ToString());
+            }
+
+            if (string.Equals(buildingData.BuildingType, "Trap", System.StringComparison.OrdinalIgnoreCase))
+            {
+                isOk &= AppendCheck(reportBuilder, buildingData.Id + ".AttackInterval", buildingData.AttackInterval > 0f, buildingData.AttackInterval.ToString());
+            }
+        }
+
+        isOk &= AppendCheck(reportBuilder, "wall count", wallCount > 0, wallCount.ToString());
+        isOk &= AppendCheck(reportBuilder, "tower count", towerCount > 0, towerCount.ToString());
+        isOk &= AppendCheck(reportBuilder, "trap count", trapCount > 0, trapCount.ToString());
+        isOk &= AppendCheck(reportBuilder, "station count", stationCount > 0, stationCount.ToString());
         return isOk;
     }
 

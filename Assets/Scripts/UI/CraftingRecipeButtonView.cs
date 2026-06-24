@@ -102,10 +102,12 @@ namespace Cinderkeep.Gameplay
             if (canCraft)
             {
                 RefreshText(_stateText, "제작 가능");
+                RefreshStateColor(new Color(0.35f, 1f, 0.55f, 1f));
             }
             else
             {
                 RefreshText(_stateText, "자원 부족");
+                RefreshStateColor(new Color(1f, 0.45f, 0.32f, 1f));
             }
         }
 
@@ -140,10 +142,22 @@ namespace Cinderkeep.Gameplay
                     costText += " / ";
                 }
 
-                costText += costData.ResourceId + " " + costData.Amount;
+                costText += UiItemDisplayFormatter.GetItemName(costData.ResourceId, InventoryItemType.Resource)
+                    + " "
+                    + costData.Amount;
             }
 
             return costText;
+        }
+
+        private void RefreshStateColor(Color color)
+        {
+            if (_stateText == null)
+            {
+                return;
+            }
+
+            _stateText.color = color;
         }
 
         private void RefreshText(TMP_Text targetText, string text)

@@ -9,6 +9,7 @@ public sealed class HudTutorialGuide : MonoBehaviour
 {
     private const string CanvasName = "Canvas_GameHUD";
     private const string HudRootName = "Panel_HUDRoot";
+    private const string GuideBackgroundName = "Image_GameGuideBackground";
     private const string GuideTextName = "Text_GameGuide";
     private const string GuideIconName = "Image_GameGuideIcon";
 
@@ -24,6 +25,7 @@ public sealed class HudTutorialGuide : MonoBehaviour
     [Header("Connected UI")]
     [SerializeField] private TMP_Text _guideText;
     [SerializeField] private Image _guideIconImage;
+    [SerializeField] private Image _guideBackgroundImage;
 
     [Header("Optional Sprites")]
     [Tooltip("GUI Pro 또는 임시 튜토리얼 기본 아이콘입니다. 비어 있으면 색상 박스로 표시합니다.")]
@@ -88,6 +90,7 @@ public sealed class HudTutorialGuide : MonoBehaviour
             hudRoot = hudRootObject.transform;
         }
 
+        Image guideBackground = FindOrCreateGuideBackground(hudRoot);
         TMP_Text guideText = FindOrCreateGuideText(hudRoot);
         Image guideIcon = FindOrCreateGuideIcon(hudRoot);
         HudTutorialGuide guide = guideText.GetComponent<HudTutorialGuide>();
@@ -96,15 +99,49 @@ public sealed class HudTutorialGuide : MonoBehaviour
             guide = guideText.gameObject.AddComponent<HudTutorialGuide>();
         }
 
-        guide.SetReferences(guideText, guideIcon);
+        guide.SetReferences(guideText, guideIcon, guideBackground);
         return guide;
     }
 
     public void SetReferences(TMP_Text guideText, Image guideIconImage)
     {
+        SetReferences(guideText, guideIconImage, _guideBackgroundImage);
+    }
+
+    public void SetReferences(TMP_Text guideText, Image guideIconImage, Image guideBackgroundImage)
+    {
         _guideText = guideText;
         _guideIconImage = guideIconImage;
+        _guideBackgroundImage = guideBackgroundImage;
+        RefreshBackground();
         RefreshGuideText();
+    }
+
+    private static Image FindOrCreateGuideBackground(Transform hudRoot)
+    {
+        Transform backgroundTransform = hudRoot.Find(GuideBackgroundName);
+        GameObject backgroundObject = backgroundTransform == null
+            ? new GameObject(GuideBackgroundName, typeof(RectTransform), typeof(Image))
+            : backgroundTransform.gameObject;
+
+        backgroundObject.transform.SetParent(hudRoot, false);
+        backgroundObject.transform.SetAsFirstSibling();
+        Image backgroundImage = backgroundObject.GetComponent<Image>();
+        if (backgroundImage == null)
+        {
+            backgroundImage = backgroundObject.AddComponent<Image>();
+        }
+
+        RectTransform rectTransform = backgroundImage.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0f, 1f);
+        rectTransform.anchorMax = new Vector2(0f, 1f);
+        rectTransform.pivot = new Vector2(0f, 1f);
+        rectTransform.anchoredPosition = new Vector2(16f, -12f);
+        rectTransform.sizeDelta = new Vector2(840f, 48f);
+
+        backgroundImage.color = new Color(0.04f, 0.06f, 0.08f, 0.72f);
+        backgroundImage.raycastTarget = false;
+        return backgroundImage;
     }
 
     private static TMP_Text FindOrCreateGuideText(Transform hudRoot)
@@ -288,6 +325,7 @@ public sealed class HudTutorialGuide : MonoBehaviour
         _guideText.richText = true;
         _guideText.color = _activeTextColor;
         _guideText.text = GetStepText(_currentStep);
+        RefreshBackground();
         RefreshIcon(false);
     }
 
@@ -301,7 +339,19 @@ public sealed class HudTutorialGuide : MonoBehaviour
         _guideText.richText = true;
         _guideText.color = _completedTextColor;
         _guideText.text = "<s>" + GetStepText(_currentStep) + "</s>";
+        RefreshBackground();
         RefreshIcon(true);
+    }
+
+    private void RefreshBackground()
+    {
+        if (_guideBackgroundImage == null)
+        {
+            return;
+        }
+
+        _guideBackgroundImage.color = new Color(0.04f, 0.06f, 0.08f, 0.72f);
+        _guideBackgroundImage.raycastTarget = false;
     }
 
     private void RefreshIcon(bool isCompleted)

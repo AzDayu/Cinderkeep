@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Cinderkeep.Gameplay
 {
     // 1~7번 퀵슬롯을 표시하는 UI 컴포넌트입니다.
-    // 인벤토리 슬롯에서 드롭하면 해당 퀵슬롯에 아이템 바로가기를 등록합니다.
+    // 드래그 앤 드롭과 더블클릭 자동 등록 결과를 플레이어가 즉시 확인할 수 있게 보여줍니다.
     public sealed class QuickSlotView : MonoBehaviour, IDropHandler
     {
         [Header("Slot")]
@@ -19,6 +19,7 @@ namespace Cinderkeep.Gameplay
 
         [Header("Image UI")]
         [SerializeField] private Image _backgroundImage;
+        [SerializeField] private Image _itemIconImage;
 
         private InventoryUI _ownerInventoryUI;
 
@@ -57,13 +58,15 @@ namespace Cinderkeep.Gameplay
             string numberText = (_slotIndex + 1).ToString();
             if (itemModel == null || itemModel.IsEmpty)
             {
-                _slotText.text = numberText + "\nEmpty";
+                _slotText.text = numberText;
                 RefreshBackground(false);
+                RefreshItemIcon(null);
                 return;
             }
 
-            _slotText.text = numberText + "\n" + itemModel.ItemId;
+            _slotText.text = numberText + "\n" + UiItemDisplayFormatter.GetItemName(itemModel);
             RefreshBackground(true);
+            RefreshItemIcon(itemModel);
         }
 
         private void RefreshBackground(bool hasItem)
@@ -81,6 +84,48 @@ namespace Cinderkeep.Gameplay
             {
                 _backgroundImage.color = new Color(0.08f, 0.10f, 0.12f, 0.86f);
             }
+        }
+
+        private void RefreshItemIcon(InventoryItemModel itemModel)
+        {
+            if (_itemIconImage == null)
+            {
+                return;
+            }
+
+            bool hasItem = itemModel != null && itemModel.IsEmpty == false;
+            _itemIconImage.enabled = hasItem;
+            if (hasItem == false)
+            {
+                return;
+            }
+
+            _itemIconImage.color = GetFallbackItemColor(itemModel.ItemType);
+        }
+
+        private Color GetFallbackItemColor(InventoryItemType itemType)
+        {
+            if (itemType == InventoryItemType.Weapon)
+            {
+                return new Color(0.95f, 0.35f, 0.32f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Tool)
+            {
+                return new Color(0.82f, 0.73f, 0.50f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Food)
+            {
+                return new Color(0.35f, 0.92f, 0.45f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Building)
+            {
+                return new Color(0.50f, 0.70f, 0.95f, 0.95f);
+            }
+
+            return new Color(0.78f, 0.84f, 0.92f, 0.95f);
         }
     }
 }

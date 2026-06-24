@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace Cinderkeep.Gameplay
 {
     // 인벤토리 한 칸을 표시하는 UI 컴포넌트입니다.
-    // 드래그 시작만 기록하고, 실제 이동 처리는 InventoryUI가 맡습니다.
+    // 실제 이동과 장착 판단은 InventoryUI가 맡고, 이 클래스는 슬롯 표시와 입력 전달만 담당합니다.
     public sealed class InventorySlotView : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
     {
         [Header("Text UI")]
@@ -16,6 +16,7 @@ namespace Cinderkeep.Gameplay
 
         [Header("Image UI")]
         [SerializeField] private Image _backgroundImage;
+        [SerializeField] private Image _itemIconImage;
 
         private InventoryUI _ownerInventoryUI;
         private int _slotIndex;
@@ -85,11 +86,13 @@ namespace Cinderkeep.Gameplay
             {
                 _itemText.text = "";
                 RefreshBackground(false);
+                RefreshItemIcon(null);
                 return;
             }
 
-            _itemText.text = itemModel.ItemId + "\n" + itemModel.Amount;
+            _itemText.text = UiItemDisplayFormatter.BuildItemStackText(itemModel, true);
             RefreshBackground(true);
+            RefreshItemIcon(itemModel);
         }
 
         private void RefreshBackground(bool hasItem)
@@ -107,6 +110,48 @@ namespace Cinderkeep.Gameplay
             {
                 _backgroundImage.color = new Color(0.10f, 0.13f, 0.16f, 0.78f);
             }
+        }
+
+        private void RefreshItemIcon(InventoryItemModel itemModel)
+        {
+            if (_itemIconImage == null)
+            {
+                return;
+            }
+
+            bool hasItem = itemModel != null && itemModel.IsEmpty == false;
+            _itemIconImage.enabled = hasItem;
+            if (hasItem == false)
+            {
+                return;
+            }
+
+            _itemIconImage.color = GetFallbackItemColor(itemModel.ItemType);
+        }
+
+        private Color GetFallbackItemColor(InventoryItemType itemType)
+        {
+            if (itemType == InventoryItemType.Resource)
+            {
+                return new Color(0.68f, 0.78f, 0.86f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Weapon)
+            {
+                return new Color(0.95f, 0.35f, 0.32f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Tool)
+            {
+                return new Color(0.82f, 0.73f, 0.50f, 0.95f);
+            }
+
+            if (itemType == InventoryItemType.Food)
+            {
+                return new Color(0.35f, 0.92f, 0.45f, 0.95f);
+            }
+
+            return new Color(0.78f, 0.84f, 0.92f, 0.95f);
         }
     }
 }

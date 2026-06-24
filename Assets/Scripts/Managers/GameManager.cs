@@ -230,6 +230,7 @@ namespace Cinderkeep.Gameplay
         private void BeginNewGameFlow()
         {
             Time.timeScale = 1f;
+            ResetPlayerSceneState();
             RunResultTracker.EnsureSceneTracker().BeginRun(_gameRunModel);
             global::PlayerEquipmentStatApplier.EnsureSceneApplier();
 
@@ -265,6 +266,7 @@ namespace Cinderkeep.Gameplay
 
             InitializeRuntimeModels();
             ResetCinderHeartState();
+            ResetPlayerSceneState();
             global::PlayerEquipmentStatApplier.EnsureSceneApplier();
             global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
             global::FoodPickupSceneBootstrap.EnsureFoodPickups();
@@ -305,6 +307,17 @@ namespace Cinderkeep.Gameplay
             }
 
             cinderHeart.InitializeHealth();
+        }
+
+        private void ResetPlayerSceneState()
+        {
+            global::PlayerStatus playerStatus = Object.FindFirstObjectByType<global::PlayerStatus>();
+            if (playerStatus == null)
+            {
+                return;
+            }
+
+            playerStatus.ResetStatusForNewRun();
         }
 
         private GameObject FindCinderHeartObject()

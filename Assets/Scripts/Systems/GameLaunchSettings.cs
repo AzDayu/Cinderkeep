@@ -81,20 +81,39 @@ namespace Cinderkeep.Gameplay
 
         public static bool TryGetDurationOverride(GameRunPhase phase, out float duration)
         {
+            return TryGetDurationForMode(_mode, phase, out duration);
+        }
+
+        public static bool TryGetDurationForMode(GameLaunchMode mode, GameRunPhase phase, out float duration)
+        {
             GameModeSettingsData settings = GetSettings();
             duration = 0f;
 
             switch (phase)
             {
                 case GameRunPhase.Day:
-                    duration = IsTestFastMode ? settings.TestFastDayDuration : settings.NormalDayDuration;
+                    duration = mode == GameLaunchMode.TestFast ? settings.TestFastDayDuration : settings.NormalDayDuration;
                     return true;
                 case GameRunPhase.Night:
-                    duration = IsTestFastMode ? settings.TestFastNightDuration : settings.NormalNightDuration;
+                    duration = mode == GameLaunchMode.TestFast ? settings.TestFastNightDuration : settings.NormalNightDuration;
                     return true;
             }
 
             return false;
+        }
+
+        public static string GetSettingsSummary()
+        {
+            GameModeSettingsData settings = GetSettings();
+            return "일반 낮 "
+                + settings.NormalDayDuration
+                + "초 / 밤 "
+                + settings.NormalNightDuration
+                + "초, 테스트초고속 낮 "
+                + settings.TestFastDayDuration
+                + "초 / 밤 "
+                + settings.TestFastNightDuration
+                + "초";
         }
     }
 
