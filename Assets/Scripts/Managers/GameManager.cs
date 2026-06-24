@@ -231,6 +231,7 @@ namespace Cinderkeep.Gameplay
         {
             Time.timeScale = 1f;
             RunResultTracker.EnsureSceneTracker().BeginRun(_gameRunModel);
+            global::PlayerEquipmentStatApplier.EnsureSceneApplier();
 
             if (_gameFlowController != null)
             {
@@ -264,6 +265,7 @@ namespace Cinderkeep.Gameplay
 
             InitializeRuntimeModels();
             ResetCinderHeartState();
+            global::PlayerEquipmentStatApplier.EnsureSceneApplier();
             global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
             global::FoodPickupSceneBootstrap.EnsureFoodPickups();
             global::TrapZoneSceneBootstrap.EnsureTrapZones();

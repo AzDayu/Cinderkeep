@@ -24,6 +24,10 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
     [SerializeField] private GatherToolType _requiredToolType = GatherToolType.None;
     [Tooltip("채집에 필요한 도구 티어입니다. 현재는 데이터 확인용이며, 도구 티어 시스템 연결 뒤 판정에 사용합니다.")]
     [SerializeField] private int _requiredToolTier;
+    [Tooltip("고갈되기 전까지 채집 가능한 횟수입니다. harvest_nodes.json의 MaxGatherCount로 초기화됩니다.")]
+    [SerializeField] private int _maxGatherCount = 1;
+    [Tooltip("고갈된 뒤 다시 나타나는 시간입니다. 0 이하이면 리스폰하지 않습니다.")]
+    [SerializeField] private float _respawnSeconds;
     [Tooltip("채집 후 이 오브젝트를 비활성화할지 결정합니다.")]
     [SerializeField] private bool _disableAfterGather = true;
     [Tooltip("현재 이 자원을 채집하거나 주울 수 있는지 결정합니다.")]
@@ -31,6 +35,8 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     private bool _hasAppliedHarvestNodeData;
     private bool _hasWarnedMissingHarvestNodeData;
+    private bool _hasInitializedGatherState;
+    private int _remainingGatherCount;
 
     public string HarvestNodeDataId
     {
@@ -267,14 +273,59 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
     private void ProcessGathered()
     {
-        _canInteract = false;
-
-        if (_disableAfterGather == false)
+        EnsureGatherStateInitialized();
+        _remainingGatherCount = Mathf.Max(0, _remainingGatherCount - 1);
+        if (_remainingGatherCount > 0)
         {
             return;
         }
 
-        gameObject.SetActive(false);
+        _canInteract = false;
+        if (_respawnSeconds > 0f)
+        {
+            SetNodeVisible(false);
+            CancelInvoke(nameof(RespawnNode));
+            Invoke(nameof(RespawnNode), _respawnSeconds);
+            return;
+        }
+
+        if (_disableAfterGather)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void RespawnNode()
+    {
+        _remainingGatherCount = Mathf.Max(1, _maxGatherCount);
+        _canInteract = true;
+        SetNodeVisible(true);
+    }
+
+    private void EnsureGatherStateInitialized()
+    {
+        if (_hasInitializedGatherState)
+        {
+            return;
+        }
+
+        _remainingGatherCount = Mathf.Max(1, _maxGatherCount);
+        _hasInitializedGatherState = true;
+    }
+
+    private void SetNodeVisible(bool isVisible)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].enabled = isVisible;
+        }
+
+        Collider[] colliders = GetComponentsInChildren<Collider>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = isVisible;
+        }
     }
 
     private void PlayResourcePickupSfx()
@@ -391,7 +442,14 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
 
         _requiredToolType = ConvertToolType(harvestNodeData.RequiredToolType, _requiredToolType);
         _requiredToolTier = harvestNodeData.RequiredToolTier;
+        if (harvestNodeData.MaxGatherCount > 0)
+        {
+            _maxGatherCount = harvestNodeData.MaxGatherCount;
+        }
+
+        _respawnSeconds = Mathf.Max(0f, harvestNodeData.RespawnSeconds);
         _hasAppliedHarvestNodeData = true;
+        _hasInitializedGatherState = false;
     }
 
     private GatherToolType ConvertToolType(string toolTypeText, GatherToolType fallbackToolType)

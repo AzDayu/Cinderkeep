@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// CinderHeart 주변 방어 함정입니다. 적이 밟으면 일정 시간 느려지고 Run Result에 이동방해 점수를 보고합니다.
+// CinderHeart 주변 방어 함정입니다.
+// 적이 밟으면 일정 시간 느려지고, Run Result에 이동방해 점수를 보고합니다.
 public sealed class TrapSlowZone : MonoBehaviour
 {
     [SerializeField] private float _speedMultiplier = 0.5f;
@@ -14,6 +16,23 @@ public sealed class TrapSlowZone : MonoBehaviour
     private void Awake()
     {
         ConnectReporter();
+    }
+
+    public void Initialize(BuildingData buildingData)
+    {
+        if (buildingData == null)
+        {
+            return;
+        }
+
+        int tier = Mathf.Clamp(buildingData.Tier, 1, 4);
+        _speedMultiplier = Mathf.Clamp(0.75f - (tier * 0.1f), 0.35f, 0.75f);
+        _slowDurationSeconds = 1.5f + (tier * 0.5f);
+
+        if (buildingData.AttackInterval > 0f)
+        {
+            _reapplyCooldownSeconds = buildingData.AttackInterval;
+        }
     }
 
     private void OnTriggerStay(Collider other)

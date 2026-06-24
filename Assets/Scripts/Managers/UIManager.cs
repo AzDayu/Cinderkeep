@@ -12,6 +12,7 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObject _inventoryRoot;
         [SerializeField] private GameObject _gameOverPanel;
         [SerializeField] private Text _runResultText;
+        [SerializeField] private RunResultUI _runResultUI;
         [SerializeField] private InventoryUI _inventoryUI;
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
@@ -145,8 +146,7 @@ namespace Cinderkeep.Gameplay
             CloseHud();
 
             _isRunResultPanelOpen = true;
-            RefreshRunResultTextFromTracker(isClear);
-            SetActive(_gameOverPanel, true);
+            OpenRunResultUI(isClear);
             RefreshCursorState();
 
             if (isClear)
@@ -161,7 +161,15 @@ namespace Cinderkeep.Gameplay
         public void CloseGameOverPanel()
         {
             _isRunResultPanelOpen = false;
-            SetActive(_gameOverPanel, false);
+            if (_runResultUI != null)
+            {
+                _runResultUI.Close();
+            }
+            else
+            {
+                SetActive(_gameOverPanel, false);
+            }
+
             RefreshCursorState();
         }
 
@@ -361,6 +369,33 @@ namespace Cinderkeep.Gameplay
             RunResultTracker tracker = RunResultTracker.Instance;
             RunResultSnapshot snapshot = tracker == null ? CreateFallbackRunResultSnapshot(isClear, gameRunModel) : tracker.CreateSnapshot(isClear, gameRunModel);
             _runResultText.text = BuildRunResultText(snapshot);
+        }
+
+        private void OpenRunResultUI(bool isClear)
+        {
+            ConnectRunResultUI();
+            if (_runResultUI != null)
+            {
+                _runResultUI.Open(isClear);
+                return;
+            }
+
+            RefreshRunResultTextFromTracker(isClear);
+            SetActive(_gameOverPanel, true);
+        }
+
+        private void ConnectRunResultUI()
+        {
+            if (_runResultUI != null || _gameOverPanel == null)
+            {
+                return;
+            }
+
+            _runResultUI = _gameOverPanel.GetComponent<RunResultUI>();
+            if (_runResultUI == null)
+            {
+                _runResultUI = _gameOverPanel.AddComponent<RunResultUI>();
+            }
         }
 
         private RunResultSnapshot CreateFallbackRunResultSnapshot(bool isClear, GameRunModel gameRunModel)

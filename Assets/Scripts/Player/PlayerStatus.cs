@@ -37,6 +37,9 @@ public sealed class PlayerStatus : MonoBehaviour
     private bool _isExhausted;
     private bool _isStarving;
     private bool _isGameOverRequested;
+    private float _equipmentDefense;
+    private float _equipmentMaxHealthBonus;
+    private float _equipmentMaxStaminaBonus;
     private PlayerMovement _playerMovement;
     private PlayerController _playerController;
     private DeathCinderHeartView _deathCinderHeartView;
@@ -177,11 +180,12 @@ public sealed class PlayerStatus : MonoBehaviour
             return;
         }
 
-        _health -= amount;
+        float finalDamage = GetFinalDamage(amount);
+        _health -= finalDamage;
         _health = Mathf.Max(_health, 0f);
 
-        Debug.Log("[PlayerStatus] 피해: " + amount + ", 현재 체력: " + _health + " / " + _maxHealth);
-        NotifyPlayerDamaged(amount);
+        Debug.Log("[PlayerStatus] 피해: " + finalDamage + ", 현재 체력: " + _health + " / " + _maxHealth);
+        NotifyPlayerDamaged(finalDamage);
 
         if (IsDead() == true)
         {
@@ -248,6 +252,31 @@ public sealed class PlayerStatus : MonoBehaviour
 
         _maxSatiety += amount;
         _satiety += amount;
+        ClampStatusValues();
+    }
+
+    public void SetEquipmentStatBonuses(float defense, float maxHealthBonus, float maxStaminaBonus)
+    {
+        float healthDelta = maxHealthBonus - _equipmentMaxHealthBonus;
+        float staminaDelta = maxStaminaBonus - _equipmentMaxStaminaBonus;
+
+        _equipmentDefense = Mathf.Max(0f, defense);
+        _equipmentMaxHealthBonus = maxHealthBonus;
+        _equipmentMaxStaminaBonus = maxStaminaBonus;
+
+        _maxHealth += healthDelta;
+        _maxStamina += staminaDelta;
+
+        if (healthDelta > 0f)
+        {
+            _health += healthDelta;
+        }
+
+        if (staminaDelta > 0f)
+        {
+            _stamina += staminaDelta;
+        }
+
         ClampStatusValues();
     }
 
@@ -354,6 +383,16 @@ public sealed class PlayerStatus : MonoBehaviour
     private void RefreshStarvingState()
     {
         _isStarving = _satiety <= 0f;
+    }
+
+    private float GetFinalDamage(float rawDamage)
+    {
+        if (_equipmentDefense <= 0f)
+        {
+            return rawDamage;
+        }
+
+        return Mathf.Max(1f, rawDamage - _equipmentDefense);
     }
 
     private bool CheckIsRunningNow()

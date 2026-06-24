@@ -1,11 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
-// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
-// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
+// 타워의 공격 범위 안에서 가장 가까운 살아있는 적을 찾습니다.
+// 태그가 누락된 임시 적/보스도 EnemyStatus가 있으면 타깃으로 인정합니다.
 public sealed class TowerTargeting : MonoBehaviour
 {
-    private const string EnemyTag = "Enemy";
     private const int MaxOverlapCount = 20;
     private const float ScanDelay = 0.2f;
 
@@ -164,7 +163,7 @@ public sealed class TowerTargeting : MonoBehaviour
             return false;
         }
 
-        return targetCollider.CompareTag(EnemyTag);
+        return targetCollider.GetComponentInParent<EnemyStatus>() != null;
     }
 
     private bool IsValidTarget(EnemyStatus enemyStatus)

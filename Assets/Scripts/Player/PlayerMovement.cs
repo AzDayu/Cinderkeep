@@ -23,6 +23,7 @@ public sealed class PlayerMovement : MonoBehaviour
     private CharacterController _characterController;
     private Vector3 _moveDirection;
     private float _verticalVelocity;
+    private float _equipmentMoveSpeedBonus;
     private bool _runIntent;
 
     public bool IsRunningNow
@@ -65,6 +66,11 @@ public sealed class PlayerMovement : MonoBehaviour
         _runIntent = runIntent;
     }
 
+    public void SetEquipmentMoveSpeedBonus(float moveSpeedBonus)
+    {
+        _equipmentMoveSpeedBonus = Mathf.Clamp(moveSpeedBonus, -0.5f, 1f);
+    }
+
     public void Jump(float jumpForce)
     {
         if (_characterController == null || _characterController.isGrounded == false)
@@ -105,12 +111,8 @@ public sealed class PlayerMovement : MonoBehaviour
 
     private float GetCurrentSpeed(bool isRunning)
     {
-        if (isRunning)
-        {
-            return _runSpeed;
-        }
-
-        return _moveSpeed;
+        float baseSpeed = isRunning ? _runSpeed : _moveSpeed;
+        return Mathf.Max(0.1f, baseSpeed * (1f + _equipmentMoveSpeedBonus));
     }
 
     private void ApplyGravity()

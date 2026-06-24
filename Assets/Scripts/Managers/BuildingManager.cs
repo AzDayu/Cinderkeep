@@ -105,7 +105,7 @@ namespace Cinderkeep.Gameplay
 
             buildingSpot.PlaceBuilding(createdBuilding);
             buildingSpot.HideBuildingSpot();
-            RegisterBuildingComponent(createdBuilding);
+            RegisterBuildingComponent(createdBuilding, buildingData);
             NotifyBuildingPlaced(buildingData);
             return true;
         }
@@ -257,8 +257,13 @@ namespace Cinderkeep.Gameplay
 
         private void RegisterBuildingComponent(GameObject buildingObject)
         {
+            RegisterBuildingComponent(buildingObject, null);
+        }
+
+        private void RegisterBuildingComponent(GameObject buildingObject, BuildingData buildingData)
+        {
             // 정식 프리팹에는 BuildingHp를 미리 붙이는 것이 기준입니다.
-            // 누락된 팀원 프리팹을 main에서 흡수할 때만 fallback으로 붙여 게임 루프가 끊기지 않게 합니다.
+            // 누락된 팀원 프리팹을 흡수할 때만 fallback으로 붙여 게임 루프가 끊기지 않게 합니다.
             if (buildingObject == null)
             {
                 return;
@@ -270,9 +275,94 @@ namespace Cinderkeep.Gameplay
                 buildingHp = buildingObject.AddComponent<BuildingHp>();
             }
 
-            buildingHp.InitializeHp();
+            buildingHp.Initialize(buildingData);
+            InitializeBuildingRoleComponents(buildingObject, buildingData);
 
             RegisterBuilding(buildingHp);
+        }
+
+        private void InitializeBuildingRoleComponents(GameObject buildingObject, BuildingData buildingData)
+        {
+            if (buildingObject == null || buildingData == null)
+            {
+                return;
+            }
+
+            if (IsTowerBuilding(buildingData) == false)
+            {
+                if (IsTrapBuilding(buildingData))
+                {
+                    EnsureTrapComponents(buildingObject, buildingData);
+                }
+
+                return;
+            }
+
+            EnsureTowerComponents(buildingObject);
+            BuildingTower buildingTower = buildingObject.GetComponent<BuildingTower>();
+            if (buildingTower != null)
+            {
+                buildingTower.Initialize(buildingData);
+            }
+        }
+
+        private bool IsTowerBuilding(BuildingData buildingData)
+        {
+            return buildingData != null
+                && string.Equals(buildingData.BuildingType, "Tower", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool IsTrapBuilding(BuildingData buildingData)
+        {
+            return buildingData != null
+                && string.Equals(buildingData.BuildingType, "Trap", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void EnsureTowerComponents(GameObject buildingObject)
+        {
+            if (buildingObject.GetComponent<TowerTargeting>() == null)
+            {
+                buildingObject.AddComponent<TowerTargeting>();
+            }
+
+            if (buildingObject.GetComponent<TowerAttack>() == null)
+            {
+                buildingObject.AddComponent<TowerAttack>();
+            }
+
+            if (buildingObject.GetComponent<DamageDealer>() == null)
+            {
+                buildingObject.AddComponent<DamageDealer>();
+            }
+
+            if (buildingObject.GetComponent<BuildingTower>() == null)
+            {
+                buildingObject.AddComponent<BuildingTower>();
+            }
+        }
+
+        private void EnsureTrapComponents(GameObject buildingObject, BuildingData buildingData)
+        {
+            Collider collider = buildingObject.GetComponent<Collider>();
+            if (collider == null)
+            {
+                collider = buildingObject.AddComponent<BoxCollider>();
+            }
+
+            collider.isTrigger = true;
+
+            if (buildingObject.GetComponent<TrapCrowdControlReporter>() == null)
+            {
+                buildingObject.AddComponent<TrapCrowdControlReporter>();
+            }
+
+            TrapSlowZone trapSlowZone = buildingObject.GetComponent<TrapSlowZone>();
+            if (trapSlowZone == null)
+            {
+                trapSlowZone = buildingObject.AddComponent<TrapSlowZone>();
+            }
+
+            trapSlowZone.Initialize(buildingData);
         }
 
         private void RegisterSceneBuildings()

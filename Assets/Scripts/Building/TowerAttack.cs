@@ -1,16 +1,17 @@
 using UnityEngine;
 
-// 타워가 EnemyStatus 대상을 공격하고 피해를 전달하는 전투 컴포넌트입니다.
-// 설치/비용/체력은 다른 건축 스크립트가 담당하고, 이 클래스는 공격 쿨타임과 피해 적용만 담당합니다.
+// 타워가 EnemyStatus 대상에게 피해를 전달하는 전투 컴포넌트입니다.
+// 타깃 탐색은 TowerTargeting, 전체 반복 실행은 BuildingTower가 담당합니다.
 public sealed class TowerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]
-    [Tooltip("타워가 적에게 주는 피해량입니다. BuildingTower 초기화 시 buildings.json 값으로 덮어쓸 수 있습니다.")]
+    [Tooltip("타워가 적에게 주는 피해량입니다. BuildingTower 초기화 시 buildings.json 값으로 덮어씁니다.")]
     [SerializeField] private float _attackDamage = 5f;
-    [Tooltip("한 번 공격한 뒤 다음 공격까지 기다리는 시간입니다.")]
+    [Tooltip("다음 공격까지 기다리는 시간입니다.")]
     [SerializeField] private float _attackInterval = 1.4f;
+
     [Header("Connected Components")]
-    [Tooltip("연결하면 DamageDealer를 통해 피해와 Run Result 기록을 함께 처리합니다.")]
+    [Tooltip("Run Result에 타워 피해량을 남기기 위한 공통 피해 전달자입니다.")]
     [SerializeField] private DamageDealer _damageDealer;
 
     private float _lastAttackTime;
@@ -31,10 +32,10 @@ public sealed class TowerAttack : MonoBehaviour
     public void SetAttackDamage(float attackDamage)
     {
         _attackDamage = Mathf.Max(0f, attackDamage);
+        ConnectDamageDealer();
 
         if (_damageDealer != null)
         {
-            _damageDealer.SetSourceType(DamageSourceType.Tower);
             _damageDealer.SetDamageValue(_attackDamage);
         }
     }
@@ -51,12 +52,7 @@ public sealed class TowerAttack : MonoBehaviour
 
     public bool TryAttack(EnemyStatus targetEnemyStatus)
     {
-        if (targetEnemyStatus == null)
-        {
-            return false;
-        }
-
-        if (targetEnemyStatus.IsDead)
+        if (targetEnemyStatus == null || targetEnemyStatus.IsDead)
         {
             return false;
         }
@@ -76,7 +72,6 @@ public sealed class TowerAttack : MonoBehaviour
         Damageable enemyDamageable = targetEnemyStatus.GetComponentInParent<Damageable>();
         if (_damageDealer != null && enemyDamageable != null)
         {
-            _damageDealer.SetSourceType(DamageSourceType.Tower);
             _damageDealer.SetDamageValue(_attackDamage);
             _damageDealer.ApplyDamage(enemyDamageable);
             return;
@@ -92,15 +87,17 @@ public sealed class TowerAttack : MonoBehaviour
 
     private void ConnectDamageDealer()
     {
-        if (_damageDealer != null)
+        if (_damageDealer == null)
         {
-            return;
+            _damageDealer = GetComponent<DamageDealer>();
         }
 
-        _damageDealer = GetComponent<DamageDealer>();
-        if (_damageDealer != null)
+        if (_damageDealer == null)
         {
-            _damageDealer.SetSourceType(DamageSourceType.Tower);
+            _damageDealer = gameObject.AddComponent<DamageDealer>();
         }
+
+        _damageDealer.SetSourceType(DamageSourceType.Tower);
+        _damageDealer.SetDamageValue(_attackDamage);
     }
 }
