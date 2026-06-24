@@ -8,10 +8,6 @@ using UnityEngine;
 public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 {
     private const int MorningRewardOptionCount = 3;
-    private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";
-    private const string EffectTypeMaxHealthAdd = "CinderHeartMaxHealthAdd";
-    private const string EffectTypePlayerHealRate = "PlayerHealRate";
-    private const string EffectTypePlayerReviveRate = "PlayerReviveRate";
 
     [Header("Flow Settings")]
     [SerializeField] private GameFlowSettings _gameFlowSettings = new GameFlowSettings();
@@ -460,10 +456,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private bool IsImplementedRewardEffect(string effectType)
     {
-        return string.Equals(effectType, EffectTypeAttackDamageAdd, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypeMaxHealthAdd, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypePlayerHealRate, StringComparison.OrdinalIgnoreCase)
-            || string.Equals(effectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase);
+        return GameDataValidationRules.IsImplementedCinderHeartRewardEffect(effectType);
     }
 
     private void AddRequiredReviveRewardIfNeeded(
@@ -483,7 +476,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
                 continue;
             }
 
-            if (string.Equals(skillData.EffectType, EffectTypePlayerReviveRate, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(skillData.EffectType, GameDataValidationRules.RewardEffectPlayerReviveRate, StringComparison.OrdinalIgnoreCase))
             {
                 skillOptions.Add(skillData);
                 candidates.RemoveAt(i);

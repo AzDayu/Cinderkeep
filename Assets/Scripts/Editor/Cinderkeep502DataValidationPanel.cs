@@ -12,24 +12,6 @@ public static class Cinderkeep502DataValidationPanel
     private const string MenuRoot = "Cinderkeep/5.02 Data Validation/";
     private const string ReportPath = "Temp/Cinderkeep_5_02_DataValidationReport.txt";
 
-    private static readonly HashSet<string> ImplementedRewardEffectTypes = new HashSet<string>
-    {
-        "CinderHeartAttackDamageAdd",
-        "CinderHeartMaxHealthAdd",
-        "PlayerHealRate",
-        "PlayerReviveRate"
-    };
-
-    private static readonly HashSet<string> SupportedRecipeResultTypes = new HashSet<string>
-    {
-        "Resource",
-        "Tool",
-        "Weapon",
-        "Armor",
-        "Building",
-        "CinderHeartUpgrade"
-    };
-
     [MenuItem(MenuRoot + "Run Full 5.02 Data Validation")]
     public static void RunFullDataValidation()
     {
@@ -113,7 +95,7 @@ public static class Cinderkeep502DataValidationPanel
             isOk &= AppendCheck(
                 reportBuilder,
                 recipeData.Id + ".ResultDataType",
-                SupportedRecipeResultTypes.Contains(recipeData.ResultDataType),
+                GameDataValidationRules.IsSupportedCraftingRecipeResultType(recipeData.ResultDataType),
                 recipeData.ResultDataType);
 
             isOk &= ValidateRecipeResult(gameDataManager, reportBuilder, recipeData);
@@ -130,32 +112,32 @@ public static class Cinderkeep502DataValidationPanel
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", false, "empty");
         }
 
-        if (string.Equals(recipeData.ResultDataType, "Resource", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeResource, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ResourceDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, "Tool", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeTool, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ToolDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, "Weapon", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeWeapon, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.WeaponDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, "Armor", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeArmor, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.ArmorDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, "Building", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeBuilding, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.BuildingDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
 
-        if (string.Equals(recipeData.ResultDataType, "CinderHeartUpgrade", System.StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(recipeData.ResultDataType, GameDataValidationRules.RecipeResultTypeCinderHeartUpgrade, System.StringComparison.OrdinalIgnoreCase))
         {
             return AppendCheck(reportBuilder, recipeData.Id + ".ResultItemId", gameDataManager.CinderHeartUpgradeDataList.ContainsKey(recipeData.ResultItemId), recipeData.ResultItemId);
         }
@@ -237,7 +219,7 @@ public static class Cinderkeep502DataValidationPanel
             isOk &= AppendCheck(reportBuilder, skillData.Id + ".EffectType", hasEffectType, skillData.EffectType);
             isOk &= AppendCheck(reportBuilder, skillData.Id + ".Weight", skillData.Weight > 0, skillData.Weight.ToString());
 
-            if (ImplementedRewardEffectTypes.Contains(skillData.EffectType))
+            if (GameDataValidationRules.IsImplementedCinderHeartRewardEffect(skillData.EffectType))
             {
                 implementedCount++;
                 reportBuilder.AppendLine("[Live] " + skillData.Id + " - " + skillData.EffectType);
