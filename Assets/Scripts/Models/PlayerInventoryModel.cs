@@ -357,6 +357,56 @@ namespace Cinderkeep.Gameplay
             NotifyInventoryChanged();
         }
 
+        public bool TryConsumeQuickSlotItem(int quickSlotIndex, int amount)
+        {
+            if (IsQuickSlotIndexValid(quickSlotIndex) == false || amount <= 0)
+            {
+                return false;
+            }
+
+            InventoryItemModel slot = _quickSlots[quickSlotIndex];
+            if (slot == null || slot.IsEmpty || slot.Amount < amount)
+            {
+                return false;
+            }
+
+            int nextAmount = slot.Amount - amount;
+            if (nextAmount <= 0)
+            {
+                slot.Clear();
+            }
+            else
+            {
+                slot.SetItem(slot.ItemId, slot.ItemType, nextAmount);
+            }
+
+            NotifyInventoryChanged();
+            return true;
+        }
+
+        public bool HasItemInInventoryOrQuickSlot(string itemId, InventoryItemType itemType)
+        {
+            return HasItemInSlots(_inventorySlots, itemId, itemType)
+                || HasItemInSlots(_quickSlots, itemId, itemType);
+        }
+
+        public bool TryReplaceItemIdEverywhere(string fromItemId, string toItemId, InventoryItemType itemType)
+        {
+            if (string.IsNullOrEmpty(fromItemId) || string.IsNullOrEmpty(toItemId))
+            {
+                return false;
+            }
+
+            bool changed = ReplaceItemIdInSlots(_inventorySlots, fromItemId, toItemId, itemType);
+            changed |= ReplaceItemIdInSlots(_quickSlots, fromItemId, toItemId, itemType);
+            if (changed)
+            {
+                NotifyInventoryChanged();
+            }
+
+            return changed;
+        }
+
         public bool TryMoveInventoryToEquipmentSlot(int inventorySlotIndex, EquipmentSlotType slotType, PlayerEquipmentModel equipmentModel)
         {
             if (equipmentModel == null)
@@ -410,6 +460,58 @@ namespace Cinderkeep.Gameplay
 
                 targetSlots[i].Clear();
             }
+        }
+
+        private bool HasItemInSlots(InventoryItemModel[] slots, string itemId, InventoryItemType itemType)
+        {
+            if (slots == null || string.IsNullOrEmpty(itemId))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < slots.Length; i++)
+            {
+                InventoryItemModel slot = slots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId == itemId && slot.ItemType == itemType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool ReplaceItemIdInSlots(InventoryItemModel[] slots, string fromItemId, string toItemId, InventoryItemType itemType)
+        {
+            if (slots == null)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                InventoryItemModel slot = slots[i];
+                if (slot == null || slot.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (slot.ItemId != fromItemId || slot.ItemType != itemType)
+                {
+                    continue;
+                }
+
+                slot.SetItem(toItemId, itemType, slot.Amount);
+                changed = true;
+            }
+
+            return changed;
         }
 
         private bool IsInventorySlotIndexValid(int slotIndex)

@@ -35,6 +35,7 @@ public sealed class PlayerAttack : MonoBehaviour
     private float _lastAttackTime;
     private PlayerController _playerController;
     private string _lastEquippedWeaponItemId;
+    private float _bonusAttackDamage;
 
     public string WeaponDataId
     {
@@ -67,6 +68,16 @@ public sealed class PlayerAttack : MonoBehaviour
         }
 
         _weaponDataId = weaponDataId;
+    }
+
+    public void AddBonusAttackDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _bonusAttackDamage += amount;
     }
 
     public void TryAttack()
@@ -235,10 +246,10 @@ public sealed class PlayerAttack : MonoBehaviour
     {
         if (weaponData != null && weaponData.Damage > 0f)
         {
-            return weaponData.Damage;
+            return weaponData.Damage + _bonusAttackDamage;
         }
 
-        return _attackDamage;
+        return _attackDamage + _bonusAttackDamage;
     }
 
     private float GetAttackDistance(WeaponData weaponData)

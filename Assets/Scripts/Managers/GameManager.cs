@@ -247,7 +247,10 @@ namespace Cinderkeep.Gameplay
             }
 
             global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
+            global::FoodPickupSceneBootstrap.EnsureFoodPickups();
+            global::TrapZoneSceneBootstrap.EnsureTrapZones();
             global::CinderHeartPlayerRecoveryAura.EnsureSceneAura();
+            global::CinderHeartFoodCooker.EnsureSceneCooker();
         }
 
         private void ResetRunState()
@@ -262,7 +265,10 @@ namespace Cinderkeep.Gameplay
             InitializeRuntimeModels();
             ResetCinderHeartState();
             global::HandStonePickupSceneBootstrap.EnsureHandStonePickup();
+            global::FoodPickupSceneBootstrap.EnsureFoodPickups();
+            global::TrapZoneSceneBootstrap.EnsureTrapZones();
             global::CinderHeartPlayerRecoveryAura.EnsureSceneAura();
+            global::CinderHeartFoodCooker.EnsureSceneCooker();
 
             if (_uiManager != null)
             {

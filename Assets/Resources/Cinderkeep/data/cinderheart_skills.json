@@ -1,67 +1,157 @@
 {
   "Items": [
     {
-      "_id": "cinderheart_attack_damage_5",
-      "_displayName": "Cinder Spark",
+      "_id": "cinder_spark_arrow",
+      "_displayName": "Cinder Spark Arrow",
       "_description": "CinderHeart attack damage increases by 5.",
       "_effectType": "CinderHeartAttackDamageAdd",
       "_value": 5,
       "_requiredDay": 1,
-      "_weight": 100,
+      "_weight": 110,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_attack_damage_8",
-      "_displayName": "Ashen Bolt",
+      "_id": "ashen_watch_bolt",
+      "_displayName": "Ashen Watch Bolt",
       "_description": "CinderHeart attack damage increases by 8.",
       "_effectType": "CinderHeartAttackDamageAdd",
       "_value": 8,
+      "_requiredDay": 1,
+      "_weight": 95,
+      "_canRepeat": true
+    },
+    {
+      "_id": "hearthfire_lance",
+      "_displayName": "Hearthfire Lance",
+      "_description": "CinderHeart attack damage increases by 12.",
+      "_effectType": "CinderHeartAttackDamageAdd",
+      "_value": 12,
       "_requiredDay": 2,
       "_weight": 70,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_attack_damage_12",
-      "_displayName": "Heartfire Lance",
-      "_description": "CinderHeart attack damage increases by 12.",
+      "_id": "viking_pyrebow",
+      "_displayName": "Viking Pyrebow",
+      "_description": "CinderHeart attack damage increases by 18.",
       "_effectType": "CinderHeartAttackDamageAdd",
-      "_value": 12,
+      "_value": 18,
       "_requiredDay": 3,
       "_weight": 45,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_max_health_100",
+      "_id": "debug_sun_spear",
+      "_displayName": "Debug Sun Spear",
+      "_description": "A strong test reward: CinderHeart attack damage increases by 35.",
+      "_effectType": "CinderHeartAttackDamageAdd",
+      "_value": 35,
+      "_requiredDay": 1,
+      "_weight": 8,
+      "_canRepeat": true
+    },
+    {
+      "_id": "rekindled_core",
       "_displayName": "Rekindled Core",
       "_description": "CinderHeart max HP increases by 100 and heals by the same amount.",
       "_effectType": "CinderHeartMaxHealthAdd",
       "_value": 100,
       "_requiredDay": 1,
-      "_weight": 100,
+      "_weight": 110,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_max_health_160",
+      "_id": "iron_ember_shell",
       "_displayName": "Iron Ember Shell",
       "_description": "CinderHeart max HP increases by 160 and heals by the same amount.",
       "_effectType": "CinderHeartMaxHealthAdd",
       "_value": 160,
       "_requiredDay": 2,
-      "_weight": 65,
+      "_weight": 80,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_max_health_240",
+      "_id": "adamant_hearth",
       "_displayName": "Adamant Hearth",
       "_description": "CinderHeart max HP increases by 240 and heals by the same amount.",
       "_effectType": "CinderHeartMaxHealthAdd",
       "_value": 240,
       "_requiredDay": 3,
+      "_weight": 55,
+      "_canRepeat": true
+    },
+    {
+      "_id": "glacier_heart_plate",
+      "_displayName": "Glacier Heart Plate",
+      "_description": "CinderHeart max HP increases by 360 and heals by the same amount.",
+      "_effectType": "CinderHeartMaxHealthAdd",
+      "_value": 360,
+      "_requiredDay": 3,
+      "_weight": 35,
+      "_canRepeat": true
+    },
+    {
+      "_id": "debug_colossus_core",
+      "_displayName": "Debug Colossus Core",
+      "_description": "A strong test reward: CinderHeart max HP increases by 700.",
+      "_effectType": "CinderHeartMaxHealthAdd",
+      "_value": 700,
+      "_requiredDay": 1,
+      "_weight": 6,
+      "_canRepeat": true
+    },
+    {
+      "_id": "coal_black_mend",
+      "_displayName": "Coal Black Mend",
+      "_description": "CinderHeart immediately heals 80 HP.",
+      "_effectType": "CinderHeartHealFlat",
+      "_value": 80,
+      "_requiredDay": 1,
+      "_weight": 100,
+      "_canRepeat": true
+    },
+    {
+      "_id": "furnace_pulse",
+      "_displayName": "Furnace Pulse",
+      "_description": "CinderHeart immediately heals 150 HP.",
+      "_effectType": "CinderHeartHealFlat",
+      "_value": 150,
+      "_requiredDay": 2,
+      "_weight": 70,
+      "_canRepeat": true
+    },
+    {
+      "_id": "red_haven_mend",
+      "_displayName": "Red Haven Mend",
+      "_description": "CinderHeart immediately heals 260 HP.",
+      "_effectType": "CinderHeartHealFlat",
+      "_value": 260,
+      "_requiredDay": 3,
+      "_weight": 45,
+      "_canRepeat": true
+    },
+    {
+      "_id": "hearth_reflow",
+      "_displayName": "Hearth Reflow",
+      "_description": "CinderHeart heals for 15 percent of max HP.",
+      "_effectType": "CinderHeartHealRate",
+      "_value": 0.15,
+      "_requiredDay": 1,
+      "_weight": 90,
+      "_canRepeat": true
+    },
+    {
+      "_id": "ancient_hearth_reflow",
+      "_displayName": "Ancient Hearth Reflow",
+      "_description": "CinderHeart heals for 30 percent of max HP.",
+      "_effectType": "CinderHeartHealRate",
+      "_value": 0.3,
+      "_requiredDay": 3,
       "_weight": 40,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_heal_30",
+      "_id": "warm_pulse",
       "_displayName": "Warm Pulse",
       "_description": "The player heals for 30 percent of max HP.",
       "_effectType": "PlayerHealRate",
@@ -71,27 +161,37 @@
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_heal_45",
+      "_id": "hearthblood",
       "_displayName": "Hearthblood",
       "_description": "The player heals for 45 percent of max HP.",
       "_effectType": "PlayerHealRate",
       "_value": 0.45,
       "_requiredDay": 2,
-      "_weight": 70,
+      "_weight": 75,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_heal_60",
+      "_id": "last_warmth",
       "_displayName": "Last Warmth",
       "_description": "The player heals for 60 percent of max HP.",
       "_effectType": "PlayerHealRate",
       "_value": 0.6,
       "_requiredDay": 3,
-      "_weight": 45,
+      "_weight": 55,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_revive_40",
+      "_id": "war_surgeon_flame",
+      "_displayName": "War Surgeon Flame",
+      "_description": "The player heals for 80 percent of max HP.",
+      "_effectType": "PlayerHealRate",
+      "_value": 0.8,
+      "_requiredDay": 3,
+      "_weight": 30,
+      "_canRepeat": true
+    },
+    {
+      "_id": "last_ember_revive",
       "_displayName": "Last Ember Revive",
       "_description": "If the player is down, revive at 40 percent max HP.",
       "_effectType": "PlayerReviveRate",
@@ -101,174 +201,304 @@
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_fire_arrow_tower",
-      "_displayName": "Fire Arrow Towers",
-      "_description": "Future tower arrows can become stronger through fire.",
-      "_effectType": "TowerFireArrowUnlock",
-      "_value": 1,
+      "_id": "deep_ember_revive",
+      "_displayName": "Deep Ember Revive",
+      "_description": "If the player is down, revive at 70 percent max HP.",
+      "_effectType": "PlayerReviveRate",
+      "_value": 0.7,
       "_requiredDay": 2,
-      "_weight": 55,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_warm_player_aura",
-      "_displayName": "Warm Aura",
-      "_description": "Future aura system candidate for slow player healing near CinderHeart.",
-      "_effectType": "CinderHeartWarmAuraUnlock",
-      "_value": 1,
-      "_requiredDay": 2,
-      "_weight": 50,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_burning_enemy_aura",
-      "_displayName": "Burning Ring",
-      "_description": "Future aura system candidate for damaging nearby enemies.",
-      "_effectType": "CinderHeartBurnAuraUnlock",
-      "_value": 1,
-      "_requiredDay": 2,
-      "_weight": 50,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_wall_heat",
-      "_displayName": "Heated Walls",
-      "_description": "Future building thorns candidate for walls.",
-      "_effectType": "BuildingThornsUnlock",
-      "_value": 1,
-      "_requiredDay": 2,
-      "_weight": 45,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_tower_range",
-      "_displayName": "Watchfire Range",
-      "_description": "Future tower range bonus candidate.",
-      "_effectType": "TowerRangeAdd",
-      "_value": 2,
-      "_requiredDay": 2,
-      "_weight": 45,
+      "_weight": 65,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_stamina_recover",
+      "_id": "firebound_vigor",
+      "_displayName": "Firebound Vigor",
+      "_description": "Player max HP increases by 20.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 20,
+      "_requiredDay": 1,
+      "_weight": 100,
+      "_canRepeat": true
+    },
+    {
+      "_id": "emberskin",
+      "_displayName": "Emberskin",
+      "_description": "Player max HP increases by 35.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 35,
+      "_requiredDay": 1,
+      "_weight": 85,
+      "_canRepeat": true
+    },
+    {
+      "_id": "iron_blood_oath",
+      "_displayName": "Iron Blood Oath",
+      "_description": "Player max HP increases by 50.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 50,
+      "_requiredDay": 2,
+      "_weight": 65,
+      "_canRepeat": true
+    },
+    {
+      "_id": "bear_heart_brand",
+      "_displayName": "Bear Heart Brand",
+      "_description": "Player max HP increases by 80.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 80,
+      "_requiredDay": 3,
+      "_weight": 40,
+      "_canRepeat": true
+    },
+    {
+      "_id": "debug_giant_blood",
+      "_displayName": "Debug Giant Blood",
+      "_description": "A strong test reward: player max HP increases by 180.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 180,
+      "_requiredDay": 1,
+      "_weight": 8,
+      "_canRepeat": true
+    },
+    {
+      "_id": "runner_coal",
+      "_displayName": "Runner Coal",
+      "_description": "Player max stamina increases by 20.",
+      "_effectType": "PlayerMaxStaminaAdd",
+      "_value": 20,
+      "_requiredDay": 1,
+      "_weight": 100,
+      "_canRepeat": true
+    },
+    {
+      "_id": "long_march_ember",
+      "_displayName": "Long March Ember",
+      "_description": "Player max stamina increases by 35.",
+      "_effectType": "PlayerMaxStaminaAdd",
+      "_value": 35,
+      "_requiredDay": 1,
+      "_weight": 85,
+      "_canRepeat": true
+    },
+    {
+      "_id": "frost_runner_lung",
+      "_displayName": "Frost Runner Lung",
+      "_description": "Player max stamina increases by 50.",
+      "_effectType": "PlayerMaxStaminaAdd",
+      "_value": 50,
+      "_requiredDay": 2,
+      "_weight": 65,
+      "_canRepeat": true
+    },
+    {
+      "_id": "raider_endurance",
+      "_displayName": "Raider Endurance",
+      "_description": "Player max stamina increases by 80.",
+      "_effectType": "PlayerMaxStaminaAdd",
+      "_value": 80,
+      "_requiredDay": 3,
+      "_weight": 40,
+      "_canRepeat": true
+    },
+    {
+      "_id": "stoked_breath",
       "_displayName": "Stoked Breath",
-      "_description": "Future player stamina recovery bonus candidate.",
+      "_description": "Player stamina recovery increases by 3 per second.",
+      "_effectType": "PlayerStaminaRecoveryAdd",
+      "_value": 3,
+      "_requiredDay": 1,
+      "_weight": 100,
+      "_canRepeat": true
+    },
+    {
+      "_id": "bellows_breath",
+      "_displayName": "Bellows Breath",
+      "_description": "Player stamina recovery increases by 5 per second.",
       "_effectType": "PlayerStaminaRecoveryAdd",
       "_value": 5,
-      "_requiredDay": 1,
-      "_weight": 45,
-      "_canRepeat": true
-    },
-    {
-      "_id": "cinderheart_resource_blessing",
-      "_displayName": "Harvest Heat",
-      "_description": "Future gathering amount bonus candidate.",
-      "_effectType": "HarvestAmountRateAdd",
-      "_value": 0.2,
-      "_requiredDay": 1,
-      "_weight": 45,
-      "_canRepeat": true
-    },
-    {
-      "_id": "cinderheart_enemy_slow_aura",
-      "_displayName": "Frostbind Flame",
-      "_description": "Future enemy slow aura candidate.",
-      "_effectType": "EnemySlowAuraUnlock",
-      "_value": 1,
       "_requiredDay": 2,
-      "_weight": 40,
-      "_canRepeat": false
+      "_weight": 70,
+      "_canRepeat": true
     },
     {
-      "_id": "cinderheart_player_attack_buff",
-      "_displayName": "Keeper Fury",
-      "_description": "Future player attack bonus candidate.",
+      "_id": "storm_breath",
+      "_displayName": "Storm Breath",
+      "_description": "Player stamina recovery increases by 8 per second.",
+      "_effectType": "PlayerStaminaRecoveryAdd",
+      "_value": 8,
+      "_requiredDay": 3,
+      "_weight": 45,
+      "_canRepeat": true
+    },
+    {
+      "_id": "debug_dragon_lung",
+      "_displayName": "Debug Dragon Lung",
+      "_description": "A strong test reward: stamina recovery increases by 18 per second.",
+      "_effectType": "PlayerStaminaRecoveryAdd",
+      "_value": 18,
+      "_requiredDay": 1,
+      "_weight": 8,
+      "_canRepeat": true
+    },
+    {
+      "_id": "warm_rations",
+      "_displayName": "Warm Rations",
+      "_description": "Player max satiety increases by 20.",
+      "_effectType": "PlayerMaxSatietyAdd",
+      "_value": 20,
+      "_requiredDay": 1,
+      "_weight": 90,
+      "_canRepeat": true
+    },
+    {
+      "_id": "smoked_winter_meat",
+      "_displayName": "Smoked Winter Meat",
+      "_description": "Player max satiety increases by 35.",
+      "_effectType": "PlayerMaxSatietyAdd",
+      "_value": 35,
+      "_requiredDay": 2,
+      "_weight": 65,
+      "_canRepeat": true
+    },
+    {
+      "_id": "chieftain_feast",
+      "_displayName": "Chieftain Feast",
+      "_description": "Player max satiety increases by 50.",
+      "_effectType": "PlayerMaxSatietyAdd",
+      "_value": 50,
+      "_requiredDay": 3,
+      "_weight": 42,
+      "_canRepeat": true
+    },
+    {
+      "_id": "knife_oath",
+      "_displayName": "Knife Oath",
+      "_description": "Player attack damage increases by 2.",
       "_effectType": "PlayerAttackDamageAdd",
       "_value": 2,
-      "_requiredDay": 2,
-      "_weight": 40,
+      "_requiredDay": 1,
+      "_weight": 100,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_repair_pulse",
-      "_displayName": "Dawn Repair Pulse",
-      "_description": "Future morning building repair candidate.",
-      "_effectType": "BuildingMorningRepairUnlock",
-      "_value": 1,
+      "_id": "raider_fury",
+      "_displayName": "Raider Fury",
+      "_description": "Player attack damage increases by 4.",
+      "_effectType": "PlayerAttackDamageAdd",
+      "_value": 4,
       "_requiredDay": 2,
-      "_weight": 38,
-      "_canRepeat": false
+      "_weight": 70,
+      "_canRepeat": true
     },
     {
-      "_id": "cinderheart_last_stand",
-      "_displayName": "Last Ember",
-      "_description": "Future emergency defense candidate when CinderHeart is low.",
-      "_effectType": "CinderHeartLastStandUnlock",
-      "_value": 1,
+      "_id": "giant_slayer_edge",
+      "_displayName": "Giant Slayer Edge",
+      "_description": "Player attack damage increases by 6.",
+      "_effectType": "PlayerAttackDamageAdd",
+      "_value": 6,
       "_requiredDay": 3,
-      "_weight": 32,
-      "_canRepeat": false
+      "_weight": 50,
+      "_canRepeat": true
     },
     {
-      "_id": "cinderheart_boss_mark",
-      "_displayName": "Giant Mark",
-      "_description": "Future boss damage bonus candidate.",
-      "_effectType": "BossDamageBonusUnlock",
-      "_value": 1,
+      "_id": "boss_breaker_rune",
+      "_displayName": "Boss Breaker Rune",
+      "_description": "Player attack damage increases by 10.",
+      "_effectType": "PlayerAttackDamageAdd",
+      "_value": 10,
       "_requiredDay": 3,
-      "_weight": 30,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_night_visibility",
-      "_displayName": "Night Sight",
-      "_description": "Future night visibility candidate.",
-      "_effectType": "NightVisionAuraUnlock",
-      "_value": 1,
-      "_requiredDay": 1,
-      "_weight": 35,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_emergency_shield",
-      "_displayName": "Emergency Shield",
-      "_description": "Future one-time CinderHeart shield candidate.",
-      "_effectType": "CinderHeartShieldUnlock",
-      "_value": 1,
-      "_requiredDay": 2,
       "_weight": 28,
-      "_canRepeat": false
-    },
-    {
-      "_id": "cinderheart_drop_heat",
-      "_displayName": "Warm Drops",
-      "_description": "Future loot drop rate candidate.",
-      "_effectType": "LootDropRateAdd",
-      "_value": 0.15,
-      "_requiredDay": 2,
-      "_weight": 38,
       "_canRepeat": true
     },
     {
-      "_id": "cinderheart_forge_speed",
-      "_displayName": "Fast Forge",
-      "_description": "Future furnace speed candidate.",
-      "_effectType": "FurnaceSpeedRateAdd",
-      "_value": 0.2,
-      "_requiredDay": 2,
-      "_weight": 34,
-      "_canRepeat": true
-    },
-    {
-      "_id": "cinderheart_dawn_reward",
-      "_displayName": "Dawn Supplies",
-      "_description": "Future morning resource bonus candidate.",
-      "_effectType": "MorningResourceBonusUnlock",
-      "_value": 1,
+      "_id": "debug_war_god_edge",
+      "_displayName": "Debug War God Edge",
+      "_description": "A strong test reward: player attack damage increases by 25.",
+      "_effectType": "PlayerAttackDamageAdd",
+      "_value": 25,
       "_requiredDay": 1,
-      "_weight": 35,
-      "_canRepeat": false
+      "_weight": 6,
+      "_canRepeat": true
+    },
+    {
+      "_id": "watchfire_pike",
+      "_displayName": "Watchfire Pike",
+      "_description": "CinderHeart attack damage increases by 25.",
+      "_effectType": "CinderHeartAttackDamageAdd",
+      "_value": 25,
+      "_requiredDay": 3,
+      "_weight": 28,
+      "_canRepeat": true
+    },
+    {
+      "_id": "great_hearth_reflow",
+      "_displayName": "Great Hearth Reflow",
+      "_description": "CinderHeart heals for 50 percent of max HP.",
+      "_effectType": "CinderHeartHealRate",
+      "_value": 0.5,
+      "_requiredDay": 3,
+      "_weight": 25,
+      "_canRepeat": true
+    },
+    {
+      "_id": "outer_wall_heart",
+      "_displayName": "Outer Wall Heart",
+      "_description": "CinderHeart max HP increases by 120 and heals by the same amount.",
+      "_effectType": "CinderHeartMaxHealthAdd",
+      "_value": 120,
+      "_requiredDay": 1,
+      "_weight": 85,
+      "_canRepeat": true
+    },
+    {
+      "_id": "wyrmhide_vigor",
+      "_displayName": "Wyrmhide Vigor",
+      "_description": "Player max HP increases by 100.",
+      "_effectType": "PlayerMaxHealthAdd",
+      "_value": 100,
+      "_requiredDay": 3,
+      "_weight": 25,
+      "_canRepeat": true
+    },
+    {
+      "_id": "endless_snow_lung",
+      "_displayName": "Endless Snow Lung",
+      "_description": "Player max stamina increases by 120.",
+      "_effectType": "PlayerMaxStaminaAdd",
+      "_value": 120,
+      "_requiredDay": 3,
+      "_weight": 22,
+      "_canRepeat": true
+    },
+    {
+      "_id": "winter_storehouse",
+      "_displayName": "Winter Storehouse",
+      "_description": "Player max satiety increases by 80.",
+      "_effectType": "PlayerMaxSatietyAdd",
+      "_value": 80,
+      "_requiredDay": 3,
+      "_weight": 22,
+      "_canRepeat": true
+    },
+    {
+      "_id": "full_warmth",
+      "_displayName": "Full Warmth",
+      "_description": "The player heals for 100 percent of max HP.",
+      "_effectType": "PlayerHealRate",
+      "_value": 1,
+      "_requiredDay": 3,
+      "_weight": 20,
+      "_canRepeat": true
+    },
+    {
+      "_id": "debug_flame_king_edge",
+      "_displayName": "Debug Flame King Edge",
+      "_description": "A very strong test reward: player attack damage increases by 40.",
+      "_effectType": "PlayerAttackDamageAdd",
+      "_value": 40,
+      "_requiredDay": 1,
+      "_weight": 3,
+      "_canRepeat": true
     }
   ]
 }

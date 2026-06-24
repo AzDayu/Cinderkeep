@@ -177,6 +177,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
     private void StartDay(int day)
     {
         global::HandStonePickupSceneBootstrap.ResetDailyPickups();
+        global::FoodPickupSceneBootstrap.ResetDailyFoodPickups();
         _gameRunModel.SetDay(day);
         _gameRunModel.SetPhase(GameRunPhase.Day);
         _gameRunModel.SetPhaseTime(GetPhaseDuration(GameRunPhase.Day, day, _gameFlowSettings.DayDuration));
@@ -453,6 +454,12 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         if (_gameRunModel != null && skillData.RequiredDay > _gameRunModel.Day)
+        {
+            return false;
+        }
+
+        if (string.Equals(skillData.EffectType, GameDataValidationRules.RewardEffectPlayerReviveRate, StringComparison.OrdinalIgnoreCase)
+            && IsPlayerDead() == false)
         {
             return false;
         }

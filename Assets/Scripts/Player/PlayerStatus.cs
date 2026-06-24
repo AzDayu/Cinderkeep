@@ -205,6 +205,52 @@ public sealed class PlayerStatus : MonoBehaviour
         _health = Mathf.Min(_health, _maxHealth);
     }
 
+    public void AddMaxHealth(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _maxHealth += amount;
+        _health += amount;
+        ClampStatusValues();
+    }
+
+    public void AddMaxStamina(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _maxStamina += amount;
+        _stamina += amount;
+        ClampStatusValues();
+    }
+
+    public void AddStaminaRecoveryRate(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _staminaRecoveryRate += amount;
+    }
+
+    public void AddMaxSatiety(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        _maxSatiety += amount;
+        _satiety += amount;
+        ClampStatusValues();
+    }
+
     public void Revive(float healthRate)
     {
         if (IsDead() == false)

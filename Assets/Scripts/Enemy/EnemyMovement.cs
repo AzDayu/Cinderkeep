@@ -20,11 +20,19 @@ public sealed class EnemyMovement : MonoBehaviour
     [SerializeField] private float _wanderRadius = 6f;
     [Tooltip("낮 배회 목표를 다시 정하는 간격입니다.")]
     [SerializeField] private float _wanderInterval = 2.5f;
+    [Header("Crowd Separation")]
+    [Tooltip("적끼리 너무 겹치지 않도록 주변 적을 확인하는 반경입니다.")]
+    [SerializeField] private float _separationRadius = 1.05f;
+    [Tooltip("한 프레임에 적용하는 밀어내기 강도입니다.")]
+    [SerializeField] private float _separationStrength = 0.65f;
 
     private NavMeshAgent _navMeshAgent;
+    private static readonly Collider[] SeparationHits = new Collider[8];
     private Vector3 _spawnPosition;
     private Vector3 _wanderTargetPosition;
     private float _nextWanderTime;
+    private float _speedMultiplier = 1f;
+    private float _slowUntilTime;
     private bool _isInitialized;
 
     public void Initialize(EnemyData enemyData)
@@ -39,6 +47,8 @@ public sealed class EnemyMovement : MonoBehaviour
         _stopDistance = enemyData.StopDistance;
         _spawnPosition = transform.position;
         _wanderTargetPosition = _spawnPosition;
+        _speedMultiplier = 1f;
+        _slowUntilTime = 0f;
         ApplyNavMeshAgentSettings();
         _isInitialized = true;
     }
@@ -62,8 +72,22 @@ public sealed class EnemyMovement : MonoBehaviour
         _stopDistance = bossData.StopDistance;
         _spawnPosition = transform.position;
         _wanderTargetPosition = _spawnPosition;
+        _speedMultiplier = 1f;
+        _slowUntilTime = 0f;
         ApplyNavMeshAgentSettings();
         _isInitialized = true;
+    }
+
+    public void ApplyMoveSpeedMultiplier(float speedMultiplier, float durationSeconds)
+    {
+        if (durationSeconds <= 0f)
+        {
+            return;
+        }
+
+        _speedMultiplier = Mathf.Clamp(speedMultiplier, 0.1f, 1f);
+        _slowUntilTime = Mathf.Max(_slowUntilTime, Time.time + durationSeconds);
+        ApplyNavMeshAgentSettings();
     }
 
     public void Initialize(BossData bossData, EnemyDetector enemyDetector)
@@ -92,10 +116,12 @@ public sealed class EnemyMovement : MonoBehaviour
         if (CanStopAtPosition(targetPosition))
         {
             StopMoving();
+            ApplyCrowdSeparation();
             return;
         }
 
         MoveWithNavMeshOrTransform(targetPosition);
+        ApplyCrowdSeparation();
     }
 
     public void WanderAroundSpawnPoint()
@@ -136,7 +162,7 @@ public sealed class EnemyMovement : MonoBehaviour
             return;
         }
 
-        _navMeshAgent.speed = _moveSpeed;
+        _navMeshAgent.speed = GetCurrentMoveSpeed();
         _navMeshAgent.stoppingDistance = _stopDistance;
         _navMeshAgent.radius = Mathf.Max(_navMeshAgent.radius, MinimumAvoidanceRadius);
         _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
@@ -163,6 +189,7 @@ public sealed class EnemyMovement : MonoBehaviour
         if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
         {
             _navMeshAgent.isStopped = false;
+            _navMeshAgent.speed = GetCurrentMoveSpeed();
             if (_navMeshAgent.SetDestination(targetPosition))
             {
                 RotateToTarget(targetPosition);
@@ -176,9 +203,75 @@ public sealed class EnemyMovement : MonoBehaviour
     private void MoveDirectlyToTarget(Vector3 targetPosition)
     {
         targetPosition.y = transform.position.y;
-        Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetPosition, _moveSpeed * Time.deltaTime);
+        Vector3 nextPosition = Vector3.MoveTowards(transform.position, targetPosition, GetCurrentMoveSpeed() * Time.deltaTime);
         transform.position = nextPosition;
         RotateToTarget(targetPosition);
+    }
+
+    private void ApplyCrowdSeparation()
+    {
+        if (_separationRadius <= 0f || _separationStrength <= 0f)
+        {
+            return;
+        }
+
+        int hitCount = Physics.OverlapSphereNonAlloc(transform.position, _separationRadius, SeparationHits);
+        if (hitCount <= 1)
+        {
+            return;
+        }
+
+        Vector3 pushDirection = Vector3.zero;
+        int neighborCount = 0;
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider hitCollider = SeparationHits[i];
+            if (hitCollider == null)
+            {
+                continue;
+            }
+
+            EnemyMovement otherMovement = hitCollider.GetComponentInParent<EnemyMovement>();
+            if (otherMovement == null || otherMovement == this)
+            {
+                continue;
+            }
+
+            Vector3 away = transform.position - otherMovement.transform.position;
+            away.y = 0f;
+            if (away.sqrMagnitude <= 0.0001f)
+            {
+                away = UnityEngine.Random.insideUnitSphere;
+                away.y = 0f;
+            }
+
+            pushDirection += away.normalized;
+            neighborCount++;
+        }
+
+        if (neighborCount <= 0)
+        {
+            return;
+        }
+
+        Vector3 pushOffset = pushDirection.normalized * (_separationStrength * Time.deltaTime);
+        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        {
+            _navMeshAgent.Move(pushOffset);
+            return;
+        }
+
+        transform.position += pushOffset;
+    }
+
+    private float GetCurrentMoveSpeed()
+    {
+        if (Time.time > _slowUntilTime)
+        {
+            _speedMultiplier = 1f;
+        }
+
+        return Mathf.Max(0f, _moveSpeed * _speedMultiplier);
     }
 
     private void RotateToTarget(Vector3 targetPosition)

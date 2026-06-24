@@ -179,7 +179,7 @@ public sealed class PlayerToolController : MonoBehaviour
 
         if (itemModel.ItemType != InventoryItemType.Tool)
         {
-            TryEquipNonToolQuickSlot(itemModel);
+            TryUseNonToolQuickSlot(itemModel, slotIndex, inventoryModel);
             EquipTool(GatherToolType.None);
             return;
         }
@@ -187,11 +187,16 @@ public sealed class PlayerToolController : MonoBehaviour
         EquipToolData(itemModel.ItemId);
     }
 
-    private bool TryEquipNonToolQuickSlot(InventoryItemModel itemModel)
+    private bool TryUseNonToolQuickSlot(InventoryItemModel itemModel, int slotIndex, PlayerInventoryModel inventoryModel)
     {
         if (itemModel == null || itemModel.IsEmpty || GameManager.Inst == null)
         {
             return false;
+        }
+
+        if (itemModel.ItemType == InventoryItemType.Food)
+        {
+            return TryEatFoodQuickSlot(itemModel, slotIndex, inventoryModel);
         }
 
         PlayerEquipmentModel equipmentModel = GameManager.Inst.PlayerEquipmentModel;
@@ -221,6 +226,30 @@ public sealed class PlayerToolController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private bool TryEatFoodQuickSlot(InventoryItemModel itemModel, int slotIndex, PlayerInventoryModel inventoryModel)
+    {
+        if (inventoryModel == null || FoodItemIds.IsFoodItem(itemModel.ItemId) == false)
+        {
+            return false;
+        }
+
+        PlayerStatus playerStatus = FindFirstObjectByType<PlayerStatus>();
+        if (playerStatus == null)
+        {
+            return false;
+        }
+
+        float restoreAmount = FoodItemIds.GetSatietyRestoreAmount(itemModel.ItemId);
+        if (restoreAmount <= 0f)
+        {
+            return false;
+        }
+
+        playerStatus.EatFood(restoreAmount);
+        inventoryModel.TryConsumeQuickSlotItem(slotIndex, 1);
+        return true;
     }
 
     private PlayerInventoryModel GetInventoryModel()

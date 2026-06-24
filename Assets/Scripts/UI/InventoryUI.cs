@@ -285,6 +285,20 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (itemModel.ItemType == InventoryItemType.Food)
+            {
+                int movedAmount = itemModel.Amount;
+                int quickSlotIndex;
+                if (TryAssignQuickSlotShortcut(itemModel, 3, out quickSlotIndex) == false)
+                {
+                    return false;
+                }
+
+                _playerInventoryModel.TryConsumeItem(itemModel.ItemId, movedAmount);
+                RefreshMessage((quickSlotIndex + 1).ToString() + "번 퀵슬롯에 음식을 연결했습니다.");
+                return true;
+            }
+
             return false;
         }
 

@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
+using UnityEngine.AI;
 
-// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
-// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
+// 씬의 EnemySpawnPoint 한 곳을 담당합니다.
+// 일반 웨이브는 연결된 적 프리팹을 쓰고, 3일차 보스는 프리팹이 비어도 런타임 fallback으로 닫힌 루프를 유지합니다.
 public enum EnemySpawnStep
 {
     Step1 = 1, // 1단계: 기본 몬스터 후보
@@ -44,6 +45,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
     [Header("Boss")]
     [SerializeField] private string _bossDataId = DefaultBossDataId;
     [SerializeField] private float _bossVisualScale = 2.4f;
+    [SerializeField] private bool _allowRuntimeFallbackBoss = true;
 
     [Header("Enemy Prefabs")]
     [Tooltip("1단계에서 무작위로 뽑을 적 프리팹 목록입니다.")]
@@ -193,7 +195,10 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
     public bool HasBossSpawnCandidate()
     {
-        return HasAnyPrefab(_step3EnemyPrefabs) || HasAnyPrefab(_step2EnemyPrefabs) || HasAnyPrefab(_step1EnemyPrefabs);
+        return _allowRuntimeFallbackBoss
+            || HasAnyPrefab(_step3EnemyPrefabs)
+            || HasAnyPrefab(_step2EnemyPrefabs)
+            || HasAnyPrefab(_step1EnemyPrefabs);
     }
 
     public void ResetSpawnTime()
@@ -335,6 +340,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         GameObject[] enemyPrefabs = GetBossEnemyPrefabs();
         if (enemyPrefabs == null || enemyPrefabs.Length == 0)
         {
+            SpawnRuntimeFallbackBoss();
             return;
         }
 
@@ -346,8 +352,93 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         ApplyBossDataToEnemy(createdEnemy);
+        RenameBossObject(createdEnemy);
         RegisterBossDefeat(createdEnemy);
         _hasSpawnedBossForCurrentEncounter = true;
+    }
+
+    private void SpawnRuntimeFallbackBoss()
+    {
+        if (_allowRuntimeFallbackBoss == false)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = _positionSelector.GetSpawnPosition(
+            _centerTransform,
+            _spawnCandidatePoints,
+            _spawnSpacing,
+            0,
+            1);
+        Quaternion spawnRotation = _positionSelector.GetSpawnRotation(_centerTransform);
+        GameObject createdEnemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        createdEnemy.SetActive(false);
+        createdEnemy.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
+
+        EnsureRuntimeBossComponents(createdEnemy);
+        RegisterRuntimeBoss(createdEnemy);
+        InitializeCreatedEnemy(createdEnemy, GetEnemyDataIdByStep());
+        ApplySpawnModeToEnemy(createdEnemy);
+        ApplyBossDataToEnemy(createdEnemy);
+        RenameBossObject(createdEnemy);
+        RegisterBossDefeat(createdEnemy);
+
+        createdEnemy.SetActive(true);
+        _hasSpawnedBossForCurrentEncounter = true;
+    }
+
+    private void EnsureRuntimeBossComponents(GameObject createdEnemy)
+    {
+        GetOrAddComponent<Rigidbody>(createdEnemy);
+        GetOrAddComponent<NavMeshAgent>(createdEnemy);
+        GetOrAddComponent<Damageable>(createdEnemy);
+        GetOrAddComponent<EnemyStatus>(createdEnemy);
+        GetOrAddComponent<EnemyAttack>(createdEnemy);
+        GetOrAddComponent<EnemyDetector>(createdEnemy);
+        GetOrAddComponent<EnemyMovement>(createdEnemy);
+        GetOrAddComponent<EnemyBrain>(createdEnemy);
+        ApplyRuntimeBossMaterial(createdEnemy);
+    }
+
+    private void RegisterRuntimeBoss(GameObject createdEnemy)
+    {
+        if (_gameObjectManager != null)
+        {
+            _gameObjectManager.RegisterGameObject(createdEnemy);
+        }
+
+        _runtimeTracker.RegisterEnemy(createdEnemy);
+    }
+
+    private TComponent GetOrAddComponent<TComponent>(GameObject targetObject)
+        where TComponent : Component
+    {
+        TComponent component = targetObject.GetComponent<TComponent>();
+        if (component != null)
+        {
+            return component;
+        }
+
+        return targetObject.AddComponent<TComponent>();
+    }
+
+    private void ApplyRuntimeBossMaterial(GameObject createdEnemy)
+    {
+        Renderer renderer = createdEnemy.GetComponentInChildren<Renderer>();
+        if (renderer == null)
+        {
+            return;
+        }
+
+        Shader shader = Shader.Find("Standard");
+        if (shader == null)
+        {
+            return;
+        }
+
+        Material material = new Material(shader);
+        material.color = new Color(0.45f, 0.85f, 1f, 1f);
+        renderer.sharedMaterial = material;
     }
 
     private GameObject[] GetBossEnemyPrefabs()
@@ -408,6 +499,23 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         {
             enemyMovement.Initialize(bossData, enemyDetector);
         }
+    }
+
+    private void RenameBossObject(GameObject createdEnemy)
+    {
+        if (createdEnemy == null)
+        {
+            return;
+        }
+
+        BossData bossData = GetBossData();
+        if (bossData != null && string.IsNullOrEmpty(bossData.DisplayName) == false)
+        {
+            createdEnemy.name = "Boss_" + bossData.DisplayName.Replace(" ", string.Empty);
+            return;
+        }
+
+        createdEnemy.name = "Boss_FrozenGolem";
     }
 
     private BossData GetBossData()

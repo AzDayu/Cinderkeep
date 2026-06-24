@@ -13,6 +13,7 @@ namespace Cinderkeep.Gameplay
         Armor,
         Boots,
         Resource,
+        Food,
         Building,
         CinderHeartUpgrade
     }

@@ -8,11 +8,19 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
 {
     private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";
     private const string EffectTypeMaxHealthAdd = "CinderHeartMaxHealthAdd";
+    private const string EffectTypeCinderHeartHealFlat = "CinderHeartHealFlat";
+    private const string EffectTypeCinderHeartHealRate = "CinderHeartHealRate";
     private const string EffectTypePlayerHealRate = "PlayerHealRate";
     private const string EffectTypePlayerReviveRate = "PlayerReviveRate";
+    private const string EffectTypePlayerMaxHealthAdd = "PlayerMaxHealthAdd";
+    private const string EffectTypePlayerMaxStaminaAdd = "PlayerMaxStaminaAdd";
+    private const string EffectTypePlayerStaminaRecoveryAdd = "PlayerStaminaRecoveryAdd";
+    private const string EffectTypePlayerMaxSatietyAdd = "PlayerMaxSatietyAdd";
+    private const string EffectTypePlayerAttackDamageAdd = "PlayerAttackDamageAdd";
 
     [SerializeField] private CinderHeart _cinderHeart;
     [SerializeField] private PlayerStatus _playerStatus;
+    [SerializeField] private PlayerAttack _playerAttack;
 
     public void SetTargets(CinderHeart cinderHeart, PlayerStatus playerStatus)
     {
@@ -41,6 +49,18 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
             return;
         }
 
+        if (IsEffectType(skillData, EffectTypeCinderHeartHealFlat))
+        {
+            ApplyCinderHeartHealFlat(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypeCinderHeartHealRate))
+        {
+            ApplyCinderHeartHealRate(skillData.Value);
+            return;
+        }
+
         if (IsEffectType(skillData, EffectTypePlayerHealRate))
         {
             ApplyPlayerHealRate(skillData.Value);
@@ -50,6 +70,36 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
         if (IsEffectType(skillData, EffectTypePlayerReviveRate))
         {
             ApplyPlayerReviveRate(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypePlayerMaxHealthAdd))
+        {
+            ApplyPlayerMaxHealthAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypePlayerMaxStaminaAdd))
+        {
+            ApplyPlayerMaxStaminaAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypePlayerStaminaRecoveryAdd))
+        {
+            ApplyPlayerStaminaRecoveryAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypePlayerMaxSatietyAdd))
+        {
+            ApplyPlayerMaxSatietyAdd(skillData.Value);
+            return;
+        }
+
+        if (IsEffectType(skillData, EffectTypePlayerAttackDamageAdd))
+        {
+            ApplyPlayerAttackDamageAdd(skillData.Value);
             return;
         }
 
@@ -81,6 +131,28 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
         _cinderHeart.AddMaxHealth(amount);
     }
 
+    private void ApplyCinderHeartHealFlat(float amount)
+    {
+        if (_cinderHeart == null)
+        {
+            return;
+        }
+
+        _cinderHeart.Heal(amount);
+        PlayHealSfx();
+    }
+
+    private void ApplyCinderHeartHealRate(float rate)
+    {
+        if (_cinderHeart == null || rate <= 0f)
+        {
+            return;
+        }
+
+        _cinderHeart.HealByRate(rate);
+        PlayHealSfx();
+    }
+
     private void ApplyPlayerHealRate(float rate)
     {
         if (_playerStatus == null || rate <= 0f)
@@ -104,6 +176,57 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
         PlayHealSfx();
     }
 
+    private void ApplyPlayerMaxHealthAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxHealth(amount);
+        PlayHealSfx();
+    }
+
+    private void ApplyPlayerMaxStaminaAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxStamina(amount);
+    }
+
+    private void ApplyPlayerStaminaRecoveryAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddStaminaRecoveryRate(amount);
+    }
+
+    private void ApplyPlayerMaxSatietyAdd(float amount)
+    {
+        if (_playerStatus == null)
+        {
+            return;
+        }
+
+        _playerStatus.AddMaxSatiety(amount);
+    }
+
+    private void ApplyPlayerAttackDamageAdd(float amount)
+    {
+        if (_playerAttack == null)
+        {
+            return;
+        }
+
+        _playerAttack.AddBonusAttackDamage(amount);
+    }
+
     private void ConnectTargetsIfNeeded()
     {
         if (_cinderHeart == null)
@@ -114,6 +237,11 @@ public sealed class CinderHeartSkillApplier : MonoBehaviour
         if (_playerStatus == null)
         {
             _playerStatus = UnityEngine.Object.FindFirstObjectByType<PlayerStatus>();
+        }
+
+        if (_playerAttack == null)
+        {
+            _playerAttack = UnityEngine.Object.FindFirstObjectByType<PlayerAttack>();
         }
     }
 

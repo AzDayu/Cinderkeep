@@ -16,8 +16,15 @@ namespace Cinderkeep.Gameplay
 
         public const string RewardEffectCinderHeartAttackDamageAdd = "CinderHeartAttackDamageAdd";
         public const string RewardEffectCinderHeartMaxHealthAdd = "CinderHeartMaxHealthAdd";
+        public const string RewardEffectCinderHeartHealFlat = "CinderHeartHealFlat";
+        public const string RewardEffectCinderHeartHealRate = "CinderHeartHealRate";
         public const string RewardEffectPlayerHealRate = "PlayerHealRate";
         public const string RewardEffectPlayerReviveRate = "PlayerReviveRate";
+        public const string RewardEffectPlayerMaxHealthAdd = "PlayerMaxHealthAdd";
+        public const string RewardEffectPlayerMaxStaminaAdd = "PlayerMaxStaminaAdd";
+        public const string RewardEffectPlayerStaminaRecoveryAdd = "PlayerStaminaRecoveryAdd";
+        public const string RewardEffectPlayerMaxSatietyAdd = "PlayerMaxSatietyAdd";
+        public const string RewardEffectPlayerAttackDamageAdd = "PlayerAttackDamageAdd";
 
         private static readonly HashSet<string> SupportedCraftingRecipeResultTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -33,8 +40,15 @@ namespace Cinderkeep.Gameplay
         {
             RewardEffectCinderHeartAttackDamageAdd,
             RewardEffectCinderHeartMaxHealthAdd,
+            RewardEffectCinderHeartHealFlat,
+            RewardEffectCinderHeartHealRate,
             RewardEffectPlayerHealRate,
-            RewardEffectPlayerReviveRate
+            RewardEffectPlayerReviveRate,
+            RewardEffectPlayerMaxHealthAdd,
+            RewardEffectPlayerMaxStaminaAdd,
+            RewardEffectPlayerStaminaRecoveryAdd,
+            RewardEffectPlayerMaxSatietyAdd,
+            RewardEffectPlayerAttackDamageAdd
         };
 
         public static bool IsSupportedCraftingRecipeResultType(string resultDataType)
