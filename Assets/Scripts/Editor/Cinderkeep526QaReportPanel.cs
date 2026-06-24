@@ -535,6 +535,11 @@ public static class Cinderkeep526QaReportPanel
             gameDataManager.Initialize();
             bool isOk = true;
             isOk &= AppendCountCheck(reportBuilder, "building_upgrades", gameDataManager.BuildingUpgradeDataList.Count, 1);
+            isOk &= AppendRequiredBuildingUpgradeCheck(gameDataManager, reportBuilder, "upgrade_wall_wood_to_iron");
+            isOk &= AppendRequiredBuildingUpgradeCheck(gameDataManager, reportBuilder, "upgrade_tower_wood_to_iron");
+            isOk &= AppendRequiredBuildingUpgradeCheck(gameDataManager, reportBuilder, "upgrade_trap_wood_to_iron");
+            isOk &= AppendRequiredBuildingUpgradeCheck(gameDataManager, reportBuilder, "upgrade_trap_iron_to_gold");
+            isOk &= AppendRequiredBuildingUpgradeCheck(gameDataManager, reportBuilder, "upgrade_trap_gold_to_adamantium");
 
             foreach (KeyValuePair<string, BuildingUpgradeData> pair in gameDataManager.BuildingUpgradeDataList)
             {
@@ -574,6 +579,17 @@ public static class Cinderkeep526QaReportPanel
         {
             UnityEngine.Object.DestroyImmediate(tempObject);
         }
+    }
+
+    private static bool AppendRequiredBuildingUpgradeCheck(
+        GameDataManager gameDataManager,
+        StringBuilder reportBuilder,
+        string upgradeId)
+    {
+        bool hasUpgrade = gameDataManager != null
+            && gameDataManager.BuildingUpgradeDataList != null
+            && gameDataManager.BuildingUpgradeDataList.ContainsKey(upgradeId);
+        return AppendCheck(reportBuilder, "required upgrade: " + upgradeId, hasUpgrade, upgradeId);
     }
 
     private static bool RunPrefabKeyReport(StringBuilder reportBuilder)

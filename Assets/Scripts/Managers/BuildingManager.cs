@@ -184,7 +184,7 @@ namespace Cinderkeep.Gameplay
             RegisterBuildingComponent(createdBuilding, toBuildingData);
             NotifyBuildingPlaced(toBuildingData);
             NotifyBuildingUpgraded(fromBuildingData, toBuildingData);
-            Debug.Log("BuildingManager: 건축 업그레이드 완료. from=" + fromBuildingId + ", to=" + toBuildingData.Id);
+            global::CinderkeepLog.Verbose("BuildingManager: 건축 업그레이드 완료. from=" + fromBuildingId + ", to=" + toBuildingData.Id);
             return true;
         }
 
@@ -304,7 +304,7 @@ namespace Cinderkeep.Gameplay
             RemoveBuilding(building);
             ClearSpotByBuilding(building.gameObject);
             NotifyBuildingDestroyed(building);
-            Debug.Log(building.gameObject.name + " 건축물 파괴 처리를 완료했습니다.");
+            global::CinderkeepLog.Verbose(building.gameObject.name + " 건축물 파괴 처리를 완료했습니다.");
         }
 
         public BuildingHp GetNearestBuilding(Vector3 monsterPosition)

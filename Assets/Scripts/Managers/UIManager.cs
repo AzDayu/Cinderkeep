@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Text;
 
 // HUD, 인벤토리, 제작 UI, 보상 선택 UI, Run Result 패널을 열고 닫는 UI 허브입니다.
 // 게임 규칙은 전용 시스템이 담당하고, 이 클래스는 화면 전환과 커서 상태, UI 사운드 호출만 조율합니다.
@@ -398,8 +397,10 @@ namespace Cinderkeep.Gameplay
 
             GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
             RunResultTracker tracker = RunResultTracker.Instance;
-            RunResultSnapshot snapshot = tracker == null ? CreateFallbackRunResultSnapshot(isClear, gameRunModel) : tracker.CreateSnapshot(isClear, gameRunModel);
-            _runResultText.text = BuildRunResultText(snapshot);
+            RunResultSnapshot snapshot = tracker == null
+                ? RunResultTextFormatter.CreateFallbackSnapshot(isClear, gameRunModel)
+                : tracker.CreateSnapshot(isClear, gameRunModel);
+            _runResultText.text = RunResultTextFormatter.BuildText(snapshot);
         }
 
         private void OpenRunResultUI(bool isClear)
@@ -427,95 +428,6 @@ namespace Cinderkeep.Gameplay
             {
                 _runResultUI = _gameOverPanel.AddComponent<RunResultUI>();
             }
-        }
-
-        private RunResultSnapshot CreateFallbackRunResultSnapshot(bool isClear, GameRunModel gameRunModel)
-        {
-            RunResultSnapshot snapshot = new RunResultSnapshot();
-            snapshot.IsClear = isClear;
-            snapshot.ReachedDay = gameRunModel == null ? 0 : gameRunModel.Day;
-            snapshot.FailureReason = isClear ? "Clear" : "CinderHeart destroyed";
-            return snapshot;
-        }
-
-        private string BuildRunResultText(RunResultSnapshot snapshot)
-        {
-            if (snapshot == null)
-            {
-                return string.Empty;
-            }
-
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine(snapshot.IsClear ? "CLEAR" : "GAME OVER");
-            builder.AppendLine(snapshot.IsClear ? "CinderHeart defended." : "CinderHeart destroyed.");
-            builder.AppendLine();
-            builder.AppendLine("Result");
-            builder.AppendLine("Reached Day: " + snapshot.ReachedDay);
-            builder.AppendLine("Survival Time: " + FormatTime(snapshot.SurvivalSeconds));
-            builder.AppendLine("Failure Reason: " + snapshot.FailureReason);
-            builder.AppendLine();
-            builder.AppendLine("Combat");
-            builder.AppendLine("Monster Kills: " + snapshot.MonsterKillCount);
-            builder.AppendLine("Boss Defeated: " + FormatBool(snapshot.BossDefeated));
-            builder.AppendLine("Damage Dealt: " + FormatNumber(snapshot.EnemyDamageDealt));
-            builder.AppendLine("Tower Damage Dealt: " + FormatNumber(snapshot.TowerDamageDealt));
-            builder.AppendLine("Trap Damage Dealt: " + FormatNumber(snapshot.TrapDamageDealt));
-            builder.AppendLine("Player Damage Taken: " + FormatNumber(snapshot.PlayerDamageTaken));
-            builder.AppendLine("Player Downs: " + snapshot.PlayerDownCount);
-            builder.AppendLine("CinderHeart Damage Taken: " + FormatNumber(snapshot.CinderHeartDamageTaken));
-            builder.AppendLine();
-            builder.AppendLine("Resources");
-            builder.AppendLine("Wood: " + snapshot.WoodGained + " / Stone: " + snapshot.StoneGained);
-            builder.AppendLine("Iron: " + snapshot.IronGained + " / Gold: " + snapshot.GoldGained);
-            builder.AppendLine("Mithril: " + snapshot.MithrilGained + " / Adamantium: " + snapshot.AdamantiumGained);
-            builder.AppendLine();
-            builder.AppendLine("Crafting / Building");
-            builder.AppendLine("Crafted Items: " + snapshot.CraftedItemCount);
-            builder.AppendLine("Placed Buildings: " + snapshot.PlacedBuildingCount);
-            builder.AppendLine("Destroyed Buildings: " + snapshot.DestroyedBuildingCount);
-            builder.AppendLine("Upgraded Buildings: " + snapshot.UpgradedBuildingCount);
-            builder.AppendLine("Trap CC Score: " + FormatNumber(snapshot.TrapCrowdControlScore));
-            builder.AppendLine();
-            builder.AppendLine("Food");
-            builder.AppendLine("Raw Meat Picked Up: " + snapshot.RawMeatPickedUpCount);
-            builder.AppendLine("Cooked Meat Created: " + snapshot.CookedMeatCreatedCount);
-            builder.AppendLine("Food Eaten: " + snapshot.FoodEatenCount);
-            builder.AppendLine("Satiety Restored: " + FormatNumber(snapshot.SatietyRestored));
-            builder.AppendLine();
-            builder.AppendLine("CinderHeart Upgrades");
-            builder.AppendLine(FormatSelectedSkills(snapshot));
-            builder.AppendLine();
-            builder.AppendLine("R: Restart");
-            builder.AppendLine("Esc: Main_Lobby");
-            return builder.ToString();
-        }
-
-        private string FormatSelectedSkills(RunResultSnapshot snapshot)
-        {
-            if (snapshot.SelectedCinderHeartSkillNames == null || snapshot.SelectedCinderHeartSkillNames.Count <= 0)
-            {
-                return "None";
-            }
-
-            return string.Join(", ", snapshot.SelectedCinderHeartSkillNames);
-        }
-
-        private string FormatTime(float seconds)
-        {
-            int totalSeconds = Mathf.Max(0, Mathf.RoundToInt(seconds));
-            int minutes = totalSeconds / 60;
-            int remainSeconds = totalSeconds % 60;
-            return minutes.ToString("00") + ":" + remainSeconds.ToString("00");
-        }
-
-        private string FormatNumber(float value)
-        {
-            return Mathf.RoundToInt(value).ToString();
-        }
-
-        private string FormatBool(bool value)
-        {
-            return value ? "Yes" : "No";
         }
 
         private void ConnectRunResultText()

@@ -199,7 +199,7 @@ public sealed class PlayerStatus : MonoBehaviour
         _health -= finalDamage;
         _health = Mathf.Max(_health, 0f);
 
-        Debug.Log("[PlayerStatus] 피해: " + finalDamage + ", 현재 체력: " + _health + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[PlayerStatus] 피해: " + finalDamage + ", 현재 체력: " + _health + " / " + _maxHealth);
         NotifyPlayerDamaged(finalDamage);
 
         if (IsDead() == true)
@@ -399,7 +399,7 @@ public sealed class PlayerStatus : MonoBehaviour
         if (_isExhausted == true && _stamina >= _exhaustedRecoveryPoint)
         {
             _isExhausted = false;
-            Debug.Log("[PlayerStatus] 스태미나가 회복되어 다시 달릴 수 있습니다.");
+            global::CinderkeepLog.Verbose("[PlayerStatus] 스태미나가 회복되어 다시 달릴 수 있습니다.");
         }
     }
 

@@ -268,7 +268,7 @@ public sealed class ResourceNode : MonoBehaviour, IInteractable
         }
 
         GameManager.Inst.PlayerModel.AddResource(_resourceId, amount);
-        Debug.Log("ResourceNode: " + _resourceId + " +" + amount);
+        global::CinderkeepLog.Verbose("ResourceNode: " + _resourceId + " +" + amount);
     }
 
     private void ProcessGathered()

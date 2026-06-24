@@ -84,7 +84,7 @@ namespace Cinderkeep.Gameplay
 
             _currentInteractor = interactor;
             NotifyStationOpened(interactor);
-            Debug.Log("CraftingStation: " + StationType + " 제작 시설을 열었습니다.");
+            global::CinderkeepLog.Verbose("CraftingStation: " + StationType + " 제작 시설을 열었습니다.");
         }
 
         public void GetAvailableRecipes(GameDataManager gameDataManager, int currentDay, List<CraftingRecipeData> resultRecipes)

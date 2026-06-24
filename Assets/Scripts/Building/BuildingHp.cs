@@ -72,7 +72,7 @@ public sealed class BuildingHp : MonoBehaviour
 
         float finalDamage = GetFinalDamage(damage);
         _currentHp = Mathf.Max(0f, _currentHp - finalDamage);
-        Debug.Log(gameObject.name + " 건축물 피해: " + finalDamage + ", 현재 체력: " + _currentHp + " / " + _maxHp);
+        global::CinderkeepLog.Verbose(gameObject.name + " 건축물 피해: " + finalDamage + ", 현재 체력: " + _currentHp + " / " + _maxHp);
 
         if (_currentHp <= 0f)
         {
@@ -88,7 +88,7 @@ public sealed class BuildingHp : MonoBehaviour
         }
 
         _currentHp = Mathf.Min(_maxHp, _currentHp + amount);
-        Debug.Log(gameObject.name + " 건축물 수리: " + amount + ", 현재 체력: " + _currentHp + " / " + _maxHp);
+        global::CinderkeepLog.Verbose(gameObject.name + " 건축물 수리: " + amount + ", 현재 체력: " + _currentHp + " / " + _maxHp);
     }
 
     private float GetFinalDamage(float rawDamage)
@@ -104,7 +104,7 @@ public sealed class BuildingHp : MonoBehaviour
     private void DestroyBuilding()
     {
         _isDestroyed = true;
-        Debug.Log(gameObject.name + " 건축물이 파괴되었습니다.");
+        global::CinderkeepLog.Verbose(gameObject.name + " 건축물이 파괴되었습니다.");
 
         if (OnBuildingDestroyed != null)
         {

@@ -65,6 +65,16 @@ public sealed class BuildingSpot : MonoBehaviour
         }
     }
 
+    public void ConfigureBuildingDataId(string buildingDataId)
+    {
+        if (string.IsNullOrEmpty(buildingDataId))
+        {
+            return;
+        }
+
+        _buildingDataId = buildingDataId;
+    }
+
     public GameObject GetBuildingPrefab(BuildingData buildingData)
     {
         GameObject overridePrefab = FindOverridePrefab(buildingData);

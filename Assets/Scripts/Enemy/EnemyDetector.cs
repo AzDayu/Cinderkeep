@@ -204,12 +204,12 @@ public sealed class EnemyDetector : MonoBehaviour
             if (IsPlayerTarget(targetCollider))
             {
                 DetectedPlayer = targetCollider.transform;
-                Debug.Log(gameObject.name + ": 피격 반응으로 플레이어를 감지했습니다.");
+                global::CinderkeepLog.Verbose(gameObject.name + ": 피격 반응으로 플레이어를 감지했습니다.");
                 return;
             }
         }
 
-        Debug.Log(gameObject.name + ": 피격되었지만 감지 범위 안에 플레이어가 없습니다.");
+        global::CinderkeepLog.Verbose(gameObject.name + ": 피격되었지만 감지 범위 안에 플레이어가 없습니다.");
     }
 
     private void ClearPlayerIfOutOfRange()

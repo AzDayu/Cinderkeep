@@ -117,7 +117,7 @@ public sealed class PlayerBuild : MonoBehaviour
 
         if (isBuilt)
         {
-            Debug.Log("PlayerBuild: E 홀드 건축을 완료했습니다.");
+            global::CinderkeepLog.Verbose("PlayerBuild: E 홀드 건축을 완료했습니다.");
         }
     }
 
@@ -136,7 +136,7 @@ public sealed class PlayerBuild : MonoBehaviour
 
         if (TryBuildAtSpot(buildingSpot))
         {
-            Debug.Log("PlayerBuild: 디버그 즉시 건축을 완료했습니다.");
+            global::CinderkeepLog.Verbose("PlayerBuild: 디버그 즉시 건축을 완료했습니다.");
         }
     }
 

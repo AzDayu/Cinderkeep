@@ -108,7 +108,7 @@ public sealed class EnemyStatus : MonoBehaviour
         NotifyEnemyDamagedByAmount(damage);
         AlertByDamage();
 
-        Debug.Log("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[EnemyStatus] " + gameObject.name + " 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
 
         if (IsDead)
         {
@@ -185,7 +185,7 @@ public sealed class EnemyStatus : MonoBehaviour
 
     private void ProcessDeath()
     {
-        Debug.Log("[EnemyStatus] " + gameObject.name + " 사망 처리");
+        global::CinderkeepLog.Verbose("[EnemyStatus] " + gameObject.name + " 사망 처리");
         NotifyDied();
         NotifyEnemyDiedGlobal();
 

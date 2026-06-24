@@ -128,6 +128,6 @@ public sealed class Damageable : MonoBehaviour
         _currentHealth = 0f;
         _isDead = true;
 
-        Debug.Log(gameObject.name + " is dead.");
+        global::CinderkeepLog.Verbose(gameObject.name + " is dead.");
     }
 }

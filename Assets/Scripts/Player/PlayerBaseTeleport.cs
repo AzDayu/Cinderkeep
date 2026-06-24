@@ -156,7 +156,7 @@ public sealed class PlayerBaseTeleport : MonoBehaviour
         float distanceFromBase = Vector3.Distance(transform.position, _baseTeleportPoint.position);
         if (distanceFromBase < _minimumDistanceFromBase)
         {
-            Debug.Log("[PlayerBaseTeleport] 베이스와 가까워 귀환을 시작하지 않습니다.");
+            global::CinderkeepLog.Verbose("[PlayerBaseTeleport] 베이스와 가까워 귀환을 시작하지 않습니다.");
             return false;
         }
 

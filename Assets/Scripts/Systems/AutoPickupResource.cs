@@ -52,7 +52,7 @@ public sealed class AutoPickupResource : MonoBehaviour
         }
 
         GameManager.Inst.PlayerModel.AddResource(_resourceId, _amount);
-        Debug.Log("AutoPickupResource: " + _resourceId + " +" + _amount);
+        global::CinderkeepLog.Verbose("AutoPickupResource: " + _resourceId + " +" + _amount);
     }
 
     private void ProcessPickedUp()

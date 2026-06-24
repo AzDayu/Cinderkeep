@@ -107,7 +107,7 @@ public sealed class CinderHeartFoodCooker : MonoBehaviour
         if (inventoryModel.TryReplaceItemIdEverywhere(FoodItemIds.RawMeat, FoodItemIds.CookedMeat, InventoryItemType.Food))
         {
             NotifyFoodCooked(cookedAmount);
-            Debug.Log("[CinderHeartFoodCooker] 생고기를 익힌 고기로 조리했습니다. amount=" + cookedAmount);
+            global::CinderkeepLog.Verbose("[CinderHeartFoodCooker] 생고기를 익힌 고기로 조리했습니다. amount=" + cookedAmount);
         }
 
         ResetProgress();

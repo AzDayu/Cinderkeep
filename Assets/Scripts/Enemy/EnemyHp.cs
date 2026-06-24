@@ -69,7 +69,7 @@ public sealed class EnemyHp : MonoBehaviour
 
     public void PrintCurrentHp()
     {
-        Debug.Log(gameObject.name + " 현재 체력 : " + GetCurrentHp() + " / 최대 체력 : " + GetMaximumHp());
+        global::CinderkeepLog.Verbose(gameObject.name + " 현재 체력 : " + GetCurrentHp() + " / 최대 체력 : " + GetMaximumHp());
     }
 
     private void ConnectComponents()

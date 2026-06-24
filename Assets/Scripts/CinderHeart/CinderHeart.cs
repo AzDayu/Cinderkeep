@@ -103,7 +103,7 @@ public sealed class CinderHeart : MonoBehaviour
 
         _currentHealth = Mathf.Max(0f, _currentHealth - damage);
         NotifyCinderHeartDamaged(damage);
-        Debug.Log("[CinderHeart] 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[CinderHeart] 피해: " + damage + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
 
         if (_currentHealth <= 0f)
         {
@@ -126,7 +126,7 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _attackDamage += amount;
-        Debug.Log("[CinderHeart] 공격력 증가: +" + amount + ", 현재 공격력: " + _attackDamage);
+        global::CinderkeepLog.Verbose("[CinderHeart] 공격력 증가: +" + amount + ", 현재 공격력: " + _attackDamage);
     }
 
     public void AddMaxHealth(float amount)
@@ -142,7 +142,7 @@ public sealed class CinderHeart : MonoBehaviour
         _currentHealth += amount;
         ClampInspectorValues();
         _currentHealth = Mathf.Clamp(_currentHealth, 0f, _maxHealth);
-        Debug.Log("[CinderHeart] 최대 체력 증가: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[CinderHeart] 최대 체력 증가: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
     }
 
     public void Heal(float amount)
@@ -158,7 +158,7 @@ public sealed class CinderHeart : MonoBehaviour
         }
 
         _currentHealth = Mathf.Min(_currentHealth + amount, _maxHealth);
-        Debug.Log("[CinderHeart] 체력 회복: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
+        global::CinderkeepLog.Verbose("[CinderHeart] 체력 회복: +" + amount + ", 현재 체력: " + _currentHealth + " / " + _maxHealth);
     }
 
     public void HealByRate(float rate)

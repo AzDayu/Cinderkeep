@@ -756,14 +756,19 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         GameDataManager gameDataManager = GameManager.Inst.GetGameDataManager();
         IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList = gameDataManager.EnemySpawnRuleDataList;
-        int totalWeight = GetTotalSpawnRuleWeight(ruleDataList, phase);
-        if (totalWeight <= 0)
-        {
-            return null;
-        }
+        List<EnemySpawnRuleData> candidates = GetSpawnRuleCandidates(ruleDataList, phase);
+        return RandomUtil.PickWeighted(candidates, spawnRuleData => spawnRuleData.SpawnWeight);
+    }
 
-        int selectedWeight = UnityEngine.Random.Range(1, totalWeight + 1);
-        int accumulatedWeight = 0;
+    private List<EnemySpawnRuleData> GetSpawnRuleCandidates(
+        IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList,
+        string phase)
+    {
+        List<EnemySpawnRuleData> candidates = new List<EnemySpawnRuleData>();
+        if (ruleDataList == null)
+        {
+            return candidates;
+        }
 
         foreach (KeyValuePair<string, EnemySpawnRuleData> pair in ruleDataList)
         {
@@ -773,14 +778,10 @@ public sealed class EnemySpawnPoint : MonoBehaviour
                 continue;
             }
 
-            accumulatedWeight += GetRuleWeight(spawnRuleData);
-            if (selectedWeight <= accumulatedWeight)
-            {
-                return spawnRuleData;
-            }
+            candidates.Add(spawnRuleData);
         }
 
-        return null;
+        return candidates;
     }
 
     private bool CanUseSpawnRuleData(string phase)
@@ -808,26 +809,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         return true;
     }
 
-    private int GetTotalSpawnRuleWeight(IReadOnlyDictionary<string, EnemySpawnRuleData> ruleDataList, string phase)
-    {
-        if (ruleDataList == null)
-        {
-            return 0;
-        }
-
-        int totalWeight = 0;
-        foreach (KeyValuePair<string, EnemySpawnRuleData> pair in ruleDataList)
-        {
-            EnemySpawnRuleData spawnRuleData = pair.Value;
-            if (IsSpawnRuleCandidate(spawnRuleData, phase) == true)
-            {
-                totalWeight += GetRuleWeight(spawnRuleData);
-            }
-        }
-
-        return totalWeight;
-    }
-
     private bool IsSpawnRuleCandidate(EnemySpawnRuleData spawnRuleData, string phase)
     {
         if (spawnRuleData == null)
@@ -841,16 +822,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         }
 
         return string.Equals(spawnRuleData.Phase, phase, StringComparison.OrdinalIgnoreCase);
-    }
-
-    private int GetRuleWeight(EnemySpawnRuleData spawnRuleData)
-    {
-        if (spawnRuleData == null)
-        {
-            return 0;
-        }
-
-        return Mathf.Max(0, spawnRuleData.SpawnWeight);
     }
 
     private string GetCurrentPhaseName()
