@@ -6,6 +6,10 @@ using UnityEngine.AI;
 // 누구를 따라갈지, 무엇을 공격할지는 EnemyBrain이 판단하고 이 클래스는 받은 위치로만 이동합니다.
 public sealed class EnemyMovement : MonoBehaviour
 {
+    private const float MinimumAvoidanceRadius = 0.45f;
+    private const int MinimumAvoidancePriority = 25;
+    private const int MaximumAvoidancePriority = 75;
+
     [Tooltip("몬스터 이동 속도입니다. EnemyData로 초기화됩니다.")]
     [SerializeField] private float _moveSpeed;
     [Tooltip("목표와 이 거리 안에 들어오면 이동을 멈춥니다. EnemyData로 초기화됩니다.")]
@@ -132,6 +136,9 @@ public sealed class EnemyMovement : MonoBehaviour
 
         _navMeshAgent.speed = _moveSpeed;
         _navMeshAgent.stoppingDistance = _stopDistance;
+        _navMeshAgent.radius = Mathf.Max(_navMeshAgent.radius, MinimumAvoidanceRadius);
+        _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        _navMeshAgent.avoidancePriority = Random.Range(MinimumAvoidancePriority, MaximumAvoidancePriority + 1);
     }
 
     private void RefreshWanderTargetPosition()
