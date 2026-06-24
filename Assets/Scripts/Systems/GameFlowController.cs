@@ -129,6 +129,13 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         RestoreTimeScaleIfRewardSelectionIsOpen();
         StopEnemySpawn();
         _gameRunModel.ClearRun();
+
+        if (_gameManager == null || _gameManager.GetUIManager() == null)
+        {
+            return;
+        }
+
+        _gameManager.GetUIManager().OpenClearPanel();
     }
 
     private void UpdateFlowTime()

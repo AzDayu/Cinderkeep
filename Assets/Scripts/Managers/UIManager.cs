@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Cinderkeep.Gameplay
 {
@@ -10,12 +11,14 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private GameObject _hudRoot;
         [SerializeField] private GameObject _inventoryRoot;
         [SerializeField] private GameObject _gameOverPanel;
+        [SerializeField] private Text _runResultText;
         [SerializeField] private InventoryUI _inventoryUI;
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
         [SerializeField] private CinderHeartSkillSelectionUI _cinderHeartSkillSelectionUI;
 
         private bool _isInitialized;
+        private bool _isRunResultPanelOpen;
 
         public bool IsInitialized
         {
@@ -44,6 +47,12 @@ namespace Cinderkeep.Gameplay
 
         private void Update()
         {
+            if (_isRunResultPanelOpen)
+            {
+                UpdateRunResultInput();
+                return;
+            }
+
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
                 if (_craftingUI != null && _craftingUI.IsOpen)
@@ -118,13 +127,41 @@ namespace Cinderkeep.Gameplay
 
         public void OpenGameOverPanel()
         {
+            OpenRunResultPanel(false);
+        }
+
+        public void OpenClearPanel()
+        {
+            OpenRunResultPanel(true);
+        }
+
+        public void OpenRunResultPanel(bool isClear)
+        {
+            CloseInventory();
+            CloseCraftingUI();
+            CloseFurnaceUI();
+            CloseCinderHeartSkillSelectionUI();
+            CloseHud();
+
+            _isRunResultPanelOpen = true;
+            RefreshRunResultText(isClear);
             SetActive(_gameOverPanel, true);
+            RefreshCursorState();
+
+            if (isClear)
+            {
+                PlayUiNotificationSfx();
+                return;
+            }
+
             PlayUiFailSfx();
         }
 
         public void CloseGameOverPanel()
         {
+            _isRunResultPanelOpen = false;
             SetActive(_gameOverPanel, false);
+            RefreshCursorState();
         }
 
         public void OpenCraftingUI(CraftingStation craftingStation, GameObject interactor)
@@ -266,7 +303,81 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (_isRunResultPanelOpen)
+            {
+                return true;
+            }
+
             return false;
+        }
+
+        private void UpdateRunResultInput()
+        {
+            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.R))
+            {
+                RestartRunFromResult();
+                return;
+            }
+
+            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Escape))
+            {
+                ReturnToMainLobbyFromResult();
+            }
+        }
+
+        private void RestartRunFromResult()
+        {
+            if (GameManager.Inst == null)
+            {
+                return;
+            }
+
+            CloseGameOverPanel();
+            PlayUiClickSfx();
+            GameManager.Inst.RestartRun();
+        }
+
+        private void ReturnToMainLobbyFromResult()
+        {
+            if (GameManager.Inst == null)
+            {
+                return;
+            }
+
+            PlayUiBackSfx();
+            GameManager.Inst.ReturnToMainLobby();
+        }
+
+        private void RefreshRunResultText(bool isClear)
+        {
+            ConnectRunResultText();
+            if (_runResultText == null)
+            {
+                return;
+            }
+
+            GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
+            int day = gameRunModel == null ? 0 : gameRunModel.Day;
+            string title = isClear ? "CLEAR" : "GAME OVER";
+            string summary = isClear ? "CinderHeart를 지켜냈습니다." : "CinderHeart가 꺼졌습니다.";
+
+            _runResultText.text =
+                title + "\n" +
+                summary + "\n\n" +
+                "도달 날짜: " + day + "일차\n" +
+                "상세 기록: 5.00 Run Result 확장 단계에서 집계 예정\n\n" +
+                "R: 다시 시작\n" +
+                "Esc: Main_Lobby로 돌아가기";
+        }
+
+        private void ConnectRunResultText()
+        {
+            if (_runResultText != null || _gameOverPanel == null)
+            {
+                return;
+            }
+
+            _runResultText = _gameOverPanel.GetComponentInChildren<Text>(true);
         }
 
         private void PlayUiToggleSfx(bool wasOpen)

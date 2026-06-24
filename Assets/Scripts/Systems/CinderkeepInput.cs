@@ -142,6 +142,12 @@ public static class CinderkeepInput
             case KeyCode.T:
                 key = Key.T;
                 return true;
+            case KeyCode.R:
+                key = Key.R;
+                return true;
+            case KeyCode.Escape:
+                key = Key.Escape;
+                return true;
             case KeyCode.Space:
                 key = Key.Space;
                 return true;
