@@ -25,6 +25,35 @@ namespace Cinderkeep.Gameplay
             return CanPayRecipeCost(recipeData, playerModel);
         }
 
+        public string GetCraftStateText(CraftingRecipeData recipeData, PlayerModel playerModel)
+        {
+            if (recipeData == null)
+            {
+                return "제작법 없음";
+            }
+
+            if (playerModel == null)
+            {
+                return "플레이어 정보 없음";
+            }
+
+            if (CanGrantRecipeResult(recipeData) == false)
+            {
+                return GetResultBlockText(recipeData);
+            }
+
+            string missingResourceId;
+            int currentAmount;
+            int requiredAmount;
+            if (TryGetFirstMissingCost(recipeData, playerModel, out missingResourceId, out currentAmount, out requiredAmount))
+            {
+                string resourceName = UiItemDisplayFormatter.GetItemName(missingResourceId, InventoryItemType.Resource);
+                return resourceName + " 부족 " + currentAmount + "/" + requiredAmount;
+            }
+
+            return "제작 가능";
+        }
+
         public bool TryCraft(CraftingRecipeData recipeData, PlayerModel playerModel)
         {
             if (CanCraft(recipeData, playerModel) == false)
@@ -65,6 +94,45 @@ namespace Cinderkeep.Gameplay
             }
 
             return true;
+        }
+
+        private bool TryGetFirstMissingCost(
+            CraftingRecipeData recipeData,
+            PlayerModel playerModel,
+            out string resourceId,
+            out int currentAmount,
+            out int requiredAmount)
+        {
+            resourceId = string.Empty;
+            currentAmount = 0;
+            requiredAmount = 0;
+
+            if (recipeData == null || playerModel == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < recipeData.Costs.Count; i++)
+            {
+                CraftingCostData costData = recipeData.Costs[i];
+                if (costData == null || costData.Amount <= 0)
+                {
+                    continue;
+                }
+
+                int playerAmount = playerModel.GetResourceAmount(costData.ResourceId);
+                if (playerAmount >= costData.Amount)
+                {
+                    continue;
+                }
+
+                resourceId = costData.ResourceId;
+                currentAmount = playerAmount;
+                requiredAmount = costData.Amount;
+                return true;
+            }
+
+            return false;
         }
 
         private bool TryPayRecipeCost(CraftingRecipeData recipeData, PlayerModel playerModel)
@@ -143,6 +211,21 @@ namespace Cinderkeep.Gameplay
             }
 
             return CanAddInventoryItem(recipeData.ResultItemId, itemType, recipeData.ResultCount);
+        }
+
+        private string GetResultBlockText(CraftingRecipeData recipeData)
+        {
+            if (IsCinderHeartUpgradeResult(recipeData))
+            {
+                return "아침 보상 전용";
+            }
+
+            if (IsBuildingResult(recipeData))
+            {
+                return "건축 준비 불가";
+            }
+
+            return "인벤토리 공간 부족";
         }
 
         public bool IsRecipeVisibleInCraftingUI(CraftingRecipeData recipeData)

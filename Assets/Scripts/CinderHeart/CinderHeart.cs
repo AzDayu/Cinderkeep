@@ -2,8 +2,8 @@ using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 
-// 5.00 direction: Maintains the CinderHeart as the central win/loss objective for the 5.00 loop.
-// 5.01+ note: Keep CinderHeart rules explicit because future rewards, healing, defense, and failure conditions depend on it.
+// CinderHeart의 체력, 피해, 파괴 이벤트를 관리하는 핵심 목표 오브젝트입니다.
+// 회복, 보상, 방어, 실패 조건이 모두 이 상태를 기준으로 연결됩니다.
 // CinderHeart는 3일 루프의 핵심 방어 대상입니다.
 // 체력이 0이 되면 GameManager를 통해 게임 오버 흐름으로 넘깁니다.
 public sealed class CinderHeart : MonoBehaviour

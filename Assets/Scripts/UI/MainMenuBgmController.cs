@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
-// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.UI
 {
     // 메인 메뉴에서 시작되는 공용 BGM을 관리합니다.

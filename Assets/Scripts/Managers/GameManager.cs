@@ -2,13 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
-// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 게임 전체 생성 주기를 잡는 최상위 매니저입니다.
-    // 규칙: 게임 영역에서는 GameManager만 싱글톤으로 둡니다.
-    // 5.00 기준으로 이 클래스는 Composition Root 역할만 맡고, 실제 계산은 각 전용 컴포넌트가 담당합니다.
+    // GameData -> Model -> Scene Managers -> UI -> GameFlow 순서로 초기화하고, 실제 계산은 전용 시스템에 맡깁니다.
+    // 게임 영역 싱글톤은 이 클래스 하나만 두어 런타임 진입점과 재시작 흐름을 명확하게 유지합니다.
     public sealed class GameManager : MonoBehaviour
     {
         [SerializeField] private GameDataManager _gameDataManager;

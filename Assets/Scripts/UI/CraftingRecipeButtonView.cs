@@ -2,8 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
-// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.Gameplay
 {
     // 제작 목록의 한 줄을 표시하는 UI 컴포넌트입니다.
@@ -31,7 +31,7 @@ namespace Cinderkeep.Gameplay
             DisconnectButton();
         }
 
-        public void SetRecipe(CraftingRecipeData recipeData, bool canCraft, CraftingUI ownerCraftingUI)
+        public void SetRecipe(CraftingRecipeData recipeData, bool canCraft, string stateText, CraftingUI ownerCraftingUI)
         {
             if (recipeData == null)
             {
@@ -45,7 +45,7 @@ namespace Cinderkeep.Gameplay
             SetVisible(true);
             RefreshName(recipeData);
             RefreshCost(recipeData);
-            RefreshState(canCraft);
+            RefreshState(canCraft, stateText);
             RefreshButton(canCraft);
         }
 
@@ -97,16 +97,20 @@ namespace Cinderkeep.Gameplay
             _costText.text = BuildCostText(recipeData);
         }
 
-        private void RefreshState(bool canCraft)
+        private void RefreshState(bool canCraft, string stateText)
         {
+            string safeStateText = string.IsNullOrEmpty(stateText)
+                ? (canCraft ? "제작 가능" : "제작 불가")
+                : stateText;
+
             if (canCraft)
             {
-                RefreshText(_stateText, "제작 가능");
+                RefreshText(_stateText, safeStateText);
                 RefreshStateColor(new Color(0.35f, 1f, 0.55f, 1f));
             }
             else
             {
-                RefreshText(_stateText, "자원 부족");
+                RefreshText(_stateText, safeStateText);
                 RefreshStateColor(new Color(1f, 0.45f, 0.32f, 1f));
             }
         }

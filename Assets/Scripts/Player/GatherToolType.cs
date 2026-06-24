@@ -1,5 +1,5 @@
-﻿// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 채집 대상이 어떤 도구를 요구하는지 구분하는 enum입니다.
 // None은 맨손 상호작용, Axe는 나무, Pickaxe는 바위와 광석에 사용합니다.
 public enum GatherToolType

@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
-// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
+// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
+// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
 namespace Cinderkeep.Gameplay
 {
     // 제작대 UI를 갱신하는 컴포넌트입니다.
@@ -108,7 +108,7 @@ namespace Cinderkeep.Gameplay
             }
 
             PlayCraftFailSfx();
-            RefreshMessage("자원이 부족하거나 아직 제작할 수 없습니다.");
+            RefreshMessage(GetCraftStateText(recipeData));
             RefreshUI();
         }
 
@@ -177,7 +177,7 @@ namespace Cinderkeep.Gameplay
 
                 CraftingRecipeData recipeData = _availableRecipes[i];
                 bool canCraft = CanCraftRecipe(recipeData);
-                _recipeSlots[i].SetRecipe(recipeData, canCraft, this);
+                _recipeSlots[i].SetRecipe(recipeData, canCraft, GetCraftStateText(recipeData), this);
             }
         }
 
@@ -188,6 +188,16 @@ namespace Cinderkeep.Gameplay
                 return false;
             }
             return _recipeExecutor.CanCraft(recipeData, _playerModel);
+        }
+
+        private string GetCraftStateText(CraftingRecipeData recipeData)
+        {
+            if (_recipeExecutor == null || _playerModel == null)
+            {
+                return "제작 연결 필요";
+            }
+
+            return _recipeExecutor.GetCraftStateText(recipeData, _playerModel);
         }
 
         private int GetCurrentDay()

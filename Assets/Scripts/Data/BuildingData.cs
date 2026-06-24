@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 5.00 direction: Defines static JSON-backed data for the 5.00 playable loop.
-// 5.01+ note: Keep this file behavior-free; add gameplay logic in Systems or Managers and keep new fields data-driven.
+// JSON에서 읽어오는 정적 데이터 구조입니다.
+// 이 파일에는 규칙 로직을 넣지 않고, 실제 처리는 Systems/Managers/Catalog 쪽에서 담당합니다.
 namespace Cinderkeep.Gameplay
 {
     // Building JSON의 한 줄을 담는 데이터 클래스입니다.

@@ -1,8 +1,8 @@
-﻿using System.Text;
+using System.Text;
 using UnityEngine;
 
-// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
-// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
+// 기지 건축 지점, 비용, 체력, 방어 오브젝트 연결을 담당합니다.
+// 설치, 비용, 내구도, 공격, 업그레이드 규칙을 나눠 방어 시스템을 확장하기 쉽게 유지합니다.
 namespace Cinderkeep.Gameplay
 {
     // 건축 비용 확인/차감을 담당하는 클래스입니다.

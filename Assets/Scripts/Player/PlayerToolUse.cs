@@ -1,8 +1,8 @@
-﻿using Cinderkeep.Gameplay;
+using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 플레이어가 현재 들고 있는 도구로 자원을 채집하는 컴포넌트입니다.
 // PlayerAttack은 적 공격만 담당하고, 도끼/곡괭이 좌클릭 채집은 이 클래스가 담당합니다.
 // 도구 거리, 범위, 쿨타임은 tools.json 값이 있으면 그 값을 우선 사용합니다.

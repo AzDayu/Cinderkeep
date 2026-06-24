@@ -1,11 +1,11 @@
 using System;
 
-// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
-// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
+// 한 판 플레이 중 변하는 런타임 상태를 저장합니다.
+// 상태 변경은 명시적인 메서드로 처리하고, UI와 시스템은 이 모델을 읽거나 요청만 보냅니다.
 namespace Cinderkeep.Gameplay
 {
-    // 플레이어가 장착한 장비를 저장하는 Instance Data입니다.
-    // 현재는 헬멧, 갑옷, 무기, 신발 칸만 열어두고 장비 효과 계산은 후속 작업에서 붙입니다.
+    // 플레이어가 장착한 장비 ID를 저장하는 Instance Data입니다.
+    // 실제 방어구 수치 적용은 PlayerEquipmentStatApplier가 PlayerStatus와 PlayerMovement에 반영합니다.
     [Serializable]
     public sealed class PlayerEquipmentModel
     {

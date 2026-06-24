@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
-// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
+// 1인칭 플레이어의 입력, 상태, 장착, 채집, 전투, 건축 중 한 흐름을 담당합니다.
+// 입력 제어와 실제 효과를 분리해 퀵슬롯, 도구, 무기, 튜토리얼이 서로 얽히지 않게 합니다.
 // 플레이어의 체력, 스태미나, 포만도를 관리하는 컴포넌트입니다.
 // 이동 입력과 HUD 표시는 다른 컴포넌트가 맡고, 이 클래스는 수치 계산과 사망 처리만 담당합니다.
 public sealed class PlayerStatus : MonoBehaviour

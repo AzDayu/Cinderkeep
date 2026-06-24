@@ -133,6 +133,12 @@ public static class Cinderkeep526QaReportPanel
         isOk &= AppendComponentCheck(reportBuilder, "UIManager", uiManager);
         isOk &= AppendComponentCheck(reportBuilder, "GameFlowController", gameFlowController);
         isOk &= AppendComponentCheck(reportBuilder, "GameFlowEnemySpawnDirector", enemySpawnDirector);
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerStatus", FindComponentInScene<PlayerStatus>(scene));
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerMovement", FindComponentInScene<PlayerMovement>(scene));
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerToolController", FindComponentInScene<PlayerToolController>(scene));
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerAttack", FindComponentInScene<PlayerAttack>(scene));
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerBuild", FindComponentInScene<PlayerBuild>(scene));
+        isOk &= AppendComponentCheck(reportBuilder, "PlayerInteraction", FindComponentInScene<PlayerInteraction>(scene));
 
         isOk &= AppendSerializedReferenceCheck(reportBuilder, gameManager, "_gameDataManager");
         isOk &= AppendSerializedReferenceCheck(reportBuilder, gameManager, "_resourceManager");
@@ -177,6 +183,7 @@ public static class Cinderkeep526QaReportPanel
 
         AppendRuntimeGeneratedCheck(reportBuilder, "BuildProgressUI", "PlayerBuild가 없으면 런타임에 생성합니다.");
         AppendRuntimeGeneratedCheck(reportBuilder, "RunResultUI", "UIManager가 결과창 오픈 시 없으면 보정합니다.");
+        AppendRuntimeGeneratedCheck(reportBuilder, "PlayerEquipmentStatApplier", "GameManager가 시작/재시작 시 Player에 자동 보정합니다.");
         reportBuilder.AppendLine();
         return isOk;
     }
