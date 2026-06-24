@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cinderkeep.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -17,12 +18,7 @@ namespace Cinderkeep.UI.Editor
         private const string MainBackgroundPath = "Assets/Arts/MainMenu/MainMenu_Background.png";
         private const string SettingBackgroundPath = "Assets/Arts/MainMenu/Setting_Background.png";
         private const string KoreanFontPath = "Assets/Fonts/ChosunCentennial.ttf";
-        private const string BgmFirstPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1.mp3";
-        private const string BgmSecondPath = "Assets/Audio/BGM/Cinderkeep_BGM_V1_2.mp3";
-        private const string BgmThirdPath = "Assets/Audio/BGM/Cinderkeep_BGM_V2.mp3";
-        private const string BgmFourthPath = "Assets/Audio/BGM/Cinderkeep_BGM_V2_2.mp3";
-        private const string BgmFifthPath = "Assets/Audio/BGM/Cinderkeep_Day_BGM.mp3";
-        private const string BgmSixthPath = "Assets/Audio/BGM/Cinderkeep_Day_BGM_2.mp3";
+        private const string BgmFolderPath = "Assets/Audio/BGM";
         private const float BgmVolume = 0.7f;
 
         [MenuItem("Cinderkeep/Main Menu/Rebuild Main Menu")]
@@ -114,14 +110,34 @@ namespace Cinderkeep.UI.Editor
 
         private static AudioClip[] LoadBgmClips()
         {
-            AudioClip[] bgmClips = new AudioClip[6];
-            bgmClips[0] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFirstPath);
-            bgmClips[1] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmSecondPath);
-            bgmClips[2] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmThirdPath);
-            bgmClips[3] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFourthPath);
-            bgmClips[4] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmFifthPath);
-            bgmClips[5] = AssetDatabase.LoadAssetAtPath<AudioClip>(BgmSixthPath);
-            return bgmClips;
+            string[] bgmAssetGuids = AssetDatabase.FindAssets("t:AudioClip", new[] { BgmFolderPath });
+            List<string> bgmAssetPaths = new List<string>();
+            for (int i = 0; i < bgmAssetGuids.Length; i++)
+            {
+                string bgmAssetPath = AssetDatabase.GUIDToAssetPath(bgmAssetGuids[i]);
+                if (string.IsNullOrEmpty(bgmAssetPath))
+                {
+                    continue;
+                }
+
+                bgmAssetPaths.Add(bgmAssetPath);
+            }
+
+            bgmAssetPaths.Sort();
+
+            List<AudioClip> bgmClips = new List<AudioClip>();
+            for (int i = 0; i < bgmAssetPaths.Count; i++)
+            {
+                AudioClip bgmClip = AssetDatabase.LoadAssetAtPath<AudioClip>(bgmAssetPaths[i]);
+                if (bgmClip == null)
+                {
+                    continue;
+                }
+
+                bgmClips.Add(bgmClip);
+            }
+
+            return bgmClips.ToArray();
         }
 
         private static void CreateMainMenuCanvas(BgmBuildReferences bgmBuildReferences)
