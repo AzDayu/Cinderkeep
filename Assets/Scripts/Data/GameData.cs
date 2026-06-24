@@ -34,6 +34,8 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private float _attackInterval;
         [SerializeField] private float _visualScale;
         [SerializeField] private float _detectorDistance;
+        [SerializeField] private float _tier;
+        [SerializeField] private float _detectorInterval;
 
         public string DisplayName
         {
@@ -98,6 +100,22 @@ namespace Cinderkeep.Gameplay
                 return _detectorDistance;
             }
         }
+        public float Tier
+        {
+            get
+            {
+                return _tier;
+            }
+        }
+
+        public float DetectorInterval
+        {
+            get
+            {
+                return _detectorInterval;
+            }
+        }
+        
     }
 
     // JsonUtility는 배열만 있는 JSON을 바로 읽기 어렵습니다.
