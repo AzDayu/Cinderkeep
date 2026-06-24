@@ -19,6 +19,10 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private InventorySlotView[] _inventorySlotViews;
         [SerializeField] private QuickSlotView[] _quickSlotViews;
 
+        [Header("Crafting Embed")]
+        [Tooltip("크래프팅 창 안에 띄울 때 숨길 오브젝트들(배경, 타이틀 등)")]
+        [SerializeField] private GameObject[] _hideWhenEmbedded;
+
         private PlayerInventoryModel _playerInventoryModel;
         private PlayerEquipmentModel _playerEquipmentModel;
         private InventorySlotView _draggingInventorySlot;
@@ -41,6 +45,7 @@ namespace Cinderkeep.Gameplay
         {
             ConnectModels();
             SetVisible(true);
+            SetEmbeddedObjectsVisible(true);
             RefreshUI();
         }
 
@@ -282,6 +287,43 @@ namespace Cinderkeep.Gameplay
 
             _rootObject.SetActive(isVisible);
         }
+
+        // 크래프팅 창 안에 끼워 넣는 용도로 여는 메서드
+        public void OpenEmbedded()
+        {
+            Open();                       
+            SetEmbeddedObjectsVisible(false);   
+        }
+
+        // 다시 단독으로 열 때 원상 복구
+        public void OpenStandalone()
+        {
+            Open();
+            SetEmbeddedObjectsVisible(true);
+        }
+
+        private void SetEmbeddedObjectsVisible(bool isVisible)
+        {
+            if (_hideWhenEmbedded == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _hideWhenEmbedded.Length; i++)
+            {
+                if (_hideWhenEmbedded[i] == null)
+                {
+                    continue;
+                }
+
+                _hideWhenEmbedded[i].SetActive(isVisible);
+            }
+        }
+
+
+
+
+
 
         private void PlayUiSuccessSfx()
         {

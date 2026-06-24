@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Cinderkeep.Gameplay
@@ -49,8 +49,10 @@ namespace Cinderkeep.Gameplay
 
                 if (playerModel.HasResource(costData.ResourceId, costData.Amount) == false)
                 {
+
                     return false;
                 }
+
             }
 
             return true;
@@ -68,7 +70,6 @@ namespace Cinderkeep.Gameplay
 
                 if (playerModel.UseResource(costData.ResourceId, costData.Amount) == false)
                 {
-                    Debug.LogWarning("CraftingRecipeExecutor: 제작 비용 차감 중 문제가 생겼습니다. recipe=" + recipeData.Id);
                     return false;
                 }
             }
@@ -78,20 +79,48 @@ namespace Cinderkeep.Gameplay
 
         private bool TryGrantRecipeResult(CraftingRecipeData recipeData, PlayerModel playerModel)
         {
-            if (IsResourceResult(recipeData) == false)
+            if (IsResourceResult(recipeData) == true)
             {
-                Debug.LogWarning("CraftingRecipeExecutor: 아직 Resource 결과만 실제 지급합니다. recipe=" + recipeData.Id);
-                return false;
+                playerModel.AddResource(recipeData.ResultItemId, recipeData.ResultCount);
+                return true;
             }
 
-            playerModel.AddResource(recipeData.ResultItemId, recipeData.ResultCount);
-            Debug.Log("CraftingRecipeExecutor: " + recipeData.DisplayName + " 제작을 완료했습니다.");
-            return true;
+            InventoryItemType itemType;
+            if (TryConvertToItemType(recipeData.ResultDataType, out itemType) == true)
+            {
+                if (GameManager.Inst == null)
+                {
+                    return false;
+                }
+
+                PlayerInventoryModel inventoryModel = GameManager.Inst.PlayerInventoryModel;
+                if (inventoryModel == null)
+                {
+                    return false;
+                }
+
+                bool isAdded = inventoryModel.TryAddItem(recipeData.ResultItemId, itemType, recipeData.ResultCount);
+                if (isAdded == false)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool CanGrantRecipeResult(CraftingRecipeData recipeData)
         {
-            return IsResourceResult(recipeData);
+            if (IsResourceResult(recipeData) == true)
+            {
+                return true;
+            }
+
+            InventoryItemType itemType;
+            bool result = TryConvertToItemType(recipeData.ResultDataType, out itemType);
+            return result;
         }
 
         private bool IsResourceResult(CraftingRecipeData recipeData)
@@ -102,6 +131,20 @@ namespace Cinderkeep.Gameplay
             }
 
             return string.Equals(recipeData.ResultDataType, "Resource", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private bool TryConvertToItemType(string resultDataType, out InventoryItemType itemType)
+        {
+            itemType = InventoryItemType.Tool;
+
+            if (string.Equals(resultDataType, "Tool", StringComparison.OrdinalIgnoreCase))
+            {
+                itemType = InventoryItemType.Tool;
+                return true;
+            }
+
+            // Weapon, Armor는 다음 단계에서 여기에 추가
+            return false;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Cinderkeep.Gameplay
 
         [Header("Connected Components")]
         [SerializeField] private CraftingRecipeExecutor _recipeExecutor;
+        [SerializeField] private InventoryUI _inventoryUI;
 
         private readonly List<CraftingRecipeData> _availableRecipes = new List<CraftingRecipeData>();
         private CraftingStation _currentStation;
@@ -54,12 +55,22 @@ namespace Cinderkeep.Gameplay
             ConnectRecipeExecutor();
             SetVisible(true);
             RefreshUI();
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.OpenEmbedded();
+            }
         }
 
         public void Close()
         {
             ClearRecipeSlots();
             SetVisible(false);
+
+            if (_inventoryUI != null) 
+            {
+                _inventoryUI.Close();
+            }
         }
 
         public void TryCraftRecipe(string recipeId)
@@ -87,6 +98,10 @@ namespace Cinderkeep.Gameplay
                 PlayCraftSuccessSfx();
                 RefreshMessage(recipeData.DisplayName + " 제작 완료");
                 RefreshUI();
+                if (_inventoryUI != null)
+                {
+                    _inventoryUI.RefreshUI();  
+                }
                 return;
             }
 
@@ -134,12 +149,12 @@ namespace Cinderkeep.Gameplay
 
             if (_recipeSlots == null)
             {
-                RefreshMessage("제작 슬롯 연결이 비어 있습니다.");
                 return;
             }
 
             int currentDay = GetCurrentDay();
             _currentStation.GetAvailableRecipes(_gameDataManager, currentDay, _availableRecipes);
+
 
             for (int i = 0; i < _availableRecipes.Count; i++)
             {
@@ -166,7 +181,6 @@ namespace Cinderkeep.Gameplay
             {
                 return false;
             }
-
             return _recipeExecutor.CanCraft(recipeData, _playerModel);
         }
 

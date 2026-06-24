@@ -184,18 +184,18 @@ namespace Cinderkeep.Gameplay
             _stamina = _maxStamina;
             _level = 1;
 
-            _wood = 0;
-            _stone = 0;
-            _iron = 0;
-            _gold = 0;
-            _mithril = 0;
-            _adamantium = 0;
-            _ironOre = 0;
-            _goldOre = 0;
-            _adamantiumOre = 0;
-            _ironIngot = 0;
-            _goldIngot = 0;
-            _adamantiumIngot = 0;
+            _wood = 20;
+            _stone = 20;
+            _iron = 20;
+            _gold = 20;
+            _mithril = 20;
+            _adamantium = 20;
+            _ironOre = 20;
+            _goldOre = 20;
+            _adamantiumOre = 20;
+            _ironIngot = 20;
+            _goldIngot = 20;
+            _adamantiumIngot = 20;
         }
 
         public void AddResource(string resourceType, int amount)

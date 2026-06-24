@@ -46,7 +46,13 @@ namespace Cinderkeep.Gameplay
         {
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
-                ToggleInventory();
+                if (_craftingUI != null && _craftingUI.IsOpen)
+                {
+                    CloseCraftingUI(); 
+                    return;
+                }
+
+                ToggleInventory();  
             }
         }
 
