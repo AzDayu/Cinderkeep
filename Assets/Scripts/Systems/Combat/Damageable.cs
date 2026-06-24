@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Routes combat hit and damage flow for player, enemy, building, and CinderHeart interactions.
+// 5.01+ note: Keep damage delivery generic so weapons, towers, traps, and bosses can reuse the same contract.
 // 피해를 받을 수 있는 오브젝트에 붙이는 공통 컴포넌트입니다.
 // 실제 체력 처리는 PlayerStatus, EnemyStatus, BuildingHp, CinderHeart 같은 역할 컴포넌트로 넘깁니다.
 // 적 체력 기준은 EnemyStatus이며, Damageable은 피해 요청을 전달하는 통로 역할만 합니다.

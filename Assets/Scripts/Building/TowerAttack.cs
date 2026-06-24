@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Supports base construction, defense objects, and building damage in the 5.00 loop.
+// 5.01+ note: Keep placement, cost, health, tower attack, and upgrade rules split so 5.01+ defenses can expand.
 public sealed class TowerAttack : MonoBehaviour
 {
     [Header("Attack Settings")]

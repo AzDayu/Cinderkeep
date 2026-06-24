@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// 5.00 direction: Defines static JSON-backed data for the 5.00 playable loop.
+// 5.01+ note: Keep this file behavior-free; add gameplay logic in Systems or Managers and keep new fields data-driven.
 namespace Cinderkeep.Gameplay
 {
     // 변하지 않는 기획 데이터의 부모 클래스입니다.

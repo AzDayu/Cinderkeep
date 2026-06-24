@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 기존 Enemy HP 작업을 EnemyStatus 기준 구조와 연결하는 호환용 컴포넌트입니다.
 // 기준: 적 체력 원본은 EnemyStatus입니다.
 // 이 클래스는 체력을 직접 보관하지 않고 EnemyStatus로 요청을 전달합니다.

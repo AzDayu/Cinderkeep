@@ -1,3 +1,5 @@
+// 5.00 direction: Defines narrow contracts used by 5.00 gameplay systems.
+// 5.01+ note: Keep interfaces minimal so they stabilize collaboration without forcing broad abstractions.
 namespace Cinderkeep.Gameplay
 {
     // 모든 매니저가 같은 이름의 초기화 함수를 갖도록 맞추는 약속입니다.

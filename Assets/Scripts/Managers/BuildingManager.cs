@@ -2,6 +2,8 @@
 using System;
 using UnityEngine;
 
+// 5.00 direction: Coordinates a focused slice of the 5.00 game loop from scene and runtime references.
+// 5.01+ note: Keep this manager as a thin hub; move calculations and feature rules into smaller systems/helpers.
 namespace Cinderkeep.Gameplay
 {
     // 거점 내 건축물의 배치 상태와 파괴 처리를 관리하는 매니저입니다.

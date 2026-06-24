@@ -8,6 +8,8 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 // Cinderkeep_Game 씬에 인벤토리/장비 UI 기준 오브젝트를 배치하는 에디터 도구입니다.
 // 런타임에는 UI를 새로 만들지 않고, 이 도구로 미리 만든 오브젝트를 켜고 끄는 방식으로 사용합니다.
 public static class CinderkeepInventoryUiSceneBuilder

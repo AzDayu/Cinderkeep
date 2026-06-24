@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 플레이어 사망 후 CinderHeart를 바라보는 관전 시점을 담당합니다.
 // PlayerStatus는 죽음만 판단하고, 카메라 전환은 이 컴포넌트가 맡습니다.
 public sealed class DeathCinderHeartView : MonoBehaviour

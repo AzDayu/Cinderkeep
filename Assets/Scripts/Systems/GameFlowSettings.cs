@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // GameFlowController가 사용하는 시간 fallback 설정입니다.
 // game_flow_phases.json 데이터가 없거나 잘못되면 이 Inspector 값을 사용합니다.
 [System.Serializable]

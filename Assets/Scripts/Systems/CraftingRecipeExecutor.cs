@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 namespace Cinderkeep.Gameplay
 {
     // Crafting UI and stations ask this component to validate cost, pay cost, and grant the result.

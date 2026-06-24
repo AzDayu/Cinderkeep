@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 적이 실제로 생성될 위치와 회전을 계산하는 클래스입니다.
 // EnemySpawnPoint는 스폰 지점 설정을 보관하고, 위치 계산은 이 클래스에 맡깁니다.
 public sealed class EnemySpawnPositionSelector

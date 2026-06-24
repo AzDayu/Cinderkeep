@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // 나무, 돌, 광석처럼 플레이어가 자원을 얻는 오브젝트입니다.
 // E 입력으로 줍는 자원과 좌클릭 도구 채집 자원을 모두 처리합니다.
 public sealed class ResourceNode : MonoBehaviour, IInteractable

@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 namespace Cinderkeep.UI.Editor
 {
     // Main_Lobby를 실제 게임의 첫 화면으로 다시 만드는 편집기 도구입니다.

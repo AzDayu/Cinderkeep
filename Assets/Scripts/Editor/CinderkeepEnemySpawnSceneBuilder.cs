@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 public static class CinderkeepEnemySpawnSceneBuilder
 {
     private const string GameScenePath = "Assets/Scenes/MainGame/Cinderkeep_Game.unity";

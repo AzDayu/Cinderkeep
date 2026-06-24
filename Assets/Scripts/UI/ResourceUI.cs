@@ -2,6 +2,8 @@
 using TMPro;
 using UnityEngine;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 플레이어가 가진 자원 수량을 화면에 표시하는 UI 컴포넌트입니다.
 // 자원 데이터는 PlayerModel이 가지고, 이 클래스는 표시와 이벤트 연결만 담당합니다.
 public sealed class ResourceUI : MonoBehaviour

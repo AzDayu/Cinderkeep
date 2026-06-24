@@ -8,6 +8,8 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 // Cinderkeep_Game 씬에 CinderHeart 아침 보상 선택 UI를 배치하는 에디터 도구입니다.
 // 런타임에서는 미리 배치된 UI를 켜고 끄기만 합니다.
 public static class CinderkeepCinderHeartSkillUiSceneBuilder

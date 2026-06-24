@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+// 5.00 direction: Displays or controls UI for the 5.00 playable loop without owning gameplay rules.
+// 5.01+ note: Keep UI as a view/controller layer; read models and dispatch requests instead of duplicating game logic.
 // 플레이어의 체력, 스태미나, 포만도를 화면에 표시하는 HUD 컴포넌트입니다.
 // 실제 수치 계산은 PlayerStatus가 담당하고, 이 클래스는 UI 갱신만 담당합니다.
 public sealed class PlayerHUD : MonoBehaviour

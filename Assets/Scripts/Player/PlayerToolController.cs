@@ -1,6 +1,8 @@
 ﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 플레이어가 현재 들고 있는 도구를 관리하는 컴포넌트입니다.
 // 현재 단계에서는 1번 도끼, 2번 곡괭이, 3번 맨손으로 연결합니다.
 // 도구의 세부 수치는 tools.json에서 가져오고, 데이터가 없으면 기존 타입만 사용합니다.

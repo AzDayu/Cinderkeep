@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+// 5.00 direction: Provides editor-only setup or validation tooling for the 5.00 production workflow.
+// 5.01+ note: Keep this out of runtime builds and use it to speed scene wiring, QA checks, and team handoff.
 // Cinderkeep_Game 씬의 메인 게임 루프 연결을 갱신하는 에디터 도구입니다.
 // 팀원이 반복해서 수동 배치해야 하는 작업을 줄이기 위한 준비용 코드입니다.
 public static class CinderkeepGameLoopSceneBuilder

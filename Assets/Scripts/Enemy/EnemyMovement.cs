@@ -2,6 +2,8 @@ using Cinderkeep.Gameplay;
 using UnityEngine;
 using UnityEngine.AI;
 
+// 5.00 direction: Supports enemy spawning, sensing, movement, attack, or boss-clear behavior for the 5.00 loop.
+// 5.01+ note: Keep AI decisions separated from movement, detection, and attack so 5.01+ behavior can grow safely.
 // 몬스터의 실제 이동 실행만 담당하는 컴포넌트입니다.
 // 누구를 따라갈지, 무엇을 공격할지는 EnemyBrain이 판단하고 이 클래스는 받은 위치로만 이동합니다.
 public sealed class EnemyMovement : MonoBehaviour

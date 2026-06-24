@@ -2,6 +2,8 @@ using System;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 public sealed class CinderHeartSkillApplier : MonoBehaviour
 {
     private const string EffectTypeAttackDamageAdd = "CinderHeartAttackDamageAdd";

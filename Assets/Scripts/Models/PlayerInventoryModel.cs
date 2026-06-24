@@ -1,5 +1,7 @@
 using System;
 
+// 5.00 direction: Stores runtime state for one play run in the 5.00 loop.
+// 5.01+ note: Keep state mutation explicit and let UI or gameplay systems observe it instead of owning it.
 namespace Cinderkeep.Gameplay
 {
     // 플레이어 인벤토리와 퀵슬롯을 저장하는 Instance Data입니다.

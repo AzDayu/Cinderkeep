@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
+// 5.00 direction: Runs one concrete gameplay system in the 5.00 closed loop.
+// 5.01+ note: Keep the class focused on one responsibility and expose simple events or methods for cross-system links.
 // Unity의 New Input System을 프로젝트에서 쓰기 쉽게 감싼 입력 보조 클래스입니다.
 // 플레이어 스크립트가 구 Input Manager API를 직접 쓰지 않도록 이 클래스만 거치게 합니다.
 public static class CinderkeepInput

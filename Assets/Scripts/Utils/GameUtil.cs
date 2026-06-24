@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+// 5.00 direction: Provides small shared helpers for the 5.00 loop.
+// 5.01+ note: Only add utility methods when multiple systems actually reuse them.
 namespace Cinderkeep.Gameplay
 {
     // 공용 계산과 데이터 로드 시작점을 모아두는 순수 도구 클래스입니다.

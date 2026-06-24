@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
+// 5.00 direction: Handles one part of first-person player control, status, combat, gathering, or building.
+// 5.01+ note: Keep input, state, and action effects separated so quickslots, tools, weapons, and tutorials remain maintainable.
 // 플레이어가 바라보는 오브젝트와 상호작용하는 입구 컴포넌트입니다.
 // 실제 채집, 제작, 문 열기는 대상 오브젝트의 IInteractable 구현체가 처리합니다.
 public sealed class PlayerInteraction : MonoBehaviour
