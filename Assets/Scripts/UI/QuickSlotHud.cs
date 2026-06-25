@@ -82,7 +82,7 @@ namespace Cinderkeep.Gameplay
             titleText.fontSize = 13f;
             titleText.color = new Color(0.92f, 0.94f, 0.98f, 1f);
             titleText.raycastTarget = false;
-            titleText.text = "퀵슬롯 1~7";
+            titleText.text = "Quick Slot 1-7";
         }
 
         private void OnEnable()

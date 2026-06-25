@@ -10,7 +10,7 @@ namespace Cinderkeep.Gameplay
     }
 
     // 메인 메뉴에서 선택한 실행 모드와 낮/밤 시간값을 보관합니다.
-    // 일반 모드와 테스트초고속 모드는 같은 게임 씬을 쓰고, 시간 설정만 다르게 적용합니다.
+    // 일반 모드와 테스트초고속 모드는 같은 게임 씬을 사용하고 시간 설정만 다르게 적용합니다.
     public static class GameLaunchSettings
     {
         private const string SettingsResourcePath = "Cinderkeep/data/game_mode_settings";
