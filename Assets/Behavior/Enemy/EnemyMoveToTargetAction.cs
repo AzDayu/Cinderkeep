@@ -4,13 +4,12 @@ using Unity.Properties;
 using UnityEngine;
 using Action = Unity.Behavior.Action;
 
-
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
     name: "Enemy Move To Target",
     story: "[Self] moves to [Target]",
     category: "Action/Cinderkeep/Enemy",
-    id: "cinderkeep_enemy_move_to_target_action_v1")]
+    id: "cinderkeep_enemy_move_to_target_action_v2")]
 public partial class EnemyMoveToTargetAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
@@ -23,21 +22,21 @@ public partial class EnemyMoveToTargetAction : Action
         GameObject selfObject = GetSelfObject();
         if (IsUnityObjectNull(selfObject))
         {
-            LogFailure("EnemyMoveToTargetAction: Self가 없습니다.", true);
+            Debug.LogWarning("EnemyMoveToTargetAction: Self가 없습니다.");
             return Status.Failure;
         }
 
         GameObject targetObject = Target == null ? null : Target.Value;
         if (IsUnityObjectNull(targetObject))
         {
-            LogFailure("EnemyMoveToTargetAction: Target이 없습니다.", false);
+            Debug.LogWarning("EnemyMoveToTargetAction: Target이 없습니다.");
             return Status.Failure;
         }
 
         _enemyMovement = selfObject.GetComponent<EnemyMovement>();
         if (_enemyMovement == null)
         {
-            LogFailure("EnemyMoveToTargetAction: Self에 EnemyMovement가 없습니다.", true);
+            Debug.LogWarning("EnemyMoveToTargetAction: Self에 EnemyMovement가 없습니다. object=" + selfObject.name);
             return Status.Failure;
         }
 
@@ -64,7 +63,6 @@ public partial class EnemyMoveToTargetAction : Action
             return Status.Failure;
         }
 
-       
         _enemyMovement.MoveToTarget(targetObject.transform);
 
         return Status.Running;
@@ -72,7 +70,6 @@ public partial class EnemyMoveToTargetAction : Action
 
     protected override void OnEnd()
     {
-        
     }
 
     private GameObject GetSelfObject()

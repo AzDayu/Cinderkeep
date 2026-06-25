@@ -1,16 +1,90 @@
+﻿using System;
+using Unity.Behavior;
+using Unity.Properties;
 using UnityEngine;
+using Action = Unity.Behavior.Action;
 
-public class EnemyWanderAroundSpawnPointAction : MonoBehaviour
+[Serializable, GeneratePropertyBag]
+[NodeDescription(
+    name: "Enemy Wander Around Spawn Point",
+    story: "[Self] wanders around spawn point",
+    category: "Action/Cinderkeep/Enemy",
+    id: "cinderkeep_enemy_wander_around_spawn_point_action_v2")]
+public partial class EnemyWanderAroundSpawnPointAction : Action
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeReference] public BlackboardVariable<GameObject> Self;
+
+    [SerializeReference] public BlackboardVariable<bool> StopOnEnd = new BlackboardVariable<bool>(false);
+
+    private EnemyMovement _enemyMovement;
+
+    protected override Status OnStart()
     {
-        
+        GameObject selfObject = GetSelfObject();
+        if (IsUnityObjectNull(selfObject))
+        {
+            Debug.LogWarning("EnemyWanderAroundSpawnPointAction: Self가 없습니다.");
+            return Status.Failure;
+        }
+
+        _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        if (_enemyMovement == null)
+        {
+            Debug.LogWarning("EnemyWanderAroundSpawnPointAction: Self에 EnemyMovement가 없습니다. object=" + selfObject.name);
+            return Status.Failure;
+        }
+
+        return Status.Running;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override Status OnUpdate()
     {
-        
+        GameObject selfObject = GetSelfObject();
+        if (IsUnityObjectNull(selfObject))
+        {
+            return Status.Failure;
+        }
+
+        if (_enemyMovement == null)
+        {
+            _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        }
+
+        if (_enemyMovement == null)
+        {
+            return Status.Failure;
+        }
+
+        _enemyMovement.WanderAroundSpawnPoint();
+
+        return Status.Running;
+    }
+
+    protected override void OnEnd()
+    {
+        if (StopOnEnd == null || StopOnEnd.Value == false)
+        {
+            return;
+        }
+
+        if (_enemyMovement != null)
+        {
+            _enemyMovement.StopMoving();
+        }
+    }
+
+    private GameObject GetSelfObject()
+    {
+        if (Self != null && IsUnityObjectNull(Self.Value) == false)
+        {
+            return Self.Value;
+        }
+
+        return GameObject;
+    }
+
+    private static bool IsUnityObjectNull(UnityEngine.Object targetObject)
+    {
+        return ReferenceEquals(targetObject, null) || targetObject == null;
     }
 }
