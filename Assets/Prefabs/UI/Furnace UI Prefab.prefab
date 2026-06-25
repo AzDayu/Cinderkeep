@@ -1353,7 +1353,7 @@ GameObject:
   - component: {fileID: 7352535838608620467}
   - component: {fileID: 4477197335676940564}
   - component: {fileID: 4890551649137988859}
-  - component: {fileID: 7279399005018231478}
+  - component: {fileID: -1244180499602153187}
   m_Layer: 0
   m_Name: Furnace UI Prefab
   m_TagString: Untagged
@@ -1421,7 +1421,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7279399005018231478
+--- !u!114 &-1244180499602153187
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1430,21 +1430,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 7724781388223518463}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c4df963f8db4622b536eb95aa02c9fb, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d0cd0f91d29442cae05b17abf04c30a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.CraftingUI
-  _rootObject: {fileID: 7724781388223518463}
-  _titleText: {fileID: 4328663414788603420}
-  _messageText: {fileID: 4065161415567087878}
-  _recipeSlots:
-  - {fileID: 282115801736151141}
-  - {fileID: 518203318607253984}
-  - {fileID: 2401422480583899848}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _recipeExecutor: {fileID: 0}
-  _inventoryUI: {fileID: 6033830131174867818, guid: 115439f5a8fc0b646b8a6f4e044526a1, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::Cinderkeep.Gameplay.FurnaceUI
+  _rootObject: {fileID: 0}
+  _inputResourceText: {fileID: 0}
+  _inputAmountText: {fileID: 0}
+  _selectedInputResourceId: IronOre
+  _selectedInputAmount: 1
+  _recipeSlots: []
+  _progressSlider: {fileID: 0}
+  _progressText: {fileID: 0}
+  _outputResourceText: {fileID: 0}
+  _outputAmountText: {fileID: 0}
+  _startButton: {fileID: 0}
+  _collectButton: {fileID: 0}
+  _messageText: {fileID: 0}
+  _inventoryUI: {fileID: 0}
 --- !u!1 &7787900979974335513
 GameObject:
   m_ObjectHideFlags: 0

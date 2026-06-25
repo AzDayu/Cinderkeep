@@ -20,6 +20,7 @@ namespace Cinderkeep.Gameplay
         [Header("UI Prefabs")]
         [SerializeField] private InventoryUI _inventoryUIPrefab;
         [SerializeField] private CraftingUI _craftingUIPrefab;
+        [SerializeField] private FurnaceUI _furnaceUIPrefab;
 
         private const string HudCanvasName = "Canvas_GameHUD";
 
@@ -85,6 +86,25 @@ namespace Cinderkeep.Gameplay
                 _inventoryUI.transform.SetAsLastSibling();
             }
 
+
+            if (_furnaceUI == null && _furnaceUIPrefab != null)
+            {
+                _furnaceUI = Instantiate(_furnaceUIPrefab, canvasTransform);
+            }
+
+            if (_furnaceUI != null && _inventoryUI != null)
+            {
+                _furnaceUI.SetInventoryUI(_inventoryUI);
+            }
+
+
+
+
+
+
+
+
+
         }
 
         private Transform ResolveHudCanvas()
@@ -111,6 +131,12 @@ namespace Cinderkeep.Gameplay
                 if (_craftingUI != null && _craftingUI.IsOpen)
                 {
                     CloseCraftingUI();
+                    return;
+                }
+
+                if (_furnaceUI != null && _furnaceUI.IsOpen)
+                {
+                    CloseFurnaceUI();
                     return;
                 }
 
@@ -178,6 +204,22 @@ namespace Cinderkeep.Gameplay
             SetActive(_inventoryRoot, wasRootOpen == false);
             RefreshCursorState();
             PlayUiToggleSfx(wasRootOpen);
+        }
+
+        public void ToggleFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
+        {
+            if (_furnaceUI == null)
+            {
+                return;
+            }
+
+            if (_furnaceUI.IsOpen)
+            {
+                CloseFurnaceUI();
+                return;
+            }
+
+            OpenFurnaceUI(furnaceStation, interactor);
         }
 
         public void OpenGameOverPanel()
