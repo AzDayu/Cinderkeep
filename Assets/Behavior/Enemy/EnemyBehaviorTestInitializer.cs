@@ -1,21 +1,9 @@
-﻿// ==================================================
-// FILE: Assets/Behavior/Enemy/EnemyBehaviorTestInitializer.cs
-// ==================================================
+﻿//테스트용 초기화 코드
 
 using System.Collections;
 using Cinderkeep.Gameplay;
 using UnityEngine;
 
-// 변경점:
-// Behavior Graph 이동 테스트를 위해 씬에 직접 배치한 Enemy를 강제로 초기화하는 테스트용 스크립트입니다.
-//
-// 사용 목적:
-// - EnemyLoopConnector를 거쳐 스폰되지 않은 Enemy도 EnemyMovement.Initialize()가 호출되도록 합니다.
-// - EnemyMovement 내부의 _isInitialized가 true가 되지 않아 MoveToTarget()이 바로 return되는 문제를 해결합니다.
-//
-// 주의:
-// - 이 스크립트는 테스트용입니다.
-// - 나중에 실제 스폰된 Enemy 프리팹에 Behavior Agent를 붙이는 구조가 완성되면 제거해도 됩니다.
 
 public sealed class EnemyBehaviorTestInitializer : MonoBehaviour
 {
@@ -29,7 +17,6 @@ public sealed class EnemyBehaviorTestInitializer : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // GameManager와 GameDataManager가 초기화될 시간을 조금 기다립니다.
         yield return null;
 
         GameDataManager gameDataManager = GetGameDataManager();
@@ -90,9 +77,6 @@ public sealed class EnemyBehaviorTestInitializer : MonoBehaviour
 
         if (enemyMovement != null)
         {
-            // 핵심:
-            // 이 호출이 되어야 EnemyMovement 내부 _isInitialized가 true가 됩니다.
-            // Inspector에서 Move Speed만 직접 바꾸는 것으로는 _isInitialized가 true가 되지 않습니다.
             enemyMovement.Initialize(enemyData, enemyDetector);
         }
         else

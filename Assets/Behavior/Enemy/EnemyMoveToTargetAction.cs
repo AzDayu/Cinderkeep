@@ -15,6 +15,8 @@ public partial class EnemyMoveToTargetAction : Action
     [SerializeReference] public BlackboardVariable<GameObject> Self;
     [SerializeReference] public BlackboardVariable<GameObject> Target;
 
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("MoveToCinderHeart");
+
     private EnemyMovement _enemyMovement;
 
     protected override Status OnStart()
@@ -53,6 +55,11 @@ public partial class EnemyMoveToTargetAction : Action
             return Status.Failure;
         }
 
+        if (IsRequiredStateMatched(selfObject) == false)
+        {
+            return Status.Failure;
+        }
+
         if (_enemyMovement == null)
         {
             _enemyMovement = selfObject.GetComponent<EnemyMovement>();
@@ -71,6 +78,17 @@ public partial class EnemyMoveToTargetAction : Action
     protected override void OnEnd()
     {
     }
+
+    private bool IsRequiredStateMatched(GameObject selfObject)
+    {
+        string requiredStateName = requiredStateName == null ? string.Empty : RequiredState.Value;
+        if(string.IsNullOrWhiteSpace(requiredStateName))
+        {
+            return true;
+        }
+    }
+
+
 
     private GameObject GetSelfObject()
     {
