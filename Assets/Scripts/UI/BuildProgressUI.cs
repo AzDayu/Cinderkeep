@@ -2,8 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 건축 E 홀드 진행률을 HUD에 표시하는 전용 UI입니다.
-// 씬 연결이 없어도 Canvas_GameHUD 아래에 최소 진행바를 런타임 생성합니다.
+// E 홀드 건축 진행도를 HUD에 표시하는 전용 UI입니다.
+// 씬 연결이 비어 있어도 Canvas_GameHUD 아래에 최소 진행바를 자동 생성합니다.
 public sealed class BuildProgressUI : MonoBehaviour
 {
     private const string CanvasName = "Canvas_GameHUD";
@@ -129,6 +129,7 @@ public sealed class BuildProgressUI : MonoBehaviour
         barRect.pivot = new Vector2(0.5f, 0f);
         barRect.anchoredPosition = new Vector2(0f, 8f);
         barRect.sizeDelta = new Vector2(320f, 10f);
+
         Image barBackground = barObject.GetComponent<Image>();
         barBackground.color = new Color(0.12f, 0.14f, 0.16f, 0.9f);
         barBackground.raycastTarget = false;
@@ -140,6 +141,7 @@ public sealed class BuildProgressUI : MonoBehaviour
         fillRect.anchorMax = Vector2.one;
         fillRect.offsetMin = Vector2.zero;
         fillRect.offsetMax = Vector2.zero;
+
         Image fillImage = fillObject.GetComponent<Image>();
         fillImage.color = new Color(0.88f, 0.58f, 0.22f, 0.95f);
         fillImage.type = Image.Type.Filled;

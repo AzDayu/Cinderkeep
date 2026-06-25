@@ -9,7 +9,8 @@ namespace Cinderkeep.Gameplay
     {
         private const string CanvasName = "Canvas_GameHUD";
         private const string HudRootName = "Panel_HUDRoot";
-        private const string HudObjectName = "Panel_QuickSlotHud_5_25";
+        private const string HudObjectName = "Panel_QuickSlotHud_5_26";
+        private const string TitleObjectName = "Text_QuickSlotHudTitle";
         private const int SlotCount = PlayerInventoryModel.QuickSlotCount;
 
         private readonly TMP_Text[] _slotTexts = new TMP_Text[SlotCount];
@@ -46,6 +47,7 @@ namespace Cinderkeep.Gameplay
             ConfigureRoot(rootObject.GetComponent<RectTransform>(), rootObject.GetComponent<Image>());
 
             QuickSlotHud hud = rootObject.AddComponent<QuickSlotHud>();
+            CreateTitle(rootObject.transform);
             hud.CreateSlots(rootObject.transform);
             hud.RefreshNow();
             return hud;
@@ -56,11 +58,31 @@ namespace Cinderkeep.Gameplay
             rectTransform.anchorMin = new Vector2(0f, 0f);
             rectTransform.anchorMax = new Vector2(0f, 0f);
             rectTransform.pivot = new Vector2(0f, 0f);
-            rectTransform.anchoredPosition = new Vector2(38f, 76f);
-            rectTransform.sizeDelta = new Vector2(518f, 58f);
+            rectTransform.anchoredPosition = new Vector2(34f, 112f);
+            rectTransform.sizeDelta = new Vector2(526f, 76f);
 
-            backgroundImage.color = new Color(0.03f, 0.045f, 0.06f, 0.72f);
+            backgroundImage.color = new Color(0.02f, 0.035f, 0.05f, 0.86f);
             backgroundImage.raycastTarget = false;
+        }
+
+        private static void CreateTitle(Transform root)
+        {
+            GameObject titleObject = new GameObject(TitleObjectName, typeof(RectTransform));
+            titleObject.transform.SetParent(root, false);
+
+            RectTransform titleRect = titleObject.GetComponent<RectTransform>();
+            titleRect.anchorMin = new Vector2(0f, 1f);
+            titleRect.anchorMax = new Vector2(1f, 1f);
+            titleRect.pivot = new Vector2(0.5f, 1f);
+            titleRect.anchoredPosition = new Vector2(0f, -4f);
+            titleRect.sizeDelta = new Vector2(-12f, 20f);
+
+            TMP_Text titleText = titleObject.AddComponent<TextMeshProUGUI>();
+            titleText.alignment = TextAlignmentOptions.Left;
+            titleText.fontSize = 13f;
+            titleText.color = new Color(0.92f, 0.94f, 0.98f, 1f);
+            titleText.raycastTarget = false;
+            titleText.text = "퀵슬롯 1~7";
         }
 
         private void OnEnable()
@@ -105,7 +127,7 @@ namespace Cinderkeep.Gameplay
                 slotRect.anchorMin = new Vector2(0f, 0.5f);
                 slotRect.anchorMax = new Vector2(0f, 0.5f);
                 slotRect.pivot = new Vector2(0f, 0.5f);
-                slotRect.anchoredPosition = new Vector2(8f + i * 72f, 0f);
+                slotRect.anchoredPosition = new Vector2(8f + i * 72f, -12f);
                 slotRect.sizeDelta = new Vector2(64f, 48f);
 
                 Image slotImage = slotObject.GetComponent<Image>();
