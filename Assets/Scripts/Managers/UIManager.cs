@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 // HUD, 인벤토리, 제작 UI, 보상 선택 UI, Run Result 패널을 열고 닫는 UI 허브입니다.
@@ -16,6 +16,13 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
         [SerializeField] private CinderHeartSkillSelectionUI _cinderHeartSkillSelectionUI;
+
+        [Header("UI Prefabs")]
+        [SerializeField] private InventoryUI _inventoryUIPrefab;
+        [SerializeField] private CraftingUI _craftingUIPrefab;
+        [SerializeField] private FurnaceUI _furnaceUIPrefab;
+
+        private const string HudCanvasName = "Canvas_GameHUD";
 
         private bool _isInitialized;
         private bool _isRunResultPanelOpen;
@@ -36,6 +43,8 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            InstantiateGameplayUI();
+
             CloseHud();
             CloseInventory();
             CloseGameOverPanel();
@@ -44,6 +53,67 @@ namespace Cinderkeep.Gameplay
             CloseCinderHeartSkillSelectionUI();
             RefreshCursorState();
             _isInitialized = true;
+        }
+
+        private void InstantiateGameplayUI()
+        {
+            Transform canvasTransform = ResolveHudCanvas();
+
+            if (canvasTransform == null)
+            {
+                Debug.LogWarning("[UIManager] " + HudCanvasName + " 캔버스를 찾을 수 없어 UI를 생성하지 못했습니다.");
+                return;
+            }
+
+            if (_inventoryUI == null && _inventoryUIPrefab != null)
+            {
+                _inventoryUI = Instantiate(_inventoryUIPrefab, canvasTransform);
+            }
+
+            if (_craftingUI == null && _craftingUIPrefab != null)
+            {
+                _craftingUI = Instantiate(_craftingUIPrefab, canvasTransform);
+            }
+
+
+            if (_craftingUI != null && _inventoryUI != null)
+            {
+                _craftingUI.SetInventoryUI(_inventoryUI);
+            }
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.transform.SetAsLastSibling();
+            }
+
+
+            if (_furnaceUI == null && _furnaceUIPrefab != null)
+            {
+                _furnaceUI = Instantiate(_furnaceUIPrefab, canvasTransform);
+            }
+
+            if (_furnaceUI != null && _inventoryUI != null)
+            {
+                _furnaceUI.SetInventoryUI(_inventoryUI);
+            }
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.transform.SetAsLastSibling();
+            }
+
+
+        }
+
+        private Transform ResolveHudCanvas()
+        {
+            GameObject canvasObject = GameObject.Find(HudCanvasName);
+            if (canvasObject == null)
+            {
+                return null;
+            }
+
+            return canvasObject.transform;
         }
 
         private void Update()
@@ -62,6 +132,12 @@ namespace Cinderkeep.Gameplay
                     return;
                 }
 
+                if (_furnaceUI != null && _furnaceUI.IsOpen)
+                {
+                    CloseFurnaceUI();
+                    return;
+                }
+
                 ToggleInventory();
             }
         }
@@ -69,6 +145,7 @@ namespace Cinderkeep.Gameplay
         public void OpenHud()
         {
             global::HudTutorialGuide.EnsureSceneGuide();
+            QuickSlotHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
@@ -125,6 +202,22 @@ namespace Cinderkeep.Gameplay
             SetActive(_inventoryRoot, wasRootOpen == false);
             RefreshCursorState();
             PlayUiToggleSfx(wasRootOpen);
+        }
+
+        public void ToggleFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
+        {
+            if (_furnaceUI == null)
+            {
+                return;
+            }
+
+            if (_furnaceUI.IsOpen)
+            {
+                CloseFurnaceUI();
+                return;
+            }
+
+            OpenFurnaceUI(furnaceStation, interactor);
         }
 
         public void OpenGameOverPanel()
@@ -234,6 +327,7 @@ namespace Cinderkeep.Gameplay
             _furnaceUI.Close();
             RefreshCursorState();
         }
+
         public void OpenCinderHeartSkillSelectionUI(
             System.Collections.Generic.IReadOnlyList<CinderHeartSkillData> skillOptions,
             System.Action onClosed)

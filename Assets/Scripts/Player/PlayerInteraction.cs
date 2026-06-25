@@ -87,7 +87,8 @@ public sealed class PlayerInteraction : MonoBehaviour
         Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
         RaycastHit hitInfo;
 
-        if (Physics.Raycast(ray, out hitInfo, _interactionDistance, _interactionLayerMask) == false)
+        int interactionMask = _interactionLayerMask.value == 0 ? ~0 : _interactionLayerMask.value;
+        if (Physics.Raycast(ray, out hitInfo, _interactionDistance, interactionMask) == false)
         {
             return null;
         }

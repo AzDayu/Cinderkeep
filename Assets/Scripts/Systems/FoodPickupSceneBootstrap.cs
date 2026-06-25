@@ -23,6 +23,7 @@ public static class FoodPickupSceneBootstrap
             Transform existing = root.Find(pickupName);
             if (existing != null)
             {
+                ConfigurePickup(existing.gameObject);
                 continue;
             }
 
@@ -68,11 +69,22 @@ public static class FoodPickupSceneBootstrap
         pickupObject.transform.position = position;
         pickupObject.transform.localScale = new Vector3(0.45f, 0.22f, 0.32f);
         pickupObject.AddComponent<FoodPickup>();
+        ConfigurePickup(pickupObject);
+    }
 
+    private static void ConfigurePickup(GameObject pickupObject)
+    {
+        if (pickupObject == null)
+        {
+            return;
+        }
+
+        pickupObject.transform.localScale = new Vector3(0.45f, 0.16f, 0.32f);
+        RuntimePrimitiveMaterial.ApplyColor(pickupObject, new Color(0.38f, 0.08f, 0.07f, 1f), "MAT_Runtime_RawMeatPickup");
         Renderer renderer = pickupObject.GetComponent<Renderer>();
         if (renderer != null)
         {
-            renderer.material.color = new Color(0.55f, 0.08f, 0.07f, 1f);
+            renderer.enabled = false;
         }
     }
 

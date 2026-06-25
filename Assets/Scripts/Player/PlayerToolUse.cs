@@ -129,16 +129,42 @@ public sealed class PlayerToolUse : MonoBehaviour
         }
 
         Ray toolRay = new Ray(_toolOrigin.position, _toolOrigin.forward);
-        RaycastHit hitInfo;
         float useDistance = GetToolUseDistance(toolData);
         float useRadius = GetToolUseRadius(toolData);
+        Physics.SyncTransforms();
+        RaycastHit[] hitInfos = Physics.SphereCastAll(toolRay, useRadius, useDistance, _toolUseLayerMask);
 
-        if (Physics.SphereCast(toolRay, useRadius, out hitInfo, useDistance, _toolUseLayerMask) == false)
+        if (hitInfos == null || hitInfos.Length <= 0)
         {
             return null;
         }
 
-        return hitInfo.collider.GetComponentInParent<ResourceNode>();
+        ResourceNode closestResourceNode = null;
+        float closestDistance = float.MaxValue;
+        for (int i = 0; i < hitInfos.Length; i++)
+        {
+            Collider hitCollider = hitInfos[i].collider;
+            if (hitCollider == null)
+            {
+                continue;
+            }
+
+            ResourceNode resourceNode = hitCollider.GetComponentInParent<ResourceNode>();
+            if (resourceNode == null)
+            {
+                continue;
+            }
+
+            if (hitInfos[i].distance >= closestDistance)
+            {
+                continue;
+            }
+
+            closestResourceNode = resourceNode;
+            closestDistance = hitInfos[i].distance;
+        }
+
+        return closestResourceNode;
     }
 
     private float GetToolUseDistance(ToolData toolData)

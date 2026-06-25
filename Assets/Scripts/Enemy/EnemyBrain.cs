@@ -34,6 +34,10 @@ public sealed class EnemyBrain : MonoBehaviour
     [SerializeField] private float _attackerMemoryDuration = 7f;
     [Tooltip("true이면 밤 우선순위: 공격자 -> 플레이어 -> 길막 건축물 -> CinderHeart 순서를 사용합니다.")]
     [SerializeField] private bool _isNightTime;
+    [Tooltip("true이면 감지된 플레이어를 CinderHeart보다 우선 추적합니다. 보스는 피격 어그로만 쓰기 위해 false로 둡니다.")]
+    [SerializeField] private bool _usePlayerDetectionAsPriority = true;
+    [Tooltip("true이면 근처 타워를 CinderHeart보다 우선 추적합니다. 보스는 기본 목표를 유지하기 위해 false로 둡니다.")]
+    [SerializeField] private bool _useTowerDetectionAsPriority = true;
 
     private readonly Collider[] _towerOverlapColliders = new Collider[MaxTowerOverlapCount];
 
@@ -47,6 +51,7 @@ public sealed class EnemyBrain : MonoBehaviour
     private Damageable _recentTowerAttacker;
     private float _lastPlayerAttackedTime;
     private float _lastTowerAttackedTime;
+    private float _nextDecisionTime;
 
     private void Awake()
     {
@@ -65,6 +70,17 @@ public sealed class EnemyBrain : MonoBehaviour
     private void OnDisable()
     {
         StopBrainRoutine();
+    }
+
+    private void Update()
+    {
+        if (Time.time >= _nextDecisionTime)
+        {
+            RefreshBrainTargets();
+        }
+
+        MoveByCurrentTarget();
+        TryAttackCurrentTarget();
     }
 
     public void SetNightTime(bool isNightTime)
@@ -194,12 +210,40 @@ public sealed class EnemyBrain : MonoBehaviour
 
         while (true)
         {
-            RefreshTargets();
-            MoveByCurrentTarget();
-            TryAttackCurrentTarget();
+            RefreshBrainTargets();
 
             yield return waitInterval;
         }
+    }
+
+    public void SetPlayerDetectionPriorityEnabled(bool isEnabled)
+    {
+        _usePlayerDetectionAsPriority = isEnabled;
+
+        if (isEnabled)
+        {
+            return;
+        }
+
+        ClearPlayerAttackTarget();
+    }
+
+    public void SetTowerDetectionPriorityEnabled(bool isEnabled)
+    {
+        _useTowerDetectionAsPriority = isEnabled;
+
+        if (isEnabled)
+        {
+            return;
+        }
+
+        ClearTowerAttackTarget();
+    }
+
+    private void RefreshBrainTargets()
+    {
+        RefreshTargets();
+        _nextDecisionTime = Time.time + DecisionInterval;
     }
 
     private void RefreshTargets()
@@ -220,9 +264,14 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        if (TrySetPlayerTargetFromDetector())
+        if (_usePlayerDetectionAsPriority && TrySetPlayerTargetFromDetector())
         {
             return;
+        }
+
+        if (_usePlayerDetectionAsPriority == false)
+        {
+            ClearPlayerAttackTarget();
         }
 
         if (TrySetBuildingTargetFromBlockedPath())
@@ -230,9 +279,14 @@ public sealed class EnemyBrain : MonoBehaviour
             return;
         }
 
-        if (TrySetTowerTarget())
+        if (_useTowerDetectionAsPriority && TrySetTowerTarget())
         {
             return;
+        }
+
+        if (_useTowerDetectionAsPriority == false)
+        {
+            ClearTowerAttackTarget();
         }
 
         TrySetCinderHeartTarget();
@@ -518,12 +572,32 @@ public sealed class EnemyBrain : MonoBehaviour
             return IsInAttackDistance(targetObject.transform, _attackDistance);
         }
 
-        if (targetObject.CompareTag(CinderHeartTag))
+        if (IsCinderHeartTarget(targetObject))
         {
             return IsInAttackDistance(targetObject.transform, _cinderHeartAttackDistance);
         }
 
         return false;
+    }
+
+    private bool IsCinderHeartTarget(GameObject targetObject)
+    {
+        if (targetObject == null)
+        {
+            return false;
+        }
+
+        if (targetObject.CompareTag(CinderHeartTag))
+        {
+            return true;
+        }
+
+        if (targetObject.GetComponent<CinderHeart>() != null)
+        {
+            return true;
+        }
+
+        return targetObject.GetComponentInParent<CinderHeart>() != null;
     }
 
     private bool IsInAttackDistance(Transform targetTransform, float attackDistance)

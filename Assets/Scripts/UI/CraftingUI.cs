@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -28,6 +28,12 @@ namespace Cinderkeep.Gameplay
         private CraftingStation _currentStation;
         private GameDataManager _gameDataManager;
         private PlayerModel _playerModel;
+
+        public void SetInventoryUI(InventoryUI inventoryUI)
+        {
+            _inventoryUI = inventoryUI;
+        }
+
 
         private bool _isOpen;
 

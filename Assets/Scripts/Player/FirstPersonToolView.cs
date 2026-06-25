@@ -16,6 +16,8 @@ public sealed class FirstPersonToolView : MonoBehaviour
     [SerializeField] private GameObject _pickaxeView;
     [Tooltip("손돌 또는 빈손 상태에서 보여줄 1인칭 오브젝트입니다.")]
     [SerializeField] private GameObject _handView;
+    [Tooltip("손돌을 주웠을 때 오른손에 보이는 임시 돌덩이 View입니다.")]
+    [SerializeField] private GameObject _handStoneView;
     [Tooltip("무기를 장착했을 때 보여줄 1인칭 오브젝트입니다. 비어 있으면 임시 검 형태를 런타임에 만듭니다.")]
     [SerializeField] private GameObject _weaponView;
 
@@ -36,6 +38,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
     private void Start()
     {
         ConnectComponents();
+        EnsureFallbackHandStoneView();
         EnsureFallbackWeaponView();
         RefreshToolView();
     }
@@ -83,7 +86,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
 
         if (_playerToolController.CurrentToolDataId == PlayerToolController.HandStoneToolDataId)
         {
-            SetToolActive(_handView);
+            SetToolActive(_handStoneView);
             return;
         }
 
@@ -107,7 +110,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
             return;
         }
 
-        SetToolActive(_handView);
+        SetToolActive(null);
     }
 
     private void SetToolActive(GameObject activeToolObject)
@@ -115,6 +118,7 @@ public sealed class FirstPersonToolView : MonoBehaviour
         SetActive(_axeView, activeToolObject == _axeView);
         SetActive(_pickaxeView, activeToolObject == _pickaxeView);
         SetActive(_handView, activeToolObject == _handView);
+        SetActive(_handStoneView, activeToolObject == _handStoneView);
         SetActive(_weaponView, activeToolObject == _weaponView);
 
         if (activeToolObject == null)
@@ -161,6 +165,25 @@ public sealed class FirstPersonToolView : MonoBehaviour
         }
 
         return string.IsNullOrEmpty(equipmentModel.GetEquippedItemId(EquipmentSlotType.Weapon)) == false;
+    }
+
+    private void EnsureFallbackHandStoneView()
+    {
+        if (_handStoneView != null)
+        {
+            return;
+        }
+
+        GameObject stoneObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        stoneObject.name = "View_HandStone_Fallback";
+        stoneObject.transform.SetParent(transform, false);
+        stoneObject.transform.localPosition = new Vector3(0.42f, -0.32f, 0.72f);
+        stoneObject.transform.localRotation = Quaternion.Euler(8f, -18f, 0f);
+        stoneObject.transform.localScale = new Vector3(0.22f, 0.18f, 0.20f);
+        RemoveCollider(stoneObject);
+        RuntimePrimitiveMaterial.ApplyColor(stoneObject, new Color(0.42f, 0.44f, 0.46f, 1f), "MAT_Runtime_ViewHandStone");
+        stoneObject.SetActive(false);
+        _handStoneView = stoneObject;
     }
 
     private void EnsureFallbackWeaponView()

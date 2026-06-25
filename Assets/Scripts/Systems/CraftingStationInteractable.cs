@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using UnityEngine;
 
 // 닫힌 플레이 루프 안에서 하나의 구체적인 게임플레이 기능을 실행합니다.
@@ -72,7 +72,7 @@ public sealed class CraftingStationInteractable : MonoBehaviour, IInteractable
         FurnaceStation furnaceStation = GetComponent<FurnaceStation>();
         if (furnaceStation != null)
         {
-            uiManager.OpenFurnaceUI(furnaceStation, gameObjectInteractor);
+            uiManager.ToggleFurnaceUI(furnaceStation, gameObjectInteractor);
             return;
         }
 
