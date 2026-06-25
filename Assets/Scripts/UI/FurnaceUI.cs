@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +12,12 @@ namespace Cinderkeep.Gameplay
     {
         [Header("Root")]
         [SerializeField] private GameObject _rootObject;
+
+        [Header("Recipe Slots")]
+        [SerializeField] private FurnaceRecipeButtonView[] _recipeSlots;
+
+        private readonly System.Collections.Generic.List<SmeltingRecipeData> _availableRecipes
+            = new System.Collections.Generic.List<SmeltingRecipeData>();
 
         [Header("Input Slot")]
         [SerializeField] private TMP_Text _inputResourceText;
@@ -116,6 +122,106 @@ namespace Cinderkeep.Gameplay
             RefreshMessage("제련할 광석이 부족하거나 사용할 수 없는 재료입니다.");
             RefreshUI();
         }
+
+        public void StartSmeltingByRecipe(string inputResourceId, int inputAmount)
+        {
+            SetInputResource(inputResourceId, inputAmount);
+            TryStartSmelting();
+        }
+
+        private void RefreshRecipes()
+        {
+            ClearRecipeSlots();
+
+            if (_recipeSlots == null || _currentFurnaceStation == null)
+            {
+                return;
+            }
+
+            GameDataManager gameDataManager = GameManager.Inst == null ? null : GameManager.Inst.GetGameDataManager();
+            if (gameDataManager == null)
+            {
+                return;
+            }
+
+            _currentFurnaceStation.GetAvailableSmeltingRecipes(gameDataManager, _availableRecipes);
+
+            for (int i = 0; i < _availableRecipes.Count; i++)
+            {
+                if (i >= _recipeSlots.Length)
+                {
+                    RefreshMessage("표시 가능한 제련 슬롯이 부족합니다.");
+                    return;
+                }
+
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
+                SmeltingRecipeData recipeData = _availableRecipes[i];
+                bool canSmelt = CanSmeltRecipe(recipeData);
+                _recipeSlots[i].SetRecipe(recipeData, canSmelt, GetSmeltStateText(recipeData), this);
+            }
+        }
+
+        private void ClearRecipeSlots()
+        {
+            if (_recipeSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _recipeSlots.Length; i++)
+            {
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
+                _recipeSlots[i].Clear();
+            }
+        }
+
+        private bool CanSmeltRecipe(SmeltingRecipeData recipeData)
+        {
+            if (recipeData == null || _playerModel == null)
+            {
+                return false;
+            }
+
+            if (_currentFurnaceStation != null && _currentFurnaceStation.IsSmelting)
+            {
+                return false;
+            }
+
+            return _playerModel.GetResourceAmount(recipeData.InputResourceId) >= recipeData.InputAmount;
+        }
+
+        private string GetSmeltStateText(SmeltingRecipeData recipeData)
+        {
+            if (_currentFurnaceStation != null && _currentFurnaceStation.IsSmelting)
+            {
+                return "제련 중";
+            }
+
+            if (recipeData == null || _playerModel == null)
+            {
+                return "재료 부족";
+            }
+
+            int owned = _playerModel.GetResourceAmount(recipeData.InputResourceId);
+            if (owned >= recipeData.InputAmount)
+            {
+                return "제련 가능";
+            }
+
+            return "재료 부족 (" + owned + "/" + recipeData.InputAmount + ")";
+        }
+
+
+
+
 
         public void TryCollectOutput()
         {

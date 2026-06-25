@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 // 한 판 플레이 중 변하는 런타임 상태를 저장합니다.
 // 상태 변경은 명시적인 메서드로 처리하고, UI와 시스템은 이 모델을 읽거나 요청만 보냅니다.
@@ -187,10 +187,10 @@ namespace Cinderkeep.Gameplay
             _stamina = _maxStamina;
             _level = 1;
 
-            _wood = 0;
-            _stone = 0;
-            _iron = 0;
-            _gold = 0;
+            _wood = 20;
+            _stone = 20;
+            _iron = 20;
+            _gold = 20;
             _mithril = 0;
             _adamantium = 0;
             _ironOre = 0;
