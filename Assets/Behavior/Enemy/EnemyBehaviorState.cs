@@ -1,16 +1,68 @@
+﻿using System;
 using UnityEngine;
+
+
+public enum BTEnemyMoveState
+{
+    Wander, 
+    MoveToCinderHeart
+}
+
 
 public class EnemyBehaviorState : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private BTEnemyMoveState _mMoveState = BTEnemyMoveState.MoveToCinderHeart;
+
+    public BTEnemyMoveState MoveState
     {
-        
+        get
+        {
+            return _mMoveState;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetMoveState(BTEnemyMoveState moveState)
     {
-        
+        _mMoveState = moveState;
     }
+
+    public void SteWanderState()
+    {
+        SetMoveState(BTEnemyMoveState.Wander);
+    }
+
+    public void SetMoveToCinderHeartState()
+    {
+        SetMoveState(BTEnemyMoveState.MoveToCinderHeart);
+    }
+
+    public bool IsCurrentState(string requiredStateName)
+    {
+        if(string.IsNullOrWhiteSpace(requiredStateName))
+        {
+            return true;
+        }
+
+        BTEnemyMoveState requiredState;
+        bool canParse = Enum.TryParse(requiredStateName, true, out requiredState);
+        if(canParse == false )
+        {
+            Debug.LogWarning("EnemyBehaviorState: 알 수 없는 상태 이름입니다. requiredStateName=" + requiredStateName);
+            return false;
+        }
+        return _mMoveState == requiredState;
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Set State/Wander")]
+    private void DebugSetWanderState()
+    {
+        DebugSetWanderState();
+    }
+    [ContextMenu("Set State/Move To CinderHeart")]
+    private void DebugSetMoveToCinderHeartState()
+    {
+        SetMoveToCinderHeartState();
+    }
+#endif
 }
