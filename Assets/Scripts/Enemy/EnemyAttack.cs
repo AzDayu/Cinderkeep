@@ -99,11 +99,31 @@ public sealed class EnemyAttack : MonoBehaviour
 
     private float GetAttackDamage(Damageable targetDamageable)
     {
-        if (targetDamageable.CompareTag(CinderHeartTag))
+        if (IsCinderHeartTarget(targetDamageable))
         {
             return _cinderHeartAttackDamage;
         }
 
         return _attackDamage;
+    }
+
+    private bool IsCinderHeartTarget(Damageable targetDamageable)
+    {
+        if (targetDamageable == null)
+        {
+            return false;
+        }
+
+        if (targetDamageable.CompareTag(CinderHeartTag))
+        {
+            return true;
+        }
+
+        if (targetDamageable.GetComponent<CinderHeart>() != null)
+        {
+            return true;
+        }
+
+        return targetDamageable.GetComponentInParent<CinderHeart>() != null;
     }
 }

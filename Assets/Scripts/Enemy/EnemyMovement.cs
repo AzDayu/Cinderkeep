@@ -108,7 +108,20 @@ public sealed class EnemyMovement : MonoBehaviour
             return;
         }
 
-        MoveToPosition(GetSpreadTargetPosition(targetTransform));
+        if (_isInitialized == false)
+        {
+            return;
+        }
+
+        if (CanStopAtPosition(targetTransform.position))
+        {
+            StopMoving();
+            ApplyCrowdSeparation();
+            return;
+        }
+
+        MoveWithNavMeshOrTransform(GetSpreadTargetPosition(targetTransform));
+        ApplyCrowdSeparation();
     }
 
     public void MoveToPosition(Vector3 targetPosition)
@@ -146,7 +159,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     public void StopMoving()
     {
-        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh && _navMeshAgent.hasPath)
+        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh && _navMeshAgent.hasPath)
         {
             _navMeshAgent.ResetPath();
         }
@@ -198,7 +211,7 @@ public sealed class EnemyMovement : MonoBehaviour
         Vector3 targetPosition = targetTransform.position + _targetSpreadOffset;
         targetPosition.y = targetTransform.position.y;
 
-        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
         {
             NavMeshHit navMeshHit;
             if (NavMesh.SamplePosition(targetPosition, out navMeshHit, _arrivalSpreadRadius + 0.5f, NavMesh.AllAreas))
@@ -212,7 +225,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     private Vector3 CreateStableSpreadOffset(Transform targetTransform)
     {
-        float spreadRadius = Mathf.Min(_arrivalSpreadRadius, Mathf.Max(0f, _stopDistance * 0.85f));
+        float spreadRadius = Mathf.Min(_arrivalSpreadRadius, Mathf.Max(0.25f, _stopDistance * 0.2f));
         if (spreadRadius <= 0.05f)
         {
             return Vector3.zero;
@@ -236,7 +249,7 @@ public sealed class EnemyMovement : MonoBehaviour
 
     private void MoveWithNavMeshOrTransform(Vector3 targetPosition)
     {
-        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
         {
             _navMeshAgent.isStopped = false;
             _navMeshAgent.speed = GetCurrentMoveSpeed();
@@ -247,6 +260,7 @@ public sealed class EnemyMovement : MonoBehaviour
             }
         }
 
+        DisableInvalidNavMeshAgent();
         MoveDirectlyToTarget(targetPosition);
     }
 
@@ -306,7 +320,7 @@ public sealed class EnemyMovement : MonoBehaviour
         }
 
         Vector3 pushOffset = pushDirection.normalized * (_separationStrength * Time.deltaTime);
-        if (_navMeshAgent != null && _navMeshAgent.isOnNavMesh)
+        if (_navMeshAgent != null && _navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
         {
             _navMeshAgent.Move(pushOffset);
             return;
@@ -336,5 +350,20 @@ public sealed class EnemyMovement : MonoBehaviour
         }
 
         transform.rotation = Quaternion.LookRotation(direction.normalized);
+    }
+
+    private void DisableInvalidNavMeshAgent()
+    {
+        if (_navMeshAgent == null || _navMeshAgent.enabled == false)
+        {
+            return;
+        }
+
+        if (_navMeshAgent.isOnNavMesh)
+        {
+            return;
+        }
+
+        _navMeshAgent.enabled = false;
     }
 }

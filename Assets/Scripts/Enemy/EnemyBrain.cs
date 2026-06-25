@@ -47,6 +47,7 @@ public sealed class EnemyBrain : MonoBehaviour
     private Damageable _recentTowerAttacker;
     private float _lastPlayerAttackedTime;
     private float _lastTowerAttackedTime;
+    private float _nextDecisionTime;
 
     private void Awake()
     {
@@ -65,6 +66,17 @@ public sealed class EnemyBrain : MonoBehaviour
     private void OnDisable()
     {
         StopBrainRoutine();
+    }
+
+    private void Update()
+    {
+        if (Time.time >= _nextDecisionTime)
+        {
+            RefreshBrainTargets();
+        }
+
+        MoveByCurrentTarget();
+        TryAttackCurrentTarget();
     }
 
     public void SetNightTime(bool isNightTime)
@@ -194,12 +206,16 @@ public sealed class EnemyBrain : MonoBehaviour
 
         while (true)
         {
-            RefreshTargets();
-            MoveByCurrentTarget();
-            TryAttackCurrentTarget();
+            RefreshBrainTargets();
 
             yield return waitInterval;
         }
+    }
+
+    private void RefreshBrainTargets()
+    {
+        RefreshTargets();
+        _nextDecisionTime = Time.time + DecisionInterval;
     }
 
     private void RefreshTargets()
@@ -518,12 +534,32 @@ public sealed class EnemyBrain : MonoBehaviour
             return IsInAttackDistance(targetObject.transform, _attackDistance);
         }
 
-        if (targetObject.CompareTag(CinderHeartTag))
+        if (IsCinderHeartTarget(targetObject))
         {
             return IsInAttackDistance(targetObject.transform, _cinderHeartAttackDistance);
         }
 
         return false;
+    }
+
+    private bool IsCinderHeartTarget(GameObject targetObject)
+    {
+        if (targetObject == null)
+        {
+            return false;
+        }
+
+        if (targetObject.CompareTag(CinderHeartTag))
+        {
+            return true;
+        }
+
+        if (targetObject.GetComponent<CinderHeart>() != null)
+        {
+            return true;
+        }
+
+        return targetObject.GetComponentInParent<CinderHeart>() != null;
     }
 
     private bool IsInAttackDistance(Transform targetTransform, float attackDistance)
