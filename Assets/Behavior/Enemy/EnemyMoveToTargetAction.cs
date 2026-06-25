@@ -7,7 +7,7 @@ using Action = Unity.Behavior.Action;
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
     name: "Enemy Move To Target",
-    story: "[Self] moves to [Target]",
+    story: "[Self] moves to [Target] when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_move_to_target_action_v2")]
 public partial class EnemyMoveToTargetAction : Action
@@ -81,11 +81,20 @@ public partial class EnemyMoveToTargetAction : Action
 
     private bool IsRequiredStateMatched(GameObject selfObject)
     {
-        string requiredStateName = requiredStateName == null ? string.Empty : RequiredState.Value;
+        string requiredStateName = RequiredState == null ? string.Empty : RequiredState.Value;
         if(string.IsNullOrWhiteSpace(requiredStateName))
         {
             return true;
         }
+        EnemyBehaviorState behaviorState = selfObject.GetComponent<EnemyBehaviorState>();
+
+        if(behaviorState == null)
+        {
+            Debug.LogWarning("EnemyMoveToTargetAction: EnemyBehaviorState가 없습니다. object=" + selfObject.name);
+            return false;
+        }
+
+        return behaviorState.IsCurrentState(requiredStateName);
     }
 
 

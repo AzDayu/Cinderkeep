@@ -26,7 +26,7 @@ public class EnemyBehaviorState : MonoBehaviour
         _mMoveState = moveState;
     }
 
-    public void SteWanderState()
+    public void SetWanderState()
     {
         SetMoveState(BTEnemyMoveState.Wander);
     }
@@ -57,7 +57,7 @@ public class EnemyBehaviorState : MonoBehaviour
     [ContextMenu("Set State/Wander")]
     private void DebugSetWanderState()
     {
-        DebugSetWanderState();
+        SetWanderState();
     }
     [ContextMenu("Set State/Move To CinderHeart")]
     private void DebugSetMoveToCinderHeartState()

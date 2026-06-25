@@ -1,4 +1,4 @@
-﻿//테스트용 초기화 코드
+﻿//테스트용 초기화 코드 - Brain을 대체할 수 있을 만큼 비헤이비어가 완성되면 없애도 됨.
 
 using System.Collections;
 using Cinderkeep.Gameplay;

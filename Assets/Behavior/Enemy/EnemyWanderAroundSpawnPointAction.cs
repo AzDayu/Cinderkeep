@@ -7,12 +7,14 @@ using Action = Unity.Behavior.Action;
 [Serializable, GeneratePropertyBag]
 [NodeDescription(
     name: "Enemy Wander Around Spawn Point",
-    story: "[Self] wanders around spawn point",
+    story: "[Self] wanders around spawn point when state is [RequiredState]",
     category: "Action/Cinderkeep/Enemy",
     id: "cinderkeep_enemy_wander_around_spawn_point_action_v2")]
 public partial class EnemyWanderAroundSpawnPointAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
+
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("Wander");
 
     [SerializeReference] public BlackboardVariable<bool> StopOnEnd = new BlackboardVariable<bool>(false);
 
@@ -45,6 +47,11 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
             return Status.Failure;
         }
 
+        if (IsRequiredStateMatched(selfObject) == false)
+        {
+            return Status.Failure;
+        }
+
         if (_enemyMovement == null)
         {
             _enemyMovement = selfObject.GetComponent<EnemyMovement>();
@@ -71,6 +78,24 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
         {
             _enemyMovement.StopMoving();
         }
+    }
+
+    private bool IsRequiredStateMatched(GameObject selfObject)
+    {
+        string requiredStateName = RequiredState == null ? string.Empty : RequiredState.Value;
+        if(string.IsNullOrWhiteSpace(requiredStateName))
+        {
+            return true;
+        }
+
+        EnemyBehaviorState behaviorState = selfObject.GetComponent<EnemyBehaviorState>();
+
+        if(behaviorState == null)
+        {
+            Debug.LogWarning("EnemyWanderAroundSpawnPointAction: EnemyBehaviorState가 없습니다. object=" + selfObject.name);
+            return false;
+        }
+        return behaviorState.IsCurrentState(requiredStateName);
     }
 
     private GameObject GetSelfObject()
