@@ -10,13 +10,28 @@ public static class TrapZoneSceneBootstrap
 
     public static void EnsureTrapZones()
     {
+        DisableExistingTrapZones();
+        return;
+    }
+
+    private static void DisableExistingTrapZones()
+    {
+        GameObject existingRoot = GameObject.Find(RootName);
+        if (existingRoot != null)
+        {
+            existingRoot.SetActive(false);
+        }
+    }
+
+    public static void EnsureTrapZonesForLater()
+    {
         Transform root = GetOrCreateRoot();
         Vector3 center = ResolveCenterPosition();
 
-        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_North", center + new Vector3(0f, 0.08f, 5.2f), new Vector3(4.0f, 0.18f, 2.2f));
-        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_South", center + new Vector3(0f, 0.08f, -5.2f), new Vector3(4.0f, 0.18f, 2.2f));
-        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_East", center + new Vector3(5.2f, 0.08f, 0f), new Vector3(2.2f, 0.18f, 4.0f));
-        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_West", center + new Vector3(-5.2f, 0.08f, 0f), new Vector3(2.2f, 0.18f, 4.0f));
+        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_North", center + new Vector3(0f, 0.02f, 8.4f), new Vector3(4.2f, 0.08f, 2.4f));
+        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_South", center + new Vector3(0f, 0.02f, -8.4f), new Vector3(4.2f, 0.08f, 2.4f));
+        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_East", center + new Vector3(8.4f, 0.02f, 0f), new Vector3(2.4f, 0.08f, 4.2f));
+        CreateOrKeepTrapSpot(root, "BuildSpot_Trap_West", center + new Vector3(-8.4f, 0.02f, 0f), new Vector3(2.4f, 0.08f, 4.2f));
     }
 
     private static Transform GetOrCreateRoot()
@@ -54,7 +69,8 @@ public static class TrapZoneSceneBootstrap
         Renderer renderer = trapObject.GetComponent<Renderer>();
         if (renderer != null)
         {
-            renderer.material.color = new Color(0.95f, 0.18f, 0.08f, 0.55f);
+            RuntimePrimitiveMaterial.ApplyColor(trapObject, new Color(0.95f, 0.18f, 0.08f, 0.22f), "MAT_Runtime_TrapBuildSpot");
+            renderer.enabled = false;
         }
 
         ConfigureTrapSpot(trapObject);
@@ -65,6 +81,12 @@ public static class TrapZoneSceneBootstrap
         if (trapObject == null)
         {
             return;
+        }
+
+        Renderer renderer = trapObject.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            renderer.enabled = false;
         }
 
         BuildingSpot buildingSpot = trapObject.GetComponent<BuildingSpot>();

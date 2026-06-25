@@ -90,7 +90,7 @@ public sealed class BuildProgressUI : MonoBehaviour
         }
 
         float remainSeconds = Mathf.Max(0f, _durationSeconds * (1f - progress));
-        _progressText.text = Mathf.RoundToInt(progress * 100f) + "% / " + remainSeconds.ToString("F1") + "초";
+        _progressText.text = "건축 진행 " + Mathf.RoundToInt(progress * 100f) + "% / 남은 시간 " + remainSeconds.ToString("F1") + "초";
     }
 
     public void Close()
@@ -177,8 +177,8 @@ public sealed class BuildProgressUI : MonoBehaviour
         }
 
         _titleText.text = string.IsNullOrEmpty(buildingName)
-            ? "건축 중"
-            : buildingName + " 건축 중";
+            ? "건축 진행"
+            : buildingName + " 건축 진행";
     }
 
     private void SetVisible(bool isVisible)

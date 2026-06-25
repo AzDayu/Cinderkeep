@@ -70,6 +70,7 @@ public static class HandStonePickupSceneBootstrap
         HandStonePickup pickup = FindScenePickup(pickupName);
         if (pickup != null)
         {
+            ApplyPickupMaterial(pickup.gameObject);
             pickup.ResetPickup();
             return;
         }
@@ -200,17 +201,7 @@ public static class HandStonePickupSceneBootstrap
             return;
         }
 
-        Shader shader = Shader.Find("Standard");
-        if (shader == null)
-        {
-            renderer.material.color = PickupColor;
-            return;
-        }
-
-        Material material = new Material(shader);
-        material.name = "MAT_Runtime_HandStone";
-        material.color = PickupColor;
-        renderer.material = material;
+        RuntimePrimitiveMaterial.ApplyColor(pickupObject, PickupColor, "MAT_Runtime_HandStone");
     }
 
     private static void RemoveLegacySinglePickup()

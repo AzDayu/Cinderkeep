@@ -69,6 +69,7 @@ namespace Cinderkeep.Gameplay
         public void OpenHud()
         {
             global::HudTutorialGuide.EnsureSceneGuide();
+            QuickSlotHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
