@@ -345,7 +345,16 @@ namespace Cinderkeep.Gameplay
             CloseInventory();
             CloseCraftingUI();
             CloseFurnaceUI();
-            _cinderHeartSkillSelectionUI.Open(skillOptions, onClosed);
+            _cinderHeartSkillSelectionUI.Open(skillOptions, () =>
+            {
+                if (onClosed != null)
+                {
+                    onClosed.Invoke();
+                }
+
+                RefreshCursorState();
+            });
+            RefreshCursorState();
             PlayUiNotificationSfx();
         }
 
@@ -357,6 +366,7 @@ namespace Cinderkeep.Gameplay
             }
 
             _cinderHeartSkillSelectionUI.Close();
+            RefreshCursorState();
         }
 
         private void SetActive(GameObject targetObject, bool isActive)
@@ -408,6 +418,11 @@ namespace Cinderkeep.Gameplay
             }
 
             if (_isRunResultPanelOpen)
+            {
+                return true;
+            }
+
+            if (_cinderHeartSkillSelectionUI != null && _cinderHeartSkillSelectionUI.IsOpen)
             {
                 return true;
             }
