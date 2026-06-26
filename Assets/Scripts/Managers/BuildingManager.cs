@@ -89,6 +89,7 @@ namespace Cinderkeep.Gameplay
                 && BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
+                global::GameplayFeedbackHud.ShowMessage("자원이 부족해서 건축할 수 없습니다.");
                 return false;
             }
 
@@ -150,6 +151,7 @@ namespace Cinderkeep.Gameplay
             {
                 Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 자원이 부족합니다. from="
                     + fromBuildingId + ", to=" + toBuildingData.Id);
+                global::GameplayFeedbackHud.ShowMessage("자원이 부족해서 업그레이드할 수 없습니다.");
                 return false;
             }
 

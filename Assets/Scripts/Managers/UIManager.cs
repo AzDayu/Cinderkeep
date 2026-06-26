@@ -150,6 +150,7 @@ namespace Cinderkeep.Gameplay
             QuickSlotHud.EnsureSceneHud();
             global::InteractionPromptHud.EnsureSceneHud();
             global::CrosshairFeedbackHud.EnsureSceneHud();
+            global::GameplayFeedbackHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
@@ -451,6 +452,7 @@ namespace Cinderkeep.Gameplay
 
             if (closedAnyUi)
             {
+                global::GameplayFeedbackHud.ShowMessage("시설에서 멀어져 창을 닫았습니다.");
                 RefreshCursorState();
             }
         }
