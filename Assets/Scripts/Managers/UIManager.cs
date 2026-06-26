@@ -124,6 +124,8 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            CloseStationUIIfInteractorTooFar();
+
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
                 if (_craftingUI != null && _craftingUI.IsOpen)
@@ -146,6 +148,7 @@ namespace Cinderkeep.Gameplay
         {
             global::HudTutorialGuide.EnsureSceneGuide();
             QuickSlotHud.EnsureSceneHud();
+            global::CrosshairFeedbackHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
@@ -312,7 +315,7 @@ namespace Cinderkeep.Gameplay
             }
 
             CloseCraftingUI();
-            _furnaceUI.OpenFurnace(furnaceStation);
+            _furnaceUI.OpenFurnace(furnaceStation, interactor);
             RefreshCursorState();
             PlayUiClickSfx();
         }
@@ -428,6 +431,27 @@ namespace Cinderkeep.Gameplay
             }
 
             return false;
+        }
+
+        private void CloseStationUIIfInteractorTooFar()
+        {
+            bool closedAnyUi = false;
+            if (_craftingUI != null && _craftingUI.ShouldCloseForDistance())
+            {
+                _craftingUI.Close();
+                closedAnyUi = true;
+            }
+
+            if (_furnaceUI != null && _furnaceUI.ShouldCloseForDistance())
+            {
+                _furnaceUI.Close();
+                closedAnyUi = true;
+            }
+
+            if (closedAnyUi)
+            {
+                RefreshCursorState();
+            }
         }
 
         private void RefreshPlayerControlState(bool isBlockingUiOpen)

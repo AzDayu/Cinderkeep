@@ -38,6 +38,14 @@ public static class CinderkeepInput
         return playerController != null && playerController.IsInputBlocked();
     }
 
+    public static bool CanRotateViewWhileUiOpen()
+    {
+        PlayerController playerController = GetPlayerController();
+        return playerController != null
+            && playerController.CurrentState == PlayerControlState.OpenUI
+            && IsRightMousePressed();
+    }
+
     private static PlayerController GetPlayerController()
     {
         if (_cachedPlayerController != null)
@@ -125,6 +133,17 @@ public static class CinderkeepInput
         }
 
         return mouse.leftButton.wasPressedThisFrame;
+    }
+
+    public static bool IsRightMousePressed()
+    {
+        Mouse mouse = Mouse.current;
+        if (mouse == null)
+        {
+            return false;
+        }
+
+        return mouse.rightButton.isPressed;
     }
 
     private static KeyControl GetKeyControl(KeyCode keyCode)

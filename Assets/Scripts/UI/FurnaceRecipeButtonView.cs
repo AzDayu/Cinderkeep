@@ -32,6 +32,13 @@ namespace Cinderkeep.Gameplay
             DisconnectButton();
         }
 
+        public void ApplyReadableTextStyle()
+        {
+            ApplyTextStyle(_nameText, 19f);
+            ApplyTextStyle(_costText, 17f);
+            ApplyTextStyle(_stateText, 17f);
+        }
+
         public void SetRecipe(SmeltingRecipeData recipeData, bool canSmelt, string stateText, FurnaceUI ownerFurnaceUI)
         {
             if (recipeData == null)
@@ -148,6 +155,17 @@ namespace Cinderkeep.Gameplay
             }
 
             targetText.text = text;
+        }
+
+        private void ApplyTextStyle(TMP_Text targetText, float minFontSize)
+        {
+            if (targetText == null)
+            {
+                return;
+            }
+
+            targetText.textWrappingMode = TextWrappingModes.Normal;
+            targetText.fontSize = Mathf.Max(targetText.fontSize, minFontSize);
         }
 
         private void SetVisible(bool isVisible)
