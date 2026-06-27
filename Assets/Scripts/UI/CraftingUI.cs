@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -24,10 +24,21 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private CraftingRecipeExecutor _recipeExecutor;
         [SerializeField] private InventoryUI _inventoryUI;
 
+        [Header("Auto Close")]
+        [Tooltip("제작 UI가 열린 뒤 플레이어가 제작대에서 이 거리 이상 멀어지면 자동으로 닫습니다.")]
+        [SerializeField] private float _autoCloseDistance = 4.5f;
+
         private readonly List<CraftingRecipeData> _availableRecipes = new List<CraftingRecipeData>();
         private CraftingStation _currentStation;
+        private Transform _currentInteractorTransform;
         private GameDataManager _gameDataManager;
         private PlayerModel _playerModel;
+
+        public void SetInventoryUI(InventoryUI inventoryUI)
+        {
+            _inventoryUI = inventoryUI;
+        }
+
 
         private bool _isOpen;
 
@@ -52,9 +63,11 @@ namespace Cinderkeep.Gameplay
             }
 
             _currentStation = craftingStation;
+            _currentInteractorTransform = interactor == null ? null : interactor.transform;
 
             ConnectGameState();
             ConnectRecipeExecutor();
+            ApplyReadableTextStyle();
             SetVisible(true);
             RefreshUI();
 
@@ -68,11 +81,24 @@ namespace Cinderkeep.Gameplay
         {
             ClearRecipeSlots();
             SetVisible(false);
+            _currentStation = null;
+            _currentInteractorTransform = null;
 
             if (_inventoryUI != null)
             {
                 _inventoryUI.Close();
             }
+        }
+
+        public bool ShouldCloseForDistance()
+        {
+            if (_isOpen == false || _currentStation == null || _currentInteractorTransform == null)
+            {
+                return false;
+            }
+
+            float safeDistance = Mathf.Max(0.5f, _autoCloseDistance);
+            return Vector3.Distance(_currentStation.transform.position, _currentInteractorTransform.position) > safeDistance;
         }
 
         public void TryCraftRecipe(string recipeId)
@@ -262,6 +288,36 @@ namespace Cinderkeep.Gameplay
             }
 
             _messageText.text = message;
+        }
+
+        private void ApplyReadableTextStyle()
+        {
+            ApplyTextStyle(_titleText, 26f);
+            ApplyTextStyle(_messageText, 20f);
+
+            if (_recipeSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _recipeSlots.Length; i++)
+            {
+                if (_recipeSlots[i] != null)
+                {
+                    _recipeSlots[i].ApplyReadableTextStyle();
+                }
+            }
+        }
+
+        private void ApplyTextStyle(TMP_Text targetText, float minFontSize)
+        {
+            if (targetText == null)
+            {
+                return;
+            }
+
+            targetText.textWrappingMode = TextWrappingModes.Normal;
+            targetText.fontSize = Mathf.Max(targetText.fontSize, minFontSize);
         }
 
         private void SetVisible(bool isVisible)

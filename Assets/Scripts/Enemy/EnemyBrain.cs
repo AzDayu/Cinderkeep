@@ -47,10 +47,7 @@ public sealed class EnemyBrain : MonoBehaviour
     private Damageable _currentAttackTarget;
     private BuildingHp _currentBuildingAttackTarget;
     private bool _canChaseCinderHeart = true;
-    private Damageable _recentPlayerAttacker;
-    private Damageable _recentTowerAttacker;
-    private float _lastPlayerAttackedTime;
-    private float _lastTowerAttackedTime;
+    private readonly EnemyAggroMemory _aggroMemory = new EnemyAggroMemory();
     private float _nextDecisionTime;
 
     private void Awake()
@@ -124,23 +121,7 @@ public sealed class EnemyBrain : MonoBehaviour
 
     public void ReportAttacker(Damageable attackerDamageable)
     {
-        if (attackerDamageable == null)
-        {
-            return;
-        }
-
-        if (attackerDamageable.CompareTag(PlayerTag))
-        {
-            _recentPlayerAttacker = attackerDamageable;
-            _lastPlayerAttackedTime = Time.time;
-            return;
-        }
-
-        if (attackerDamageable.GetComponentInParent<BuildingTower>() != null)
-        {
-            _recentTowerAttacker = attackerDamageable;
-            _lastTowerAttackedTime = Time.time;
-        }
+        _aggroMemory.ReportAttacker(attackerDamageable);
     }
 
     public void SetAttackTarget(Damageable targetDamageable)
@@ -337,13 +318,7 @@ public sealed class EnemyBrain : MonoBehaviour
 
     private Damageable GetNearestRecentAttacker()
     {
-        return EnemyTargetSelector.SelectNearestRecentAttacker(
-            transform,
-            _recentPlayerAttacker,
-            _lastPlayerAttackedTime,
-            _recentTowerAttacker,
-            _lastTowerAttackedTime,
-            _attackerMemoryDuration);
+        return _aggroMemory.SelectNearestRecentAttacker(transform, _attackerMemoryDuration);
     }
 
     private bool TrySetPlayerTargetFromDetector()

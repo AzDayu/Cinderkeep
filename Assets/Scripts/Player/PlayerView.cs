@@ -11,6 +11,8 @@ public sealed class PlayerView : MonoBehaviour
     [FormerlySerializedAs("mouseSensitivity")]
     [Tooltip("마우스 시점 회전 민감도입니다. 값이 클수록 더 빠르게 회전합니다.")]
     [SerializeField] private float _mouseSensitivity = 285f;
+    [Tooltip("UI가 열린 상태에서 우클릭으로 둘러볼 때 적용할 회전 배율입니다.")]
+    [SerializeField] private float _uiLookSensitivityMultiplier = 0.45f;
 
     [Header("Connected Objects")]
     [FormerlySerializedAs("playerBody")]
@@ -33,12 +35,17 @@ public sealed class PlayerView : MonoBehaviour
     {
         if (CinderkeepInput.IsGameplayInputBlocked())
         {
+            if (CinderkeepInput.CanRotateViewWhileUiOpen())
+            {
+                RotateView(_uiLookSensitivityMultiplier);
+            }
+
             return;
         }
 
         if (Cursor.lockState == CursorLockMode.Locked)
         {
-            RotateView();
+            RotateView(1f);
         }
     }
 
@@ -61,7 +68,7 @@ public sealed class PlayerView : MonoBehaviour
         }
     }
 
-    private void RotateView()
+    private void RotateView(float sensitivityMultiplier)
     {
         if (_cameraTransform == null || _playerBody == null)
         {
@@ -69,8 +76,9 @@ public sealed class PlayerView : MonoBehaviour
         }
 
         Vector2 mouseAxis = CinderkeepInput.GetMouseAxis();
-        float mouseX = mouseAxis.x * _mouseSensitivity * Time.deltaTime;
-        float mouseY = mouseAxis.y * _mouseSensitivity * Time.deltaTime;
+        float safeMultiplier = Mathf.Max(0f, sensitivityMultiplier);
+        float mouseX = mouseAxis.x * _mouseSensitivity * safeMultiplier * Time.deltaTime;
+        float mouseY = mouseAxis.y * _mouseSensitivity * safeMultiplier * Time.deltaTime;
 
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -45f, 45f);
