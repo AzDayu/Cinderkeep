@@ -63,8 +63,44 @@ public partial class EnemyAttackCinderHeartAction : Action
             return Status.Failure;
         }
 
-        float attackDistance = AttackDistance == null ? 3f : AttackDistance.Value;
+        Damageable cinderHeartDamageable = GetDamageableFromObject(cinderHeartObject);
+        if (cinderHeartDamageable == null)
+        {
+            return Status.Failure;
+        }
 
+
+        float attackDistance = AttackDistance == null ? 3f : AttackDistance.Value;
+        float distance = Vector3.Distance(selfObject.transform.position, cinderHeartObject.transform.position);
+
+        if(distance >  attackDistance)
+        {
+            return Status.Failure;
+        }
+
+        if (_enemyMovement == null)
+        {
+            _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        }
+
+        if (_enemyMovement != null)
+        {
+            _enemyMovement.StopMoving();
+        }
+
+        if (_enemyAttack == null)
+        {
+            _enemyAttack = selfObject.GetComponent<EnemyAttack>();
+        }
+
+        if (_enemyAttack == null)
+        {
+            return Status.Failure;
+        }
+
+        _enemyAttack.TryAttack(cinderHeartDamageable);
+
+        return Status.Running;
 
     }
 
@@ -104,6 +140,23 @@ public partial class EnemyAttackCinderHeartAction : Action
 
         return behaviorState.IsCurrentState(requiredStateName);
     }
+
+    private Damageable GetDamageableFromObject(GameObject targetObject)
+    {
+        if(targetObject == null)
+        {
+            return null;
+        }
+
+        Damageable damageable = targetObject.GetComponent<Damageable>();
+        if(damageable != null)
+        {
+            return damageable;
+        }
+
+        return targetObject.GetComponent<Damageable>();
+    }
+
 
     private GameObject GetSelfObject()
     {
