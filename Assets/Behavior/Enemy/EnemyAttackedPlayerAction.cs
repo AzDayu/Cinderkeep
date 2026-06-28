@@ -80,7 +80,7 @@ public partial class EnemyAttackDetectedPlayerAction : Action
             return Status.Failure;
         }
 
-        if (IsInAttackDistance(GetSelfObject().transform, detectedPlayerTransform)== false)
+        if (IsInAttackDistance(selfObject.transform, detectedPlayerTransform) == false)
         {
             return Status.Failure;
         }

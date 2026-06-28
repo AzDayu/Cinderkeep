@@ -2,38 +2,41 @@
 using UnityEngine;
 
 
-public enum BTEnemyMoveState
+public enum BTEnemyMode
 {
-    Wander, 
-    MoveToCinderHeart
+    DayWander,
+    NightAssault
+
 }
 
 
 public class EnemyBehaviorState : MonoBehaviour
 {
-    [SerializeField] private BTEnemyMoveState _mMoveState = BTEnemyMoveState.MoveToCinderHeart;
+    [Header("Behavior Mode")]
+    [Tooltip("현재 Enemy의 큰 행동 모드입니다. 낮에는 DayWander, 밤에는 NightAssault를 사용합니다.")]
+    [SerializeField] private BTEnemyMode _mode = BTEnemyMode.DayWander;
 
-    public BTEnemyMoveState MoveState
+    public BTEnemyMode Mode
     {
         get
         {
-            return _mMoveState;
+            return _mode;
         }
     }
 
-    public void SetMoveState(BTEnemyMoveState moveState)
+    public void SetMode(BTEnemyMode mode)
     {
-        _mMoveState = moveState;
+        _mode = mode;
     }
 
-    public void SetWanderState()
+    public void SetDayWanderMode()
     {
-        SetMoveState(BTEnemyMoveState.Wander);
+        SetMode(BTEnemyMode.DayWander);
     }
 
-    public void SetMoveToCinderHeartState()
+    public void SetNightAssaultMode()
     {
-        SetMoveState(BTEnemyMoveState.MoveToCinderHeart);
+        SetMode(BTEnemyMode.NightAssault);
     }
 
     public bool IsCurrentState(string requiredStateName)
@@ -43,26 +46,27 @@ public class EnemyBehaviorState : MonoBehaviour
             return true;
         }
 
-        BTEnemyMoveState requiredState;
-        bool canParse = Enum.TryParse(requiredStateName, true, out requiredState);
-        if(canParse == false )
+        BTEnemyMode requiredMode;
+        bool canParse = Enum.TryParse(requiredStateName, true, out requiredMode);
+        if(canParse == false)
         {
             Debug.LogWarning("EnemyBehaviorState: 알 수 없는 상태 이름입니다. requiredStateName=" + requiredStateName);
             return false;
         }
-        return _mMoveState == requiredState;
+        return _mode == requiredMode;
     }
 
 #if UNITY_EDITOR
-    [ContextMenu("Set State/Wander")]
-    private void DebugSetWanderState()
+    [ContextMenu("Set Mode/Day Wander")]
+    private void DebugSetDayWanderMode()
     {
-        SetWanderState();
+        SetDayWanderMode();
     }
-    [ContextMenu("Set State/Move To CinderHeart")]
-    private void DebugSetMoveToCinderHeartState()
+
+    [ContextMenu("Set Mode/Night Assault")]
+    private void DebugSetNightAssaultMode()
     {
-        SetMoveToCinderHeartState();
+        SetNightAssaultMode();
     }
 #endif
 }
