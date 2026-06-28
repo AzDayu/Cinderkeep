@@ -66,11 +66,80 @@ public partial class EnemyAttackBlockingBuildingAction : Action
             return Status.Failure;
         }
 
-        if(ShouldInterruptForDetectedPlayer(selfObject))
+        if (IsRequiredStateMatched(selfObject) == false)
         {
             return Status.Failure;
         }
+
+        if (ShouldInterruptForDetectedPlayer(selfObject))
+        {
+            return Status.Failure;
+        }
+        BuildingHp blockingBuilding = FindBlockingBuilding(selfObject, cinderHeartObject);
+        if(blockingBuilding == null)
+        {
+            return Status.Failure;
+        }
+
+        float attackDistance = AttackDistance == null ? 2.3f : AttackDistance.Value;
+        float distance = Vector3.Distance(selfObject.transform.position, blockingBuilding.transform.position);
+
+        if(distance > attackDistance)
+        {
+            return Status.Failure;
+        }
+
+        if(_enemyMovement == null)
+        {
+            _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        }
+
+        if(_enemyMovement != null)
+        {
+            _enemyMovement.StopMoving();
+        }
+
+        if(_enemyAttack == null)
+        {
+            _enemyAttack = selfObject.GetComponent<EnemyAttack>();
+        }
+        if(_enemyAttack == null)
+        {
+            return Status.Failure;
+        }
+
+        _enemyAttack.TryAttack(blockingBuilding);
+
+        return Status.Running;
     }
+
+    private BuildingHp FindBlockingBuilding(GameObject selfObject, GameObject cinderHeartObject)
+    {
+        if(_path == null)
+        {
+            _path = new NavMeshPath();
+        }
+
+        bool isPathBlocked = EnemyPathQuery.IsPathBlocked(
+            selfObject.transform,
+            cinderHeartObject.transform,
+            _path);
+        if(isPathBlocked == false)
+        {
+            return null;
+        }
+
+        float detectDistance = BlockingBuildingDetectDistance == null ? 5f : BlockingBuildingDetectDistance.Value;
+        float detectRadius = BlockingBuildingDetectRadius == null ? 1f : BlockingBuildingDetectRadius.Value;
+
+        return EnemyPathQuery.FindBlockingBuilding(
+            selfObject.transform.position,
+            cinderHeartObject.transform.position,
+            detectRadius,
+            detectDistance,
+            BuildTag);
+    }
+
 
     private bool IsRequiredStateMatched(GameObject selfObject)
     {
