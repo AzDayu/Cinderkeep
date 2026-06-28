@@ -14,11 +14,14 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
 
-    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("Wander");
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("");
 
     [SerializeReference] public BlackboardVariable<bool> StopOnEnd = new BlackboardVariable<bool>(false);
 
+    [SerializeReference] public BlackboardVariable<bool> InterruptWhenPlayerDetected = new BlackboardVariable<bool>(true);
+
     private EnemyMovement _enemyMovement;
+    private EnemyDetector _enemyDetector;
 
     protected override Status OnStart()
     {
@@ -35,6 +38,7 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
             Debug.LogWarning("EnemyWanderAroundSpawnPointAction: Self에 EnemyMovement가 없습니다. object=" + selfObject.name);
             return Status.Failure;
         }
+        _enemyDetector = selfObject.GetComponent<EnemyDetector>();
 
         return Status.Running;
     }
@@ -48,6 +52,11 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
         }
 
         if (IsRequiredStateMatched(selfObject) == false)
+        {
+            return Status.Failure;
+        }
+
+        if (ShouldInterruptForDetectedPlayer(selfObject))
         {
             return Status.Failure;
         }
@@ -78,6 +87,26 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
         {
             _enemyMovement.StopMoving();
         }
+    }
+
+    private bool ShouldInterruptForDetectedPlayer(GameObject selfObject)
+    {
+        if(InterruptWhenPlayerDetected == null || InterruptWhenPlayerDetected.Value == false)
+        {
+            return false;
+        }
+
+        if(_enemyDetector == null)
+        {
+            _enemyDetector = selfObject.GetComponent<EnemyDetector>();
+        }
+
+        if(_enemyDetector == null)
+        {
+            return false;
+        }
+
+        return _enemyDetector.HasDetectedPlayer && _enemyDetector.DetectedPlayer != null;
     }
 
     private bool IsRequiredStateMatched(GameObject selfObject)
