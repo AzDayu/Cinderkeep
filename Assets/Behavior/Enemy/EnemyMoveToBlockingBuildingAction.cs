@@ -51,8 +51,44 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
         return Status.Running;
     }
 
+    protected override Status OnUpdate()
+    {
+        GameObject selfObject = GetSelfObject();
+        GameObject cinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
 
+        if(IsUnityObjectNull(selfObject) || IsUnityObjectNull(CinderHeart))
+        {
+            return Status.Failure;
+        }
+        if (IsRequiredStateMatched(selfObject) == false)
+        {
+            return Status.Failure;
+        }
+        if (ShouldInterruptForDetectedPlayer(selfObject))
+        {
+            return Status.Failure;
+        }
+        BuildingHp blockingBuilding = FindBlockingBuilding(selfObject, cinderHeartObject);
+        if (blockingBuilding == null)
+        {
+            return Status.Failure;
+        }
 
+        if (_enemyMovement == null)
+        {
+            _enemyMovement = selfObject.GetComponent<EnemyMovement>();
+        }
+
+        if (_enemyMovement == null)
+        {
+            return Status.Failure;
+        }
+
+        _enemyMovement.MoveToTarget(blockingBuilding.transform);
+
+        return Status.Running;
+
+    }
 
     private BuildingHp FindBlockingBuilding(GameObject selfObject, GameObject cinderHeartObject)
     {
