@@ -22,6 +22,11 @@ public partial class EnemyRequiredStateGateAction : Action
         return CheckState();
     }
 
+    protected override Status OnUpdate()
+    {
+        return CheckState();
+    }
+
     private Status CheckState()
     {
         GameObject selfObject = GetSelfObject();

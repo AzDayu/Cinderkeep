@@ -14,7 +14,7 @@ public partial class EnemyWanderAroundSpawnPointAction : Action
 {
     [SerializeReference] public BlackboardVariable<GameObject> Self;
 
-    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("");
+    [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("DayWander");
 
     [SerializeReference] public BlackboardVariable<bool> StopOnEnd = new BlackboardVariable<bool>(false);
 

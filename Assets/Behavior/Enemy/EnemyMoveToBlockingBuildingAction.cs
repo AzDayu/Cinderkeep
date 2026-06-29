@@ -56,7 +56,7 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
         GameObject selfObject = GetSelfObject();
         GameObject cinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
 
-        if(IsUnityObjectNull(selfObject) || IsUnityObjectNull(CinderHeart))
+        if (IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
         {
             return Status.Failure;
         }

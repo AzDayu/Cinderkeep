@@ -54,11 +54,13 @@ public partial class EnemyAttackCinderHeartAction : Action
         {
             return Status.Failure;
         }
-        if(IsUnityObjectNull(selfObject) == false)
+
+        if (IsRequiredStateMatched(selfObject) == false)
         {
             return Status.Failure;
         }
-        if(ShouldInterruptForDetectedPlayer(selfObject))
+
+        if (ShouldInterruptForDetectedPlayer(selfObject))
         {
             return Status.Failure;
         }
@@ -71,7 +73,7 @@ public partial class EnemyAttackCinderHeartAction : Action
 
 
         float attackDistance = AttackDistance == null ? 3f : AttackDistance.Value;
-        float distance = Vector3.Distance(selfObject.transform.position, cinderHeartObject.transform.position);
+        float distance = Vector3.Distance(selfObject.transform.position, cinderHeartDamageable.transform.position);
 
         if(distance >  attackDistance)
         {
@@ -149,12 +151,25 @@ public partial class EnemyAttackCinderHeartAction : Action
         }
 
         Damageable damageable = targetObject.GetComponent<Damageable>();
-        if(damageable != null)
+        if (damageable != null)
         {
             return damageable;
         }
 
-        return targetObject.GetComponent<Damageable>();
+        damageable = targetObject.GetComponentInParent<Damageable>();
+        if (damageable != null)
+        {
+            return damageable;
+        }
+
+        damageable = targetObject.GetComponentInChildren<Damageable>(true);
+        if (damageable != null)
+        {
+            return damageable;
+        }
+
+        Debug.LogWarning("EnemyAttackCinderHeartAction: CinderHeart 또는 부모/자식에서 Damageable을 찾지 못했습니다. target=" + targetObject.name);
+        return null;
     }
 
 

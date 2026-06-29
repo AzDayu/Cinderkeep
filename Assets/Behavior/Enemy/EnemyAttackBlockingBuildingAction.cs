@@ -61,11 +61,7 @@ public partial class EnemyAttackBlockingBuildingAction : Action
         {
             return Status.Failure;
         }
-        if(IsUnityObjectNull(selfObject) == false)
-        {
-            return Status.Failure;
-        }
-
+        
         if (IsRequiredStateMatched(selfObject) == false)
         {
             return Status.Failure;
