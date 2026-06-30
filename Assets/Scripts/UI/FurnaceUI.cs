@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +19,9 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private string _selectedInputResourceId = PlayerModel.ResourceIronOre;
         [SerializeField] private int _selectedInputAmount = 1;
 
+        [Header("Recipe Slots")]
+        [SerializeField] private FurnaceRecipeButtonView[] _recipeSlots;
+
         [Header("Progress UI")]
         [SerializeField] private Slider _progressSlider;
         [SerializeField] private TMP_Text _progressText;
@@ -34,7 +37,18 @@ namespace Cinderkeep.Gameplay
         [Header("Message UI")]
         [SerializeField] private TMP_Text _messageText;
 
+        [Header("Crafting Embed")]
+        [SerializeField] private InventoryUI _inventoryUI;
+
+        [Header("Auto Close")]
+        [Tooltip("용광로 UI가 열린 뒤 플레이어가 용광로에서 이 거리 이상 멀어지면 자동으로 닫습니다.")]
+        [SerializeField] private float _autoCloseDistance = 4.5f;
+
+        private readonly System.Collections.Generic.List<SmeltingRecipeData> _availableRecipes
+            = new System.Collections.Generic.List<SmeltingRecipeData>();
+
         private FurnaceStation _currentFurnaceStation;
+        private Transform _currentInteractorTransform;
         private PlayerModel _playerModel;
 
         private bool _isOpen;
@@ -44,6 +58,11 @@ namespace Cinderkeep.Gameplay
             {
                 return _isOpen;
             }
+        }
+
+        public void SetInventoryUI(InventoryUI inventoryUI)
+        {
+            _inventoryUI = inventoryUI;
         }
 
         private void OnEnable()
@@ -69,21 +88,50 @@ namespace Cinderkeep.Gameplay
 
         public void OpenFurnace(FurnaceStation furnaceStation)
         {
+            OpenFurnace(furnaceStation, null);
+        }
+
+        public void OpenFurnace(FurnaceStation furnaceStation, GameObject interactor)
+        {
             if (furnaceStation == null)
             {
                 return;
             }
 
             SetFurnaceStation(furnaceStation);
+            _currentInteractorTransform = interactor == null ? null : interactor.transform;
             ConnectPlayerModel();
+            ApplyReadableTextStyle();
             SetVisible(true);
             RefreshUI();
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.OpenEmbedded();
+            }
         }
 
         public void Close()
         {
             UnsubscribeFurnace();
             SetVisible(false);
+            _currentInteractorTransform = null;
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.Close();
+            }
+        }
+
+        public bool ShouldCloseForDistance()
+        {
+            if (_isOpen == false || _currentFurnaceStation == null || _currentInteractorTransform == null)
+            {
+                return false;
+            }
+
+            float safeDistance = Mathf.Max(0.5f, _autoCloseDistance);
+            return Vector3.Distance(_currentFurnaceStation.transform.position, _currentInteractorTransform.position) > safeDistance;
         }
 
         public void SetInputResource(string inputResourceId, int inputAmount)
@@ -91,6 +139,13 @@ namespace Cinderkeep.Gameplay
             _selectedInputResourceId = inputResourceId;
             _selectedInputAmount = inputAmount;
             RefreshUI();
+        }
+
+        // 레시피 버튼이 클릭되면 그 레시피의 투입물을 골라 바로 제련을 시작합니다.
+        public void StartSmeltingByRecipe(string inputResourceId, int inputAmount)
+        {
+            SetInputResource(inputResourceId, inputAmount);
+            TryStartSmelting();
         }
 
         public void TryStartSmelting()
@@ -159,6 +214,97 @@ namespace Cinderkeep.Gameplay
             RefreshProgress();
             RefreshOutputSlot();
             RefreshButtons();
+            RefreshRecipes();
+        }
+
+        private void RefreshRecipes()
+        {
+            ClearRecipeSlots();
+
+            if (_recipeSlots == null || _currentFurnaceStation == null)
+            {
+                return;
+            }
+
+            GameDataManager gameDataManager = GameManager.Inst == null ? null : GameManager.Inst.GetGameDataManager();
+            if (gameDataManager == null)
+            {
+                return;
+            }
+
+            _currentFurnaceStation.GetAvailableSmeltingRecipes(gameDataManager, _availableRecipes);
+
+            for (int i = 0; i < _availableRecipes.Count; i++)
+            {
+                if (i >= _recipeSlots.Length)
+                {
+                    RefreshMessage("표시 가능한 제련 슬롯이 부족합니다.");
+                    return;
+                }
+
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
+                SmeltingRecipeData recipeData = _availableRecipes[i];
+                bool canSmelt = CanSmeltRecipe(recipeData);
+                _recipeSlots[i].SetRecipe(recipeData, canSmelt, GetSmeltStateText(recipeData), this);
+            }
+        }
+
+        private void ClearRecipeSlots()
+        {
+            if (_recipeSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _recipeSlots.Length; i++)
+            {
+                if (_recipeSlots[i] == null)
+                {
+                    continue;
+                }
+
+                _recipeSlots[i].Clear();
+            }
+        }
+
+        private bool CanSmeltRecipe(SmeltingRecipeData recipeData)
+        {
+            if (recipeData == null || _playerModel == null)
+            {
+                return false;
+            }
+
+            if (_currentFurnaceStation != null && _currentFurnaceStation.IsSmelting)
+            {
+                return false;
+            }
+
+            return _playerModel.HasResource(recipeData.InputResourceId, recipeData.InputAmount);
+        }
+
+        private string GetSmeltStateText(SmeltingRecipeData recipeData)
+        {
+            if (_currentFurnaceStation != null && _currentFurnaceStation.IsSmelting)
+            {
+                return "제련 중";
+            }
+
+            if (recipeData == null || _playerModel == null)
+            {
+                return "재료 부족";
+            }
+
+            int owned = _playerModel.GetResourceAmount(recipeData.InputResourceId);
+            if (owned >= recipeData.InputAmount)
+            {
+                return "제련 가능";
+            }
+
+            return "재료 부족 (" + owned + "/" + recipeData.InputAmount + ")";
         }
 
         private void RefreshInputSlot()
@@ -214,6 +360,40 @@ namespace Cinderkeep.Gameplay
         private void RefreshMessage(string message)
         {
             RefreshText(_messageText, message);
+        }
+
+        private void ApplyReadableTextStyle()
+        {
+            ApplyTextStyle(_inputResourceText, 18f);
+            ApplyTextStyle(_inputAmountText, 18f);
+            ApplyTextStyle(_outputResourceText, 18f);
+            ApplyTextStyle(_outputAmountText, 18f);
+            ApplyTextStyle(_progressText, 18f);
+            ApplyTextStyle(_messageText, 20f);
+
+            if (_recipeSlots == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _recipeSlots.Length; i++)
+            {
+                if (_recipeSlots[i] != null)
+                {
+                    _recipeSlots[i].ApplyReadableTextStyle();
+                }
+            }
+        }
+
+        private void ApplyTextStyle(TMP_Text targetText, float minFontSize)
+        {
+            if (targetText == null)
+            {
+                return;
+            }
+
+            targetText.textWrappingMode = TextWrappingModes.Normal;
+            targetText.fontSize = Mathf.Max(targetText.fontSize, minFontSize);
         }
 
         private void RefreshText(TMP_Text targetText, string text)

@@ -1,11 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 // HUD, 인벤토리, 제작 UI, 보상 선택 UI, Run Result 패널을 열고 닫는 UI 허브입니다.
 // 게임 규칙은 전용 시스템이 담당하고, 이 클래스는 화면 전환과 커서 상태, UI 사운드 호출만 조율합니다.
 namespace Cinderkeep.Gameplay
 {
-    public sealed class UIManager : MonoBehaviour, IGameInitializable
+    public sealed partial class UIManager : MonoBehaviour, IGameInitializable
     {
         [SerializeField] private GameObject _hudRoot;
         [SerializeField] private GameObject _inventoryRoot;
@@ -16,6 +16,13 @@ namespace Cinderkeep.Gameplay
         [SerializeField] private CraftingUI _craftingUI;
         [SerializeField] private FurnaceUI _furnaceUI;
         [SerializeField] private CinderHeartSkillSelectionUI _cinderHeartSkillSelectionUI;
+
+        [Header("UI Prefabs")]
+        [SerializeField] private InventoryUI _inventoryUIPrefab;
+        [SerializeField] private CraftingUI _craftingUIPrefab;
+        [SerializeField] private FurnaceUI _furnaceUIPrefab;
+
+        private const string HudCanvasName = "Canvas_GameHUD";
 
         private bool _isInitialized;
         private bool _isRunResultPanelOpen;
@@ -36,6 +43,8 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            InstantiateGameplayUI();
+
             CloseHud();
             CloseInventory();
             CloseGameOverPanel();
@@ -46,6 +55,67 @@ namespace Cinderkeep.Gameplay
             _isInitialized = true;
         }
 
+        private void InstantiateGameplayUI()
+        {
+            Transform canvasTransform = ResolveHudCanvas();
+
+            if (canvasTransform == null)
+            {
+                Debug.LogWarning("[UIManager] " + HudCanvasName + " 캔버스를 찾을 수 없어 UI를 생성하지 못했습니다.");
+                return;
+            }
+
+            if (_inventoryUI == null && _inventoryUIPrefab != null)
+            {
+                _inventoryUI = Instantiate(_inventoryUIPrefab, canvasTransform);
+            }
+
+            if (_craftingUI == null && _craftingUIPrefab != null)
+            {
+                _craftingUI = Instantiate(_craftingUIPrefab, canvasTransform);
+            }
+
+
+            if (_craftingUI != null && _inventoryUI != null)
+            {
+                _craftingUI.SetInventoryUI(_inventoryUI);
+            }
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.transform.SetAsLastSibling();
+            }
+
+
+            if (_furnaceUI == null && _furnaceUIPrefab != null)
+            {
+                _furnaceUI = Instantiate(_furnaceUIPrefab, canvasTransform);
+            }
+
+            if (_furnaceUI != null && _inventoryUI != null)
+            {
+                _furnaceUI.SetInventoryUI(_inventoryUI);
+            }
+
+            if (_inventoryUI != null)
+            {
+                _inventoryUI.transform.SetAsLastSibling();
+            }
+
+
+        }
+
+        private Transform ResolveHudCanvas()
+        {
+            GameObject canvasObject = GameObject.Find(HudCanvasName);
+            if (canvasObject == null)
+            {
+                return null;
+            }
+
+            return canvasObject.transform;
+        }
+
         private void Update()
         {
             if (_isRunResultPanelOpen)
@@ -54,11 +124,19 @@ namespace Cinderkeep.Gameplay
                 return;
             }
 
+            CloseStationUIIfInteractorTooFar();
+
             if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Tab))
             {
                 if (_craftingUI != null && _craftingUI.IsOpen)
                 {
                     CloseCraftingUI();
+                    return;
+                }
+
+                if (_furnaceUI != null && _furnaceUI.IsOpen)
+                {
+                    CloseFurnaceUI();
                     return;
                 }
 
@@ -70,6 +148,13 @@ namespace Cinderkeep.Gameplay
         {
             global::HudTutorialGuide.EnsureSceneGuide();
             QuickSlotHud.EnsureSceneHud();
+            global::InteractionPromptHud.EnsureSceneHud();
+            global::CrosshairFeedbackHud.EnsureSceneHud();
+            global::GameplayFeedbackHud.EnsureSceneHud();
+            global::CinderHeartDamageFlashHud.EnsureSceneHud();
+            global::MorningPrepTimerHUD.EnsureSceneHud();
+            global::PlayerDownHud.EnsureSceneHud();
+            global::BossEncounterHud.EnsureSceneHud();
             SetActive(_hudRoot, true);
         }
 
@@ -126,6 +211,22 @@ namespace Cinderkeep.Gameplay
             SetActive(_inventoryRoot, wasRootOpen == false);
             RefreshCursorState();
             PlayUiToggleSfx(wasRootOpen);
+        }
+
+        public void ToggleFurnaceUI(FurnaceStation furnaceStation, GameObject interactor)
+        {
+            if (_furnaceUI == null)
+            {
+                return;
+            }
+
+            if (_furnaceUI.IsOpen)
+            {
+                CloseFurnaceUI();
+                return;
+            }
+
+            OpenFurnaceUI(furnaceStation, interactor);
         }
 
         public void OpenGameOverPanel()
@@ -220,7 +321,7 @@ namespace Cinderkeep.Gameplay
             }
 
             CloseCraftingUI();
-            _furnaceUI.OpenFurnace(furnaceStation);
+            _furnaceUI.OpenFurnace(furnaceStation, interactor);
             RefreshCursorState();
             PlayUiClickSfx();
         }
@@ -235,6 +336,7 @@ namespace Cinderkeep.Gameplay
             _furnaceUI.Close();
             RefreshCursorState();
         }
+
         public void OpenCinderHeartSkillSelectionUI(
             System.Collections.Generic.IReadOnlyList<CinderHeartSkillData> skillOptions,
             System.Action onClosed)
@@ -252,7 +354,16 @@ namespace Cinderkeep.Gameplay
             CloseInventory();
             CloseCraftingUI();
             CloseFurnaceUI();
-            _cinderHeartSkillSelectionUI.Open(skillOptions, onClosed);
+            _cinderHeartSkillSelectionUI.Open(skillOptions, () =>
+            {
+                if (onClosed != null)
+                {
+                    onClosed.Invoke();
+                }
+
+                RefreshCursorState();
+            });
+            RefreshCursorState();
             PlayUiNotificationSfx();
         }
 
@@ -264,6 +375,7 @@ namespace Cinderkeep.Gameplay
             }
 
             _cinderHeartSkillSelectionUI.Close();
+            RefreshCursorState();
         }
 
         private void SetActive(GameObject targetObject, bool isActive)
@@ -319,7 +431,34 @@ namespace Cinderkeep.Gameplay
                 return true;
             }
 
+            if (_cinderHeartSkillSelectionUI != null && _cinderHeartSkillSelectionUI.IsOpen)
+            {
+                return true;
+            }
+
             return false;
+        }
+
+        private void CloseStationUIIfInteractorTooFar()
+        {
+            bool closedAnyUi = false;
+            if (_craftingUI != null && _craftingUI.ShouldCloseForDistance())
+            {
+                _craftingUI.Close();
+                closedAnyUi = true;
+            }
+
+            if (_furnaceUI != null && _furnaceUI.ShouldCloseForDistance())
+            {
+                _furnaceUI.Close();
+                closedAnyUi = true;
+            }
+
+            if (closedAnyUi)
+            {
+                global::GameplayFeedbackHud.ShowMessage("시설에서 멀어져 창을 닫았습니다.");
+                RefreshCursorState();
+            }
         }
 
         private void RefreshPlayerControlState(bool isBlockingUiOpen)
@@ -351,159 +490,5 @@ namespace Cinderkeep.Gameplay
             }
         }
 
-        private void UpdateRunResultInput()
-        {
-            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.R))
-            {
-                RestartRunFromResult();
-                return;
-            }
-
-            if (CinderkeepInput.WasKeyPressedThisFrame(KeyCode.Escape))
-            {
-                ReturnToMainLobbyFromResult();
-            }
-        }
-
-        private void RestartRunFromResult()
-        {
-            if (GameManager.Inst == null)
-            {
-                return;
-            }
-
-            CloseGameOverPanel();
-            PlayUiClickSfx();
-            GameManager.Inst.RestartRun();
-        }
-
-        private void ReturnToMainLobbyFromResult()
-        {
-            if (GameManager.Inst == null)
-            {
-                return;
-            }
-
-            PlayUiBackSfx();
-            GameManager.Inst.ReturnToMainLobby();
-        }
-
-        private void RefreshRunResultTextFromTracker(bool isClear)
-        {
-            ConnectRunResultText();
-            if (_runResultText == null)
-            {
-                return;
-            }
-
-            GameRunModel gameRunModel = GameManager.Inst == null ? null : GameManager.Inst.GameRunModel;
-            RunResultTracker tracker = RunResultTracker.Instance;
-            RunResultSnapshot snapshot = tracker == null
-                ? RunResultTextFormatter.CreateFallbackSnapshot(isClear, gameRunModel)
-                : tracker.CreateSnapshot(isClear, gameRunModel);
-            _runResultText.text = RunResultTextFormatter.BuildText(snapshot);
-        }
-
-        private void OpenRunResultUI(bool isClear)
-        {
-            ConnectRunResultUI();
-            if (_runResultUI != null)
-            {
-                _runResultUI.Open(isClear);
-                return;
-            }
-
-            RefreshRunResultTextFromTracker(isClear);
-            SetActive(_gameOverPanel, true);
-        }
-
-        private void ConnectRunResultUI()
-        {
-            if (_runResultUI != null || _gameOverPanel == null)
-            {
-                return;
-            }
-
-            _runResultUI = _gameOverPanel.GetComponent<RunResultUI>();
-            if (_runResultUI == null)
-            {
-                _runResultUI = _gameOverPanel.AddComponent<RunResultUI>();
-            }
-        }
-
-        private void ConnectRunResultText()
-        {
-            if (_runResultText != null || _gameOverPanel == null)
-            {
-                return;
-            }
-
-            _runResultText = _gameOverPanel.GetComponentInChildren<Text>(true);
-        }
-
-        private void PlayUiToggleSfx(bool wasOpen)
-        {
-            if (wasOpen)
-            {
-                PlayUiBackSfx();
-                return;
-            }
-
-            PlayUiClickSfx();
-        }
-
-        private void PlayUiClickSfx()
-        {
-            SoundManager soundManager = GetSoundManager();
-            if (soundManager == null)
-            {
-                return;
-            }
-
-            soundManager.PlayUiClick();
-        }
-
-        private void PlayUiBackSfx()
-        {
-            SoundManager soundManager = GetSoundManager();
-            if (soundManager == null)
-            {
-                return;
-            }
-
-            soundManager.PlayUiBack();
-        }
-
-        private void PlayUiNotificationSfx()
-        {
-            SoundManager soundManager = GetSoundManager();
-            if (soundManager == null)
-            {
-                return;
-            }
-
-            soundManager.PlayUiNotification();
-        }
-
-        private void PlayUiFailSfx()
-        {
-            SoundManager soundManager = GetSoundManager();
-            if (soundManager == null)
-            {
-                return;
-            }
-
-            soundManager.PlayUiFail();
-        }
-
-        private SoundManager GetSoundManager()
-        {
-            if (GameManager.Inst == null)
-            {
-                return null;
-            }
-
-            return GameManager.Inst.GetSoundManager();
-        }
     }
 }

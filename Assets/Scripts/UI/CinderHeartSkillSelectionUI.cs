@@ -22,6 +22,14 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
     private bool _isOpen;
     private bool _canSkipCurrentSelection;
 
+    public bool IsOpen
+    {
+        get
+        {
+            return _isOpen;
+        }
+    }
+
     public void Initialize()
     {
         if (_isInitialized == true)
@@ -65,6 +73,7 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         SetSkipButtonVisible(_canSkipCurrentSelection);
         ApplySkillOptions(skillOptions);
         SetRootActive(true);
+        BringToFront();
     }
 
     public void Close()
@@ -166,6 +175,17 @@ public sealed class CinderHeartSkillSelectionUI : MonoBehaviour
         }
 
         gameObject.SetActive(isActive);
+    }
+
+    private void BringToFront()
+    {
+        if (_rootObject != null)
+        {
+            _rootObject.transform.SetAsLastSibling();
+            return;
+        }
+
+        transform.SetAsLastSibling();
     }
 
     private void SetSkipButtonVisible(bool isVisible)

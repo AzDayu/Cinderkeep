@@ -232,6 +232,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
             _gameRunModel.Day,
             _gameFlowSettings.BossApproachDuration));
         StartBossSpawn();
+        global::BossEncounterHud.ShowBossWarning();
         PlayPhaseBgm(GameRunPhase.BossApproach);
     }
 
@@ -357,6 +358,18 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
 
     private void HandleBossDefeated(EnemyStatus enemyStatus)
     {
+
+        RequestClearByBossDefeated();
+
+    }
+
+    public void RequestClearByBossDefeated(BossStatus bossStatus)
+    {
+        RequestClearByBossDefeated();
+    }
+
+    private void RequestClearByBossDefeated()
+    {
         if (_isBossClearHandled)
         {
             return;
@@ -373,6 +386,7 @@ public sealed class GameFlowController : MonoBehaviour, IGameInitializable
         }
 
         _isBossClearHandled = true;
+
         if (RunResultTracker.Instance != null)
         {
             RunResultTracker.Instance.RecordBossDefeated();

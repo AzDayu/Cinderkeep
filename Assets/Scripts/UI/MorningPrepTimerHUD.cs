@@ -4,15 +4,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// 플레이 상태를 화면에 표시하거나 사용자의 UI 요청을 전달합니다.
-// UI는 규칙을 소유하지 않고 모델을 읽고 시스템에 요청을 보내는 계층으로 유지합니다.
+// 아침 보상 선택 뒤 30초 정비 시간을 좌측 상단에 표시하는 HUD입니다.
+// 보상 선택 중에는 숨기고, 실제 정비 카운트가 흐를 때만 표시합니다.
 public sealed class MorningPrepTimerHUD : MonoBehaviour
 {
     private const string RootName = "Panel_MorningPrepTimerHUD";
     private const string CanvasName = "Canvas_GameHUD";
-    private const string TitleText = "\uC544\uCE68 \uC815\uBE44";
+    private const string TitleText = "\uC544\uCE68 \uC815\uBE44 \uC2DC\uAC04";
     private const string TimerPrefix = "\uB2E4\uC74C \uB0AE\uAE4C\uC9C0 ";
-    private const string HintText = "\uBCA0\uC774\uC2A4 \uC815\uB9AC / \uC81C\uC791 / \uAC74\uCD95 \uC2DC\uAC04";
+    private const string HintText = "\uC81C\uC791 / \uAC74\uCD95 / \uC7A5\uBE44 \uC815\uB9AC";
 
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private GameFlowController _gameFlowController;
@@ -29,34 +29,36 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
     {
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         SceneManager.sceneLoaded += HandleSceneLoaded;
-        TryCreateForActiveScene();
+        EnsureSceneHud();
     }
 
-    private static void HandleSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    public static MorningPrepTimerHUD EnsureSceneHud()
     {
-        TryCreateForActiveScene();
-    }
-
-    private static void TryCreateForActiveScene()
-    {
-        if (GameObject.Find(RootName) != null)
+        MorningPrepTimerHUD existing = FindFirstObjectByType<MorningPrepTimerHUD>(FindObjectsInactive.Include);
+        if (existing != null)
         {
-            return;
+            existing.gameObject.SetActive(true);
+            return existing;
         }
 
         GameObject gameManagerObject = GameObject.Find("GameManager");
         if (gameManagerObject == null && SceneManager.GetActiveScene().name != "Cinderkeep_Game")
         {
-            return;
+            return null;
         }
 
         Canvas canvas = FindGameHudCanvas();
         if (canvas == null)
         {
-            return;
+            return null;
         }
 
-        CreateHud(canvas.transform, gameManagerObject);
+        return CreateHud(canvas.transform, gameManagerObject);
+    }
+
+    private static void HandleSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        EnsureSceneHud();
     }
 
     private static Canvas FindGameHudCanvas()
@@ -79,7 +81,7 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         return null;
     }
 
-    private static void CreateHud(Transform canvasTransform, GameObject gameManagerObject)
+    private static MorningPrepTimerHUD CreateHud(Transform canvasTransform, GameObject gameManagerObject)
     {
         GameObject rootObject = new GameObject(RootName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(CanvasGroup));
         rootObject.transform.SetParent(canvasTransform, false);
@@ -88,7 +90,7 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         rootRect.anchorMin = new Vector2(0f, 1f);
         rootRect.anchorMax = new Vector2(0f, 1f);
         rootRect.pivot = new Vector2(0f, 1f);
-        rootRect.sizeDelta = new Vector2(290f, 82f);
+        rootRect.sizeDelta = new Vector2(320f, 92f);
         rootRect.anchoredPosition = new Vector2(20f, -22f);
 
         Image background = rootObject.GetComponent<Image>();
@@ -99,9 +101,9 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
 
-        TMP_Text titleText = CreateText(rootObject.transform, "Text_MorningPrepTitle", TitleText, 17f, new Vector2(14f, -10f), new Vector2(260f, 22f));
-        TMP_Text timerText = CreateText(rootObject.transform, "Text_MorningPrepTimer", TimerPrefix + "00:30", 22f, new Vector2(14f, -34f), new Vector2(260f, 28f));
-        TMP_Text hintText = CreateText(rootObject.transform, "Text_MorningPrepHint", HintText, 13f, new Vector2(14f, -64f), new Vector2(260f, 18f));
+        TMP_Text titleText = CreateText(rootObject.transform, "Text_MorningPrepTitle", TitleText, 18f, new Vector2(14f, -10f), new Vector2(292f, 24f));
+        TMP_Text timerText = CreateText(rootObject.transform, "Text_MorningPrepTimer", TimerPrefix + "00:30", 24f, new Vector2(14f, -38f), new Vector2(292f, 30f));
+        TMP_Text hintText = CreateText(rootObject.transform, "Text_MorningPrepHint", HintText, 14f, new Vector2(14f, -72f), new Vector2(292f, 20f));
 
         MorningPrepTimerHUD timerHud = rootObject.AddComponent<MorningPrepTimerHUD>();
         GameManager gameManager = null;
@@ -117,6 +119,7 @@ public sealed class MorningPrepTimerHUD : MonoBehaviour
         }
 
         timerHud.Configure(gameManager, gameFlowController, canvasGroup, titleText, timerText, hintText);
+        return timerHud;
     }
 
     private static TMP_Text CreateText(Transform parent, string objectName, string text, float fontSize, Vector2 anchoredPosition, Vector2 sizeDelta)

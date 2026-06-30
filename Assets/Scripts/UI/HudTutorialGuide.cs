@@ -367,6 +367,26 @@ public sealed class HudTutorialGuide : MonoBehaviour
 
     private string GetStepText(TutorialStep step)
     {
+        if (step == TutorialStep.PickHandStone)
+        {
+            return "E키로 바닥의 손돌을 주우세요";
+        }
+
+        if (step == TutorialStep.EquipHandStone)
+        {
+            return "1~7번으로 손돌을 장착하세요";
+        }
+
+        if (step == TutorialStep.GatherWithHandStone)
+        {
+            return "좌클릭으로 나무와 돌을 채집하세요";
+        }
+
+        if (step == TutorialStep.OpenCraftingLoop)
+        {
+            return "자원을 모아 제작대와 건축 지점을 사용하세요";
+        }
+
         switch (step)
         {
             case TutorialStep.PickHandStone:

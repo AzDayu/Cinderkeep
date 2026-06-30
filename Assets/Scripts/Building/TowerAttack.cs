@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 타워가 선택된 적에게 피해를 적용하는 전투 컴포넌트입니다.
+// 타워가 선택된 적에게 피해를 적용하고 공격 피드백을 재생하는 컴포넌트입니다.
 // 타깃 탐색은 TowerTargeting, 반복 실행은 BuildingTower가 담당합니다.
 public sealed class TowerAttack : MonoBehaviour
 {
@@ -62,9 +62,17 @@ public sealed class TowerAttack : MonoBehaviour
             return false;
         }
 
+        PlayAttackFeedback(targetEnemyStatus);
         ApplyDamageToEnemy(targetEnemyStatus);
         RecordAttackTime();
         return true;
+    }
+
+    private void PlayAttackFeedback(EnemyStatus targetEnemyStatus)
+    {
+        Vector3 startPosition = transform.position + Vector3.up * 1.1f;
+        Vector3 targetPosition = targetEnemyStatus.transform.position + Vector3.up * 0.8f;
+        TowerProjectileView.Play(startPosition, targetPosition);
     }
 
     private void ApplyDamageToEnemy(EnemyStatus targetEnemyStatus)

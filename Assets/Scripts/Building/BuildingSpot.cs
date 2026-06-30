@@ -25,6 +25,10 @@ public sealed class BuildingSpot : MonoBehaviour
     private string _currentBuildingDataId;
     private bool _isEmpty = true;
 
+    [Header("Build Spot Visual")]
+    [Tooltip("건축 완료 시 끌 Spot 연출 오브젝트입니다. 비어 있으면 직접 자식 ParticleSystem을 찾습니다.")]
+    [SerializeField] private GameObject _buildSpotVisualRoot;
+
     public bool IsEmpty
     {
         get
@@ -89,11 +93,13 @@ public sealed class BuildingSpot : MonoBehaviour
     private void Awake()
     {
         InitializeAnchor();
+        CacheBuildSpotVisualRoot();
     }
 
     private void Start()
     {
         RegisterToBuildingManager();
+        RefreshBuildSpotLabel();
     }
 
     private void RegisterToBuildingManager()
@@ -151,16 +157,16 @@ public sealed class BuildingSpot : MonoBehaviour
         _currentBuildingDataId = string.IsNullOrEmpty(buildingDataId) ? _buildingDataId : buildingDataId;
         buildingObject.transform.SetParent(transform, true);
         _isEmpty = false;
+        RefreshBuildSpotLabel();
     }
 
     public void HideBuildingSpot()
     {
-        SetSpotRendererVisible(false);
+        SetBuildSpotVisualActive(false);
     }
-
     public void ShowBuildingSpot()
     {
-        SetSpotRendererVisible(true);
+        SetBuildSpotVisualActive(true);
     }
 
     public void ClearSpot()
@@ -169,6 +175,7 @@ public sealed class BuildingSpot : MonoBehaviour
         _currentBuildingDataId = null;
         _isEmpty = true;
         ShowBuildingSpot();
+        RefreshBuildSpotLabel();
     }
 
     public void ReplaceBuilding(GameObject buildingObject, string buildingDataId)
@@ -177,6 +184,16 @@ public sealed class BuildingSpot : MonoBehaviour
         _isEmpty = true;
         PlaceBuilding(buildingObject, buildingDataId);
         HideBuildingSpot();
+        RefreshBuildSpotLabel();
+    }
+
+    private void RefreshBuildSpotLabel()
+    {
+        BuildingSpotLabel label = BuildingSpotLabel.EnsureForSpot(this);
+        if (label != null)
+        {
+            label.RefreshLabel();
+        }
     }
 
     private void InitializeAnchor()
@@ -195,6 +212,59 @@ public sealed class BuildingSpot : MonoBehaviour
         if (spotRenderer != null)
         {
             spotRenderer.enabled = isVisible;
+        }
+    }
+
+    private void CacheBuildSpotVisualRoot()
+    {
+        if (_buildSpotVisualRoot != null)
+        {
+            return;
+        }
+        // 직접 자식 중 Particle System만 찾습니다 (건축물 자식과 구분)
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform childTransform = transform.GetChild(i);
+            if (childTransform.GetComponent<ParticleSystem>() != null)
+            {
+                _buildSpotVisualRoot = childTransform.gameObject;
+                return;
+            }
+        }
+    }
+
+    private void SetBuildSpotVisualActive(bool isActive)
+    {
+        CacheBuildSpotVisualRoot();
+
+        if (_buildSpotVisualRoot != null)
+        {
+            _buildSpotVisualRoot.SetActive(isActive);
+        }
+        else
+        {
+            SetDirectChildSpotVisualsActive(isActive);
+        }
+
+        SetSpotRendererVisible(isActive);
+    }
+
+    private void SetDirectChildSpotVisualsActive(bool isActive)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Transform childTransform = transform.GetChild(i);
+
+            // 이미 지어진 건축물 자식은 끄지 않습니다.
+            if (_currentBuildingObject != null && childTransform.gameObject == _currentBuildingObject)
+            {
+                continue;
+            }
+
+            if (childTransform.GetComponent<ParticleSystem>() != null)
+            {
+                childTransform.gameObject.SetActive(isActive);
+            }
         }
     }
 

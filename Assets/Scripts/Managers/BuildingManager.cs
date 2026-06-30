@@ -89,6 +89,7 @@ namespace Cinderkeep.Gameplay
                 && BuildingCostHelper.CanPayBuildCost(buildingData, playerModel, gameDataManager) == false)
             {
                 Debug.LogWarning(BuildingCostHelper.GetNotEnoughResourceLog(buildingData, playerModel, gameDataManager));
+                global::GameplayFeedbackHud.ShowMessage("자원이 부족해서 건축할 수 없습니다.");
                 return false;
             }
 
@@ -150,6 +151,7 @@ namespace Cinderkeep.Gameplay
             {
                 Debug.LogWarning("BuildingManager: 건축 업그레이드 차액 자원이 부족합니다. from="
                     + fromBuildingId + ", to=" + toBuildingData.Id);
+                global::GameplayFeedbackHud.ShowMessage("자원이 부족해서 업그레이드할 수 없습니다.");
                 return false;
             }
 
@@ -454,7 +456,7 @@ namespace Cinderkeep.Gameplay
                 return CreatePrefabBuildingObject(buildingPrefab, buildPosition, buildRotation);
             }
 
-            GameObject fallbackBuilding = CreateRuntimeFallbackBuilding(buildingData, buildPosition, buildRotation);
+            GameObject fallbackBuilding = BuildingFallbackFactory.Create(buildingData, buildPosition, buildRotation);
             if (fallbackBuilding == null)
             {
                 return null;
@@ -484,103 +486,6 @@ namespace Cinderkeep.Gameplay
             }
 
             _gameObjectManager.RegisterGameObject(buildingObject);
-        }
-
-        private GameObject CreateRuntimeFallbackBuilding(
-            BuildingData buildingData,
-            Vector3 buildPosition,
-            Quaternion buildRotation)
-        {
-            if (buildingData == null)
-            {
-                Debug.LogWarning("BuildingManager: 건축 데이터가 없어 임시 건축물을 만들 수 없습니다.");
-                return null;
-            }
-
-            PrimitiveType primitiveType = ResolveFallbackPrimitiveType(buildingData);
-            GameObject createdBuilding = GameObject.CreatePrimitive(primitiveType);
-            createdBuilding.name = "RuntimeFallback_" + buildingData.Id;
-            createdBuilding.transform.position = buildPosition;
-            createdBuilding.transform.rotation = buildRotation;
-            createdBuilding.transform.localScale = ResolveFallbackScale(buildingData);
-            ApplyFallbackColor(createdBuilding, buildingData);
-
-            Debug.LogWarning("BuildingManager: 프리팹 연결이 없어 임시 건축물을 생성했습니다. building=" + buildingData.Id);
-            return createdBuilding;
-        }
-
-        private PrimitiveType ResolveFallbackPrimitiveType(BuildingData buildingData)
-        {
-            if (IsTowerBuilding(buildingData))
-            {
-                return PrimitiveType.Cylinder;
-            }
-
-            return PrimitiveType.Cube;
-        }
-
-        private Vector3 ResolveFallbackScale(BuildingData buildingData)
-        {
-            if (buildingData == null)
-            {
-                return Vector3.one;
-            }
-
-            if (IsTowerBuilding(buildingData))
-            {
-                return new Vector3(1.25f, 2.8f, 1.25f);
-            }
-
-            if (IsTrapBuilding(buildingData))
-            {
-                return new Vector3(2.1f, 0.18f, 2.1f);
-            }
-
-            if (string.Equals(buildingData.BuildingType, "Station", StringComparison.OrdinalIgnoreCase))
-            {
-                return new Vector3(1.6f, 1.2f, 1.6f);
-            }
-
-            return new Vector3(2.6f, 1.8f, 0.45f);
-        }
-
-        private void ApplyFallbackColor(GameObject createdBuilding, BuildingData buildingData)
-        {
-            Renderer targetRenderer = createdBuilding == null ? null : createdBuilding.GetComponent<Renderer>();
-            if (targetRenderer == null)
-            {
-                return;
-            }
-
-            Color materialKeyColor;
-            if (buildingData != null
-                && GameDataMaterialColorResolver.TryResolveColor(buildingData.MaterialKey, out materialKeyColor))
-            {
-                targetRenderer.material.color = materialKeyColor;
-                return;
-            }
-
-            targetRenderer.material.color = ResolveTierColor(buildingData);
-        }
-
-        private Color ResolveTierColor(BuildingData buildingData)
-        {
-            if (buildingData == null)
-            {
-                return Color.white;
-            }
-
-            switch (buildingData.Tier)
-            {
-                case 2:
-                    return new Color(0.45f, 0.58f, 0.68f);
-                case 3:
-                    return new Color(0.95f, 0.74f, 0.22f);
-                case 4:
-                    return new Color(0.58f, 0.28f, 0.82f);
-                default:
-                    return new Color(0.42f, 0.26f, 0.14f);
-            }
         }
 
         private void RegisterBuildingComponent(GameObject buildingObject)

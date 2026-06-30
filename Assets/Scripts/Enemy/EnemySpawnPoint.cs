@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Cinderkeep.Gameplay;
 using UnityEngine;
-using UnityEngine.AI;
 
 // 씬의 EnemySpawnPoint 한 곳을 담당합니다.
 // 일반 웨이브는 단계별 적 프리팹을 쓰고, 3일차 보스는 전용 보스 프리팹을 우선 사용합니다.
@@ -383,11 +382,7 @@ public sealed class EnemySpawnPoint : MonoBehaviour
             0,
             1);
         Quaternion spawnRotation = _positionSelector.GetSpawnRotation(_centerTransform);
-        GameObject createdEnemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        createdEnemy.SetActive(false);
-        createdEnemy.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
-
-        EnsureRuntimeBossComponents(createdEnemy);
+        GameObject createdEnemy = EnemyRuntimeBossFactory.Create(spawnPosition, spawnRotation);
         RegisterRuntimeBoss(createdEnemy);
         InitializeCreatedEnemy(createdEnemy, GetEnemyDataIdByStep());
         ApplySpawnModeToEnemy(createdEnemy);
@@ -399,19 +394,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
         _hasSpawnedBossForCurrentEncounter = true;
     }
 
-    private void EnsureRuntimeBossComponents(GameObject createdEnemy)
-    {
-        GetOrAddComponent<Rigidbody>(createdEnemy);
-        GetOrAddComponent<NavMeshAgent>(createdEnemy);
-        GetOrAddComponent<Damageable>(createdEnemy);
-        GetOrAddComponent<EnemyStatus>(createdEnemy);
-        GetOrAddComponent<EnemyAttack>(createdEnemy);
-        GetOrAddComponent<EnemyDetector>(createdEnemy);
-        GetOrAddComponent<EnemyMovement>(createdEnemy);
-        GetOrAddComponent<EnemyBrain>(createdEnemy);
-        ApplyRuntimeBossMaterial(createdEnemy);
-    }
-
     private void RegisterRuntimeBoss(GameObject createdEnemy)
     {
         if (_gameObjectManager != null)
@@ -421,38 +403,6 @@ public sealed class EnemySpawnPoint : MonoBehaviour
 
         _runtimeTracker.RegisterEnemy(createdEnemy);
     }
-
-    private TComponent GetOrAddComponent<TComponent>(GameObject targetObject)
-        where TComponent : Component
-    {
-        TComponent component = targetObject.GetComponent<TComponent>();
-        if (component != null)
-        {
-            return component;
-        }
-
-        return targetObject.AddComponent<TComponent>();
-    }
-
-    private void ApplyRuntimeBossMaterial(GameObject createdEnemy)
-    {
-        Renderer renderer = createdEnemy.GetComponentInChildren<Renderer>();
-        if (renderer == null)
-        {
-            return;
-        }
-
-        Shader shader = Shader.Find("Standard");
-        if (shader == null)
-        {
-            return;
-        }
-
-        Material material = new Material(shader);
-        material.color = new Color(0.45f, 0.85f, 1f, 1f);
-        renderer.sharedMaterial = material;
-    }
-
     private GameObject[] GetBossEnemyPrefabs()
     {
         if (_bossEnemyPrefab != null)
