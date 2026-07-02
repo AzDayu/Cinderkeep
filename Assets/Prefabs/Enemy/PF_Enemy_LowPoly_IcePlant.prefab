@@ -18,6 +18,9 @@ GameObject:
   - component: {fileID: 8665547763757173376}
   - component: {fileID: 7963914889142995290}
   - component: {fileID: 5572637237410272874}
+  - component: {fileID: 8550450210772472295}
+  - component: {fileID: 4961364216530351761}
+  - component: {fileID: 4248890431298125697}
   m_Layer: 0
   m_Name: PF_Enemy_LowPoly_IcePlant
   m_TagString: Enemy
@@ -123,7 +126,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dcfdf4c78c01ef24ba925a51d8f6bd03, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Damageable
   _maxHealth: 100
 --- !u!114 &2974566854221694362
@@ -136,7 +139,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6af9ceaefb898cb418b598da99efd19c, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStatus
   _maxHealth: 1
   _deactivateOnDeath: 1
@@ -151,9 +154,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c029023d3dc05854187a29fdaca82637, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDetector
-  _viewAngle: 90
+  _dayViewAngle: 150
+  _nightViewAngle: 90
+  _detectionInterval: 0.2
+  _dayDetectorDistance: 6
+  _nightDetectorDistance: 12
 --- !u!114 &8665547763757173376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +171,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 477a66aa383fe1548ba567ea206adc70, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
   _attackDamage: 0
   _cinderHeartAttackDamage: 10
@@ -179,13 +186,41 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f574aa547d328af4cbf708966b938649, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  _enemyDetector: {fileID: 2296944158827657574}
-  _cinderHeartTarget: {fileID: 0}
   _moveSpeed: 0
   _stopDistance: 0
+  _wanderRadius: 6
+  _wanderInterval: 2.5
+  _separationRadius: 1.05
+  _separationStrength: 0.65
+  _arrivalSpreadRadius: 1.35
 --- !u!114 &5572637237410272874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8817031620031285111}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6e26d4a4e433f4c8eb46dc97bae73f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
+  _enemyDetector: {fileID: 2296944158827657574}
+  _enemyAttack: {fileID: 8665547763757173376}
+  _enemyMovement: {fileID: 0}
+  _cinderHeartDamageable: {fileID: 0}
+  _attackDistance: 2.3
+  _cinderHeartAttackDistance: 3
+  _blockingBuildingDetectDistance: 5
+  _blockingBuildingDetectRadius: 1
+  _towerDetectDistance: 5
+  _attackerMemoryDuration: 7
+  _isNightTime: 0
+  _usePlayerDetectionAsPriority: 1
+  _useTowerDetectionAsPriority: 1
+--- !u!114 &8550450210772472295
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -194,14 +229,52 @@ MonoBehaviour:
   m_GameObject: {fileID: 8817031620031285111}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a6e26d4a4e433f4c8eb46dc97bae73f, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBrain
-  _enemyDetector: {fileID: 2296944158827657574}
-  _enemyAttack: {fileID: 8665547763757173376}
-  _cinderHeartDamageable: {fileID: 0}
-  _attackDistance: 2.3
-  _cinderHeartAttackDistance: 3
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
+  m_Graph: {fileID: 723487754898012346, guid: 45d3f3dc32fac1a44b05945bd75b2bb0, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 6383304974749139035
+  m_OriginalGraph: {fileID: 723487754898012346, guid: 45d3f3dc32fac1a44b05945bd75b2bb0, type: 2}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 6383304974749139035
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 8817031620031285111}
+--- !u!114 &4961364216530351761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8817031620031285111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9341142d07b2b28439bdd0547b05ae83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorTargetContext
+  _cinderHeartTarget: {fileID: 0}
+--- !u!114 &4248890431298125697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8817031620031285111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b113c27bd81d3e48932d759582b7e1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviorState
+  _mode: 0
 --- !u!1001 &2843309398132826418
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -268,7 +341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: ab84d4bda4ca7ff4fb9b96a602cfdadf, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: b7a6d2b88932dcf499cca95adcd6260f, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
