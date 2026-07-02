@@ -17,7 +17,7 @@ public partial class EnemyMoveToTargetAction : Action
 
     [SerializeReference] public BlackboardVariable<string> RequiredState = new BlackboardVariable<string>("NightAssault");
     [SerializeReference] public BlackboardVariable<bool> InterruptWhenPlayerDetected = new BlackboardVariable<bool>(true);
-
+    [SerializeReference] public BlackboardVariable<float> CompleteDistance = new BlackboardVariable<float>(3f);
 
     private EnemyMovement _enemyMovement;
     private EnemyDetector _enemyDetector;
@@ -80,6 +80,12 @@ public partial class EnemyMoveToTargetAction : Action
             return Status.Failure;
         }
 
+        if (IsWithinCompleteDistance(selfObject.transform, targetObject.transform))
+        {
+            _enemyMovement.StopMoving();
+            return Status.Success;
+        }
+
         _enemyMovement.MoveToTarget(targetObject.transform);
 
         return Status.Running;
@@ -129,7 +135,18 @@ public partial class EnemyMoveToTargetAction : Action
         return behaviorState.IsCurrentState(requiredStateName);
     }
 
+    private bool IsWithinCompleteDistance(Transform selfTransform, Transform targetTransform)
+    {
+        if (selfTransform == null || targetTransform == null)
+        {
+            return false;
+        }
 
+        float completeDistance = CompleteDistance == null ? 3f : CompleteDistance.Value;
+        float distance = Vector3.Distance(selfTransform.position, targetTransform.position);
+
+        return distance <= completeDistance;
+    }
 
     private GameObject GetSelfObject()
     {
