@@ -26,6 +26,9 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
 
     [SerializeReference] public BlackboardVariable<bool> InterruptWhenPlayerDetected = new BlackboardVariable<bool>(true);
 
+    [SerializeReference] public BlackboardVariable<float> CompleteDistance = new BlackboardVariable<float>(2.3f);
+
+
     private EnemyMovement _enemyMovement;
     private EnemyDetector _enemyDetector;
     private NavMeshPath _path;
@@ -82,6 +85,12 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
         if (_enemyMovement == null)
         {
             return Status.Failure;
+        }
+
+        if(isWithinCompleteDistance(selfObject.transform, blockingBuilding.transform))
+        {
+            _enemyMovement.StopMoving();
+            return Status.Success;
         }
 
         _enemyMovement.MoveToTarget(blockingBuilding.transform);
@@ -154,6 +163,19 @@ public partial class EnemyMoveToBlockingBuildingAction : Action
 
         return behaviorState.IsCurrentState(requiredStateName);
     }
+
+    private bool isWithinCompleteDistance(Transform selfTransform, Transform targetTransform)
+    {
+        if(selfTransform == null || targetTransform == null)
+        {
+            return false;
+        }
+        float completeDistance = CompleteDistance == null ? 2.3f : CompleteDistance.Value;
+        float distance = Vector3.Distance(selfTransform.position, targetTransform.position);
+
+        return distance <= completeDistance;
+    }
+
 
     private GameObject GetSelfObject()
     {
