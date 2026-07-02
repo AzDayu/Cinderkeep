@@ -31,8 +31,8 @@ public partial class EnemyMoveToTargetAction : Action
             return Status.Failure;
         }
 
-        GameObject targetObject = Target == null ? null : Target.Value;
-        if(IsUnityObjectNull(targetObject))
+        GameObject targetObject = GetTargetObject(selfObject);
+        if (IsUnityObjectNull(targetObject))
         {
             Debug.LogWarning("EnemyMoveToTargetAction: Target이 없습니다.");
             return Status.Failure;
@@ -54,9 +54,10 @@ public partial class EnemyMoveToTargetAction : Action
     protected override Status OnUpdate()
     {
         GameObject selfObject = GetSelfObject();
-        GameObject targetObject = Target == null ? null : Target.Value;
 
-        if( IsUnityObjectNull(selfObject) || IsUnityObjectNull(targetObject))
+        GameObject targetObject = GetTargetObject(selfObject);
+
+        if ( IsUnityObjectNull(selfObject) || IsUnityObjectNull(targetObject))
         {
             return Status.Failure;
         }
@@ -115,6 +116,30 @@ public partial class EnemyMoveToTargetAction : Action
 
         return _enemyDetector.HasDetectedPlayer && _enemyDetector.DetectedPlayer != null;
 
+    }
+
+    private GameObject GetTargetObject(GameObject selfObject)
+    {
+        GameObject blackboardTargetObject = Target == null ? null : Target.Value;
+        if (IsUnityObjectNull(blackboardTargetObject) == false)
+        {
+            return blackboardTargetObject;
+        }
+
+        if (selfObject == null)
+        {
+            return null;
+        }
+
+        EnemyBehaviorTargetContext targetContext =
+            selfObject.GetComponent<EnemyBehaviorTargetContext>();
+
+        if (targetContext == null)
+        {
+            return null;
+        }
+
+        return targetContext.CinderHeartObject;
     }
 
     private bool IsRequiredStateMatched(GameObject selfObject)

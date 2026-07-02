@@ -1,4 +1,4 @@
-using Cinderkeep.Gameplay;
+﻿using Cinderkeep.Gameplay;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -81,6 +81,7 @@ public sealed class EnemyLoopConnector : MonoBehaviour
         }
 
         InitializeEnemyComponents(enemyData, enemyStatus, enemyAttack, enemyDetector, enemyMovement, enemyBrain, enemyHud);
+        InitializeEnemyBehaviorTargetContext(enemyObject);
     }
 
     private void InitializeEnemyRuntimeSet(EnemyRuntimeSet enemyRuntimeSet)
@@ -246,6 +247,37 @@ public sealed class EnemyLoopConnector : MonoBehaviour
         }
 
         return _cinderHeartTarget.GetComponentInParent<Damageable>();
+    }
+    private void InitializeEnemyBehaviorTargetContext(GameObject enemyObject)
+    {
+        if (enemyObject == null)
+        {
+            return;
+        }
+
+        EnemyBehaviorTargetContext behaviorTargetContext =
+            enemyObject.GetComponent<EnemyBehaviorTargetContext>();
+
+        if (behaviorTargetContext == null)
+        {
+            Debug.LogWarning(
+                "EnemyLoopConnector: " + enemyObject.name +
+                " 프리팹에 EnemyBehaviorTargetContext가 없습니다. " +
+                "Behavior Graph에서 CinderHeart를 사용하려면 프리팹에 추가해주세요.");
+
+            return;
+        }
+
+        if (_cinderHeartTarget == null)
+        {
+            Debug.LogWarning(
+                "EnemyLoopConnector: _cinderHeartTarget이 비어 있습니다. " +
+                "씬의 CinderHeart Transform을 EnemyLoopConnector에 연결해주세요.");
+
+            return;
+        }
+
+        behaviorTargetContext.SetCinderHeartTarget(_cinderHeartTarget);
     }
 }
 

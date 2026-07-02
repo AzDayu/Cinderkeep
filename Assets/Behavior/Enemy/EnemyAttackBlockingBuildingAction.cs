@@ -55,9 +55,9 @@ public partial class EnemyAttackBlockingBuildingAction : Action
     protected override Status OnUpdate()
     {
         GameObject selfObject = GetSelfObject();
-        GameObject cinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
+        GameObject cinderHeartObject = GetCinderHeartObject(selfObject);
 
-        if(IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
+        if (IsUnityObjectNull(selfObject) || IsUnityObjectNull(cinderHeartObject))
         {
             return Status.Failure;
         }
@@ -173,6 +173,30 @@ public partial class EnemyAttackBlockingBuildingAction : Action
         }
 
         return _enemyDetector.HasDetectedPlayer && _enemyDetector.DetectedPlayer != null;
+    }
+
+    private GameObject GetCinderHeartObject(GameObject selfObject)
+    {
+        GameObject blackboardCinderHeartObject = CinderHeart == null ? null : CinderHeart.Value;
+        if (IsUnityObjectNull(blackboardCinderHeartObject) == false)
+        {
+            return blackboardCinderHeartObject;
+        }
+
+        if (selfObject == null)
+        {
+            return null;
+        }
+
+        EnemyBehaviorTargetContext targetContext =
+            selfObject.GetComponent<EnemyBehaviorTargetContext>();
+
+        if (targetContext == null)
+        {
+            return null;
+        }
+
+        return targetContext.CinderHeartObject;
     }
 
 
